@@ -1,5 +1,5 @@
 <?php
-
+//Archivo modificado en dev
 session_start();
 
 if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
