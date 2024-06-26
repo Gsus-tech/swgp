@@ -1,5 +1,6 @@
 
 <?php
+//Archivo modificado en dev
 if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsable']==true){
     $proyectos = crud::getFiltersOptions('tbl_proyectos', 'id_proyecto');
     if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD'){
