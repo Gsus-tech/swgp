@@ -29,7 +29,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
         }
         ?>
-            <div class="header">
+            <div class="header"> 
                 <h4>Gestión de usuarios</h4>
             </div>
             <!-- Contenido de gestion de usuarios -->
