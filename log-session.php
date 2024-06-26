@@ -64,5 +64,5 @@ elseif(isset($_GET['logout']) && $_GET['logout']=='true'){
     session_destroy();
     
     header("Location: index.php");    
-
+	//comentario en master
 }
