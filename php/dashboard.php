@@ -2,7 +2,7 @@
 session_start();
 
 if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
-    require("generalCRUD.php");
+    require("../controller/generalCRUD.php");
     ?>
 
 <!DOCTYPE html>
@@ -11,7 +11,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 <meta http-equiv=»X-UA-Compatible» content=»IE-edge» charset=UTF-8″>
     <meta name="viewport" content="width=device-width" initial-scale=1.0″>
     <title>SWGP - Panel de inicio</title>
-    <link rel="stylesheet" href="../assets/icons/font-awesome-4.7.0/css/font-awesome.min.css">    
+    <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style-dash.css">
     <link rel="stylesheet" href="../css/style-userTools.css">
 </head>

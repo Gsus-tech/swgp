@@ -11,10 +11,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <meta http-equiv=»X-UA-Compatible» content=»IE-edge» charset=UTF-8″>
     <meta name="viewport" content="width=device-width" initial-scale=1.0″>
     <title>SWGP - Panel de inicio</title>
-    <link rel="stylesheet" href="../assets/icons/font-awesome-4.7.0/css/font-awesome.min.css">    
-    <link rel="stylesheet" href="css/style-dash.css">
-    <link rel="stylesheet" href="css/userMan_style.css">
-    <link rel="stylesheet" href="css/table-style.css">
+    <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
+    <link rel="stylesheet" href="../css/style-dash.css">
+    <link rel="stylesheet" href="../css/userMan_style.css">
+    <link rel="stylesheet" href="../css/table-style.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -51,7 +51,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <select class="dropDownFilter" id="filtersForDto" name="filtersForDto">
                     <option value="noFilter"></option>
                         <?php
-                        require("db_connection/generalCRUD.php");
+                        require("../controller/generalCRUD.php");
                         $filters = crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
                             for($i=0;$i<count($filters);$i++){
@@ -124,10 +124,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         <td>
                                             <a id="seeUser" class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<?php echo $userId; ?>)"></a>
                                             <a id="editUserBtn" class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
-                                            <form action="userMng/deleteUser.php" method="POST" onsubmit="return confirmDelete()">
-                                                <input type="hidden" name="deleteUserThisIs" value="<?php echo htmlspecialchars($p[$i]['id_usuario']); ?>">
-                                                <button class="fa fa-trash button" title="Eliminar cuenta" type="submit"></button>
-                                            </form>
+                                            <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
                                         </td>
                                         <?php
                                         echo '</tr>';
@@ -155,15 +152,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     if($fl==true){
                                         $userId = htmlspecialchars($p[$i][0]);
                                     ?>
-                                    <td><a id="seeUser"class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<?php echo $userId; ?>)"></a>
-                                    <a id="editUserBtn"class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
-                                        <form action="userMng/deleteUser.php" method="POST" onsubmit="return confirmDelete()">
-                                            <input type="hidden" name="deleteUserThisIs" value="<?php echo $p[$i][0];?>">
-                                            <button class="fa fa-trash button" title="Eliminar cuenta" type="submit"></button>
-                                        </form>
-                                
-                                    <!-- </a> -->
-                                </td>
+                                    <td>
+                                        <a id="seeUser"class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<?php echo $userId; ?>)"></a>
+                                        <a id="editUserBtn"class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
+                                        <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
+                                    </td>
                                     <?php
                                     echo '</tr>';
                                     }
@@ -183,17 +176,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="addBtn"><a id="showUserFormBtn" title="Crear nueva cuenta de usuario" class="fa fa-user-plus add-user-btn"></a></div>
 
                 <!-- Formulario de alta de usuario -->
-                <form class="addUser-form hide" id="addUser-form" action="userMng/addUser.php" method="POST" autocomplete="on">
+                <form class="addUser-form hide" id="addUser-form" action="../controller/userManager.php?addUser=true" method="POST" autocomplete="on">
                 <div class="form-bg">
                     <div class="form-container">
                         <div class="fm-content">
                             <div class="title"><h4>Agregar usuario:</h4></div>                            <!-- <label for="name">Nombre:</label> -->
                             <input type="text" name="Fname" id="Fname" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
                             <br>
-                            <!-- <label for="dpto">Departamento:</label> -->
-                            <!-- <input type="text" name="Fdpto" id="Fdepto" placeholder="Departamento" title="Introducir departamento del usuario" required
-                            oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')">  -->
-
 
                             <div class="mT-half">
                             <label for="dropDownDepto">Departamento:</label>
@@ -224,12 +213,12 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
                             <br>
                             <!-- <label for="dpto">Contraseña:</label> -->
-                            <input type="password" class="passInput" name="Fpassword" id="Fpassword" title="Introducir contraseña de la cuenta" placeholder="Contraseña" autocomplete="Cobach123!" required
+                            <input type="password" class="passInput" name="Fpassword" id="Fpassword" title="Introducir contraseña de la cuenta" placeholder="Contraseña" autocomplete="false" required
                             oninvalid="this.setCustomValidity('Define una contraseña para la cuenta de usuario')" oninput="this.setCustomValidity('')">
                             <i id="passwordVisibility" name="passwordVisibility" class="fa fa-lock button" ></i> 
                             <br>
                             <!-- <label for="dpto">Confirmar contraseña:</label> -->
-                            <input type="password" class="passwordConField" name="FpasswordCon" id="FpasswordCon" title="Confirmar contraseña" placeholder="Confirmar contraseña" autocomplete="Cobach123!" required
+                            <input type="password" class="passwordConField" name="FpasswordCon" id="FpasswordCon" title="Confirmar contraseña" placeholder="Confirmar contraseña" autocomplete="false" required
                             oninvalid="this.setCustomValidity('Confirma la contraseña de la cuenta')" oninput="this.setCustomValidity('')"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label>
@@ -259,8 +248,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div> <!-- Fin de main -->
         
     </div> <!-- Fin de container -->
-    <script src="js/init.js"></script>
-    <script src="js/userManager.js"></script>
+    <script src="../js/init.js"></script>
+    <script src="../js/userManager.js"></script>
 </body>
 </html>
 

@@ -1,0 +1,565 @@
+:root {
+    --hover-items: hsl(26, 88%, 33%);
+    --disabled-button: #b0b0b0;
+    --bg-forms: #b0b0b051;
+    --black: #333;
+    --white: #fff;
+    --cancelBtn: #823015;
+}
+
+.container .main .userManagement {
+    background-color: #fff;
+    width: 100%;
+    height: 100%;
+}
+
+.container .main .userManagement .addBtn {
+    position: sticky;
+    background-color: #0d8c7751;
+    margin: 15px;
+    border-radius: 50%;
+    bottom: 10px;
+    cursor: pointer;
+    width: fit-content;
+}
+
+.container .main .userManagement .addBtn fa {
+    color: #33333351;
+}
+
+.container .main .userManagement .addBtn .add-user-btn {
+    padding: 5px 5px;
+    font-size: 20px;
+}
+
+.container .main .userManagement .addBtn .add-user-btn:hover {
+    background-color: #09be00;
+    border-radius: 50%;
+    font-size: 170%;
+
+}
+
+.container .main .userManagement .addBtn .add-user-btn:hover fa {
+    color: #333;
+}
+
+
+.container .main .userManagement .addUser-form {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #0000008c;
+}
+
+.container .main .editContainer .editUser-form {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+
+    .form-container {
+        width: 20rem;
+        background-color: #fff;
+        border-radius: 1em;
+        transition: width .3s ease-in-out;
+
+        .fm-content {
+            margin: 1rem;
+
+            .title {
+                display: flex;
+                margin-top: 1.33em;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .comboBoxUserType {
+                width: 100%;
+                height: 30px;
+                margin-bottom: 8px;
+            }
+
+            .sumbit-editUser {
+                background-color: #676767;
+                border: none;
+                color: white;
+                padding: 8px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 15px;
+            }
+
+            .enabled {
+                background-color: #124734;
+                cursor: pointer;
+            }
+
+            .close-editUser {
+                background-color: #823015;
+                border: none;
+                color: white;
+                padding: 8px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 15px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.input {
+    width: 100%;
+    padding: 10px 17px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+.container .main .userManagement .addUser-form .select-field .asd {
+    text-align: center;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container {
+    margin-left: 2rem;
+    margin-top: 4rem;
+    width: 20rem;
+    background-color: #fff;
+    border-radius: 1em;
+    padding: 10px 0;
+    transition: width .3s ease-in-out;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content {
+    margin: 1rem;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content .title {
+    display: flex;
+    margin-top: 1.33em;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content input {
+    width: 100%;
+    padding: 10px 17px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content .passInput {
+    width: 92%;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content .fa {
+    position: inline;
+    font-size: 20px;
+    display: inline;
+    transition: background-color .25s ease-in-out;
+    color: #333;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content .comboBoxUserType {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 8px;
+}
+
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content .form-options {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sumbit-AddUser {
+    background-color: #676767;
+    border: none;
+    color: white;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 15px;
+}
+
+.enabled {
+    background-color: #124734;
+    cursor: pointer;
+}
+
+.close-AddUser {
+    background-color: #823015;
+    border: none;
+    color: white;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+.container .main .userManagement table {
+    border-collapse: collapse;
+    margin-right: 2.5rem;
+    margin-top: .5rem;
+    margin-left: .5rem;
+    margin-bottom: 6rem;
+
+    .rowActions {
+        width: 6.5rem;
+    }
+
+    .fa {
+        margin-left: 10%;
+        text-decoration: none;
+    }
+
+}
+
+.container .main .userManagement table th {
+    border: 1px solid #aaa9a9;
+    text-align: left;
+    padding: 8px;
+    background-color: #f2f2f2;
+    word-wrap: break-word;
+}
+
+.container .main .userManagement table td {
+    border: 1px solid #aaa9a9;
+    text-align: left;
+    padding: 8px;
+    word-wrap: break-word;
+}
+
+.container .main .userManagement table form {
+    display: inline;
+
+    .fa-trash {
+        color: rgb(202, 0, 0)
+    }
+}
+
+.container .userManagement .table {
+    .users-list {
+        font-size: 11px;
+    }
+}
+
+.container .userManagement table:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.container .userManagement .nav-buttons {
+    position: absolute;
+    border-radius: 25px;
+    background-color: #b0b0b051;
+    top: 3rem;
+    right: 2rem;
+    margin: 16px;
+}
+
+.container .userManagement .nav-buttons i {
+    padding-top: 3px;
+    padding-bottom: 5px;
+    margin: 2px 5px;
+    font-size: 22px;
+    color: var(--black);
+}
+
+.container .userManagement .nav-buttons i:hover {
+    color: var(--hover-items);
+}
+
+.container .userManagement .nav-buttons:hover {
+    background-color: var(--disabled-button);
+}
+
+.container .userManagement .filterDiv {
+    display: inline-block;
+    border-radius: 25px;
+    background-color: #b0b0b051;
+    padding: 3px 1rem 7px 1rem;
+    margin-right: 2.5rem;
+    margin-top: .5rem;
+    margin-left: 1rem;
+    margin-bottom: 10px;
+    font-size: 11px;
+}
+
+.container .userManagement .filterDiv .fa {
+    font-size: 22px;
+}
+
+.container .userManagement .filterDiv i:hover {
+    color: var(--hover-items);
+}
+
+.closedFilterDiv {
+    width: fit-content;
+    height: fit-content;
+
+}
+
+.openFilterDiv {
+    display: inline;
+    width: auto;
+    height: auto;
+}
+
+.openFilterDiv i:hover {
+    background-color: #b0b0b0;
+}
+
+.container .userManagement .filterDiv:hover {
+    background-color: #b0b0b0;
+}
+
+.container .main .accountDetailsDiv {
+    padding: 1rem 1.5rem;
+    background-color: #b0b0b0;
+    position: fixed;
+    height: -webkit-fill-available;
+    width: -webkit-fill-available;
+}
+
+.container .main .accountDetailsDiv div {
+    background-color: var(--white);
+    padding: 1rem;
+}
+
+.projectsInfo .project {
+    border: solid 1px black;
+    /* margin-top: 1rem; */
+}
+
+.rowOfprojects {
+    position: revert;
+}
+
+@media screen and (min-width: 700px) {
+    .container .main .userManagement .addBtn {
+        bottom: 15px;
+
+        .add-user-btn {
+            font-size: 22.5px;
+        }
+    }
+
+    .openFilterDiv {
+        width: calc(100% - 8rem);
+    }
+
+    .container .userManagement .filterDiv {
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .search-bar {
+        margin-left: 2%;
+    }
+
+    .container .main .userManagement .addUser-form .form-bg {
+        padding-left: 7rem;
+    }
+
+    .container .main .userManagement .addUser-form .form-bg .form-container {
+        width: 23rem;
+    }
+
+    .container .userManagement .table {
+        margin-left: 4%;
+
+        .users-list {
+            font-size: 13px;
+        }
+
+        .rowID {
+            width: 2.5rem;
+        }
+
+        .rowRol {
+            width: 11rem;
+        }
+
+        .rowName {
+            width: 15rem;
+        }
+
+        .rowMail {
+            width: 15rem;
+        }
+
+        .rowDpto {
+            width: 8rem;
+        }
+    }
+
+    .container .userManagement .filterDiv {
+        margin-left: 4%;
+    }
+}
+
+@media screen and (min-width: 640px) {
+
+    .accountDetailsDiv .generalInfo {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .accountDetailsDiv .generalInfo div {
+        width: 48%;
+    }
+
+    .accountDetailsDiv .projectsInfo .twoGroups .rowOfprojects {
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+@media screen and (min-width: 810px) {
+
+    .accountDetailsDiv .projectsInfo .twoGroups {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .lfMg {
+        margin-left: 10%;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    .container .main .userManagement .addBtn {
+        bottom: 10%;
+    }
+}
+
+@media screen and (min-width: 1100px) {
+    .container .main .userManagement .addBtn {
+        .add-user-btn {
+            font-size: 25px;
+        }
+    }
+
+    .openFilterDiv {
+        width: calc(100% - 20rem);
+    }
+
+    .container .userManagement .nav-buttons {
+        right: 5rem;
+    }
+
+    .container .userManagement .filterDiv {
+        font-size: 15px;
+        flex-direction: row;
+    }
+
+    .container .main .userManagement .addUser-form .form-bg {
+        padding-left: 15rem;
+    }
+
+    .container .userManagement .table {
+        margin-left: 4%;
+
+        .users-list {
+            font-size: 15px;
+        }
+
+        .rowID {
+            width: 3rem;
+        }
+
+        .rowRol {
+            width: 13rem;
+        }
+
+        .rowName {
+            width: 17rem;
+        }
+
+        .rowMail {
+            width: 17rem;
+        }
+
+        .rowDpto {
+            width: 9rem;
+        }
+    }
+
+    .container .userManagement .filterDiv {
+        margin-right: 6rem;
+    }
+}
+
+@media screen and (max-height: 500px) {
+    .container .main .userManagement .addUser-form .form-bg .form-container {
+        max-height: 22rem;
+        margin-top: 2rem;
+
+        .fm-content input {
+            padding: 5px 12px;
+        }
+
+        .fm-content .comboBoxUserType {
+            width: 50%;
+        }
+    }
+
+    .sumbit-AddUser,
+    .close-AddUser {
+        padding: 5px 25px;
+    }
+
+
+}
+
+.short {
+    .container .main .userManagement .add-user-btn .addBtn i {
+        font-size: 22px;
+    }
+
+    .container .main .userManagement .add-user-btn .addBtn:hover i {
+        font-size: 30px;
+        padding-bottom: 5px;
+        display: inline-block;
+    }
+}
+
+.wrongCP {
+    background-color: rgba(255, 73, 73, 0.311);
+}
+
+@media (max-width: 600px) {
+    td:nth-of-type(1):before {
+        content: "ID";
+    }
+
+    td:nth-of-type(2):before {
+        content: "Rol de usuario";
+    }
+
+    td:nth-of-type(3):before {
+        content: "Nombre";
+    }
+
+    td:nth-of-type(4):before {
+        content: "Correo Electrónico";
+    }
+
+    td:nth-of-type(5):before {
+        content: "Departamento";
+    }
+
+    td:nth-of-type(6):before {
+        content: "Acciones";
+    }
+}

@@ -26,7 +26,7 @@ class crud{
             if ($deleteRow === false) {
                 throw new Exception(mysqli_error($conn));
             }
-            header("Location: ../$route");
+            header("Location: ../php/$route");
         }catch(mysqli_sql_exception $e){
             echo "Error al eliminar los datos: " . $e->getMessage();
         }
@@ -74,12 +74,12 @@ class crud{
         try{
             $result = mysqli_query($conn, (string)$query);
             if($result){
-                echo "<script>window.location.href = '../$destinationPage';</script>";
+                echo "<script>window.location.href = '../php/$destinationPage';</script>";
                 exit();
             }
         }catch(mysqli_sql_exception $e){
             $error=$e->getCode();
-            echo "<script>window.location.href = '../$destinationPage?error=$error';</script>";
+            echo "<script>window.location.href = '../php/$destinationPage?error=$error';</script>";
             exit();
         }
     }
@@ -268,13 +268,13 @@ class crud{
             if($result){
                 $result2 = mysqli_query($conn, (string)$query2);
                 if($result2){
-                    echo "<script>window.location.href = '../$destinationPage';</script>";
+                    echo "<script>window.location.href = '../php/$destinationPage';</script>";
                     exit();
                 }
             }
         }catch(mysqli_sql_exception $e){
             $error=$e->getCode();
-            echo "<script>window.location.href = '../$destinationPage?error=$error';</script>";
+            echo "<script>window.location.href = '../php/$destinationPage?error=$error';</script>";
             exit();
         }
     }

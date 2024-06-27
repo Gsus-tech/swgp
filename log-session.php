@@ -1,7 +1,7 @@
 <?php
 if(isset($_GET['login']) && $_GET['login']=='true'){
     session_start();
-    include "php/db_connection.php";
+    include "controller/db_connection.php";
     if(isset($_POST['userMail']) && isset($_POST['password'])) {
         function validar($data) {
             $data = trim($data);
@@ -33,7 +33,7 @@ if(isset($_GET['login']) && $_GET['login']=='true'){
             $_SESSION['nickname'] = $row['nickname'];
             $_SESSION['projectSelected'] = 0;
             if($_SESSION['rol'] == 'EST'){
-                require("php/generalCRUD.php");
+                require("controller/generalCRUD.php");
                 $user=$_SESSION['id'];
                 $accountProjects=array();
                 $accountProjects = crud::executeResultQuery("SELECT responsable FROM tbl_integrantes WHERE id_usuario = '$user' AND responsable = 1;");
