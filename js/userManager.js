@@ -214,37 +214,6 @@ function updateCancelLink(){
     btn.href = currentUrl;
 }
 
-//OLD VERSION
-// document.addEventListener('DOMContentLoaded', function() {
-//     const rolFilter = document.getElementById('filtersForRol');
-
-//     rolFilter.addEventListener('change', function() {
-//         const selectedValue = rolFilter.value;
-//         if (selectedValue === 'noFilter') {
-//             window.location.href = `userManagement.php`;
-//         } else{
-//             window.location.href = `userManagement.php?filterRol=${selectedValue}`;
-//         }
-//     });
-// });
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     const dtoFilter = document.getElementById('filtersForDto');
-
-    // dtoFilter.addEventListener('change', function() {
-    //     const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
-    //     const selectedValue = selectedOption.value;
-    //     const selectedText = selectedOption.textContent || selectedOption.innerText;
-
-    //     if (selectedValue === 'noFilter') {
-    //         window.location.href = `userManagement.php`;
-    //     } else {
-    //         const encodedText = encodeURIComponent(selectedText);
-    //         window.location.href = `userManagement.php?filterDto=${encodedText}`;
-    //     }
-    // });
-// });
-
 function toggleFilterItems(){
     document.querySelector('.dropDownFilter1').classList.toggle('hide');
     document.querySelector('.dropDownFilter2').classList.toggle('hide');
@@ -283,11 +252,13 @@ document.addEventListener('keydown', function(event) {
 });
 
 function editUserAccount(idToEdit){
-    window.location.href = `userMng/manageUserAccount.php?editId=${idToEdit}`;   
+    var currentUrl = new URL(window.location.href);
+    window.location.href = `${currentUrl.origin}${currentUrl.pathname}?editId=${idToEdit}`;   
 }
 
-function seeUserAccount(idToEdit){
-    window.location.href = `userMng/manageUserAccount.php?detailsId=${idToEdit}`;   
+function seeUserAccount(idToSee){
+    var currentUrl = new URL(window.location.href);
+    window.location.href = `${currentUrl.origin}${currentUrl.pathname}?detailsId=${idToSee}`;   
 }
 
 //Confirmar eliminar usuario

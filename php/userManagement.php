@@ -23,10 +23,87 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
         <?php
+        require("../controller/generalCRUD.php");
         if (isset($_GET['error'])) {
             $errorMsg = urldecode($_GET['error']);
             echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
         }
+
+        if(isset($_GET['detailsId'])){
+            $id=$_GET['detailsId'];
+            $infoAccount = crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'id_usuario', $id);
+            ?>
+            <div class="accountDetailsDiv scroll">
+                <div><h3 for="name">Detalles de cuenta:</h2></div>
+                <br>
+                <div class="generalInfo">
+                    <div class="generalInfo1">
+                        <h4 for="name">Nombre de usuario:</h4>
+                        <input disabled class ="name input" name="name" value=<?php echo $infoAccount[0][2];?>>
+                        <br>
+                        <h4 for="mail">Correo:</h4>
+                        <input disabled class ="mail input" name="mail" value=<?php echo $infoAccount[0][3];?>>
+                    </div>
+                    <div class="generalInfo2">
+                        <h4 for="userRol">Rol de usuario:</h4>
+                        <?php if($infoAccount[0][1]=='ADM'){$type='Superusuario';}
+                            elseif($infoAccount[0][1]=='SAD'){$type='Administrador';}
+                            else{$type='Estándar';}
+                        ?>
+                        <input disabled name="userRol" class="input" value="<?php echo $type;?>">
+                        <br>
+                        <h4 for="name">Departamento:</h4>
+                        <input disabled class="input" name="name" value="<?php echo $infoAccount[0][4];?>">
+                    </div>
+                </div>
+                <br>
+                <div class="projectsInfo">
+                    <h3>Proyectos asignados</h3>
+                    <?php
+                    $projectParticipation = crud::executeResultQuery("SELECT proyecto.nombre,proyecto.fecha_inicio,proyecto.fecha_cierre, integrante.responsable FROM tbl_proyectos proyecto JOIN tbl_integrantes integrante ON proyecto.id_proyecto = integrante.id_proyecto WHERE integrante.id_usuario=$id;");
+                        $divFlag = true;
+                        $flag = true;
+                        $count = 0;
+                        $count1 = 0;
+                        if(count($projectParticipation) >0){
+                        for($i=0;$i<count($projectParticipation);$i++){ 
+                            if($count==4){$flag=true; $count=0;}
+                            if($count1==2){$divFlag=true; $count1=0;}
+                            if($flag==true){echo "<div class='twoGroups'>"; $flag=false;}
+                            if($divFlag==true){echo "<div class='rowOfprojects'>"; $divFlag=false;}
+                            ?>
+                            <div class="project <?php if($count1==1){ echo "lfMg";} ?>">
+                                <h4><?php echo $projectParticipation[$i][0] ?></h4>
+                                
+                                <label for="dateStart">Fecha de inicio: <i><?php echo $projectParticipation[$i][1] ?></i></label>
+                                <br>
+                                <label for="dateStart">Fecha de cierre: <i><?php echo $projectParticipation[$i][2] ?></i></label>
+                                <h4>Rol: <label><?php if($projectParticipation[$i][3]===true){echo "Responsable de proyecto";}else{echo "Colaborador";} ?></label></h4>
+                            </div>  
+                            <?php
+                            if($count1==1 || $i==count($projectParticipation)-1){echo "</div>"; }
+                            if($count==3 || $i==count($projectParticipation)-1){echo "</div>"; }
+                            $count++;
+                            $count1++;
+                        }
+                    }else{
+                        echo"<br><a for='' class='lfMg'>- No se encontraron proyectos asignados a este usuario -</a><br><br>";
+                    }
+                    ?>
+
+                </div>
+
+                <a href="userManagement.php" class="button close-AddUser" id="returnD"><i class="fa fa-arrow-circle-left mr-half"></i>Regresar</a>
+            </div>
+        
+        </div> <!-- Fin de main -->
+    </div> <!-- Fin de container -->
+    <script src="../js/init.js"></script>
+    
+</body>
+</html>
+            <?php
+        }else{
         ?>
             <div class="header"> 
                 <h4>Gestión de usuarios</h4>
@@ -59,7 +136,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <select class="dropDownFilter" id="filtersForDto" name="filtersForDto">
                     <option value="noFilter"></option>
                         <?php
-                        require("../controller/generalCRUD.php");
                         $filters = crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
                             if(isset($_GET['filterDto'])){
@@ -216,13 +292,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <option value="other">Otro</option>
                             </select>
                             <div id="Fdpto" class="Fdpto hide">
-                            <input type="text" name="Fdpto" id="Fdepto" placeholder="Departamento" title="Introducir departamento del usuario" required
-                            oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
+                                <input type="text" name="Fdpto" id="Fdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
+                                oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
                             </div>
                             </div>
 
-
-                            <br>
                             <!-- <label for="mail">Correo:</label> -->
                             <input type="email" name="Fmail" id="Fmail" placeholder="Correo" title="Introducir correo del usuario" required
                             oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
@@ -252,7 +326,69 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div> <!-- Fin de form-container --> 
                 </form> <!-- Fin de user-form -->
     
-            
+                <?php 
+                if(isset($_GET['editId'])){ 
+                    $cR = crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
+                    ?>
+                <form class="addUser-form" id="editUser-form" action="../controller/userManager.php?updateUser=true" method="POST" autocomplete="on">
+                <div class="form-bg">
+                    <div class="form-container">
+                        <div class="fm-content">
+                            <div class="title"><h4>Editar usuario:</h4></div>                            <!-- <label for="name">Nombre:</label> -->
+                            <input type="hidden" name="EditThisID" value="<?php echo $_GET['editId']?>">
+                            <input class="input" type="text" name="Ename" id="Ename" value="<?php echo $cR[0][2] ?>" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
+                            <br>
+                            <!-- <label for="dpto">Departamento:</label> -->
+                            <input class="input" type="text" name="Edpto" id="Edepto" value="<?php echo $cR[0][4] ?>" placeholder="Departamento" title="Introducir departamento del usuario" required
+                            oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
+                            <br>
+                            <!-- <label for="mail">Correo:</label> -->
+                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0][3] ?>" placeholder="Correo" title="Introducir correo del usuario" required
+                            oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
+                            <br>
+                            <label for="comboBoxUserType"> Permisos de usuario: </label><br>
+                            <select class="comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
+                                <option value="EST" <?php if ("EST" == $cR[0][1]) echo 'selected="selected"'; ?>>Usuario estándar</option>
+                                <option value="SAD" <?php if ("SAD" == $cR[0][1]) echo 'selected="selected"'; ?>>Usuario administrador</option>
+                                <option value="ADM" <?php if ("ADM" == $cR[0][1]) echo 'selected="selected"'; ?>>Super-usuario</option>
+                            </select>
+                            <div class="form-options">
+                                <button disabled class="sumbit-AddUser" id="sumbit-editUser" type="submit">Guardar cambios</button>
+                                <a href="userManagement.php" id="cancel-editUser" class="close-AddUser">Cancelar</a>
+                            </div>
+                        </div>
+                    </div> <!-- Fin de form-container --> 
+                </div>
+                </form> <!-- Fin de edit-user-form -->
+                <script>
+                            const btnSaveChanges = document.getElementById('sumbit-editUser');
+                            const eUserName = document.getElementById("Ename");
+                            const eDepto = document.getElementById("Edepto");
+                            const eMail = document.getElementById("Email");
+
+                            eUserName.addEventListener('change', (e)=>{toggleBtn();});
+                            eDepto.addEventListener('change', (e)=>{toggleBtn();});
+                            eMail.addEventListener('change', (e)=>{toggleBtn();});
+                            eUserName.addEventListener('keyup', (e)=>{toggleBtn();});
+                            eDepto.addEventListener('keyup', (e)=>{toggleBtn();});
+                            eMail.addEventListener('keyup', (e)=>{toggleBtn();});
+                            function toggleBtn(){
+                                if(eUserName.value != "" && eDepto.value != "" && eMail.value != ""){
+                                    btnSaveChanges.disabled=false;
+                                    if(!document.getElementById('sumbit-editUser').classList.contains('enabled')){
+                                        document.getElementById("sumbit-editUser").classList.toggle('enabled');
+                                    }
+                                }else{
+                                    btnSaveChanges.disabled=true;
+                                    if(document.getElementById('sumbit-editUser').classList.contains('enabled')){
+                                        document.getElementById("sumbit-editUser").classList.toggle('enabled');
+                                    }
+                                }
+                            }
+                            </script>
+                <?php } ?>
+
+
                 </div>
 
             </div> <!-- Fin de userManagement -->
@@ -270,6 +406,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             }
         });
     </script>
+    <?php } ?>
 </body>
 </html>
 

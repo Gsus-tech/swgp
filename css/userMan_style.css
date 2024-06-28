@@ -44,66 +44,6 @@
     background-color: #0000008c;
 }
 
-.container .main .editContainer .editUser-form {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-
-    .form-container {
-        width: 20rem;
-        background-color: #fff;
-        border-radius: 1em;
-        transition: width .3s ease-in-out;
-
-        .fm-content {
-            margin: 1rem;
-
-            .title {
-                display: flex;
-                margin-top: 1.33em;
-                font-size: 16px;
-                font-weight: bold;
-            }
-
-            .comboBoxUserType {
-                width: 100%;
-                height: 30px;
-                margin-bottom: 8px;
-            }
-
-            .sumbit-editUser {
-                background-color: #676767;
-                border: none;
-                color: white;
-                padding: 8px 20px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                border-radius: 15px;
-            }
-
-            .enabled {
-                background-color: #124734;
-                cursor: pointer;
-            }
-
-            .close-editUser {
-                background-color: #823015;
-                border: none;
-                color: white;
-                padding: 8px 20px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                border-radius: 15px;
-                cursor: pointer;
-            }
-        }
-    }
-}
-
 .input {
     width: 100%;
     padding: 10px 17px;
@@ -155,10 +95,16 @@
     color: var(--black);
 }
 
-.container .main .userManagement .addUser-form .form-bg .form-container .fm-content .comboBoxUserType {
-    width: 100%;
-    height: 30px;
-    margin-bottom: 8px;
+.container .main .userManagement .addUser-form .form-bg .form-container .fm-content {
+    .comboBoxUserType {
+        width: 100%;
+        height: 30px;
+        margin-bottom: 8px;
+    }
+
+    .dropDownDepto {
+        height: 30px;
+    }
 }
 
 .container .main .userManagement .addUser-form .form-bg .form-container .fm-content .form-options {

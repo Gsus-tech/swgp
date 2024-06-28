@@ -1,9 +1,12 @@
 <?php
 session_start();
 if($_SESSION['rol']==='ADM'){
+    $destination = "userManagement.php";
+    require("generalCRUD.php");
+    
     if(isset($_GET['addUser']) && $_GET['addUser'] == 'true'){
         if($_POST['Fpassword'] === $_POST['FpasswordCon']){
-            require("generalCRUD.php");
+            // require("generalCRUD.php");
             $userName = crud::antiNaughty((string)$_POST['Fname']);
             $depto = crud::antiNaughty((string)$_POST['Fdpto']);
             $mail = crud::antiNaughty($_POST['Fmail']);
@@ -12,7 +15,7 @@ if($_SESSION['rol']==='ADM'){
             $errorMsg = '';
             $e0 = $_POST['comboBoxUserType'];
             // $nickname = 
-            $destination = "userManagement.php";
+            // $destination = "userManagement.php";
             $query = "INSERT INTO tbl_usuarios (rolUsuario,nombre,correo,contrasena,departamento,nickname) 
             VALUES('$e0','$userName','$mail','$password','$depto','$userName')";
             
@@ -23,9 +26,9 @@ if($_SESSION['rol']==='ADM'){
     if(isset($_GET['delete']) && $_GET['delete'] == 'true' && isset($_GET['deleteUser'])){
         $id = $_GET['deleteUser'];
         if (is_numeric($id)) {
-            require("generalCRUD.php");
+            // require("generalCRUD.php");
             $dependency = checkForDependencies($id);
-            $destination = "userManagement.php" ;
+            // $destination = "userManagement.php" ;
             $query = "DELETE FROM tbl_usuarios WHERE id_usuario='$id';";
             if($dependency==true){
                 $resp = breakUserDependencies($id);
@@ -36,8 +39,22 @@ if($_SESSION['rol']==='ADM'){
             }
             echo "<script>window.location.href = '../php/userManagement.php';</script>";
         }
-
     }
+
+    if(isset($_GET['updateUser']) && $_GET['updateUser'] == 'true'){
+        $idToUpdate = $_POST['EditThisID'];
+        $userName = (string)$_POST['Ename'];
+        $depto = (string)$_POST['Edpto'];
+        $mail = $_POST['Email'];
+        $userType = $_POST['comboBoxUserType'];
+    
+        // $destination = "userManagement.php";
+        $query = "UPDATE tbl_usuarios SET rolUsuario='$userType',nombre='$userName',correo='$mail',departamento='$depto' WHERE id_usuario=$idToUpdate";
+    
+        // require("generalCRUD.php");
+        crud::executeNonResultQuery($query, $destination);
+    }
+
 }else{
     echo "<script>
     window.location.href = '../dashboard.php';
