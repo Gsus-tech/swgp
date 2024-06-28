@@ -35,15 +35,23 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             <div class="userManagement">            
             
                 <!-- Filtros de busqueda -->
+                <?php 
+                $filterFlag = (isset($_GET['filterRol']) || isset($_GET['filterDto'])) ? true : false; 
+                ?>
                 <div class="closedFilterDiv filterDiv">
                     <i id="filterUserList" class="fa fa-sliders button" title="Filtrar resultados"></i>
                     <div class="dropDownFilter1 hide">
                     <label for="filtersForRol">Por rol de usuario:</label>
+                    <?php 
+                        if(isset($_GET['filterRol'])){
+                            $selected = $_GET['filterRol'];
+                        }else{ $selected = ""; }
+                    ?>
                     <select class="dropDownFilter" id="filtersForRol" name="filtersForRol">
                         <option value="noFilter"></option>
-                        <option value="EST">Usuario Estándar</option>
-                        <option value="SAD">Usuario Administrador</option>
-                        <option value="ADM">Super-Usuario</option>
+                        <option value="EST" <?php $r = ($selected == "EST") ? "selected" : ""; echo $r; ?>>Usuario Estándar</option>
+                        <option value="SAD" <?php $r = ($selected == "SAD") ? "selected" : ""; echo $r; ?>>Usuario Administrador</option>
+                        <option value="ADM" <?php $r = ($selected == "ADM") ? "selected" : ""; echo $r; ?>>Super-Usuario</option>
                     </select>
                     </div>
                     <div class="dropDownFilter2 hide">
@@ -54,11 +62,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         require("../controller/generalCRUD.php");
                         $filters = crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
+                            if(isset($_GET['filterDto'])){
+                                $selected = $_GET['filterDto'];
+                            }else{ $selected = ""; }
                             for($i=0;$i<count($filters);$i++){
                                 foreach($filters[$i] as $key=>$value){
-                                    if($filters[$i][0]!=$_SESSION['id']){
-                                        echo '<option value=dto'.$i.'>'.$value.'</option>';
-                                    }
+                                    $r = ($selected == $value) ? "selected" : "";
+                                    echo '<option value=dto'.$i.' '.$r.'>'.$value.'</option>';
                                 }
                             }
                         }else{
@@ -91,15 +101,20 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </thead>
                     <tbody class="tableContent">
                         <?php
-
                         if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
                             if(isset($_GET['search'])){
                                 $p = crud::selectUserSearchData('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
-                            }elseif(isset($_GET['filterRol'])){
+                            }
+                            elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
+                                $p = crud::findRows2Condition('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
+                            }
+                            elseif(isset($_GET['filterRol'])){
                                 $p = crud::findRows('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
-                            }else{
+                            }
+                            else{
                                 $p = crud::findRows('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
                             }
+
                             if(!empty($p) && count($p) > 0) {
                                 for ($i = 0; $i < count($p); $i++) {
                                     $fl = false;
@@ -235,9 +250,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </div>
                     </div>
                 </div> <!-- Fin de form-container --> 
-                <script>
-                  
-                </script>
                 </form> <!-- Fin de user-form -->
     
             
@@ -250,6 +262,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     </div> <!-- Fin de container -->
     <script src="../js/init.js"></script>
     <script src="../js/userManager.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var filter = "<?php echo $filterFlag; ?>";
+            if (filter) {
+                toggleFilterItems();
+            }
+        });
+    </script>
 </body>
 </html>
 

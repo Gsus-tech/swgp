@@ -151,41 +151,106 @@ filterBtn.addEventListener('click', function(){
     toggleFilterItems();
 });
 
+//NEW VERSION
 document.addEventListener('DOMContentLoaded', function() {
-    const rolFilter = document.getElementById('filtersForRol');
+    updateCancelLink();
 
+    var currentUrl = new URL(window.location.href);
+    var paramUrl = window.location.search;
+    var clsParam = paramUrl.substring(1);
+    var parametro = new URLSearchParams(clsParam);
+
+    const rolFilter = document.getElementById('filtersForRol');
     rolFilter.addEventListener('change', function() {
         const selectedValue = rolFilter.value;
+
+        if (parametro.has('search')) {
+            parametro.delete('search');
+        }
+
         if (selectedValue === 'noFilter') {
-            window.location.href = `userManagement.php`;
-        } else{
-            window.location.href = `userManagement.php?filterRol=${selectedValue}`;
+            parametro.delete('filterRol');
+            if (parametro.has('filterDto')) {
+                window.location.href = `${currentUrl.pathname}?${parametro.toString()}`;
+            } else {
+                window.location.href = `userManagement.php`;
+            }
+        } else {
+            parametro.set('filterRol', selectedValue);
+            var newUrl = `${currentUrl.origin}${currentUrl.pathname}?${parametro.toString()}`;
+            window.location.href = newUrl;
         }
     });
-});
 
-document.addEventListener('DOMContentLoaded', function() {
     const dtoFilter = document.getElementById('filtersForDto');
-
     dtoFilter.addEventListener('change', function() {
         const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
         const selectedValue = selectedOption.value;
         const selectedText = selectedOption.textContent || selectedOption.innerText;
 
+        if (parametro.has('search')) {
+            parametro.delete('search');
+        }
+
         if (selectedValue === 'noFilter') {
-            window.location.href = `userManagement.php`;
+            parametro.delete('filterDto');
+            if (parametro.has('filterRol')) {
+                window.location.href = `${currentUrl.pathname}?${parametro.toString()}`;
+            } else {
+                window.location.href = `userManagement.php`;
+            }
         } else {
-            const encodedText = encodeURIComponent(selectedText);
-            window.location.href = `userManagement.php?filterDto=${encodedText}`;
+            // const encodedText = encodeURIComponent(selectedText);
+            parametro.set('filterDto', selectedText);
+            var newUrl = `${currentUrl.origin}${currentUrl.pathname}?${parametro.toString()}`;
+            window.location.href = newUrl;
         }
     });
 });
+
+function updateCancelLink(){
+    var btn = document.getElementById('cancel-Adduser');
+    var currentUrl = new URL(window.location.href);
+    btn.href = currentUrl;
+}
+
+//OLD VERSION
+// document.addEventListener('DOMContentLoaded', function() {
+//     const rolFilter = document.getElementById('filtersForRol');
+
+//     rolFilter.addEventListener('change', function() {
+//         const selectedValue = rolFilter.value;
+//         if (selectedValue === 'noFilter') {
+//             window.location.href = `userManagement.php`;
+//         } else{
+//             window.location.href = `userManagement.php?filterRol=${selectedValue}`;
+//         }
+//     });
+// });
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     const dtoFilter = document.getElementById('filtersForDto');
+
+    // dtoFilter.addEventListener('change', function() {
+    //     const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
+    //     const selectedValue = selectedOption.value;
+    //     const selectedText = selectedOption.textContent || selectedOption.innerText;
+
+    //     if (selectedValue === 'noFilter') {
+    //         window.location.href = `userManagement.php`;
+    //     } else {
+    //         const encodedText = encodeURIComponent(selectedText);
+    //         window.location.href = `userManagement.php?filterDto=${encodedText}`;
+    //     }
+    // });
+// });
 
 function toggleFilterItems(){
     document.querySelector('.dropDownFilter1').classList.toggle('hide');
     document.querySelector('.dropDownFilter2').classList.toggle('hide');
     document.querySelector('.filterDiv').classList.toggle('openFilterDiv');
     document.querySelector('.filterDiv').classList.toggle('closedFilterDiv');
+    document.querySelector('.nav-buttons').classList.toggle('hide')
 }
 
 //Cerrar filtros al hacer clic fuera del div
