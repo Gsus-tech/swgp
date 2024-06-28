@@ -275,7 +275,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <input type="text" name="Fname" id="Fname" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
                             <br>
 
-                            <div class="mT-half">
                             <label for="dropDownDepto">Departamento:</label>
                             <select class="dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
@@ -294,7 +293,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <div id="Fdpto" class="Fdpto hide">
                                 <input type="text" name="Fdpto" id="Fdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
                                 oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
-                            </div>
                             </div>
 
                             <!-- <label for="mail">Correo:</label> -->
@@ -338,10 +336,27 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <input type="hidden" name="EditThisID" value="<?php echo $_GET['editId']?>">
                             <input class="input" type="text" name="Ename" id="Ename" value="<?php echo $cR[0][2] ?>" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
                             <br>
-                            <!-- <label for="dpto">Departamento:</label> -->
-                            <input class="input" type="text" name="Edpto" id="Edepto" value="<?php echo $cR[0][4] ?>" placeholder="Departamento" title="Introducir departamento del usuario" required
-                            oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
-                            <br>
+                            
+                            <label for="dropDownDepto">Departamento:</label>
+                            <select class="dropDownDepto" id="edropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
+                            <?php
+                                $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                if(count($Deptos)>0){
+                                    for($i=0;$i<count($Deptos);$i++){
+                                        foreach($Deptos[$i] as $key=>$value){
+                                            $selected = ($value == $cR[0][4]) ? 'selected' : '';
+                                            echo '<option value='.$i.' '.$selected.'>'.$value.'</option>';
+                                        }
+                                    }
+                                }
+                            ?>
+                            <option value="other">Otro</option>
+                            </select>
+                            <div id="Edepto" class="Fdpto hide">
+                                <input type="text" name="Fdpto" id="eFdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
+                                oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
+                            </div>
+
                             <!-- <label for="mail">Correo:</label> -->
                             <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0][3] ?>" placeholder="Correo" title="Introducir correo del usuario" required
                             oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
@@ -360,32 +375,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </div> <!-- Fin de form-container --> 
                 </div>
                 </form> <!-- Fin de edit-user-form -->
-                <script>
-                            const btnSaveChanges = document.getElementById('sumbit-editUser');
-                            const eUserName = document.getElementById("Ename");
-                            const eDepto = document.getElementById("Edepto");
-                            const eMail = document.getElementById("Email");
 
-                            eUserName.addEventListener('change', (e)=>{toggleBtn();});
-                            eDepto.addEventListener('change', (e)=>{toggleBtn();});
-                            eMail.addEventListener('change', (e)=>{toggleBtn();});
-                            eUserName.addEventListener('keyup', (e)=>{toggleBtn();});
-                            eDepto.addEventListener('keyup', (e)=>{toggleBtn();});
-                            eMail.addEventListener('keyup', (e)=>{toggleBtn();});
-                            function toggleBtn(){
-                                if(eUserName.value != "" && eDepto.value != "" && eMail.value != ""){
-                                    btnSaveChanges.disabled=false;
-                                    if(!document.getElementById('sumbit-editUser').classList.contains('enabled')){
-                                        document.getElementById("sumbit-editUser").classList.toggle('enabled');
-                                    }
-                                }else{
-                                    btnSaveChanges.disabled=true;
-                                    if(document.getElementById('sumbit-editUser').classList.contains('enabled')){
-                                        document.getElementById("sumbit-editUser").classList.toggle('enabled');
-                                    }
-                                }
-                            }
-                            </script>
                 <?php } ?>
 
 

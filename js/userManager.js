@@ -17,6 +17,7 @@ mail.addEventListener("change", (e)=>{toggleFormBtn();});
 password.addEventListener("change", (e)=>{toggleFormBtn();});
 password2.addEventListener("change", (e)=>{toggleFormBtn();});
 
+
 function toggleFormBtn(){
     if(userName.value != "" && depto.value != "" && mail.value != "" && password.value != ""  && password2.value != ""){
         if(password.value == password2.value){
@@ -121,8 +122,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //Cerrar barra al hacer clic fuera del div
 document.addEventListener('DOMContentLoaded', (event) => {
+    //Validacion de entrada de datos
+    const forbiddenChars = /[\\*|"'<>@`$[\]{}();?=:&#]/g;
+    userName.addEventListener('input', function(){
+        this.value = this.value.replace(forbiddenChars, '');
+    })
+    depto.addEventListener('input', function(){
+        this.value = this.value.replace(forbiddenChars, '');
+    })
+    //Boton de buscar
     const searchDiv = document.querySelector('.nav-buttons');
-
     document.addEventListener('click', function(event) {
         const closeSearchBar = searchDiv.contains(event.target);
 
@@ -269,3 +278,64 @@ function confirmDelete(idToEdit) {
         return false;
     }
 }
+
+document.addEventListener("DOMContentLoaded", function(){
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('editId')) {
+        
+        const btnSaveChanges = document.getElementById('sumbit-editUser');
+        const eUserName = document.getElementById("Ename");
+        const eDepto = document.getElementById("Edepto");
+        const edropDownDepto = document.getElementById("edropDownDepto");
+        const eFdepto = document.getElementById("eFdepto");
+        const eMail = document.getElementById("Email");
+        edropDownDepto.addEventListener('change', (e)=>{toggleBtn();});
+        eUserName.addEventListener('change', (e)=>{toggleBtn();});
+        eDepto.addEventListener('change', (e)=>{toggleBtn();});
+        eMail.addEventListener('change', (e)=>{toggleBtn();});
+        eUserName.addEventListener('keyup', (e)=>{toggleBtn();});
+        eDepto.addEventListener('keyup', (e)=>{toggleBtn();});
+        eMail.addEventListener('keyup', (e)=>{toggleBtn();});
+        function toggleBtn(){
+            if((eUserName.value != "" && eMail.value != "")&&(eFdepto.value != "" ||edropDownDepto.value != "other")){
+                btnSaveChanges.disabled=false;
+                if(!document.getElementById('sumbit-editUser').classList.contains('enabled')){
+                    document.getElementById("sumbit-editUser").classList.toggle('enabled');
+                }
+            }else{
+                btnSaveChanges.disabled=true;
+                if(document.getElementById('sumbit-editUser').classList.contains('enabled')){
+                    document.getElementById("sumbit-editUser").classList.toggle('enabled');
+                }
+            }
+        }
+        //Validacion de entrada de datos
+        const forbiddenChars = /[\\*|"'<>@`$[\]{}();?=:&#]/g;
+        eUserName.addEventListener('input', function(){
+            this.value = this.value.replace(forbiddenChars, '');
+        });
+        eFdepto.addEventListener('input', function(){
+            this.value = this.value.replace(forbiddenChars, '');
+        });
+
+        //Departamento select e introducir nuevo
+        const eDropBox = document.getElementById('edropDownDepto');
+        eDropBox.addEventListener('change', function(){
+            const selectedValue = eDropBox.value;
+            if (selectedValue === 'other') {
+                document.getElementById('eFdepto').value = "";    
+                if(eDepto.classList.contains('hide')){
+                    eDepto.classList.remove('hide');
+                    toggleFormBtn();
+                }
+            } else{
+                document.getElementById('eFdepto').value = eDropBox.options[eDropBox.selectedIndex].text;
+                if(!eDepto.classList.contains('hide')){
+                    eDepto.classList.add('hide');
+                    toggleFormBtn();
+                }
+            }
+        });
+    }
+});
