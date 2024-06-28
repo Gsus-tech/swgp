@@ -353,10 +353,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <option value="other">Otro</option>
                             </select>
                             <div id="Edepto" class="Fdpto hide">
-                                <input type="text" name="Fdpto" id="eFdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
+                                <input type="text" name="eFdpto" id="eFdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
                                 oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
                             </div>
-
+                            
                             <!-- <label for="mail">Correo:</label> -->
                             <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0][3] ?>" placeholder="Correo" title="Introducir correo del usuario" required
                             oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
@@ -368,7 +368,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <option value="ADM" <?php if ("ADM" == $cR[0][1]) echo 'selected="selected"'; ?>>Super-usuario</option>
                             </select>
                             <div class="form-options">
-                                <button disabled class="sumbit-AddUser" id="sumbit-editUser" type="submit">Guardar cambios</button>
+                                <button disabled class="sumbit-AddUser" id="sumbit-editUser" type="submit" onclick="toggleInput()">Guardar cambios</button>
                                 <a href="userManagement.php" id="cancel-editUser" class="close-AddUser">Cancelar</a>
                             </div>
                         </div>

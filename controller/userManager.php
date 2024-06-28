@@ -1,6 +1,6 @@
 <?php
 session_start();
-if($_SESSION['rol']==='ADM'){
+if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
     $destination = "userManagement.php";
     require("generalCRUD.php");
     
@@ -44,7 +44,7 @@ if($_SESSION['rol']==='ADM'){
     if(isset($_GET['updateUser']) && $_GET['updateUser'] == 'true'){
         $idToUpdate = $_POST['EditThisID'];
         $userName = (string)$_POST['Ename'];
-        $depto = (string)$_POST['Edpto'];
+        $depto = (string)$_POST['eFdpto'];
         $mail = $_POST['Email'];
         $userType = $_POST['comboBoxUserType'];
     

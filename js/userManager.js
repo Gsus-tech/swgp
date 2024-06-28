@@ -283,14 +283,14 @@ document.addEventListener("DOMContentLoaded", function(){
     const urlParams = new URLSearchParams(window.location.search);
 
     if (urlParams.has('editId')) {
-        
+        updateValue();
         const btnSaveChanges = document.getElementById('sumbit-editUser');
         const eUserName = document.getElementById("Ename");
         const eDepto = document.getElementById("Edepto");
-        const edropDownDepto = document.getElementById("edropDownDepto");
+        const eDropBox = document.getElementById('edropDownDepto');
         const eFdepto = document.getElementById("eFdepto");
         const eMail = document.getElementById("Email");
-        edropDownDepto.addEventListener('change', (e)=>{toggleBtn();});
+        eDropBox.addEventListener('change', (e)=>{toggleBtn();});
         eUserName.addEventListener('change', (e)=>{toggleBtn();});
         eDepto.addEventListener('change', (e)=>{toggleBtn();});
         eMail.addEventListener('change', (e)=>{toggleBtn();});
@@ -298,7 +298,7 @@ document.addEventListener("DOMContentLoaded", function(){
         eDepto.addEventListener('keyup', (e)=>{toggleBtn();});
         eMail.addEventListener('keyup', (e)=>{toggleBtn();});
         function toggleBtn(){
-            if((eUserName.value != "" && eMail.value != "")&&(eFdepto.value != "" ||edropDownDepto.value != "other")){
+            if((eUserName.value != "" && eMail.value != "")&&(eFdepto.value != "" ||eDropBox.value != "other")){
                 btnSaveChanges.disabled=false;
                 if(!document.getElementById('sumbit-editUser').classList.contains('enabled')){
                     document.getElementById("sumbit-editUser").classList.toggle('enabled');
@@ -320,22 +320,35 @@ document.addEventListener("DOMContentLoaded", function(){
         });
 
         //Departamento select e introducir nuevo
-        const eDropBox = document.getElementById('edropDownDepto');
         eDropBox.addEventListener('change', function(){
-            const selectedValue = eDropBox.value;
-            if (selectedValue === 'other') {
-                document.getElementById('eFdepto').value = "";    
-                if(eDepto.classList.contains('hide')){
-                    eDepto.classList.remove('hide');
-                    toggleFormBtn();
-                }
-            } else{
-                document.getElementById('eFdepto').value = eDropBox.options[eDropBox.selectedIndex].text;
-                if(!eDepto.classList.contains('hide')){
-                    eDepto.classList.add('hide');
-                    toggleFormBtn();
-                }
-            }
+            updateValue();
         });
     }
 });
+
+function toggleInput(){
+    const eDepto = document.getElementById("Edepto");
+    if(eDepto.classList.contains('hide')){
+        eDepto.classList.remove('hide');
+    }
+}
+
+function updateValue(){
+    const eDepto = document.getElementById("Edepto");
+    const eDropBox = document.getElementById('edropDownDepto');
+        const eFdepto = document.getElementById("eFdepto");
+    const selectedValue = eDropBox.value;
+    if (selectedValue === 'other') {
+        eFdepto.value = "";    
+        if(eDepto.classList.contains('hide')){
+            eDepto.classList.remove('hide');
+            toggleFormBtn();
+        }
+    } else{
+        eFdepto.value = eDropBox.options[eDropBox.selectedIndex].text;
+        if(!eDepto.classList.contains('hide')){
+            eDepto.classList.add('hide');
+            toggleFormBtn();
+        }
+    }
+}
