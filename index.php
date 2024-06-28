@@ -60,5 +60,3 @@
     </script>
 </body>
 </html>
-
-<!-- UPDATING FROM LOCAL -->
