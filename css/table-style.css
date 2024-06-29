@@ -69,13 +69,15 @@ table:hover {
 }
 
 .blueText {
-
+    color: #102e6f;
     cursor: pointer;
     font-style: normal;
+    text-decoration: underline;
 }
 
 .blueText:hover {
     color: #0045db;
+    font-size: 105%;
 }
 
 @media screen and (min-width: 700px) {
@@ -88,6 +90,10 @@ table:hover {
             font-size: 22.5px;
         }
     }
+
+    table td {
+        font-size: 14px;
+    }
 }
 
 @media screen and (min-width: 1100px) {
@@ -97,6 +103,10 @@ table:hover {
         .addFloatingButton {
             font-size: 25px;
         }
+    }
+
+    table td {
+        font-size: 18px;
     }
 }
 
