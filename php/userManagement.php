@@ -195,19 +195,16 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 for ($i = 0; $i < count($p); $i++) {
                                     $fl = false;
                                     echo '<tr>';
-                                    foreach ($p[$i] as $key => $value) {
-                                        if (isset($p[$i]['id_usuario']) && $p[$i]['id_usuario'] != $_SESSION['id']) {
-                                            if([$value === $p[$i][1]]){
-                                                echo '<td href="#" onclick='. seeUserAccount(htmlspecialchars($p[$i]['id_usuario'])) .'>' . htmlspecialchars($value) . '</td>';
-                                            } else if($value == 'ADM') { 
-                                                echo '<td>Super-Usuario</td>'; 
-                                            } else if ($value == 'SAD') { 
-                                                echo '<td>Administrador</td>'; 
-                                            } else if ($value == 'EST') { 
-                                                echo '<td>Estándar</td>'; 
-                                            } else {
-                                                echo '<td>' . htmlspecialchars($value) . '</td>';
-                                            }
+                                    foreach($p[$i] as $key=>$value){
+                                        if($p[$i]['id_usuario']!=$_SESSION['id']){
+                                            if($value === $p[$i]['nombre']){
+                                                $cId = htmlspecialchars($p[$i]['id_usuario']);
+                                                echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
+                                            } 
+                                            else if($value=='ADM'){ echo '<td>Super-Usuario</td>'; }      
+                                            else if($value=='SAD'){ echo '<td>Administrador</td>'; }      
+                                            else if($value=='EST'){ echo '<td>Estándar</td>'; }      
+                                            else{echo '<td>'.$value.'</td>';}
                                             $fl = true;
                                         }
                                     }
