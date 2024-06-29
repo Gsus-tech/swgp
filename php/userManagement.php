@@ -39,10 +39,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="generalInfo">
                     <div class="generalInfo1">
                         <h4 for="name">Nombre de usuario:</h4>
-                        <input disabled class ="name input" name="name" value=<?php echo $infoAccount[0][2];?>>
+                        <input disabled class ="name input" name="name" value="<?php echo htmlspecialchars($infoAccount[0][2]);?>">
                         <br>
                         <h4 for="mail">Correo:</h4>
-                        <input disabled class ="mail input" name="mail" value=<?php echo $infoAccount[0][3];?>>
+                        <input disabled class ="mail input" name="mail" value="<?php echo htmlspecialchars($infoAccount[0][3]);?>">
                     </div>
                     <div class="generalInfo2">
                         <h4 for="userRol">Rol de usuario:</h4>
@@ -50,10 +50,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             elseif($infoAccount[0][1]=='SAD'){$type='Administrador';}
                             else{$type='Estándar';}
                         ?>
-                        <input disabled name="userRol" class="input" value="<?php echo $type;?>">
+                        <input disabled name="userRol" class="input" value="<?php echo htmlspecialchars($type);?>">
                         <br>
                         <h4 for="name">Departamento:</h4>
-                        <input disabled class="input" name="name" value="<?php echo $infoAccount[0][4];?>">
+                        <input disabled class="input" name="name" value="<?php echo htmlspecialchars($infoAccount[0][4]);?>">
                     </div>
                 </div>
                 <br>
@@ -168,8 +168,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <thead>
                         <tr>
                             <th class="rowID">ID</th>
-                            <th class="rowRol">Rol de usuario</th>
                             <th class="rowName">Nombre</th>
+                            <th class="rowRol">Rol de usuario</th>
                             <th class="rowMail">Correo Electrónico</th>
                             <th class="rowDpto">Departamento</th>
                             <th class="rowActions">Acciones</th>
@@ -179,16 +179,16 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <?php
                         if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
                             if(isset($_GET['search'])){
-                                $p = crud::selectUserSearchData('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
+                                $p = crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
                             }
                             elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
-                                $p = crud::findRows2Condition('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
+                                $p = crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
                             }
                             elseif(isset($_GET['filterRol'])){
-                                $p = crud::findRows('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
+                                $p = crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
                             }
                             else{
-                                $p = crud::findRows('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
+                                $p = crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
                             }
 
                             if(!empty($p) && count($p) > 0) {
@@ -197,7 +197,9 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     echo '<tr>';
                                     foreach ($p[$i] as $key => $value) {
                                         if (isset($p[$i]['id_usuario']) && $p[$i]['id_usuario'] != $_SESSION['id']) {
-                                            if ($value == 'ADM') { 
+                                            if([$value === $p[$i][1]]){
+                                                echo '<td href="#" onclick='. seeUserAccount(htmlspecialchars($p[$i]['id_usuario'])) .'>' . htmlspecialchars($value) . '</td>';
+                                            } else if($value == 'ADM') { 
                                                 echo '<td>Super-Usuario</td>'; 
                                             } else if ($value == 'SAD') { 
                                                 echo '<td>Administrador</td>'; 
@@ -225,7 +227,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                             }
                         } else {
-                            $p = crud::selectData('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
+                            $p = crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
 
                             if(count($p)>0){
                                 for($i=0;$i<count($p);$i++){
@@ -233,7 +235,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     echo '<tr>';
                                     foreach($p[$i] as $key=>$value){
                                         if($p[$i][0]!=$_SESSION['id']){
-                                            if($value=='ADM'){ echo '<td>Super-Usuario</td>'; }      
+                                            if($value === $p[$i][1]){
+                                                $cId = htmlspecialchars($p[$i][0]);
+                                                echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
+                                            } 
+                                            else if($value=='ADM'){ echo '<td>Super-Usuario</td>'; }      
                                             else if($value=='SAD'){ echo '<td>Administrador</td>'; }      
                                             else if($value=='EST'){ echo '<td>Estándar</td>'; }      
                                             else{echo '<td>'.$value.'</td>';}
@@ -244,7 +250,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         $userId = htmlspecialchars($p[$i][0]);
                                     ?>
                                     <td>
-                                        <a id="seeUser"class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<?php echo $userId; ?>)"></a>
+                                        <!-- <a id="seeUser"class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<php echo $userId; ?>)"></a> -->
                                         <a id="editUserBtn"class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
                                         <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
                                     </td>

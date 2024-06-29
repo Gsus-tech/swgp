@@ -68,6 +68,15 @@ table:hover {
     color: #333;
 }
 
+.blueText {
+
+    cursor: pointer;
+    font-style: normal;
+}
+
+.blueText:hover {
+    color: #0045db;
+}
 
 @media screen and (min-width: 700px) {
 
