@@ -4,7 +4,7 @@
     <div class="sidebartop">
         <div class="sidebar-logo">
             <a id="LogoBtn" href="dashboard.php" title="Dashboard">
-                <img src="../assets/icons/logoCBC.png">
+                <img src="../assets/logoCBC.png">
             </a>
         </div>
 

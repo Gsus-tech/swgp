@@ -26,7 +26,7 @@ class crud{
             if ($deleteRow === false) {
                 throw new Exception(mysqli_error($conn));
             }
-            header("Location: ../$route");
+            header("Location: ../php/$route");
         }catch(mysqli_sql_exception $e){
             echo "Error al eliminar los datos: " . $e->getMessage();
         }
@@ -60,6 +60,66 @@ class crud{
         return $data;
     }
 
+    public static function findRows($fields, $table, $idField, $id){
+        include "db_connection.php";
+        $queryFind = "SELECT $fields FROM $table WHERE $idField = ?";
+        $data = array();
+    
+        try {
+            if ($stmt = $conn->prepare($queryFind)) {
+                $stmt->bind_param("s", $id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $data = $result->fetch_all(MYSQLI_ASSOC);
+                $stmt->close();
+            } else {
+                throw new Exception($conn->error);
+            }
+        } catch (Exception $e) {
+            echo "Error al obtener los datos: " . $e->getMessage();
+        }
+        return $data;
+    }
+
+    public static function findRows2Condition($fields, $table, $condition1, $value1, $condition2, $value2){
+        include "db_connection.php";
+        $queryFind = "SELECT $fields FROM $table WHERE $condition1 = ? AND $condition2 = ?"; 
+        $data = array();
+    
+        try {
+            if ($stmt = $conn->prepare($queryFind)) {
+                // Vincula los valores a los marcadores de posición
+                $stmt->bind_param("ss", $value1, $value2);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $data = $result->fetch_all(MYSQLI_ASSOC);
+                $stmt->close();
+            } else {
+                throw new Exception($conn->error);
+            }
+        } catch (Exception $e) {
+            echo "Error al obtener los datos: " . $e->getMessage();
+        }
+        return $data;
+    }
+
+    public static function findRowsOrderBy($fields, $table, $idField, $id, $by, $order){
+        include "db_connection.php";
+        $queryFind = "SELECT $fields FROM $table WHERE $idField='$id' ORDER BY `$by` $order;"; 
+        $data = array();
+
+        try {
+            $listaResultados = mysqli_query($conn, $queryFind);
+            if ($listaResultados === false) {
+                throw new Exception(mysqli_error($conn));
+            }
+            $data = mysqli_fetch_all($listaResultados, MYSQLI_ASSOC);
+        } catch (Exception $e) {
+            echo "Error al obtener los datos: " . $e->getMessage();
+        }
+        return $data;
+    }
+
     public static function getLastInserted($idField, $table){
         include "db_connection.php";
         $query = "SELECT MAX($idField) AS last_id FROM $table";
@@ -74,12 +134,12 @@ class crud{
         try{
             $result = mysqli_query($conn, (string)$query);
             if($result){
-                echo "<script>window.location.href = '../$destinationPage';</script>";
+                echo "<script>window.location.href = '../php/$destinationPage';</script>";
                 exit();
             }
         }catch(mysqli_sql_exception $e){
             $error=$e->getCode();
-            echo "<script>window.location.href = '../$destinationPage?error=$error';</script>";
+            echo "<script>window.location.href = '../php/$destinationPage?error=$error';</script>";
             exit();
         }
     }
@@ -182,45 +242,6 @@ class crud{
         return $data;
     }
 
-    public static function findRows($fields, $table, $idField, $id){
-        include "db_connection.php";
-        $queryFind = "SELECT $fields FROM $table WHERE $idField = ?";
-        $data = array();
-    
-        try {
-            if ($stmt = $conn->prepare($queryFind)) {
-                $stmt->bind_param("s", $id);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                $data = $result->fetch_all(MYSQLI_ASSOC);
-                $stmt->close();
-            } else {
-                throw new Exception($conn->error);
-            }
-        } catch (Exception $e) {
-            echo "Error al obtener los datos: " . $e->getMessage();
-        }
-        return $data;
-    }
-    
-
-    public static function findRowsOrderBy($fields, $table, $idField, $id, $by, $order){
-        include "db_connection.php";
-        $queryFind = "SELECT $fields FROM $table WHERE $idField='$id' ORDER BY `$by` $order;"; 
-        $data = array();
-
-        try {
-            $listaResultados = mysqli_query($conn, $queryFind);
-            if ($listaResultados === false) {
-                throw new Exception(mysqli_error($conn));
-            }
-            $data = mysqli_fetch_all($listaResultados, MYSQLI_ASSOC);
-        } catch (Exception $e) {
-            echo "Error al obtener los datos: " . $e->getMessage();
-        }
-        return $data;
-    }
-
     public static function isInArray($data, $condition) {
         $exist= false;
         for($i=0;$i<count($data);$i++){
@@ -268,13 +289,13 @@ class crud{
             if($result){
                 $result2 = mysqli_query($conn, (string)$query2);
                 if($result2){
-                    echo "<script>window.location.href = '../$destinationPage';</script>";
+                    echo "<script>window.location.href = '../php/$destinationPage';</script>";
                     exit();
                 }
             }
         }catch(mysqli_sql_exception $e){
             $error=$e->getCode();
-            echo "<script>window.location.href = '../$destinationPage?error=$error';</script>";
+            echo "<script>window.location.href = '../php/$destinationPage?error=$error';</script>";
             exit();
         }
     }
