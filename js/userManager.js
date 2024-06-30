@@ -97,6 +97,7 @@ function confirmCancel() {
 const searchBtn = document.getElementById('searchUser');
 searchBtn.addEventListener('click', function(){
     toggleSearchItems();
+    moveSelectDiv(false, true);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -109,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
         } else {
             toggleSearchItems();
+            moveSelectDiv(false, false);
         }
     });
 
@@ -138,6 +140,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (!closeSearchBar) {
             if(!document.querySelector('.search-bar').classList.contains('hide')){
                 toggleSearchItems();
+                moveSelectDiv(false, false);
             }
         }
     });
@@ -148,7 +151,6 @@ function toggleSearchItems(){
     document.querySelector('.nav-buttons').classList.toggle('searchingMode');
     document.getElementById('searchAccount').classList.toggle('hide');
     document.getElementById('searchUser').classList.toggle('hide');
-    
 }
 }
 
@@ -158,6 +160,7 @@ function toggleSearchItems(){
 const filterBtn = document.getElementById('filterUserList');
 filterBtn.addEventListener('click', function(){
     toggleFilterItems();
+    moveSelectDiv(true, false);
 });
 
 //NEW VERSION
@@ -231,6 +234,23 @@ function toggleFilterItems(){
     document.querySelector('.nav-buttons').classList.toggle('hide')
 }
 
+function moveSelectDiv(f1, f2){
+    const selectionDiv = document.getElementById('accountsSelected');
+    if(!selectionDiv.classList.contains('top-10') && f1==true){
+        selectionDiv.classList.add('top-10');
+    }
+    else if(!selectionDiv.classList.contains('top-7') && f2==true){
+        selectionDiv.classList.add('top-7');
+    }
+
+    if(selectionDiv.classList.contains('top-7') && f1==false && f2==false){
+        selectionDiv.classList.remove('top-7');
+    }
+    if(selectionDiv.classList.contains('top-10') && f1==false && f2==false){
+        selectionDiv.classList.remove('top-10');
+    }
+}
+
 //Cerrar filtros al hacer clic fuera del div
 document.addEventListener('DOMContentLoaded', (event) => {
     const filterDiv = document.querySelector('.filterDiv');
@@ -241,6 +261,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (!closeFilterBar) {
             if(document.querySelector('.filterDiv').classList.contains('openFilterDiv')){
                 toggleFilterItems();
+                moveSelectDiv(false, false);
             }
         }
     });
@@ -253,9 +274,11 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         if(!document.querySelector('.search-bar').classList.contains('hide')){
             toggleSearchItems();
+            moveSelectDiv(false, false);
         }
         if(document.querySelector('.filterDiv').classList.contains('openFilterDiv')){
             toggleFilterItems();
+            moveSelectDiv(false, false);
         }
     }
 });
@@ -351,4 +374,60 @@ function updateValue(){
             toggleFormBtn();
         }
     }
+}
+
+
+// Habilitar boton de Eliminar multiples cuentas
+document.addEventListener('DOMContentLoaded', (event) => {
+    const checkboxes = document.querySelectorAll('.account-checkbox');
+    const accountsSelectedDiv = document.getElementById('accountsSelected');
+    const selectAllBox = document.getElementById('selectAllBoxes');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateAccountsSelectedDiv);
+    });
+
+    selectAllBox.addEventListener('change', () => {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllBox.checked;
+        });
+        updateAccountsSelectedDiv();
+    });
+
+    function updateAccountsSelectedDiv() {
+        const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
+        if (checkedCheckboxes.length > 0) {
+            accountsSelectedDiv.classList.remove('hide');
+        } else {
+            accountsSelectedDiv.classList.add('hide');
+        }
+    }
+
+    const applyAction1 = document.getElementById('applyAction');
+    const applyAction2 = document.getElementById('applyAction2');
+    applyAction1.addEventListener('click', applyAction);
+    applyAction2.addEventListener('click', applyAction);
+});
+
+function applyAction() {
+    var actionSelected = document.getElementById('actionSelected').value;
+    if (actionSelected === 'delete') {
+        deleteSelectedAccounts();
+    } else {}
+}
+
+function deleteSelectedAccounts(){
+    const checkboxes = document.querySelectorAll('.account-checkbox');
+    const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
+    
+    const confirmationMessage = `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} cuentas?\nEsta acción es irreversible.`;
+    const userConfirmed = confirm(confirmationMessage);
+
+    if (userConfirmed) {
+        var parametros = "?deleteAccounts="+checkedCheckboxes[0].value;
+        for(i=1; i<checkedCheckboxes.length; i++){
+            parametros += ","+checkedCheckboxes[i].value;
+        }
+        window.location.href = `../controller/userManager.php${parametros}`;
+    }   
 }

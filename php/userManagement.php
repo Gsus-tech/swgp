@@ -124,7 +124,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $selected = $_GET['filterRol'];
                         }else{ $selected = ""; }
                     ?>
-                    <select class="dropDownFilter" id="filtersForRol" name="filtersForRol">
+                    <select class="comboBox dropDownFilter" id="filtersForRol" name="filtersForRol">
                         <option value="noFilter"></option>
                         <option value="EST" <?php $r = ($selected == "EST") ? "selected" : ""; echo $r; ?>>Usuario Estándar</option>
                         <option value="SAD" <?php $r = ($selected == "SAD") ? "selected" : ""; echo $r; ?>>Usuario Administrador</option>
@@ -133,7 +133,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </div>
                     <div class="dropDownFilter2 hide">
                     <label for="filtersForRol">Por departamento:</label>
-                    <select class="dropDownFilter" id="filtersForDto" name="filtersForDto">
+                    <select class="comboBox dropDownFilter" id="filtersForDto" name="filtersForDto">
                     <option value="noFilter"></option>
                         <?php
                         $filters = crud::getFiltersOptions('tbl_usuarios', 'departamento');
@@ -167,7 +167,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <table class="users-list">
                     <thead>
                         <tr>
-                            <th class="rowID">ID</th>
+                            <th class="selectAccounts"><input type="checkbox" id="selectAllBoxes"></th>
                             <th class="rowName">Nombre</th>
                             <th class="rowRol">Rol de usuario</th>
                             <th class="rowMail">Correo Electrónico</th>
@@ -197,7 +197,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     echo '<tr>';
                                     foreach($p[$i] as $key=>$value){
                                         if($p[$i]['id_usuario']!=$_SESSION['id']){
-                                            if($value === $p[$i]['nombre']){
+                                            if($value === $p[$i]['id_usuario']){
+                                                echo "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                                            }
+                                            else if($value === $p[$i]['nombre']){
                                                 $cId = htmlspecialchars($p[$i]['id_usuario']);
                                                 echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
                                             } 
@@ -212,7 +215,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         $userId = htmlspecialchars($p[$i]['id_usuario']);
                                         ?>
                                         <td>
-                                            <a id="seeUser" class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<?php echo $userId; ?>)"></a>
                                             <a id="editUserBtn" class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
                                             <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
                                         </td>
@@ -232,7 +234,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     echo '<tr>';
                                     foreach($p[$i] as $key=>$value){
                                         if($p[$i][0]!=$_SESSION['id']){
-                                            if($value === $p[$i][1]){
+                                            if($value === $p[$i][0]){
+                                                echo "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                                            }
+                                            else if($value === $p[$i][1]){
                                                 $cId = htmlspecialchars($p[$i][0]);
                                                 echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
                                             } 
@@ -247,7 +252,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         $userId = htmlspecialchars($p[$i][0]);
                                     ?>
                                     <td>
-                                        <!-- <a id="seeUser"class="fa fa-eye button" title="Ver cuenta" onclick="seeUserAccount(<php echo $userId; ?>)"></a> -->
                                         <a id="editUserBtn"class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
                                         <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
                                     </td>
@@ -268,6 +272,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             
 
                 <div class="addBtn"><a id="showUserFormBtn" title="Crear nueva cuenta de usuario" class="fa fa-user-plus add-user-btn"></a></div>
+                <div id="accountsSelected" class="accountsSelected hide">
+                    <select class="comboBox" name="actionSelected" id="actionSelected">
+                        <option value="0"> - Seleccionar acción - </option>
+                        <option value="delete">Eliminar cuenta(s)</option>
+                    </select>
+                    <a id="applyAction" title="Aplicar acción a las cuentas seleccionadas" class="button apply deleteAll">Aplicar</a>
+                    <a id="applyAction2" title="Aplicar acción a las cuentas seleccionadas" class="button apply deleteAllShort fa fa-chevron-right"></a>
+                </div>
 
                 <!-- Formulario de alta de usuario -->
                 <form class="addUser-form hide" id="addUser-form" action="../controller/userManager.php?addUser=true" method="POST" autocomplete="on">
@@ -279,7 +291,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <br>
 
                             <label for="dropDownDepto">Departamento:</label>
-                            <select class="dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
+                            <select class="comboBox dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
                                 $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
@@ -312,7 +324,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             oninvalid="this.setCustomValidity('Confirma la contraseña de la cuenta')" oninput="this.setCustomValidity('')"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label>
-                            <select class="comboBoxUserType" id="FcmbBox" name="comboBoxUserType">
+                            <select class="comboBox comboBoxUserType" id="FcmbBox" name="comboBoxUserType">
                                 <option value="EST">Usuario Estándar</option>
                                 <option value="SAD">Usuario Administrador</option>
                                 <option value="ADM">Super-Usuario</option>
@@ -341,7 +353,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <br>
                             
                             <label for="dropDownDepto">Departamento:</label>
-                            <select class="dropDownDepto" id="edropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
+                            <select class="comboBox dropDownDepto" id="edropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
                                 $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
@@ -365,7 +377,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label><br>
-                            <select class="comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
+                            <select class="comboBox comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
                                 <option value="EST" <?php if ("EST" == $cR[0][1]) echo 'selected="selected"'; ?>>Usuario estándar</option>
                                 <option value="SAD" <?php if ("SAD" == $cR[0][1]) echo 'selected="selected"'; ?>>Usuario administrador</option>
                                 <option value="ADM" <?php if ("ADM" == $cR[0][1]) echo 'selected="selected"'; ?>>Super-usuario</option>

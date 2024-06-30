@@ -444,6 +444,27 @@ body {
     cursor: pointer;
 }
 
+.apply {
+    background-color: #7b7b7b;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 15px;
+}
+
+.apply:hover {
+    background-color: var(--black);
+}
+
+.comboBox {
+    height: 30px;
+    font-size: 14px;
+    border-radius: 10px;
+    padding: 2px 7px;
+}
+
 .fa-plus-circle:hover {
     transition: background-color 0.3s, color 0.3s;
     font-size: 150%;

@@ -142,6 +142,21 @@
     cursor: pointer;
 }
 
+.deleteAllShort {
+    display: inline-flex;
+}
+
+.deleteAll {
+    display: none;
+}
+
+.accountsSelected {
+    justify-content: space-between;
+    position: absolute;
+    top: 4rem;
+    right: 8%;
+}
+
 .container .main .userManagement table {
     border-collapse: collapse;
     margin-right: 2.5rem;
@@ -222,6 +237,8 @@
     min-width: 15rem;
     max-width: 45rem;
     width: clamp(15rem, 50vw, 45rem);
+    z-index: 2;
+    padding-left: 10px;
 
     .input {
         width: calc(100% - 4rem);
@@ -257,9 +274,13 @@
 .openFilterDiv {
     display: inline;
     min-width: 19rem;
-    max-width: 60rem;
-    width: clamp(19rem, 50vw, 60rem);
+    max-width: 65rem;
+    width: clamp(19rem, 52vw, 60rem);
     height: auto;
+
+    .fa-sliders {
+        display: none;
+    }
 
     .dropDownFilter1,
     .dropDownFilter2 {
@@ -304,6 +325,14 @@
         .add-user-btn {
             font-size: 22.5px;
         }
+    }
+
+    .deleteAllShort {
+        display: none;
+    }
+
+    .deleteAll {
+        display: inline-flex;
     }
 
     .container .userManagement .filterDiv {
@@ -382,6 +411,7 @@
     .lfMg {
         margin-left: 10%;
     }
+
 }
 
 @media screen and (min-width: 800px) {
@@ -397,8 +427,15 @@
         }
     }
 
+    .accountsSelected {
+        position: absolute;
+        top: 4.5rem;
+        right: 20%;
+    }
+
     .openFilterDiv {
-        width: calc(100% - 20rem);
+        max-width: 38rem;
+        width: calc(100% - 35rem);
     }
 
     .container .userManagement .nav-buttons {
@@ -489,6 +526,24 @@
 }
 
 @media (max-width: 600px) {
+    .top-10 {
+        top: 10rem;
+    }
+
+    .top-7 {
+        top: 7rem;
+    }
+
+    .container .userManagement .searchingMode {
+        height: 2.5rem;
+        padding-left: 10px;
+
+        .input {
+            height: 1rem;
+        }
+    }
+
+
     td:nth-of-type(1):before {
         content: "ID";
     }
@@ -502,7 +557,7 @@
     }
 
     td:nth-of-type(4):before {
-        content: "Correo Electrónico";
+        content: "Correo ElectrÃ³nico";
     }
 
     td:nth-of-type(5):before {
