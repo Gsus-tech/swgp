@@ -1,8 +1,9 @@
 <?php
 session_start();
+require '../controller/generalCRUD.php';
+use Controller\GeneralCrud\Crud;
 
-if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
-    require("../controller/generalCRUD.php");
+if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     ?>
 
 <!DOCTYPE html>

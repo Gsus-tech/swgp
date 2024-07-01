@@ -1,6 +1,61 @@
 <?php
 
-namespace App\Controller;
+namespace Controller\GeneralCrud;
+
+// class executeResultQuery{
+//     public static function executeResultQuery($query)
+//     {
+//         include "db_connection.php";
+//         $data=array();
+//         try {
+//             $result =  mysqli_query($conn, $query);
+//             if ($result) {
+//                 $data = mysqli_fetch_all($result);
+//                 return $data;
+//                 exit();
+//             }
+//         } catch (mysqli_sql_exception $e) {
+//         }
+//     }
+// }
+
+// class isInArray{
+//     public static function isInArray($data, $condition)
+//     {
+//         $exist= false;
+//         for ($i=0; $i<count($data); $i++) {
+//             foreach ($data[$i] as $key => $value) {
+//                 if ($value == $condition) {
+//                     $exist= true;
+//                 }
+//             }
+//         }
+//         return $exist;
+//     }
+// }
+
+// class isInArrayOver1Time{
+//     public function isInArrayOver1Time($data, $condition)
+//     {
+//         $exist= false;
+//         $exist2= false;
+//         for ($i=0; $i<count($data); $i++) {
+//             foreach ($data[$i] as $key => $value) {
+//                 if ($value == $condition && $exist== true) {
+//                     $exist2= true;
+//                 }
+//                 if ($value == $condition) {
+//                     $exist= true;
+//                 }
+//             }
+//         }
+//         if ($exist==true && $exist2==true) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+// }
 
 class Crud
 {

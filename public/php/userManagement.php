@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once '../controller/generalCRUD.php';
+use Controller\GeneralCrud\Crud;
 
 if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     if($_SESSION['rol']==='ADM'){
@@ -23,7 +25,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
         <?php
-        require("../controller/generalCRUD.php");
         if (isset($_GET['error'])) {
             $errorMsg = urldecode($_GET['error']);
             echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
@@ -31,7 +32,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         if(isset($_GET['detailsId'])){
             $id=$_GET['detailsId'];
-            $infoAccount = crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'id_usuario', $id);
+            $infoAccount = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'id_usuario', $id);
             ?>
             <div class="accountDetailsDiv scroll">
                 <div><h3 for="name">Detalles de cuenta:</h2></div>
@@ -60,7 +61,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="projectsInfo">
                     <h3>Proyectos asignados</h3>
                     <?php
-                    $projectParticipation = crud::executeResultQuery("SELECT proyecto.nombre,proyecto.fecha_inicio,proyecto.fecha_cierre, integrante.responsable FROM tbl_proyectos proyecto JOIN tbl_integrantes integrante ON proyecto.id_proyecto = integrante.id_proyecto WHERE integrante.id_usuario=$id;");
+                    $projectParticipation = Crud::executeResultQuery("SELECT proyecto.nombre,proyecto.fecha_inicio,proyecto.fecha_cierre, integrante.responsable FROM tbl_proyectos proyecto JOIN tbl_integrantes integrante ON proyecto.id_proyecto = integrante.id_proyecto WHERE integrante.id_usuario=$id;");
                         $divFlag = true;
                         $flag = true;
                         $count = 0;
@@ -136,7 +137,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <select class="comboBox dropDownFilter" id="filtersForDto" name="filtersForDto">
                     <option value="noFilter"></option>
                         <?php
-                        $filters = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                        $filters = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
                             if(isset($_GET['filterDto'])){
                                 $selected = $_GET['filterDto'];
@@ -179,16 +180,16 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <?php
                         if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
                             if(isset($_GET['search'])){
-                                $p = crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
+                                $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
                             }
                             elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
-                                $p = crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
+                                $p = Crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
                             }
                             elseif(isset($_GET['filterRol'])){
-                                $p = crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
+                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
                             }
                             else{
-                                $p = crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
+                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
                             }
 
                             if(!empty($p) && count($p) > 0) {
@@ -226,7 +227,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                             }
                         } else {
-                            $p = crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
+                            $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
 
                             if(count($p)>0){
                                 for($i=0;$i<count($p);$i++){
@@ -293,7 +294,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <label for="dropDownDepto">Departamento:</label>
                             <select class="comboBox dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
-                                $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
                                     for($i=0;$i<count($Deptos);$i++){
                                         foreach($Deptos[$i] as $key=>$value){
@@ -341,7 +342,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     
                 <?php 
                 if(isset($_GET['editId'])){ 
-                    $cR = crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
+                    $cR = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
                     ?>
                 <form class="addUser-form" id="editUser-form" action="../controller/userManager.php?updateUser=true" method="POST" autocomplete="on">
                 <div class="form-bg">
@@ -355,7 +356,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <label for="dropDownDepto">Departamento:</label>
                             <select class="comboBox dropDownDepto" id="edropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
-                                $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
                                     for($i=0;$i<count($Deptos);$i++){
                                         foreach($Deptos[$i] as $key=>$value){

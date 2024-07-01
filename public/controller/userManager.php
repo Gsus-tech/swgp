@@ -1,15 +1,16 @@
 <?php
 session_start();
-use App\Controller\Crud;
+require_once '../controller/generalCRUD.php';
+use Controller\GeneralCrud\Crud;
 
 if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
     $destination = "userManagement.php";
     
     if(isset($_GET['addUser']) && $_GET['addUser'] == 'true'){
         if($_POST['Fpassword'] === $_POST['FpasswordCon']){
-            $userName = crud::antiNaughty((string)$_POST['Fname']);
-            $depto = crud::antiNaughty((string)$_POST['Fdpto']);
-            $mail = crud::antiNaughty($_POST['Fmail']);
+            $userName = Crud::antiNaughty((string)$_POST['Fname']);
+            $depto = Crud::antiNaughty((string)$_POST['Fdpto']);
+            $mail = Crud::antiNaughty($_POST['Fmail']);
             $password = md5($_POST['Fpassword']);
             $userType = '';
             $errorMsg = '';
@@ -18,7 +19,7 @@ if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
             $query = "INSERT INTO tbl_usuarios (rolUsuario,nombre,correo,contrasena,departamento,nickname) 
             VALUES('$e0','$userName','$mail','$password','$depto','$userName')";
             
-            crud::executeNonResultQuery($query, $destination);
+            Crud::executeNonResultQuery($query, $destination);
         }
     }
 
@@ -29,10 +30,10 @@ if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
             $query = "DELETE FROM tbl_usuarios WHERE id_usuario='$id';";
             if($dependency==true){
                 $resp = breakUserDependencies($id);
-                crud::executeNonResultQuery($query, $destination);
+                Crud::executeNonResultQuery($query, $destination);
             }
             else{
-                crud::executeNonResultQuery($query, $destination);
+                Crud::executeNonResultQuery($query, $destination);
             }
             echo "<script>window.location.href = '../php/userManagement.php';</script>";
         }
@@ -47,7 +48,7 @@ if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
     
         $query = "UPDATE tbl_usuarios SET rolUsuario='$userType',nombre='$userName',correo='$mail',departamento='$depto' WHERE id_usuario=$idToUpdate";
     
-        crud::executeNonResultQuery($query, $destination);
+        Crud::executeNonResultQuery($query, $destination);
     } 
 
 }else{
@@ -60,8 +61,7 @@ if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
             $idsList = implode(',', array_map('intval', $idsArray));
             $query = "DELETE FROM tbl_usuarios WHERE id_usuario IN ($idsList)";
             $destination = "userManagement.php";
-            require("generalCRUD.php");
-            crud::executeNonResultQuery($query, $destination);
+            Crud::executeNonResultQuery($query, $destination);
         }
     }else{
         echo "<script>window.location.href = '../php/dashboard.php';</script>";
@@ -71,7 +71,7 @@ exit();
 
 
 function checkForDependencies($id){
-    $d = crud::executeResultQuery("SELECT id_actividad FROM tbl_actividades WHERE id_usuario = '$id';");
+    $d = Crud::executeResultQuery("SELECT id_actividad FROM tbl_actividades WHERE id_usuario = '$id';");
     if(count($d)>=1){
         return true;
     }
@@ -81,11 +81,11 @@ function checkForDependencies($id){
 }
 
 function breakUserDependencies($id){
-    $dependecies = crud::executeResultQuery("SELECT id_actividad, id_proyecto FROM tbl_actividades WHERE id_usuario = '$id';");
+    $dependecies = Crud::executeResultQuery("SELECT id_actividad, id_proyecto FROM tbl_actividades WHERE id_usuario = '$id';");
     for($i=0;$i<count($dependecies);$i++){
         $act = $dependecies[$i][0];
         $project = $dependecies[$i][1];
-        $f = crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = '$project' AND responsable = 1;");
+        $f = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = '$project' AND responsable = 1;");
         $n = count($f);
         if($n>=1 && $f[0][0]!=$id || count($f)>=1 && $f[$n][0]!=$id){
             if($f[0][0]!=$id){
@@ -97,7 +97,7 @@ function breakUserDependencies($id){
             $user = $_SESSION['id'];
         }
         $query = "UPDATE tbl_actividades SET id_usuario='$user' WHERE id_proyecto = '$project' AND id_actividad='$act' AND id_usuario = '$id'";
-        return crud::executeNonResultQuery2($query);
+        return Crud::executeNonResultQuery2($query);
         // echo "<script>console.log('Proyecto: $project - Actividad: $act - Usuario: $user');</script>";
     }
 }
