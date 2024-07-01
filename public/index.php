@@ -1,3 +1,6 @@
+
+<!-- Modulo de inicio de sesion -->
+
     <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -5,12 +8,16 @@
     <meta http-equiv=»X-UA-Compatible» content=»IE-edge» charset=UTF-8″>
     <meta name="viewport" content="width=device-width" initial-scale=1.0″>
     <link rel="icon" type="image/ico" href="favicon.ico">
-    <link rel="stylesheet" href="assets/font-awesome-4.7.0/css/font-awesome.min.css">    
+
+    <link rel="stylesheet" 
+    href="assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
     <div class="limiter">
-    <div class="container-login" style="background-image: url('assets/FondoDigital.png');">
+
+    <div class="container-login" 
+    style="background-image: url('assets/FondoDigital.png');">
     <div class="wrap-login">
         
         <!-- Formulario de inicio de sesión -->
@@ -35,6 +42,7 @@
                 <label for="showPass" class="lbl">Mostrar contraseña</label>
             </div>
             <?php
+
             $fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             if (strpos($fullUrl, "?") == true) {
                 echo "<p class='error'>Datos erróneos. Intenta de nuevo.</p>";
@@ -44,7 +52,9 @@
                 <button class="login-form-btn" type="submit">Iniciar Sesión</button>
             </div>
             <div>
-            <a href="secciones/RecoverAccount/PasswordRecovery.php" class="btm-form-btn">Recuperar contraseña</a>
+
+            <a href="secciones/RecoverAccount/PasswordRecovery.php" 
+             class="btm-form-btn">Recuperar contraseña</a>
         </div>
         </form> <!-- Fin de login-form -->
     </div>
@@ -55,7 +65,11 @@
             const x= document.getElementById('password');
             if(document.getElementById('showPass').checked ===true){
                 x.type = 'text';}
-            if(document.getElementById('showPass').checked ===false){ x.type = 'password';}
+            if(document.getElementById('showPass').checked ===false)
+            { 
+              x.type = 'password';
+            }
+
         });
     </script>
 </body>
