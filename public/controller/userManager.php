@@ -1,8 +1,9 @@
 <?php
 session_start();
+use App\Controller\Crud;
+
 if($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST"){
     $destination = "userManagement.php";
-    require("generalCRUD.php");
     
     if(isset($_GET['addUser']) && $_GET['addUser'] == 'true'){
         if($_POST['Fpassword'] === $_POST['FpasswordCon']){

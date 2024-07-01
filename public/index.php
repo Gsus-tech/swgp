@@ -21,12 +21,12 @@
             </span>
 
             <div class="wrap-inputLog">
-                <input class="inputLog" type="email" name="userMail" placeholder="Correo" required
+                <input class="inputLog" type="email" name="userMail" placeholder="Correo" required autocomplete="email"
                 oninvalid="this.setCustomValidity('Ingresa tu correo para iniciar sesión')" oninput="this.setCustomValidity('')"> 
                 <i class="fa fa-user"></i>
             </div>
             <div class="wrap-inputLog">
-                <input class="inputLog" type="password" name="password" id='password' placeholder="Contraseña" required
+                <input class="inputLog" type="password" name="password" id='password' placeholder="Contraseña" required autocomplete="current-password"
                 oninvalid="this.setCustomValidity('Ingresa tu contraseña para iniciar sesión')" oninput="this.setCustomValidity('')"> 
                 <i class="fa fa-lock"></i>
             </div>
@@ -34,9 +34,9 @@
                 <input type="checkbox" class="checkBx" id="showPass" name="showPass" value="1">
                 <label for="showPass" class="lbl">Mostrar contraseña</label>
             </div>
-            <?php 
+            <?php
             $fullUrl = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            if(strpos($fullUrl, "?") == true){
+            if (strpos($fullUrl, "?") == true) {
                 echo "<p class='error'>Datos erróneos. Intenta de nuevo.</p>";
             }
             ?>
