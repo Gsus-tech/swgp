@@ -2,7 +2,7 @@ table,
 .table {
     border-collapse: collapse;
     margin: 1rem auto .6rem auto;
-    width: 85%;
+    width: 95%;
 
     .rowActions {
         width: 6.5rem;
@@ -80,7 +80,7 @@ table:hover {
     font-size: 105%;
 }
 
-@media screen and (min-width: 700px) {
+@media screen and (min-width: 750px) {
 
 
     .addBtn {

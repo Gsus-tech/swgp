@@ -301,7 +301,6 @@ body {
     .container .main {
         margin-left: 11rem;
         width: calc(100% - 10rem);
-        height: fit-content;
         min-height: 100vh;
     }
 
