@@ -1,6 +1,6 @@
 {
     "name": "jesusmv/swgp",
-    "description": "Sistema web de gestion de proyectos para COBACH.",
+    "description": "Sistema web de gestion de proyectos para el COBACH.",
     "type": "project",
     "require": {
         "monolog/monolog": "^2.0",
