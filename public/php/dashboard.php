@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../controller/generalCRUD.php';
+require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {

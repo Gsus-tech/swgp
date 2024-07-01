@@ -1,6 +1,6 @@
 <?php
 require_once 'controller/generalCRUD.php';
-use Controller\GeneralCrud;
+use Controller\GeneralCrud\Crud;
 
 if (isset($_GET['login']) && $_GET['login']=='true') {
     session_start();
@@ -34,9 +34,9 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                     $user=$_SESSION['id'];
                     $accountProjects=array();
                     $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = '$user' AND responsable = 1;";
-                    $accountProjects = Controller\GeneralCrud\Crud::executeResultQuery($query);
-                    $_SESSION['responsable'] = Controller\GeneralCrud\Crud::isInArray($accountProjects, 1);
-                    $_SESSION['responsable+2'] = Controller\GeneralCrud\Crud::isInArrayOver1Time($accountProjects, 1);
+                    $accountProjects = Crud::executeResultQuery($query);
+                    $_SESSION['responsable'] = Crud::isInArray($accountProjects, 1);
+                    $_SESSION['responsable+2'] = Crud::isInArrayOver1Time($accountProjects, 1);
                 } else {
                     $_SESSION['responsable'] = false;
                     $_SESSION['responsable+2'] = false;
