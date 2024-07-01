@@ -47,16 +47,19 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                 header("Location: index.php?");
                 exit();
             }
+
         }
     } else {
         header("Location: index.php?");
         exit();
     }
 } elseif (isset($_GET['logout']) && $_GET['logout']=='true') {
+
     session_start();
     
     session_unset();
     session_destroy();
     
     header("Location: index.php");
+
 }
