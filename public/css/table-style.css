@@ -4,6 +4,10 @@ table,
     margin: 1rem auto .6rem auto;
     width: 95%;
 
+    .selectAccounts{
+        width: 30px;
+    }
+
     .rowActions {
         width: 6.5rem;
     }
@@ -28,6 +32,9 @@ table th {
     text-align: left;
     padding: 8px;
     word-wrap: break-word;
+    .fa{
+        font-size:20px;
+    }
 }
 
 table form {
@@ -91,8 +98,11 @@ table:hover {
         }
     }
 
-    table td {
+    .table td {
         font-size: 14px;
+        .fa{
+        font-size:22px;
+    }
     }
 }
 
@@ -105,8 +115,11 @@ table:hover {
         }
     }
 
-    table td {
+    .table td {
         font-size: 18px;
+        .fa{
+            font-size:25px;
+        }
     }
 }
 
