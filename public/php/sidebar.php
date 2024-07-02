@@ -78,7 +78,7 @@
         </div>
         <hr style='margin: 5px 0'>
         <div class="logout">
-            <a href="../log-session.php?logout=true" title='Cerrar sesión' class='logOutOption' id='logOutOption'><i class="fa fa-sign-out"><span>Cerrar sesión</span></i></a>
+            <a href="../controller/log-session.php?logout=true" title='Cerrar sesión' class='logOutOption' id='logOutOption'><i class="fa fa-sign-out"><span>Cerrar sesión</span></i></a>
         </div>
         <hr style='margin: 5px 0'>
         

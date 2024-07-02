@@ -1,10 +1,10 @@
 <?php
-require_once 'controller/generalCRUD.php';
+require_once 'generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 if (isset($_GET['login']) && $_GET['login']=='true') {
     session_start();
-    include "controller/db_connection.php";
+    include "db_connection.php";
     if (isset($_POST['userMail']) && isset($_POST['password'])) {
         $userMail = trim($_POST['userMail']);
         $userMail = stripslashes($userMail);
@@ -41,16 +41,19 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                     $_SESSION['responsable'] = false;
                     $_SESSION['responsable+2'] = false;
                 }
-                header("Location: php/dashboard.php");
+                header("Location: ../php/dashboard.php");
                 exit();
             } else {
-                header("Location: index.php?");
+                header("Location: ../index.php?");
                 exit();
             }
 
+        }else {
+            header("Location: ../index.php?");
+            exit();
         }
     } else {
-        header("Location: index.php?");
+        header("Location: ../index.php");
         exit();
     }
 } elseif (isset($_GET['logout']) && $_GET['logout']=='true') {
@@ -60,6 +63,6 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
     session_unset();
     session_destroy();
     
-    header("Location: index.php");
+    header("Location: ../index.php");
 
 }

@@ -21,7 +21,7 @@
     <div class="wrap-login">
         
         <!-- Formulario de inicio de sesión -->
-        <form class="login-form" action="log-session.php?login=true" method="post">
+        <form class="login-form" action="controller/log-session.php?login=true" method="post">
             
             <span class="login-form-title">
             Sistema Web de Gestión de Proyectos del COBACH
@@ -53,8 +53,8 @@
             </div>
             <div>
 
-            <a href="secciones/RecoverAccount/PasswordRecovery.php" 
-             class="btm-form-btn">Recuperar contraseña</a>
+            <!-- <a href="#" 
+             class="btm-form-btn">Recuperar contraseña</a> -->
         </div>
         </form> <!-- Fin de login-form -->
     </div>
