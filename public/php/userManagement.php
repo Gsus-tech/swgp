@@ -179,6 +179,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <tbody class="tableContent">
                         <?php
                         if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
+                            $p = array();
                             if(isset($_GET['search'])){
                                 $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
                             }
@@ -192,7 +193,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
                             }
 
-                            if(!empty($p) && count($p) > 0) {
+                            if(!empty($p) && count($p) > 0 && $p[0]['id_usuario']!=$_SESSION['id']) {
                                 for ($i = 0; $i < count($p); $i++) {
                                     $fl = false;
                                     echo '<tr>';

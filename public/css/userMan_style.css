@@ -158,12 +158,6 @@
 }
 
 .container .main .userManagement table {
-    border-collapse: collapse;
-    margin-right: 2.5rem;
-    margin-top: .5rem;
-    margin-left: .5rem;
-    margin-bottom: 6rem;
-
     .rowActions {
         width: 6.5rem;
     }
@@ -172,40 +166,6 @@
         margin-left: 10%;
         text-decoration: none;
     }
-
-}
-
-.container .main .userManagement table th {
-    border: 1px solid #aaa9a9;
-    text-align: left;
-    padding: 8px;
-    background-color: #f2f2f2;
-    word-wrap: break-word;
-}
-
-.container .main .userManagement table td {
-    border: 1px solid #aaa9a9;
-    text-align: left;
-    padding: 8px;
-    word-wrap: break-word;
-}
-
-.container .main .userManagement table form {
-    display: inline;
-
-    .fa-trash {
-        color: rgb(202, 0, 0)
-    }
-}
-
-.container .userManagement .table {
-    .users-list {
-        font-size: 11px;
-    }
-}
-
-.container .userManagement table:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .container .userManagement .nav-buttons {
@@ -356,8 +316,6 @@
     }
 
     .container .userManagement .table {
-        margin-left: 4%;
-
         .users-list {
             font-size: 13px;
         }
@@ -453,8 +411,6 @@
     }
 
     .container .userManagement .table {
-        margin-left: 4%;
-
         .users-list {
             font-size: 15px;
         }
@@ -525,7 +481,7 @@
     background-color: rgba(255, 73, 73, 0.311);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 650px) {
     .top-10 {
         top: 10rem;
     }

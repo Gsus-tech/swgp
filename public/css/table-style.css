@@ -19,7 +19,7 @@ table,
 
 }
 
-table th {
+.table th {
     border: 1px solid #aaa9a9;
     text-align: left;
     padding: 8px;
@@ -42,12 +42,6 @@ table form {
 
     .fa-trash {
         color: rgb(202, 0, 0)
-    }
-}
-
-table {
-    .users-list {
-        font-size: 11px;
     }
 }
 
