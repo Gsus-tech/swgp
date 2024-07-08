@@ -11,11 +11,12 @@ class Crud
         $myQuery = "SELECT $fields FROM $table ORDER BY $id $order;";
         $data=array();
         try {
-            $listaResultados = mysqli_query($conn, $myQuery);
-            if ($listaResultados === false) {
-                throw new Exception(mysqli_error($conn));
+            if ($stmt = $conn->prepare($myQuery)) {
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $data = $result->fetch_all(MYSQLI_ASSOC);
+                $stmt->close();
             }
-            $data = mysqli_fetch_all($listaResultados);
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
         }
@@ -74,7 +75,6 @@ class Crud
         include "db_connection.php";
         $queryFind = "SELECT $fields FROM $table WHERE $idField = ?";
         $data = array();
-    
         try {
             if ($stmt = $conn->prepare($queryFind)) {
                 $stmt->bind_param("s", $id);

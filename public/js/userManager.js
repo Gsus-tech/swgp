@@ -431,3 +431,8 @@ function deleteSelectedAccounts(){
         window.location.href = `../controller/userManager.php${parametros}`;
     }   
 }
+
+function validarCuenta(search){
+    x = Count(search) != 0;
+    x == true ? true : window.location.href = 'userManagement.php';
+}

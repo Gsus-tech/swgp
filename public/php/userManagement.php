@@ -33,7 +33,17 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         if(isset($_GET['detailsId'])){
             $id=$_GET['detailsId'];
             $infoAccount = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'id_usuario', $id);
+            $x = Count($infoAccount) != 0;
+            if($x == false){
+                echo "<script>
+                    alert('No se encontro una cuenta con el ID -$id-');
+                    window.location.href = 'userManagement.php';
+                </script>";
+            }
             ?>
+            <div class="header"> 
+                <h4>Gestión de usuarios</h4>
+            </div>
             <div class="accountDetailsDiv scroll">
                 <div><h3 for="name">Detalles de cuenta:</h2></div>
                 <br>
@@ -178,7 +188,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </thead>
                     <tbody class="tableContent">
                         <?php
-                        if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
+                        // if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
                             $p = array();
                             if(isset($_GET['search'])){
                                 $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
@@ -186,14 +196,17 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
                                 $p = Crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
                             }
+                            elseif(isset($_GET['filterDto'])){
+                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
+                            }
                             elseif(isset($_GET['filterRol'])){
                                 $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
                             }
                             else{
-                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
+                                $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
                             }
 
-                            if(!empty($p) && count($p) > 0 && $p[0]['id_usuario']!=$_SESSION['id']) {
+                            if(!empty($p) && count($p) > 0 && ($p[0]['id_usuario']!=$_SESSION['id'] || $p[1]['id_usuario']!=$_SESSION['id'])) {
                                 for ($i = 0; $i < count($p); $i++) {
                                     $fl = false;
                                     echo '<tr>';
@@ -227,44 +240,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             } else {
                                 echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                             }
-                        } else {
-                            $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
-
-                            if(count($p)>0){
-                                for($i=0;$i<count($p);$i++){
-                                    $fl = false;
-                                    echo '<tr>';
-                                    foreach($p[$i] as $key=>$value){
-                                        if($p[$i][0]!=$_SESSION['id']){
-                                            if($value === $p[$i][0]){
-                                                echo "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
-                                            }
-                                            else if($value === $p[$i][1]){
-                                                $cId = htmlspecialchars($p[$i][0]);
-                                                echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
-                                            } 
-                                            else if($value=='ADM'){ echo '<td>Super-Usuario</td>'; }      
-                                            else if($value=='SAD'){ echo '<td>Administrador</td>'; }      
-                                            else if($value=='EST'){ echo '<td>Estándar</td>'; }      
-                                            else{echo '<td>'.$value.'</td>';}
-                                            $fl = true;
-                                        }
-                                    }
-                                    if($fl==true){
-                                        $userId = htmlspecialchars($p[$i][0]);
-                                    ?>
-                                    <td>
-                                        <a id="editUserBtn"class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
-                                        <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
-                                    </td>
-                                    <?php
-                                    echo '</tr>';
-                                    }
-                                }
-                            }else {
-                                echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
-                            }
-                        }
                         
                         ?>
                     </tbody>
