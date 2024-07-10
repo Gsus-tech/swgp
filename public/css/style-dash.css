@@ -320,6 +320,14 @@ body {
     }
 }
 
+.input {
+    width: 100%;
+    padding: 10px 17px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    margin-left: 10px;
+}
+
 .short {
     .sidebar {
         width: 1rem;
