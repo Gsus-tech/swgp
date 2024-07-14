@@ -12,7 +12,7 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
         }else{
             $user_id=$_SESSION['id'];
             $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT tbl_proyectos.id_proyecto, tbl_proyectos.nombre FROM tbl_proyectos;");
-            $_SESSION['projectSelected'] = $myProject[0][0];
+            $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
         }
     }
     
@@ -28,7 +28,7 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
                 $selected=0;
                 $user_id=$_SESSION['id'];
                 $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
-                $_SESSION['projectSelected'] = $myProject[0][0];
+                $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
             }
     }
     // $abtn = $_SESSION['projectSelected'];
@@ -52,8 +52,8 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             }
             if(count($filters)>0){
                 for($i=0;$i<count($filters);$i++){
-                    $selected = ($selectedP == $filters[$i][0]) ? 'selected' : '';
-                    echo '<option value='.$filters[$i][0].' ' . $selected .'>'.htmlspecialchars($filters[$i][1], ENT_QUOTES, 'UTF-8').'</option>';
+                    $selected = ($selectedP == $filters[$i]['id_proyecto']) ? 'selected' : '';
+                    echo '<option value='.$filters[$i]['id_proyecto'].' ' . $selected .'>'.htmlspecialchars($filters[$i]['nombre'], ENT_QUOTES, 'UTF-8').'</option>';
                 }
             }
             else{

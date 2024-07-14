@@ -33,8 +33,10 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                 if ($_SESSION['rol'] == 'EST') {
                     $user=$_SESSION['id'];
                     $accountProjects=array();
-                    $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = '$user' AND responsable = 1;";
-                    $accountProjects = Crud::executeResultQuery($query);
+                    $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = ? AND responsable = 1;";
+                    $params = [$user];
+                    $types = "i";
+                    $accountProjects = Crud::executeResultQuery($query, $params, $types);
                     $_SESSION['responsable'] = Crud::isInArray($accountProjects, 1);
                     $_SESSION['responsable+2'] = Crud::isInArrayOver1Time($accountProjects, 1);
                 } else {
