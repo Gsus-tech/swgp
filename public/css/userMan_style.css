@@ -177,8 +177,13 @@
     color: var(--black);
 }
 
-.container .userManagement .nav-buttons i:hover {
-    color: var(--hover-items);
+.container .userManagement{
+    .nav-buttons i:hover {
+        color: var(--hover-items);
+    }
+    .filterDiv i:hover{
+        color: var(--hover-items);
+    }
 }
 
 .container .userManagement .nav-buttons:hover {
