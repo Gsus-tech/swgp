@@ -173,7 +173,7 @@ filterBtn.addEventListener('click', function(){
 
 //NEW VERSION
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     var currentUrl = new URL(window.location.href);
     var paramUrl = window.location.search;
     var clsParam = paramUrl.substring(1);
@@ -421,16 +421,18 @@ function deleteSelectedAccounts(){
     const checkboxes = document.querySelectorAll('.account-checkbox');
     const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
     
-    const confirmationMessage = `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} cuentas?\nEsta acción es irreversible.`;
-    const userConfirmed = confirm(confirmationMessage);
+    if(checkedCheckboxes.length>0){
+        const confirmationMessage = `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} cuentas?\nEsta acción es irreversible.`;
+        const userConfirmed = confirm(confirmationMessage);
 
-    if (userConfirmed) {
-        var parametros = "?deleteAccounts="+checkedCheckboxes[0].value;
-        for(i=1; i<checkedCheckboxes.length; i++){
-            parametros += ","+checkedCheckboxes[i].value;
-        }
-        window.location.href = `../controller/userManager.php${parametros}`;
-    }   
+        if (userConfirmed) {
+            var parametros = "?deleteAccounts="+checkedCheckboxes[0].value;
+            for(i=1; i<checkedCheckboxes.length; i++){
+                parametros += ","+checkedCheckboxes[i].value;
+            }
+            window.location.href = `../controller/userManager.php${parametros}`;
+        }   
+    }
 }
 
 function validarCuenta(search){
