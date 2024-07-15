@@ -84,7 +84,15 @@ const openForm = document.getElementById('showUserFormBtn');
 openForm.addEventListener('click', function(){
     document.getElementById('addUser-form').classList.toggle('hide');
 });
+
 //Cerrar formulario crear usuario
+function cerrarFormulario(){
+    if(confirmCancel()==true){
+        document.getElementById("addUser-form").reset();
+        document.getElementById('addUser-form').classList.toggle('hide');
+    }
+}
+
 function confirmCancel() {
     if(userName.value != "" || mail.value != "" || password.value != ""  || password2.value != ""){
         return confirm("¿Estás seguro de que deseas cancelar? Se perderá la información ingresada.");
@@ -165,8 +173,7 @@ filterBtn.addEventListener('click', function(){
 
 //NEW VERSION
 document.addEventListener('DOMContentLoaded', function() {
-    updateCancelLink();
-
+    
     var currentUrl = new URL(window.location.href);
     var paramUrl = window.location.search;
     var clsParam = paramUrl.substring(1);
@@ -219,12 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-function updateCancelLink(){
-    var btn = document.getElementById('cancel-Adduser');
-    var currentUrl = new URL(window.location.href);
-    btn.href = currentUrl;
-}
 
 function toggleFilterItems(){
     document.querySelector('.dropDownFilter1').classList.toggle('hide');

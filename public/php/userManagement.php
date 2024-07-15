@@ -318,7 +318,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </select>
                             <div class="form-options">
                                 <button disabled class="sumbit-AddUser" id="sumbit-AddUser" type="submit">Agregar usuario</button>
-                                <a href="userManagement.php" id="cancel-Adduser" class="close-AddUser" onclick="return confirmCancel()">Cancelar</a>                                
+                                <a id="cancel-Adduser" class="close-AddUser" onclick="cerrarFormulario()">Cancelar</a>                                
                                 
                             </div>
                         </div>
