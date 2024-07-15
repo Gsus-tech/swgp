@@ -2,7 +2,7 @@
 <?php
 //Archivo modificado en dev
 if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsable']==true){
-    $proyectos = crud::getFiltersOptions('tbl_proyectos', 'id_proyecto');
+    $proyectos = Controller\GeneralCrud\Crud::getFiltersOptions('tbl_proyectos', 'id_proyecto');
     if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD'){
         if(isset($_GET['id'])){
             $selectedP = $_GET['id'];
@@ -11,8 +11,8 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             $selectedP = $_SESSION['projectSelected'];
         }else{
             $user_id=$_SESSION['id'];
-            $myProject = crud::executeResultQuery("SELECT tbl_proyectos.id_proyecto, tbl_proyectos.nombre FROM tbl_proyectos;");
-            $_SESSION['projectSelected'] = $myProject[0][0];
+            $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT tbl_proyectos.id_proyecto, tbl_proyectos.nombre FROM tbl_proyectos;");
+            $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
         }
     }
     
@@ -27,8 +27,8 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             else{ 
                 $selected=0;
                 $user_id=$_SESSION['id'];
-                $myProject = crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
-                $_SESSION['projectSelected'] = $myProject[0][0];
+                $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
+                $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
             }
     }
     // $abtn = $_SESSION['projectSelected'];
@@ -45,15 +45,15 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
                 echo "<form id='switchForm' method='post' action=''>";
                 echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
                 $user_id=$_SESSION['id'];
-                $filters = crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
+                $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
             }else{
                 echo "<select name='listProyectos' id='listProyectos' class='listProyectos'>";
-                $filters = crud::executeResultQuery('SELECT id_proyecto,nombre FROM tbl_proyectos;');
+                $filters = Controller\GeneralCrud\Crud::executeResultQuery('SELECT id_proyecto,nombre FROM tbl_proyectos;');
             }
             if(count($filters)>0){
                 for($i=0;$i<count($filters);$i++){
-                    $selected = ($selectedP == $filters[$i][0]) ? 'selected' : '';
-                    echo '<option value='.$filters[$i][0].' ' . $selected .'>'.htmlspecialchars($filters[$i][1], ENT_QUOTES, 'UTF-8').'</option>';
+                    $selected = ($selectedP == $filters[$i]['id_proyecto']) ? 'selected' : '';
+                    echo '<option value='.$filters[$i]['id_proyecto'].' ' . $selected .'>'.htmlspecialchars($filters[$i]['nombre'], ENT_QUOTES, 'UTF-8').'</option>';
                 }
             }
             else{

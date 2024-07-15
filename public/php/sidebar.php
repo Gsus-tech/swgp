@@ -34,10 +34,10 @@
     <?php   if($_SESSION['rol']=='EST'){  
                 $isMember = array();
                 $user=$condition=$_SESSION['id'];
-                $data = crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = '$user'");
-                $isMember[0] = crud::isInArray($data, $_SESSION['id']);
-                $data2 = crud::executeResultQuery("SELECT responsable FROM tbl_integrantes WHERE id_usuario = '$user'");
-                $isMember[1] = crud::isInArray($data2, 1);
+                $data = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = '$user'");
+                $isMember[0] = Controller\GeneralCrud\Crud::isInArray($data, $_SESSION['id']);
+                $data2 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT responsable FROM tbl_integrantes WHERE id_usuario = '$user'");
+                $isMember[1] = Controller\GeneralCrud\Crud::isInArray($data2, 1);
                 
                 if($isMember[0]==true){ ?>
                     <li><a href="#" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
@@ -78,7 +78,7 @@
         </div>
         <hr style='margin: 5px 0'>
         <div class="logout">
-            <a href="../log-session.php?logout=true" title='Cerrar sesión' class='logOutOption' id='logOutOption'><i class="fa fa-sign-out"><span>Cerrar sesión</span></i></a>
+            <a href="../controller/log-session.php?logout=true" title='Cerrar sesión' class='logOutOption' id='logOutOption'><i class="fa fa-sign-out"><span>Cerrar sesión</span></i></a>
         </div>
         <hr style='margin: 5px 0'>
         

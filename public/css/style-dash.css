@@ -8,6 +8,7 @@
     --menuItemHover: #0140f2;
     --navBtnBg: #b0b0b051;
     --navBtnHover: #b0b0b0;
+    --cancelBtn: #823015;
 }
 
 
@@ -301,7 +302,6 @@ body {
     .container .main {
         margin-left: 11rem;
         width: calc(100% - 10rem);
-        height: fit-content;
         min-height: 100vh;
     }
 
@@ -318,6 +318,14 @@ body {
         font-size: 15px;
         font-weight: normal;
     }
+}
+
+.input {
+    width: 100%;
+    padding: 10px 17px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    margin-left: 10px;
 }
 
 .short {

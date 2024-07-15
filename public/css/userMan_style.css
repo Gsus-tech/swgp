@@ -38,17 +38,10 @@
 .container .main .userManagement .addUser-form {
     width: 100%;
     height: 100%;
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: 0;
+    left: 2rem;
     background-color: #0000008c;
-}
-
-.input {
-    width: 100%;
-    padding: 10px 17px;
-    margin: 8px 0;
-    box-sizing: border-box;
 }
 
 .container .main .userManagement .addUser-form .select-field .asd {
@@ -56,8 +49,7 @@
 }
 
 .container .main .userManagement .addUser-form .form-bg .form-container {
-    margin-left: 2rem;
-    margin-top: 4rem;
+    margin: 4rem auto 0 auto;
     width: 20rem;
     background-color: #fff;
     border-radius: 1em;
@@ -158,12 +150,6 @@
 }
 
 .container .main .userManagement table {
-    border-collapse: collapse;
-    margin-right: 2.5rem;
-    margin-top: .5rem;
-    margin-left: .5rem;
-    margin-bottom: 6rem;
-
     .rowActions {
         width: 6.5rem;
     }
@@ -172,40 +158,6 @@
         margin-left: 10%;
         text-decoration: none;
     }
-
-}
-
-.container .main .userManagement table th {
-    border: 1px solid #aaa9a9;
-    text-align: left;
-    padding: 8px;
-    background-color: #f2f2f2;
-    word-wrap: break-word;
-}
-
-.container .main .userManagement table td {
-    border: 1px solid #aaa9a9;
-    text-align: left;
-    padding: 8px;
-    word-wrap: break-word;
-}
-
-.container .main .userManagement table form {
-    display: inline;
-
-    .fa-trash {
-        color: rgb(202, 0, 0)
-    }
-}
-
-.container .userManagement .table {
-    .users-list {
-        font-size: 11px;
-    }
-}
-
-.container .userManagement table:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .container .userManagement .nav-buttons {
@@ -225,8 +177,13 @@
     color: var(--black);
 }
 
-.container .userManagement .nav-buttons i:hover {
-    color: var(--hover-items);
+.container .userManagement{
+    .nav-buttons i:hover {
+        color: var(--hover-items);
+    }
+    .filterDiv i:hover{
+        color: var(--hover-items);
+    }
 }
 
 .container .userManagement .nav-buttons:hover {
@@ -238,7 +195,6 @@
     max-width: 45rem;
     width: clamp(15rem, 50vw, 45rem);
     z-index: 2;
-    padding-left: 10px;
 
     .input {
         width: calc(100% - 4rem);
@@ -259,10 +215,6 @@
 
 .container .userManagement .filterDiv .fa {
     font-size: 22px;
-}
-
-.container .userManagement .filterDiv i:hover {
-    color: var(--hover-items);
 }
 
 .closedFilterDiv {
@@ -293,6 +245,7 @@
 }
 
 .container .userManagement .filterDiv:hover {
+    transition: background-color 0.3s, color 0.3s;
     background-color: var(--navBtnHover);
 }
 
@@ -346,18 +299,12 @@
     .search-bar {
         margin-left: 2%;
     }
-
-    .container .main .userManagement .addUser-form .form-bg {
-        padding-left: 7rem;
-    }
-
+    
     .container .main .userManagement .addUser-form .form-bg .form-container {
         width: 23rem;
     }
 
     .container .userManagement .table {
-        margin-left: 4%;
-
         .users-list {
             font-size: 13px;
         }
@@ -448,13 +395,7 @@
         flex-direction: row;
     }
 
-    .container .main .userManagement .addUser-form .form-bg {
-        padding-left: 15rem;
-    }
-
     .container .userManagement .table {
-        margin-left: 4%;
-
         .users-list {
             font-size: 15px;
         }
@@ -525,7 +466,7 @@
     background-color: rgba(255, 73, 73, 0.311);
 }
 
-@media (max-width: 600px) {
+@media (max-width: 650px) {
     .top-10 {
         top: 10rem;
     }
@@ -536,8 +477,6 @@
 
     .container .userManagement .searchingMode {
         height: 2.5rem;
-        padding-left: 10px;
-
         .input {
             height: 1rem;
         }
@@ -557,7 +496,7 @@
     }
 
     td:nth-of-type(4):before {
-        content: "Correo ElectrÃ³nico";
+        content: "Correo Electrónico";
     }
 
     td:nth-of-type(5):before {

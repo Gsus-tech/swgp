@@ -1,5 +1,7 @@
 <?php
 session_start();
+require_once '../controller/generalCRUD.php';
+use Controller\GeneralCrud\Crud;
 
 if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     if($_SESSION['rol']==='ADM'){
@@ -23,7 +25,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
         <?php
-        require("../controller/generalCRUD.php");
         if (isset($_GET['error'])) {
             $errorMsg = urldecode($_GET['error']);
             echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
@@ -31,36 +32,46 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         if(isset($_GET['detailsId'])){
             $id=$_GET['detailsId'];
-            $infoAccount = crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'id_usuario', $id);
+            $infoAccount = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', 'id_usuario', $id);
+            $x = Count($infoAccount) != 0;
+            if($x == false){
+                echo "<script>
+                    alert('No se encontro una cuenta con el ID -$id-');
+                    window.location.href = 'userManagement.php';
+                </script>";
+            }
             ?>
+            <div class="header"> 
+                <h4>Gestión de usuarios</h4>
+            </div>
             <div class="accountDetailsDiv scroll">
                 <div><h3 for="name">Detalles de cuenta:</h2></div>
                 <br>
                 <div class="generalInfo">
                     <div class="generalInfo1">
                         <h4 for="name">Nombre de usuario:</h4>
-                        <input disabled class ="name input" name="name" value="<?php echo htmlspecialchars($infoAccount[0][2]);?>">
+                        <input disabled class ="name input" name="name" value="<?php echo htmlspecialchars($infoAccount[0]['nombre']);?>">
                         <br>
                         <h4 for="mail">Correo:</h4>
-                        <input disabled class ="mail input" name="mail" value="<?php echo htmlspecialchars($infoAccount[0][3]);?>">
+                        <input disabled class ="mail input" name="mail" value="<?php echo htmlspecialchars($infoAccount[0]['correo']);?>">
                     </div>
                     <div class="generalInfo2">
                         <h4 for="userRol">Rol de usuario:</h4>
-                        <?php if($infoAccount[0][1]=='ADM'){$type='Superusuario';}
-                            elseif($infoAccount[0][1]=='SAD'){$type='Administrador';}
+                        <?php if($infoAccount[0]['rolUsuario']=='ADM'){$type='Superusuario';}
+                            elseif($infoAccount[0]['rolUsuario']=='SAD'){$type='Administrador';}
                             else{$type='Estándar';}
                         ?>
                         <input disabled name="userRol" class="input" value="<?php echo htmlspecialchars($type);?>">
                         <br>
                         <h4 for="name">Departamento:</h4>
-                        <input disabled class="input" name="name" value="<?php echo htmlspecialchars($infoAccount[0][4]);?>">
+                        <input disabled class="input" name="name" value="<?php echo htmlspecialchars($infoAccount[0]['departamento']);?>">
                     </div>
                 </div>
                 <br>
                 <div class="projectsInfo">
                     <h3>Proyectos asignados</h3>
                     <?php
-                    $projectParticipation = crud::executeResultQuery("SELECT proyecto.nombre,proyecto.fecha_inicio,proyecto.fecha_cierre, integrante.responsable FROM tbl_proyectos proyecto JOIN tbl_integrantes integrante ON proyecto.id_proyecto = integrante.id_proyecto WHERE integrante.id_usuario=$id;");
+                    $projectParticipation = Crud::executeResultQuery("SELECT proyecto.nombre,proyecto.fecha_inicio,proyecto.fecha_cierre, integrante.responsable FROM tbl_proyectos proyecto JOIN tbl_integrantes integrante ON proyecto.id_proyecto = integrante.id_proyecto WHERE integrante.id_usuario=$id;");
                         $divFlag = true;
                         $flag = true;
                         $count = 0;
@@ -73,12 +84,12 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             if($divFlag==true){echo "<div class='rowOfprojects'>"; $divFlag=false;}
                             ?>
                             <div class="project <?php if($count1==1){ echo "lfMg";} ?>">
-                                <h4><?php echo $projectParticipation[$i][0] ?></h4>
+                                <h4><?php echo $projectParticipation[$i]['nombre'] ?></h4>
                                 
-                                <label for="dateStart">Fecha de inicio: <i><?php echo $projectParticipation[$i][1] ?></i></label>
+                                <label for="dateStart">Fecha de inicio: <i><?php echo $projectParticipation[$i]['fecha_inicio'] ?></i></label>
                                 <br>
-                                <label for="dateStart">Fecha de cierre: <i><?php echo $projectParticipation[$i][2] ?></i></label>
-                                <h4>Rol: <label><?php if($projectParticipation[$i][3]===true){echo "Responsable de proyecto";}else{echo "Colaborador";} ?></label></h4>
+                                <label for="dateStart">Fecha de cierre: <i><?php echo $projectParticipation[$i]['fecha_cierre'] ?></i></label>
+                                <h4>Rol: <label><?php if($projectParticipation[$i]['responsable']===true){echo "Responsable de proyecto";}else{echo "Colaborador";} ?></label></h4>
                             </div>  
                             <?php
                             if($count1==1 || $i==count($projectParticipation)-1){echo "</div>"; }
@@ -136,7 +147,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <select class="comboBox dropDownFilter" id="filtersForDto" name="filtersForDto">
                     <option value="noFilter"></option>
                         <?php
-                        $filters = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                        $filters = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
                             if(isset($_GET['filterDto'])){
                                 $selected = $_GET['filterDto'];
@@ -177,92 +188,68 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </thead>
                     <tbody class="tableContent">
                         <?php
-                        if (isset($_GET['search']) || isset($_GET['filterRol']) || isset($_GET['filterDto'])) {
+                            $p = array();
                             if(isset($_GET['search'])){
-                                $p = crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
+                                $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
                             }
                             elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
-                                $p = crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
+                                $p = Crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
+                            }
+                            elseif(isset($_GET['filterDto'])){
+                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
                             }
                             elseif(isset($_GET['filterRol'])){
-                                $p = crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
+                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
                             }
                             else{
-                                $p = crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
+                                $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
                             }
 
-                            if(!empty($p) && count($p) > 0) {
-                                for ($i = 0; $i < count($p); $i++) {
-                                    $fl = false;
-                                    echo '<tr>';
-                                    foreach($p[$i] as $key=>$value){
-                                        if($p[$i]['id_usuario']!=$_SESSION['id']){
-                                            if($value === $p[$i]['id_usuario']){
-                                                echo "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                            if (!empty($p) && count($p) > 0) {
+                                $sessionId = $_SESSION['id'];
+                            
+                                // Filtrar los resultados que no coinciden con el id de la sesión actual
+                                $filteredResults = array_filter($p, function ($item) use ($sessionId) {
+                                    return $item['id_usuario'] != $sessionId;
+                                });
+                            
+                                // Verificar si hay resultados después de filtrar
+                                if (count($filteredResults) > 0) {
+                                    foreach ($filteredResults as $user) {
+                                        echo '<tr>';
+                                        // echo generateUserRow($user);
+                                        $row='';
+                                        foreach ($user as $key => $value) {
+                                            if ($value === $user['id_usuario']) {
+                                                $row .= "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                                            } else if ($value === $user['nombre']) {
+                                                $cId = htmlspecialchars($user['id_usuario']);
+                                                $row .= "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
+                                            } else if ($value == 'ADM') {
+                                                $row .= '<td>Super-Usuario</td>';
+                                            } else if ($value == 'SAD') {
+                                                $row .= '<td>Administrador</td>';
+                                            } else if ($value == 'EST') {
+                                                $row .= '<td>Estándar</td>';
+                                            } else {
+                                                $row .= '<td>' . htmlspecialchars($value) . '</td>';
                                             }
-                                            else if($value === $p[$i]['nombre']){
-                                                $cId = htmlspecialchars($p[$i]['id_usuario']);
-                                                echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
-                                            } 
-                                            else if($value=='ADM'){ echo '<td>Super-Usuario</td>'; }      
-                                            else if($value=='SAD'){ echo '<td>Administrador</td>'; }      
-                                            else if($value=='EST'){ echo '<td>Estándar</td>'; }      
-                                            else{echo '<td>'.$value.'</td>';}
-                                            $fl = true;
                                         }
-                                    }
-                                    if ($fl == true) {
-                                        $userId = htmlspecialchars($p[$i]['id_usuario']);
-                                        ?>
-                                        <td>
-                                            <a id="editUserBtn" class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
-                                            <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
-                                        </td>
-                                        <?php
+
+                                        $userId = htmlspecialchars($user['id_usuario']);
+                                        $row .= "<td>
+                                                    <a id='editUserBtn' class='fa fa-edit button' title='Editar cuenta' onclick='editUserAccount($userId)'></a>
+                                                    <a id='deleteUserBtn' class='fa fa-trash button' title='Eliminar cuenta' onclick='confirmDelete($userId)'></a>
+                                                </td>";
+                                        echo $row;
                                         echo '</tr>';
                                     }
+                                } else {
+                                    echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                                 }
                             } else {
                                 echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                             }
-                        } else {
-                            $p = crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
-
-                            if(count($p)>0){
-                                for($i=0;$i<count($p);$i++){
-                                    $fl = false;
-                                    echo '<tr>';
-                                    foreach($p[$i] as $key=>$value){
-                                        if($p[$i][0]!=$_SESSION['id']){
-                                            if($value === $p[$i][0]){
-                                                echo "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
-                                            }
-                                            else if($value === $p[$i][1]){
-                                                $cId = htmlspecialchars($p[$i][0]);
-                                                echo "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
-                                            } 
-                                            else if($value=='ADM'){ echo '<td>Super-Usuario</td>'; }      
-                                            else if($value=='SAD'){ echo '<td>Administrador</td>'; }      
-                                            else if($value=='EST'){ echo '<td>Estándar</td>'; }      
-                                            else{echo '<td>'.$value.'</td>';}
-                                            $fl = true;
-                                        }
-                                    }
-                                    if($fl==true){
-                                        $userId = htmlspecialchars($p[$i][0]);
-                                    ?>
-                                    <td>
-                                        <a id="editUserBtn"class="fa fa-edit button" title="Editar cuenta" onclick="editUserAccount(<?php echo $userId; ?>)"></a>
-                                        <a id="deleteUserBtn" class="fa fa-trash button" title="Eliminar cuenta" onclick="confirmDelete(<?php echo $userId; ?>)"></a>
-                                    </td>
-                                    <?php
-                                    echo '</tr>';
-                                    }
-                                }
-                            }else {
-                                echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
-                            }
-                        }
                         
                         ?>
                     </tbody>
@@ -293,7 +280,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <label for="dropDownDepto">Departamento:</label>
                             <select class="comboBox dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
-                                $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
                                     for($i=0;$i<count($Deptos);$i++){
                                         foreach($Deptos[$i] as $key=>$value){
@@ -331,7 +318,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </select>
                             <div class="form-options">
                                 <button disabled class="sumbit-AddUser" id="sumbit-AddUser" type="submit">Agregar usuario</button>
-                                <a href="userManagement.php" id="cancel-Adduser" class="close-AddUser" onclick="return confirmCancel()">Cancelar</a>                                
+                                <a id="cancel-Adduser" class="close-AddUser" onclick="cerrarFormulario()">Cancelar</a>                                
                                 
                             </div>
                         </div>
@@ -341,7 +328,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     
                 <?php 
                 if(isset($_GET['editId'])){ 
-                    $cR = crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
+                    $cR = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
                     ?>
                 <form class="addUser-form" id="editUser-form" action="../controller/userManager.php?updateUser=true" method="POST" autocomplete="on">
                 <div class="form-bg">
@@ -349,17 +336,17 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <div class="fm-content">
                             <div class="title"><h4>Editar usuario:</h4></div>                            <!-- <label for="name">Nombre:</label> -->
                             <input type="hidden" name="EditThisID" value="<?php echo $_GET['editId']?>">
-                            <input class="input" type="text" name="Ename" id="Ename" value="<?php echo $cR[0][2] ?>" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
+                            <input class="input" type="text" name="Ename" id="Ename" value="<?php echo $cR[0]['nombre'] ?>" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
                             <br>
                             
                             <label for="dropDownDepto">Departamento:</label>
                             <select class="comboBox dropDownDepto" id="edropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
-                                $Deptos = crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
                                     for($i=0;$i<count($Deptos);$i++){
                                         foreach($Deptos[$i] as $key=>$value){
-                                            $selected = ($value == $cR[0][4]) ? 'selected' : '';
+                                            $selected = ($value == $cR[0]['departamento']) ? 'selected' : '';
                                             echo '<option value='.$i.' '.$selected.'>'.$value.'</option>';
                                         }
                                     }
@@ -373,14 +360,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div>
                             
                             <!-- <label for="mail">Correo:</label> -->
-                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0][3] ?>" placeholder="Correo" title="Introducir correo del usuario" required
+                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0]['correo'] ?>" placeholder="Correo" title="Introducir correo del usuario" required
                             oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label><br>
                             <select class="comboBox comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
-                                <option value="EST" <?php if ("EST" == $cR[0][1]) echo 'selected="selected"'; ?>>Usuario estándar</option>
-                                <option value="SAD" <?php if ("SAD" == $cR[0][1]) echo 'selected="selected"'; ?>>Usuario administrador</option>
-                                <option value="ADM" <?php if ("ADM" == $cR[0][1]) echo 'selected="selected"'; ?>>Super-usuario</option>
+                                <option value="EST" <?php if ("EST" == $cR[0]['rolUsuario']) echo 'selected="selected"'; ?>>Usuario estándar</option>
+                                <option value="SAD" <?php if ("SAD" == $cR[0]['rolUsuario']) echo 'selected="selected"'; ?>>Usuario administrador</option>
+                                <option value="ADM" <?php if ("ADM" == $cR[0]['rolUsuario']) echo 'selected="selected"'; ?>>Super-usuario</option>
                             </select>
                             <div class="form-options">
                                 <button disabled class="sumbit-AddUser" id="sumbit-editUser" type="submit" onclick="toggleInput()">Guardar cambios</button>
