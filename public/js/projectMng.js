@@ -256,8 +256,10 @@ function toggleFilterItems(){
     filtros.classList.toggle('hide');
     document.querySelector('.filterDiv').classList.toggle('openFilterDiv');
     document.querySelector('.filterDiv').classList.toggle('closedFilterDiv');
-    document.querySelector('.filtroFecha').classList.toggle('hide');
-    document.querySelector('.dropDownFilter1').classList.toggle('hide');    
+    // document.querySelector('.filtroFecha').classList.toggle('hide');
+    document.querySelector('.nav-buttons').classList.toggle('hide');
+    document.querySelector('.dropDownFilter1').classList.toggle('hide');
+    document.querySelector('.fa-history').classList.toggle('hide');    
 }
 
 //Cerrar barra al hacer clic fuera del div
@@ -285,4 +287,60 @@ document.addEventListener('keydown', function(event) {
         }
     }
 
+});
+
+//Cerrar formulario de alta -- no se recarga la pagina para esta accion.
+function cerrarFormulario() {
+    if (confirmCancel() == true) {
+        document.getElementById("addProject-form").reset();
+        document.getElementById('addProject-form').classList.toggle('hide');
+    }
+}
+
+function confirmCancel() {
+    const projectName = document.getElementById("Fname").value;
+    const description = document.getElementById("Fdescription").value;
+    const metas = document.getElementById("Fmeta").value;
+
+    if (projectName !== '' || description !== '' || metas !== '') {
+        return confirm("¿Estás seguro de que deseas cancelar? Se perderá la información ingresada.");
+    }
+    return true;
+}
+
+//Ver detalles de proyecto
+function seeProjectAccount(idProyecto){
+    window.location.href = `projectsManagement.php?projectDetails=${idProyecto}`;
+}
+
+//Habilitar acciones para proyectos seleccionados
+document.addEventListener('DOMContentLoaded', (event) => {
+    const checkboxes = document.querySelectorAll('.project-checkbox');
+    const projectSelectedDiv = document.getElementById('projectSelected');
+    const selectAllBox = document.getElementById('selectAllBoxes');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateprojectSelectedDiv);
+    });
+
+    selectAllBox.addEventListener('change', () => {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllBox.checked;
+        });
+        updateprojectSelectedDiv();
+    });
+
+    function updateprojectSelectedDiv() {
+        const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
+        if (checkedCheckboxes.length > 0) {
+            projectSelectedDiv.classList.remove('hide');
+        } else {
+            projectSelectedDiv.classList.add('hide');
+        }
+    }
+
+    const applyAction1 = document.getElementById('applyAction');
+    const applyAction2 = document.getElementById('applyAction2');
+    applyAction1.addEventListener('click', applyAction);
+    applyAction2.addEventListener('click', applyAction);
 });

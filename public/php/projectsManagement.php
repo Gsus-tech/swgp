@@ -26,10 +26,283 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <div class="main">
             <?php
             if (isset($_GET['error'])) {
+                
                 $errorMsg = urldecode($_GET['error']);
                 echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
-            }
-            ?>
+
+            }elseif (isset($_GET['projectDetails'])) {
+                $projectID = $_GET['projectDetails'];
+
+                $projectData = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectID);
+                $objectivesGData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID,"tipo","general");
+                $objectivesEData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID,"tipo","especifico");
+                $integrantes = Crud::executeResultQuery('SELECT nombre,departamento,responsable FROM tbl_integrantes JOIN tbl_usuarios ON tbl_integrantes.id_usuario = tbl_usuarios.id_usuario WHERE tbl_integrantes.id_proyecto='.$projectID.';');
+                $d1 = date("m-d-Y", strtotime($projectData[0]['fecha_inicio']));
+                $d2 = date("m-d-Y", strtotime($projectData[0]['fecha_cierre']));
+               ?>
+                <div class="header">
+                    <h4>Gestión de Proyectos</h4>
+                </div>
+                <div class="detailsContainer">
+                    <div class="detailsContainerTitle">
+                        <div class="name">
+                            <i><?php echo $projectData[0]['nombre']?></i>
+                        </div>
+                        <div class="fechas">
+                            <label class="fechaInicio">Fecha de inicio: <?php echo $d1?></label><br>
+                            <label class="fechaCierre">Fecha de cierre: <?php echo $d2?></label>
+                        </div>
+                    </div>
+                    <div class="detailsContainerDiv">
+                        <div class="descripcion">
+                            <h3>Descripción:</h3>
+                            <i style="font-style: normal;"><?php echo $projectData[0]['descripción']?></i>
+                        </div>
+                    </div>
+                    <div class="detailsContainerDiv">
+                        <div class="meta">
+                            <h3>Meta:</h3>
+                            <i style="font-style: normal;"><?php echo $projectData[0]['meta']?></i>
+                        </div>
+                        <div class="objetivosGen">
+                            <h3>Objetivos generales:</h3>
+                        <?php   if(count($objectivesGData)!=0){
+                                for($i=0;$i<count($objectivesGData);$i++){
+                                    echo '<a style="font-style: normal;">'.$objectivesGData[$i]['id_objetivo'].':  '.$objectivesGData[$i]['contenido'].'</a><br>';
+                                    $fl = true;
+                                } 
+                            }else{
+                                echo '<a style="font-style: normal;color:#9a9a9a;">Aún no se han registrado objetivos específicos</a><br>';
+                            }?>
+                        </div>
+                    </div>
+                    <div class="detailsContainerDiv">
+                        <div class="objetivosEsp">
+                            <h3>Objetivos específicos:</h3>
+                        <?php   if(count($objectivesEData)!=0){
+                                for($i=0;$i<count($objectivesEData);$i++){
+                                    echo '<a style="font-style: normal;">'.$objectivesEData[$i]['id_objetivo'].':  '.$objectivesEData[$i]['contenido'].'</a><br>';
+                                    $fl = true;
+                                } 
+                            }else{
+                            echo '<a style="font-style: normal;color:#9a9a9a;">Aún no se han registrado objetivos específicos</a><br>';
+                        }?>
+                        </div>
+                    </div>
+                    <div class="detailsContainerDiv">
+                        <div class="integrantes">
+                            <h3 >Integrantes:</h3><br>
+                        <?php   
+                            if(count($integrantes)!=0){
+                                for($i=0;$i<count($integrantes);$i++){
+                                    echo '<a style="font-style: normal;margin: 1rem;">Nombre: '.$integrantes[$i]['nombre'].'</a><br>';
+                                    echo '<a style="font-style: normal;margin: 1rem;">Departamento:  '.$integrantes[$i]['departamento'].'</a><br><br>';
+                                    $fl = true;
+                                } 
+                            }else{
+                                echo '<a style="font-style: normal;margin: 1rem;color:#9a9a9a;">Aún no se han registrado integrantes</a><br>';
+                            }?>
+                        </div>
+                    </div>
+                    <a id="returnToProjects" class="button redBtn" onclick="returnToProjectsList()" title="Lista de Proyectos"><i class="fa fa-arrow-circle-left"></i></a>
+                    <div class="optionsDiv">
+                        <a id="printDetails" class="button hide"><i class="fa fa-print" onclick="imprimirProyecto()" title="Imprimir"></i></a>
+                        <a id="editProject" class="button hide"><i class="fa fa-share-square-o" onclick="exportarProyecto()" title="Exportar"></i></a>
+                        <a id="toggleDocumentOptions" class="button"><i class="fa fa-ellipsis-v" onclick="toggleDocumentOptions()" title="Opciones"></i></a>
+                    </div>
+                        
+                </div>   <!-- Fin detailsContainer -->
+               <script src="../js/projectDetails.js"></script>
+
+
+               <?php } elseif(isset($_GET['editProject'])){ 
+                $projectId = $_GET['editProject'] ?? null;
+                // Verificar si el ID es un entero
+                if ($projectId === null || !filter_var($projectId, FILTER_VALIDATE_INT)) {
+                    echo "
+                    <script>
+                    alert('No se encontro ningun proyecto con el ID proporcionado');
+                    window.location.href = `projectsManagement.php`;
+                    </script>";       
+                }else{
+                
+                $cR=Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectId)
+                ?>
+                <!-- EDITAR PROYECTO -->
+                <div class="header">
+                    <h4>Gestión de Proyectos</h4>
+                </div>
+                <div class="editContainer">
+                <div class="form-container">
+                    <div class="title"><h4>Editar proyecto:</h4></div>   
+                        <form class="editProject-form" id="editProject-form" action="updateProject.php" method="POST" autocomplete="off">
+                        <div class="fm-content">
+                            <div class="section1">
+                            <input type="hidden" name="EditThisID" value="<?php echo $_GET['editProject']?>">
+                                <label class="bold" for="Fname">Nombre del proyecto:</label><br>
+                                <input class="NameInput" type="text" name="Fname" id="Fname" placeholder="Nombre del Proyecto" title="Nombre del proyecto" required value="<?php echo $cR[0]['nombre'] ?>"
+                                oninvalid="this.setCustomValidity('El nombre del proyecto es un campo necesario')" oninput="this.setCustomValidity('')"> 
+                                <br>
+                            </div>
+                            <div class="section2">
+                            <div class="datesEditForm">
+                                    <div id="fechaIni" class="fechaIni">
+                                        <label class="bold" for="fechaInicio">Fecha de inicio:</label><br>
+                                        <div class="inline">
+                                            <?php setlocale(LC_TIME, 'es_MX'); $fechaFormateada = strftime("%d / %B / %Y", strtotime($cR[0]['fecha_inicio']));?>
+                                            <span><?php echo $fechaFormateada; ?></span>
+                                            <i id="editInitialDate" class="fa fa-edit button" title="Editar"></i>
+                                        </div>
+                                        <input type="hidden" name="thisDate_inicio" id="thisDate_inicio">
+                                        <!-- datePicker -->
+                                        <br>
+                                        <div class="initDatePicker hide">
+                                            <?php $idUnico = "inicio"; include 'datePicker.php'; ?>
+                                            <i id="saveDate1" class="fa fa-check-square-o button" title="Guardar"></i>
+                                        </div>
+                                    </div> 
+                                    <div id="fechaFin" class="fechaFin">
+                                        <label class="bold spacer" for="fechaCierre">Fecha de cierre:</label><br>
+                                        <div class="inline">
+                                            <?php setlocale(LC_TIME, 'es_MX'); $fechaFormateada = strftime("%d / %B / %Y", strtotime($cR[0]['fecha_cierre']));?>
+                                            <span><?php echo $fechaFormateada; ?></span>
+                                            <i id="editFinalDate" class="fa fa-edit button" title="Editar"></i>
+                                        </div>
+                                        <input type="hidden" name="thisDate_cierre" id="thisDate_cierre">
+                                        <!-- datePicker -->
+                                        <br>
+                                        <div class="endDatePicker hide">
+                                            <?php $idUnico = "cierre"; include 'datePicker.php'; ?>
+                                            <i id="saveDate2" class="fa fa-check-square-o button" title="Guardar"></i>
+                                        </div>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="fm-content">
+                            <div class="section1">
+
+                                <label class="bold" for="Fdescription">Descripción del proyecto:</label><br>
+                                <textarea type="text" name="Fdescription" id="Fdescription" placeholder="Descripción del Proyecto" title="Descripción del proyecto" required
+                                oninvalid="this.setCustomValidity('Escribe una descripcion del proyecto')" oninput='this.setCustomValidity("");this.style.height = "";this.style.height = this.scrollHeight + "px"'><?php echo $cR[0]['descripción'] ?></textarea>
+                                <br>
+                                
+                            </div>
+                            <div class="section2">
+                            
+                                <label class="bold" for="Fmeta">Meta del proyecto:</label><br>
+                                <textarea type="text" name="Fmeta" id="Fmeta" placeholder="Introduzca la meta del proyecto" title="Meta del proyecto" required
+                                oninvalid="this.setCustomValidity('Define al menos una meta de proyecto')" oninput='this.setCustomValidity("");this.style.height = "";this.style.height = this.scrollHeight + "px"'><?php echo $cR[0]['meta'] ?></textarea>
+                                
+                            </div> 
+                        </div> <!-- Fin de fm-content -->
+
+                        <div class="fm-content">
+                            <div class="section1">
+                            <div class="gestionIntegrantes"> 
+                                    <div class="topTable flexAndSpaceDiv">
+                                        <label class="bold" for="Fmeta">Integrantes del proyecto:</label><br>
+                                        
+                                        <a id="manageProjectsLink" class="button addMemberBtn" href="gestionarMiembros.php?id=<?php echo $_GET['editProject']?>">Gestionar integrantes</a>
+                                    </div>
+                                    <div class="table">
+                                        <table class="members-list">
+                                            <thead>
+                                                <tr>
+                                                    <th class="rowNombre">Nombre de integrante</th>
+                                                    <th class="rowCargo">Cargo</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <?php
+                                            $id=$_GET['editProject'];
+                                            $p = array();
+                                            $query = "SELECT usuarios.nombre, integrantes.responsable 
+                                            FROM tbl_integrantes integrantes JOIN tbl_usuarios usuarios 
+                                            ON integrantes.id_usuario = usuarios.id_usuario WHERE integrantes.id_proyecto = ?";
+                                            
+                                            $p = Crud::executeResultQuery($query, [$id], "i");
+                                            if(count($p)>0){
+                                                for($i=0;$i<count($p);$i++){
+                                                    echo '<tr>';
+                                                    foreach($p[$i] as $key=>$value){
+                                                        if($p[$i]['responsable'] == $value){
+                                                            if($value == 1){
+                                                                echo '<td>Responsable de proyecto</td>';
+                                                            }else{
+                                                                echo '<td>Colaborador</td>';
+                                                            }
+                                                        }else{
+                                                            echo '<td>'.$value.'</td>';
+                                                        }
+                                                    
+                                                    }
+                                                    echo '</tr>';
+                                                }
+                                            }else {
+                                                echo "<tr><td colspan='4'>No se encontraron integrantes registrados.</td>";
+                                            }
+                                            ?>
+                                            </tbody>
+                                        </table>
+                                    </div> <!-- Fin de .table -->
+                                </div> <!-- Fin de .gestionIntegrantes -->
+                            </div>
+
+                            <div class="section2">
+                            <div class="gestionObjetivos"> 
+                            <div class="table"> 
+                            <table class="objectiveG-list">
+                                <thead>
+                                    <tr>
+                                        <th class="rowIdObj">No.</th>
+                                        <th class="rowObjetivo">Descripcion de Objetivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                $id=$_GET['editProject'];
+                                $p = array();
+                                $query = "SELECT id_objetivo, contenido 
+                                FROM tbl_objetivos WHERE id_proyecto = ? AND tipo = ?";
+                                
+                                $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
+                                if(count($p)>0){
+                                    for($i=0;$i<count($p);$i++){
+                                        echo '<tr>';
+                                        foreach($p[$i] as $key=>$value){
+                                            echo '<td>'.$value.'</td>';
+                                        }
+                                        echo '</tr>';
+                                    }
+                                }else {
+                                    echo "<tr><td colspan='4'>No se encontraron objetivos registrados.</td>";
+                                }
+                                ?>
+                                </tbody>
+                            </table>
+                            </div> <!-- .table -->
+                            </div> <!-- .gestionIntegrantes -->
+                            </div>
+                        </div>
+                        <div class="form-options">
+                            <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
+                            <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
+                            <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
+                        </div>
+                </form> <!-- Fin de edit-user-form -->
+
+
+            </div> <!-- Fin de form-container --> 
+
+
+
+
+
+
+                </div>
+            <?php } } else{ ?>
 
             <div class="header">
                 <h4>Gestión de Proyectos</h4>
@@ -42,13 +315,12 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="filterDiv closedFilterDiv">
                     <i id="historialProyectos" class="fa fa-history button" title="Historial de proyectos" style="margin-right:.5rem;"></i>
                     <i id="filterProjectsList" class="fa fa-sliders button" title="Filtrar resultados"></i>
-                    <button id="filtroFecha" class="filtroFecha button hide" disabled>Por porcentaje de avance</button>
+                    <!-- <button id="filtroFecha" class="filtroFecha button hide" disabled>Por porcentaje de avance</button> -->
                     <div class="dropDownFilter1 hide ">
                         <label for="filtersForRol">Departamento asignado:</label>
-                        <select class="dropDownDeptoFilter" id="dropDownDeptoFilter" name="dropDownDeptoFilter" style="margin-left:2rem;">
+                        <select class="dropDownDeptoFilter comboBox" id="dropDownDeptoFilter" name="dropDownDeptoFilter" style="margin-left:2rem;">
                             <option value="noFilter"></option>
                             <?php
-                            // require("../controller/generalCRUD.php");
                                 $Deptos = Crud::getFiltersOptions('tbl_proyectos', 'departamentoAsignado');
                                 if(count($Deptos)>0){
                                     for($i=0;$i<count($Deptos);$i++){
@@ -115,8 +387,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             ?>
                                             <td>
                                                 <!-- <a id="seeProject" class="fa fa-eye button" title="Ver detalles de proyecto" href="projectMng/projectDetails.php?id=<?php echo urlencode($currentId); ?>" style="color:#333;"></a> -->
-                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectMng/editProject.php?id=<?php echo urlencode($currentId); ?>"></a>
-                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectMng/manageProjects.php?cerrar=<?php echo urlencode($currentId); ?>"></a>
+                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?id=<?php echo urlencode($currentId); ?>"></a>
+                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?cerrar=<?php echo urlencode($currentId); ?>"></a>
                                             </td>
                                             <?php
                                             echo '</tr>';
@@ -133,10 +405,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         $fl = false;
                                         echo '<tr>';
                                         foreach($p[$i] as $key=>$value){
-                                            if($value === $p[$i][0]){
+                                            if($value === $p[$i]['id_proyecto']){
                                                 echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
-                                            }else if($value === $p[$i][1]){
-                                                $cId = htmlspecialchars($p[$i][0]);
+                                            }else if($value === $p[$i]['nombre']){
+                                                $cId = htmlspecialchars($p[$i]['id_proyecto']);
                                                 echo "<td><i class='blueText' onclick=seeProjectAccount('$cId') title='Ver detalles de proyecto'>" . htmlspecialchars($value) . "</i></td>";
                                             }else{
                                                 echo '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
@@ -147,8 +419,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         ?>
                                         <td>
                                             <!-- <a id="seeProject"class="fa fa-eye button" title="Ver detalles de proyecto" href="projectMng/projectDetails.php?id=<?php echo $p[$i][0];?>" style="color:#333;"></a> -->
-                                            <a id="editProjectBtn"class="fa fa-edit button" title="Editar proyecto" href="projectMng/editProject.php?id=<?php echo $p[$i][0];?>"></a>
-                                            <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectMng/manageProjects.php?cerrar=<?php echo $p[$i][0];?>"></a>
+                                            <a id="editProjectBtn"class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
+                                            <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
                                         </td>
                                         <?php
                                         echo '</tr>';
@@ -166,6 +438,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <!-- Boton de añadir proyecto -->
                 <div class="addBtn"><a id="showProjectFormBtn" title="Crear proyecto" class="fa fa-plus add-project-btn button" style="margin-top:0;"></a></div>
 
+                <div id="projectSelected" class="projectSelected hide">
+                    <select class="comboBox" name="actionSelected" id="actionSelected">
+                        <option value="0"> - Seleccionar acción - </option>
+                        <option value="delete">Cerrar proyecto(s)</option>
+                    </select>
+                    <a id="applyAction" title="Aplicar acción a los proyectos seleccionadas" class="button apply deleteAll">Aplicar</a>
+                    <a id="applyAction2" title="Aplicar acción a los proyectos seleccionadas" class="button apply deleteAllShort fa fa-chevron-right"></a>
+                </div>
 
                 <!-- Formulario de alta de proyecto -->
                 <form class="addProject-form hide scroll" id="addProject-form" action="projectMng/addProject.php" method="POST" autocomplete="on">
@@ -220,20 +500,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <br>
                             
                             <div class="form-options">
-                            <a href="projectsManagement.php" id="cancel-AddProject" class="close-AddProject" onclick="return confirmCancel()">Cancelar</a>
-                                <script>
-                                    function confirmCancel() {
-                                        const projectName = document.getElementById("Fname").value;
-                                        const description = document.getElementById("Fdescription").value;
-                                        const metas = document.getElementById("Fmeta").value;
-
-                                        if (projectName !== '' || description !== '' || metas !== '') {
-                                             return confirm("¿Estás seguro de que deseas cancelar? Se perderá la información ingresada.");
-                                        }
-                                        return true;
-                                    }
-                                </script>
-                                <button disabled name="sumbit-AddProject" class="sumbit-AddProject" id="sumbit-AddProject" type="submit">Crear proyecto</button>
+                            <a id="cancel-AddProject" class="close-AddProject" onclick="cerrarFormulario()">Cancelar</a>
+                            <button disabled name="sumbit-AddProject" class="sumbit-AddProject" id="sumbit-AddProject" type="submit">Crear proyecto</button>
                             </div>
                             <br>
                             <button disabled name="sumbit-AddProject-obj" class="sumbit-AddProject-obj" id="sumbit-AddProject-obj" type="submit">Crear e ir a definición de objetivos <span class="fa fa-arrow-right"></span></button>
@@ -244,11 +512,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </form> <!-- Fin de project-form -->
 
             </div>
+            <script src="../js/projectMng.js"></script>
+            <?php
+            }
+            ?>
         </div>
 
     </div> <!-- Fin de container -->
 
-    <script src="../js/projectMng.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>

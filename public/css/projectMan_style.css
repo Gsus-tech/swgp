@@ -36,9 +36,9 @@
     position: absolute;
     border-radius: 25px;
     background-color: #b0b0b051;
-    top: 2.5rem;
-    right: 2rem;
-    margin: 16px;
+    top: .5rem;
+    left: 5.5rem;
+    margin: 0 16px;
 }
 
 .container .main .projectManagement .nav-buttons .fa {
@@ -49,19 +49,40 @@
     color: var(--black);
 }
 
-.container .main .projectManagement .nav-buttons .fa:hover {
-    transition: background-color 0.3s, color 0.3s;
-    color: var(--hover-items);
-}
+.container .main .projectManagement{
+    .nav-buttons:hover {
+        background-color: var(--navBtnHover);
+    }
+    
+    .nav-buttons .fa:hover {
+        transition: background-color 0.3s, color 0.3s;
+        color: var(--hover-items);
+    }
 
-.container .main .projectManagement .nav-buttons:hover {
-    background-color: var(--navBtnHover);
+    .filterDiv i:hover{
+        color: var(--hover-items);
+    }
+
+    .projectSelected {
+        justify-content: space-between;
+        position: absolute;
+        top: 4rem;
+        right: 8%;
+    }
+
+    .deleteAllShort {
+    display: inline-flex;
+    }
+    
+    .deleteAll {
+        display: none;
+    }
 }
 
 .container .projectManagement .filterDiv {
     display: inline-block;
     border-radius: 25px;
-    background-color: #b0b0b051;
+    background-color: var(--navBtnBg);
     padding: 3px 1rem 7px 1rem;
     margin-right: 2.5rem;
     margin-top: .5rem;
@@ -74,26 +95,25 @@
     font-size: 22px;
 }
 
-.container .projectManagement .filterDiv i:hover {
-    transition: background-color 0.3s, color 0.3s;
-    color: var(--hover-items);
-}
-
 .closedFilterDiv {
     width: fit-content;
     height: fit-content;
-
 }
 
 .openFilterDiv {
     display: inline;
-    width: calc(100% - 7rem);
+    min-width: 19rem;
+    max-width: 26rem;
+    width: clamp(19rem, 52vw, 26rem);
     height: auto;
-}
 
-.openFilterDiv i:hover {
-    transition: background-color 0.3s, color 0.3s;
-    background-color: #b0b0b0;
+    .fa-sliders {
+        display: none;
+    }
+
+    .dropDownFilter1 {
+        margin-left: 1rem;
+    }
 }
 
 .container .projectManagement .filterDiv:hover {
@@ -105,14 +125,15 @@
 .container .main .projectManagement .addProject-form {
     width: 100%;
     height: 100%;
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: 0;
+    left: 2rem;
     background-color: #0000008c;
+    overflow-y: auto;
 }
 
 .container .main .projectManagement .addProject-form .form-bg .form-container {
-    margin: 8% auto;
+    margin: 4rem auto 0 auto;
     width: 380px;
     background-color: #fff;
     border-radius: 1em;
@@ -121,16 +142,23 @@
 }
 
 .container .main .projectManagement .addProject-form .form-bg .form-container .fm-content {
-    margin: 1rem;
-}
+     margin: 1rem;
+    .title {
+        display: flex;
+        /* margin: 1.33em auto; */
+        font-size: 16px;
+        font-weight: bold;
+    }
 
-.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content .title {
-    display: flex;
-    margin: 1.33em auto;
-    font-size: 16px;
-    font-weight: bold;
-}
+    .objetivos {
+        width: 80%;
+    }
 
+    .form-options {
+        display: flex;
+        justify-content: space-between;
+    }
+}
 
 .container .main .projectManagement .addProject-form .form-bg .form-container .fm-content textarea {
     width: 100%;
@@ -139,15 +167,6 @@
     margin: 8px 0;
     box-sizing: border-box;
     font-family: 'Open Sans', sans-serif;
-}
-
-.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content .objetivos {
-    width: 80%;
-}
-
-.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content .form-options {
-    display: flex;
-    justify-content: space-between;
 }
 
 .close-AddProject {
@@ -173,7 +192,7 @@
     width: 100%;
     height: 100%;
     background-color: #fff;
-
+    
     .title {
         display: flex;
         margin-top: 1.33em;
@@ -183,61 +202,58 @@
     }
 
     .editProject-form {
-        width: 20rem;
-        background-color: #fff;
+        width: 90%;
         border-radius: 1em;
         transition: width .3s ease-in-out;
-        margin: 5px 2%;
+        margin: 5px 5%;
 
         .fm-content {
             padding: 1rem;
+            .section1, .section2 {
+                width:100%;
+                margin-top:2rem;
+                .datesEditForm span {
+                    width: 100%;
+                    border: 1px solid --black;
+                    box-sizing: border-box;
+                }
 
-            .section1 .datesEditForm {
-                margin: 1rem 0;
+                .datesEditForm i {
+                    margin-left: 1rem;
+                }
+
+                .datesEditForm i:hover {
+                    transition: background-color 0.3s, color 0.3s;
+                    color: hsl(36, 100%, 35%);
+                }
+
+                textarea {
+                    font-family: 'Open Sans', sans-serif;
+                    width: 100%;
+                    max-height: 11rem;
+                    max-width: 125%;
+                    min-height: 10rem;
+                    padding: 10px 17px;
+                    margin: 8px 0;
+                    box-sizing: border-box;
+                }
+
+                .gestionObjetivos{
+                    margin-bottom: 6rem;
+                }
             }
 
-            .section1 .datesEditForm a {
-                width: 100%;
-                border: 1px solid --black;
-                box-sizing: border-box;
+            .objectivesBtn i {
+                padding-left: 5px;
             }
+        }
 
-            .section1 .datesEditForm i {
-                margin-left: 1rem;
-            }
-
-            .section1 .datesEditForm i:hover {
-                transition: background-color 0.3s, color 0.3s;
-                color: hsl(36, 100%, 35%);
-            }
-
-            .section2 textarea {
-                font-family: 'Open Sans', sans-serif;
-                width: 125%;
-                height: 3rem;
-                max-height: 20rem;
-                max-width: 125%;
-                min-width: 125%;
-                min-height: 10rem;
-                padding: 10px 17px;
-                margin: 8px 0;
-                box-sizing: border-box;
-            }
-
-            .section1 textarea {
-                font-family: 'Open Sans', sans-serif;
-                width: 125%;
-                max-height: 11rem;
-                max-width: 125%;
-                min-width: 125%;
-                min-height: 10rem;
-                padding: 10px 17px;
-                margin: 8px 0;
-                box-sizing: border-box;
-            }
-
+        .form-options {
+            position: fixed;
+            bottom: 1rem;
+            left: 5rem;
             .sumbit-editProject {
-                background-color: #676767;
+                background-color: #67676769;
                 border: none;
                 color: var(--white);
                 padding: 8px 20px;
@@ -253,30 +269,28 @@
                 cursor: pointer;
             }
 
-            .objectivesBtn i {
-                padding-left: 5px;
+            .close-editProject {
+                background-color: #8230159c;
+                border: none;
+                color: var(--white);
+                padding: 8px 20px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 15px;
+                cursor: pointer;
+            }
+            
+            .close-editProject:hover {
+                transition: background-color 0.3s, color 0.3s;
+                background-color: #94300e;
             }
         }
     }
 }
 
-.close-editProject {
-    background-color: var(--cancelBtn);
-    border: none;
-    color: var(--white);
-    padding: 8px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    border-radius: 15px;
-    cursor: pointer;
-}
 
-.close-editProject:hover {
-    transition: background-color 0.3s, color 0.3s;
-    background-color: #94300e;
-}
 
 .bold {
     font-weight: bold;
@@ -376,7 +390,6 @@
     position: absolute;
     top: 0;
     left: 0;
-    background-color: #0000008c;
 
     .addObjectiveForm {
         position: absolute;
@@ -471,27 +484,65 @@
     border: none;
 }
 
-.pageBg {
-    .fa-edit {
+.detailsContainer {
+    .fa-share-square-o {
         position: absolute;
         background-color: #0d8c7751;
-        margin: 15px;
+        margin-left: 10px;
         border-radius: 50%;
         bottom: 10px;
         cursor: pointer;
     }
 
-    .detailsContainerPage {
+    .detailsContainerDiv, .detailsContainerTitle {
         margin: 1rem 1rem;
         width: 85%;
         left: 0;
 
-        .name {
+        .name i{
             display: flex;
             align-items: center;
             justify-content: center;
+            font-style: normal;
+            font-size:1.5rem;
+            font-weight: bold;
         }
     }
+
+    .redBtn{
+        padding: 10px;
+        position: fixed;
+        bottom: 20px;
+        right: 1rem;   
+    }
+
+    .optionsDiv{
+        position: fixed;
+        top: 4rem;
+        right: 1rem;
+        background-color: var(--navBtnBg);
+        padding: 10px;
+        border-radius: 20px;
+        justify-content: space-between;
+        .fa-edit{
+            margin: 0 9px 0 10px;
+        }
+        .fa-ellipsis-v{
+            padding: 0 5px;
+        }
+        .fa{
+            background-color: unset;
+            position: initial;
+            font-size: 18px;
+        }
+    }
+     .optionsDiv:hover{
+        background-color: var(--menuColor);
+     }
+}
+
+.detailsContainer div div h3{
+    margin:1rem 0 .5rem 0;
 }
 
 .addMemberBtn {
@@ -541,6 +592,65 @@
     }
 }
 
+@media screen and (min-width: 600px){
+      .detailsContainer {
+        background-color: #3333338a;
+        padding-top: 1rem;
+        position: absolute;
+        width: -webkit-fill-available;
+        height: calc(fit-content + 3rem);
+        min-height: 100vh;
+        .detailsContainerTitle {
+            margin: 0 auto;
+            background-color: var(--white);
+            padding: 1rem 0;
+            .fechas{
+                display: flex;
+                padding: 0 1rem;
+                justify-content: space-between;
+                .fechaInicio{
+                    width: 30rem;
+                }
+                .fechaCierre{
+                    margin-left: calc(100% - 23rem);
+                    width: 30rem;
+                }
+            }
+        }
+        .detailsContainerDiv {
+            margin: 10px auto;
+            background-color: var(--white);
+            padding: 1px 2.5rem 1em 2.5rem;
+        }
+        .optionsDiv{
+            background-color: var(--menuColor);
+        }
+    }
+
+    .datesEditForm {
+        max-width: 32rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        .fechaIni, .fechaFin{
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+@media screen and (min-width: 700px){
+    .main .projectManagement .projectSelected{
+        .deleteAllShort {
+            display: none;
+        }
+    
+        .deleteAll {
+            display: inline-flex;
+        }
+    }
+}
+
 @media screen and (min-width: 800px) {
     .objectivesBtn {
         position: fixed;
@@ -558,6 +668,11 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-left: 4%;
+    }
+
+    .container .projectManagement .nav-buttons{
+        left: calc(4% + 4.2rem);
     }
 
     .container .main .projectManagement .addBtn {
@@ -566,10 +681,6 @@
         .add-user-btn {
             font-size: 24px;
         }
-    }
-
-    .container .projectManagement .nav-buttons {
-        top: 3rem;
     }
 
     .container .main .projectManagement .addProject-form .form-bg .form-container {
@@ -598,23 +709,27 @@
 
     .container .main .editContainer .form-container .editProject-form {
         width: calc(100% - 4rem);
-        ;
-
+        .fm-content div{
+            
+        }
         .fm-content .section1 {
             width: 40%;
-            margin-right: 1rem;
             float: left;
+
+             .gestionObjetivos{
+                    margin-bottom: 7rem;
+                }
         }
 
         .fm-content .section2 {
             width: 40%;
-            margin-left: 10%;
+            margin-left:10%;
             margin-right: 1.5rem;
             float: left;
+            margin-bottom: 3rem;
         }
 
         .fm-content .section2 textarea {
-            max-width: calc(100% - .2rem);
             min-width: calc(100% - .2rem);
             width: calc(100% - .2rem);
             height: 10rem;
@@ -622,18 +737,11 @@
         }
 
         .fm-content .section1 textarea {
-            max-width: calc(100% - .2rem);
-            min-width: calc(100% - .2rem);
-            width: calc(100% - .2rem);
+            /* max-width: calc(100% - .2rem);
+            min-width: calc(100% - .2rem); */
+            width: calc(100% - .2rem); 
             height: 10rem;
             max-height: 25rem;
-        }
-
-        .fm-content .form-options {
-            width: 125%;
-            position: fixed;
-            bottom: 6.5rem;
-            left: 5rem;
         }
     }
 
@@ -655,25 +763,39 @@
     .cancelObj {
         left: 65%;
     }
+}
 
-    .pageBg {
-        background-color: #3333338a;
-        padding-top: 1rem;
-        position: absolute;
-        width: -webkit-fill-available;
-        height: calc(fit-content + 3rem);
-
-        .detailsContainerPage {
-            width: 42rem;
-            height: calc(42rem*1.2);
-            margin: 1rem auto;
-            background-color: var(--white);
-            padding: 1.5rem 2.5rem;
+@media screen and (min-width: 950px){
+      .detailsContainer{
+        display:flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+        .detailsContainerTitle {
+            width: 96%;
+            .name i{
+                font-size: 200%;
+            }
+        }
+        
+        .detailsContainerDiv {
+            margin: 1px 1px;
+            width: 45%;
+            padding: 10px 2rem;
+            font-size: 106%;
         }
     }
+    
 }
 
 @media screen and (min-width: 1100px) {
+    .container .main .projectManagement{
+        .projectSelected {
+            right: 20%;
+        }
+    }
+    
     .container .main .projectManagement .addBtn {
         bottom: 20px;
 
@@ -681,15 +803,6 @@
             font-size: 25px;
         }
     }
-
-    .container .projectManagement .openFilterDiv {
-        width: calc(100% - 11rem);
-    }
-
-    .container .projectManagement .nav-buttons {
-        right: 5rem;
-    }
-
     .container .main .projectManagement .addProject-form .form-bg .form-container {
         margin: 5% auto;
         width: 640px;
@@ -720,8 +833,8 @@
             height: 8rem;
         }
 
-        .fm-content .form-options {
-            bottom: 5.5rem;
+        .form-options {
+            bottom: 1.5rem;
         }
 
     }
@@ -755,13 +868,6 @@
 
     .cancelObj {
         left: 67%;
-    }
-
-    .pageBg .detailsContainerPage {
-        margin: 1rem auto;
-        width: 45rem;
-        padding: 1.5rem 3rem;
-        font-size: 106%;
     }
 }
 
@@ -838,5 +944,30 @@
 
     td:nth-of-type(6):before {
         content: "Acciones";
+    }
+
+    .editContainer div form div div div .table {
+        
+        table {
+            width: 95%;
+        }
+
+        .members-list{
+            td:nth-of-type(1):before {
+            content: "Nombre";
+            }
+            td:nth-of-type(3):before {
+                content: "Cargo";
+            }
+        }
+        
+        .objectiveG-list{
+            td:nth-of-type(1):before {
+            content: "No.";
+            }
+            td:nth-of-type(3):before {
+                content: "Descripción";
+            }
+        }
     }
 }
