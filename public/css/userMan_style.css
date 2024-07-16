@@ -164,9 +164,9 @@
     position: absolute;
     border-radius: 25px;
     background-color: var(--navBtnBg);
-    top: 3rem;
+    top: .5rem;
     left: 5rem;
-    margin: 16px;
+    margin: 0 16px;
     height: fit-content;
 }
 
