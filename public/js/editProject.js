@@ -114,6 +114,65 @@ function parseSpanishDate(dateString) {
     return `${year}-${monthNumber}-${dayPadded}`;
 }
 
+//Filtrar usuarios disponibles
+function filtrarUsuariosPorDepartamento() {
+    const departamento = document.getElementById('filtroDepartamento').value;
+    const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
+    let firstVisible = true;
+
+    const opciones = usuariosSelect.getElementsByTagName('option');
+
+    for (let i = 0; i < opciones.length; i++) {
+        const opcion = opciones[i];
+        const depto = opcion.getAttribute('data-depto');
+        
+        if (departamento === 'noFilter' || departamento === depto) {
+            opcion.style.display = 'block';
+            if (firstVisible) {
+                opcion.selected = true;
+                firstVisible = false;
+            }
+        } else {
+            opcion.style.display = 'none';
+        }
+    }
+}
+
+///Agregar integrante de proyecto
+function agregarMiembro() {
+    const usuarioId = document.getElementById('listaUsuariosDisponibles').value;
+    const usuarioNombre = document.getElementById('listaUsuariosDisponibles').selectedOptions[0].text;
+    const tipoMiembro = document.getElementById('tipoMiembro').value;
+    const tipoMiembroTexto = tipoMiembro == '1' ? 'Responsable' : 'Colaborador';
+    const tablaBody = document.getElementById('members-list-body');
+    const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
+
+    // Verificar y eliminar la fila "No se encontraron integrantes registrados" si existe
+    const noIntegrantesRow = document.getElementById('no-integrantes-row');
+    if (noIntegrantesRow) {
+        noIntegrantesRow.remove();
+    }
+
+    // Crear nueva fila y añadirla a la tabla
+    const nuevaFila = document.createElement('tr');
+    const nombreCelda = document.createElement('td');
+    const rolCelda = document.createElement('td');
+
+    nombreCelda.textContent = usuarioNombre;
+    rolCelda.textContent = tipoMiembroTexto;
+
+    nuevaFila.appendChild(nombreCelda);
+    nuevaFila.appendChild(rolCelda);
+
+    tablaBody.appendChild(nuevaFila);
+
+    // Eliminar la opción del usuario del select de usuarios disponibles
+    const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
+    if (opcionAEliminar) {
+        opcionAEliminar.remove();
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     function init() {
         console.log("La página ha cargado completamente");

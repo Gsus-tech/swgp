@@ -1,100 +1,224 @@
 
-.container .main .projectManagement {
-    background-color: #fff;
-    width: 100%;
-    height: 100%;
-    margin-bottom: 2rem;
-}
-
-.container .main .projectManagement .addBtn {
-    position: fixed;
-    width: fit-content;
-    background-color: #0d8c7751;
-    margin: 15px;
+.container .main .projectManagement {    
+    background-color: #fff;    
+    width: 100%;   
+    margin-bottom: 2rem; 
+} 
+.container .main .projectManagement .addBtn {  
+    position: sticky;  
+    width: fit-content; 
+    background-color: #0d8c7751;  
+    margin: 15px; 
     border-radius: 50%;
-    bottom: 10px;
-    left: 3rem;
+    bottom: 5rem;  
     cursor: pointer;
-}
-
-.container .main .projectManagement .addBtn .add-project-btn {
+} 
+.container .main .projectManagement .addBtn .add-project-btn {  
     padding: 6px 7px;
-    font-size: 22px;
-}
-
-.container .main .projectManagement .addBtn .add-project-btn:hover {
+    font-size: 22px; 
+} 
+.container .main .projectManagement .addBtn .add-project-btn:hover { 
+    background-color: #09be00;     
+    border-radius: 50%;    
+    font-size: 170%;    
     transition: background-color 0.3s, color 0.3s;
-    background-color: #09be00;
-    border-radius: 50%;
-    font-size: 170%;
-}
-
-.container .main .projectManagement .addBtn .add-project-btn:hover fa {
-    transition: background-color 0.3s, color 0.3s;
-    color: var(--black);
-}
-
-.container .projectManagement .nav-buttons {
-    position: absolute;
+} 
+.container .projectManagement .nav-buttons {   
+    position: absolute;     
     border-radius: 25px;
-    background-color: #b0b0b051;
-    top: .5rem;
-    left: 5.5rem;
-    margin: 0 16px;
-}
-
-.container .main .projectManagement .nav-buttons .fa {
-    padding-top: 3px;
-    padding-bottom: 5px;
-    margin: 2px 5px;
-    font-size: 22px;
+    background-color: #b0b0b051; 
+    top: 0.5rem;   
+    left: 5.5rem;    
+    margin: 0 16px; 
+} 
+.container .main .projectManagement .nav-buttons .fa {   
+    padding-top: 3px; 
+    padding-bottom: 5px;  
+    margin: 2px 5px;  
+    font-size: 22px;   
     color: var(--black);
-}
-
-.container .main .projectManagement{
-    .nav-buttons:hover {
-        background-color: var(--navBtnHover);
-    }
-    
-    .nav-buttons .fa:hover {
-        transition: background-color 0.3s, color 0.3s;
-        color: var(--hover-items);
-    }
-
-    .filterDiv i:hover{
-        color: var(--hover-items);
-    }
-
-    .projectSelected {
-        justify-content: space-between;
-        position: absolute;
-        top: 4rem;
-        right: 8%;
-    }
-
-    .deleteAllShort {
-    display: inline-flex;
-    }
-    
-    .deleteAll {
-        display: none;
-    }
-}
-
-.container .projectManagement .filterDiv {
-    display: inline-block;
-    border-radius: 25px;
-    background-color: var(--navBtnBg);
-    padding: 3px 1rem 7px 1rem;
-    margin-right: 2.5rem;
-    margin-top: .5rem;
-    margin-left: 1rem;
-    margin-bottom: 10px;
+}  
+.container .projectManagement .nav-buttons:hover {   
+    background-color: var(--navBtnHover); 
+}  
+.container .projectManagement .nav-buttons .fa:hover {  
+    color: var(--hover-items);  
+    transition: background-color 0.3s, color 0.3s; 
+}  
+.container .projectManagement .filterDiv {  
+    display: inline-block;  
+    border-radius: 25px;    
+    background-color: var(--navBtnBg);   
+    padding: 3px 1rem 7px 1rem; 
+    margin-right: 2.5rem; 
+    margin-top: 0.5rem;   
+    margin-left: 1rem;  
+    margin-bottom: 10px;    
     font-size: 11px;
 }
+.container .projectManagement .filterDiv .fa {  
+    font-size: 22px; 
+} 
+.container .projectManagement .filterDiv:hover { 
+    background-color: #b0b0b0;   
+    transition: background-color 0.3s, color 0.3s;
+}  
+.container .projectManagement .table .project-list .rowActions {
+    width: 6.5rem; 
+} 
+.container .projectManagement .table .project-list .fa {
+    margin-left: 10%;  
+    text-decoration: none;
+    color: #333;
+}  
+.container .projectManagement .table .project-list th {
+    background-color: #f2f2f2;
+}  
+.container .projectManagement .table .project-list form {  
+    display: inline; 
+} 
+.container .main .projectManagement .addProject-form {   
+    width: 100%;    
+    height: 100%;    
+    position: fixed;  
+    top: 0;    
+    left: 2rem;
+    background-color: #0000008c;   
+    overflow-y: auto; 
+}  
+.container .main .projectManagement .addProject-form .form-bg .form-container {
+    margin: 4rem auto 0 auto;   
+    width: 380px;    
+    background-color: #fff; 
+    border-radius: 1em;  
+    padding: 10px 2rem;    
+    transition: width 0.3s ease-in-out;
+}
+.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content {  
+    margin: 1rem 0; 
+}
+.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content .title {    
+    display: flex;     
+    font-size: 16px;   
+    font-weight: bold;
+}  
+.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content .objetivos {  
+    width: 80%; 
+}
+.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content .form-options {   
+    display: flex; 
+    justify-content: 
+    space-between; 
+}  
+.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content textarea { 
+    width: 100%;  
+    max-height: 10rem; 
+    padding: 10px 17px;  
+    margin: 8px 0;     
+    box-sizing: border-box; 
+    font-family: 'Open Sans', sans-serif; 
+} 
 
-.container .projectManagement .filterDiv .fa {
-    font-size: 22px;
+
+.container .main .editContainer {  
+    width: 100%; 
+    height: 100%;  
+    background-color: var(--white);
+    margin-bottom: 7.5rem; 
+} 
+.container .main .editContainer .form-container {  
+    width: 100%; 
+    height: 100%;
+    background-color: var(--white); 
+} 
+.container .main .editContainer .form-container .title {   
+    display: flex;
+    margin-top: 1.33em;    
+    margin-left: 1rem;  
+    font-size: 18px;  
+    font-weight: bold;
+}
+.container .main .editContainer .form-container .editProject-form { 
+    width: 90%;   
+    height: fit-content;
+    border-radius: 1em; 
+    transition: width 0.3s ease-in-out; 
+    margin: 5px 5%;
+    background-color: #e2e2e2;
+}  
+.container .main .editContainer .form-container .editProject-form .fm-content { 
+    padding: 1rem;
+}
+.container .main .editContainer .form-container .editProject-form .fm-content .section1, .container .main .editContainer .form-container .editProject-form .fm-content .section2 {  
+    width: 100%;    
+    margin-top: 2rem; 
+}
+.container .main .editContainer .form-container .editProject-form .fm-content .section1 .deptoDiv, .container .main .editContainer .form-container .editProject-form .fm-content .section2 .deptoDiv {    
+    margin-top: 1rem;
+}
+.container .main .editContainer .form-container .editProject-form .fm-content .section1 .deptoDiv .deptoAsign, .container .main .editContainer .form-container .editProject-form .fm-content .section2 .deptoDiv .deptoAsign {   
+    margin-top: 0.5rem;
+} 
+.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm span {  
+    width: 100%;   
+    border: 1px solid --black;   
+    box-sizing: border-box;   
+    font-size: 16px;
+} 
+.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm div div select {    
+    font-size: 13px; 
+} 
+.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm i { 
+    margin-left: 0.5rem;
+} 
+.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm i:hover {     
+    color: hsl(36, 100%, 35%);     
+    transition: background-color 0.3s, color 0.3s;
+}  .container .main .editContainer .form-container .editProject-form .fm-content textarea { 
+    font-family: 'Open Sans', sans-serif;  
+    width: 100%;    
+    max-height: 11rem;  
+    min-height: 6rem; 
+    resize: none;    
+    padding: 10px 17px;    
+    margin: 8px 0;  
+    box-sizing: border-box;
+} 
+.container .main .editContainer .form-container .editProject-form .form-options { 
+    position: fixed;  
+    bottom: 1rem;   
+    left: 5rem; 
+} 
+.container .main .editContainer .form-container .editProject-form .form-options .sumbit-editProject {  
+    background-color: #67676769;    
+    border: none;   
+    color: var(--white);
+    padding: 8px 20px;  
+    text-align: center;   
+    text-decoration: none; 
+    display: inline-block;     
+    font-size: 16px; 
+    border-radius: 15px; 
+} 
+.container .main .editContainer .form-container .editProject-form .form-options .enabled {   
+    background-color: #124734; 
+    cursor: pointer;
+}
+.container .main .editContainer .form-container .editProject-form .form-options .close-editProject {   
+    background-color: #8230159c;     
+    border: none;  
+    color: var(--white);   
+    padding: 8px 20px;   
+    text-align: center;   
+    text-decoration: none;  
+    display: inline-block;     
+    font-size: 16px;    
+    border-radius: 15px;   
+    cursor: pointer;
+} 
+.container .main .editContainer .form-container .editProject-form .form-options .close-editProject:hover { 
+    background-color: #94300e;  
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .closedFilterDiv {
@@ -118,59 +242,6 @@
     }
 }
 
-.container .projectManagement .filterDiv:hover {
-    transition: background-color 0.3s, color 0.3s;
-    background-color: #b0b0b0;
-}
-
-
-.container .main .projectManagement .addProject-form {
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 2rem;
-    background-color: #0000008c;
-    overflow-y: auto;
-}
-
-.container .main .projectManagement .addProject-form .form-bg .form-container {
-    margin: 4rem auto 0 auto;
-    width: 380px;
-    background-color: #fff;
-    border-radius: 1em;
-    padding: 10px 0;
-    transition: width .3s ease-in-out;
-}
-
-.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content {
-     margin: 1rem;
-    .title {
-        display: flex;
-        /* margin: 1.33em auto; */
-        font-size: 16px;
-        font-weight: bold;
-    }
-
-    .objetivos {
-        width: 80%;
-    }
-
-    .form-options {
-        display: flex;
-        justify-content: space-between;
-    }
-}
-
-.container .main .projectManagement .addProject-form .form-bg .form-container .fm-content textarea {
-    width: 100%;
-    max-height: 10rem;
-    padding: 10px 17px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    font-family: 'Open Sans', sans-serif;
-}
-
 .close-AddProject {
     background-color: var(--cancelBtn);
     border: none;
@@ -188,125 +259,6 @@
 .close-AddProject:hover {
     transition: background-color 0.3s, color 0.3s;
     background-color: #94300e;
-}
-
-.container .main{
-    .editContainer {
-        min-height: fit-content;
-    }
-}
-
-.container .main .editContainer .form-container {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-    
-    .title {
-        display: flex;
-        margin-top: 1.33em;
-        margin-left: 1rem;
-        font-size: 18px;
-        font-weight: bold;
-    }
-
-    .editProject-form {
-        width: 90%;
-        border-radius: 1em;
-        transition: width .3s ease-in-out;
-        margin: 5px 5%;
-        .fm-content {
-            .projectSpecs{
-                margin-bottom: 6rem;
-            }
-            padding: 1rem;
-            .section1, .section2 {
-                width:100%;
-                margin-top:2rem;
-
-                .deptoDiv {
-                    margin-top: 1rem;
-                    .deptoAsign{
-                        margin-top:.5rem;
-                    }
-                }
-
-                .datesEditForm span {
-                    width: 100%;
-                    border: 1px solid --black;
-                    box-sizing: border-box;
-                    font-size: 12px;
-                }
-
-                .datesEditForm div div select {
-                     font-size: 11px;
-                }
-
-                .datesEditForm i {
-                    margin-left: .5rem;
-                }
-
-                .datesEditForm i:hover {
-                    transition: background-color 0.3s, color 0.3s;
-                    color: hsl(36, 100%, 35%);
-                }
-
-                textarea {
-                    font-family: 'Open Sans', sans-serif;
-                    width: 100%;
-                    max-height: 11rem;
-                    min-height: 6rem;
-                    resize: none;
-                    padding: 10px 17px;
-                    margin: 8px 0;
-                    box-sizing: border-box;
-                }
-            }
-
-            .objectivesBtn i {
-                padding-left: 5px;
-            }
-        }
-
-        .form-options {
-            position: fixed;
-            bottom: 1rem;
-            left: 5rem;
-            .sumbit-editProject {
-                background-color: #67676769;
-                border: none;
-                color: var(--white);
-                padding: 8px 20px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                border-radius: 15px;
-            }
-
-            .enabled {
-                background-color: #124734;
-                cursor: pointer;
-            }
-
-            .close-editProject {
-                background-color: #8230159c;
-                border: none;
-                color: var(--white);
-                padding: 8px 20px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                border-radius: 15px;
-                cursor: pointer;
-            }
-            
-            .close-editProject:hover {
-                transition: background-color 0.3s, color 0.3s;
-                background-color: #94300e;
-            }
-        }
-    }
 }
 
 
@@ -357,37 +309,6 @@
 .enabled {
     background-color: #124734;
     cursor: pointer;
-}
-
-.container .main .projectManagement {
-    .project-list {
-        .rowActions {
-            width: 6.5rem;
-        }
-    
-        .fa {
-            margin-left: 10%;
-            text-decoration: none;
-        }
-    }
-
-    .project-list th {
-        background-color: #f2f2f2;
-    }
-
-    .project-list form {
-        display: inline;
-    }
-}
-
-.container .projectManagement .table {
-    .project-list {
-        font-size: 12px;
-    }
-
-    .fa {
-        color: #333;
-    }
 }
 
 .NameInput {
@@ -503,67 +424,6 @@
     border: none;
 }
 
-.detailsContainer {
-    .fa-share-square-o {
-        position: absolute;
-        background-color: #0d8c7751;
-        margin-left: 10px;
-        border-radius: 50%;
-        bottom: 10px;
-        cursor: pointer;
-    }
-
-    .detailsContainerDiv, .detailsContainerTitle {
-        margin: 1rem 1rem;
-        width: 85%;
-        left: 0;
-
-        .name i{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-style: normal;
-            font-size:1.5rem;
-            font-weight: bold;
-        }
-    }
-
-    .redBtn{
-        padding: 10px;
-        position: fixed;
-        bottom: 20px;
-        right: 1rem;   
-    }
-
-    .optionsDiv{
-        position: fixed;
-        top: 4rem;
-        right: 1rem;
-        background-color: var(--navBtnBg);
-        padding: 10px;
-        border-radius: 20px;
-        justify-content: space-between;
-        .fa-edit{
-            margin: 0 9px 0 10px;
-        }
-        .fa-ellipsis-v{
-            padding: 0 5px;
-        }
-        .fa{
-            background-color: unset;
-            position: initial;
-            font-size: 18px;
-        }
-    }
-     .optionsDiv:hover{
-        background-color: var(--menuColor);
-     }
-}
-
-.detailsContainer div div h3{
-    margin:1rem 0 .5rem 0;
-}
-
 .addMemberBtn {
     color: var(--white);
     padding: 3px 10px;
@@ -611,39 +471,68 @@
     }
 }
 
+
+.detailsContainer {
+    margin-bottom: 3rem;
+}  
+.detailsContainer .fa-share-square-o {
+    position: absolute;
+    background-color: #0d8c7751;
+    margin-left: 10px;
+    border-radius: 50%;
+    bottom: 10px;
+    cursor: pointer;
+}  
+.detailsContainer .detailsContainerDiv, .detailsContainer .detailsContainerTitle {
+    margin: 1rem 1rem;
+    width: 85%;
+    left: 0;
+}  
+.detailsContainer .detailsContainerDiv .name i { 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-style: normal;
+    font-size: 1.5rem;
+    font-weight: bold; 
+}
+.detailsContainer .redBtn {
+    padding: 10px; 
+    position: fixed;  
+    bottom: 20px;    
+    right: 1rem;
+}  
+.detailsContainer .optionsDiv { 
+    position: fixed;  
+    top: 4rem;   
+    right: 1rem;   
+    background-color: var(--navBtnBg);  
+    padding: 10px;  
+    border-radius: 20px;   
+    justify-content: space-between;
+} 
+.detailsContainer .optionsDiv .fa-edit
+{  
+    margin: 0 9px 0 10px;
+}  
+.detailsContainer .optionsDiv .fa-ellipsis-v {  
+    padding: 0 5px; 
+}  
+.detailsContainer .optionsDiv .fa
+{  
+    background-color: unset;     
+    position: initial;
+    font-size: 18px;
+}  
+.detailsContainer .optionsDiv:hover { 
+    background-color: var(--menuColor);
+}  
+.detailsContainer div div h3 {   
+    margin: 1rem 0 0.5rem 0;
+}
+
+
 @media screen and (min-width: 600px){
-    .detailsContainer {
-        background-color: #3333338a;
-        padding-top: 1rem;
-        position: relative;
-        width: -webkit-fill-available;
-        height: fit-content;
-        .detailsContainerTitle {
-            margin: 0 auto;
-            background-color: var(--white);
-            padding: 1rem 0;
-            .fechas{
-                display: flex;
-                padding: 0 1rem;
-                justify-content: space-between;
-                .fechaInicio{
-                    width: 30rem;
-                }
-                .fechaCierre{
-                    margin-left: calc(100% - 23rem);
-                    width: 30rem;
-                }
-            }
-        }
-        .detailsContainerDiv {
-            margin: 10px auto;
-            background-color: var(--white);
-            padding: 1px 2.5rem 1em 2.5rem;
-        }
-        .optionsDiv{
-            background-color: var(--menuColor);
-        }
-    }
 
     .datesEditForm {
         display: flex;
@@ -654,21 +543,83 @@
             flex-direction: column;
         }
     }
+
+    .detailsContainer {    
+        background-color: #3333338a;    
+        padding-top: 1rem;     
+        position: relative;         
+        width: -webkit-fill-available;  
+        height: fit-content;    
+    }   
+    .detailsContainer .detailsContainerTitle {     
+        margin: 0 auto;      
+        background-color: var(--white);         
+        padding: 1rem 0;    
+    }     
+     .detailsContainer .detailsContainerTitle .name i{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: normal;
+        font-size:1.5rem;
+        font-weight: bold;
+    
+     }
+    .detailsContainer .detailsContainerTitle .fechas {    
+        display: flex;       
+        padding: 0 1rem;     
+        justify-content: space-between;     
+    }    
+    .detailsContainer .detailsContainerTitle .fechas .fechaInicio {       
+        width: 30rem;    
+    }     
+    .detailsContainer .detailsContainerTitle .fechas .fechaCierre {   
+        margin-left: calc(100% - 23rem);    
+        width: 30rem;   
+    }  
+    .detailsContainer .detailsContainerDiv {   
+        margin: 10px auto;         
+        background-color: var(--white);       
+        padding: 1px 2.5rem 1em 2.5rem;    
+    }     
+    .detailsContainer .optionsDiv { 
+        background-color: var(--menuColor);     
+    }
 }
 
+
 @media screen and (min-width: 700px){
-    .main .projectManagement .projectSelected{
-        .deleteAllShort {
-            display: none;
-        }
-    
-        .deleteAll {
-            display: inline-flex;
-        }
+   .main .projectManagement .projectSelected .deleteAllShort {    
+        display: none;   
+    }    
+    .main .projectManagement .projectSelected .deleteAll {    
+        display: inline-flex;    
     }
 }
 
 @media screen and (min-width: 800px) {
+
+    .container .projectManagement .filterDiv { 
+        font-size: 13px;      
+        display: flex;   
+        justify-content: space-between;   
+        align-items: center;     
+        margin-left: 4%;    
+    }     
+    .container .projectManagement .nav-buttons {  
+        left: calc(4% + 4.2rem); 
+    }      
+    .container .main .projectManagement .addBtn .add-user-btn {         
+        font-size: 24px;     
+    }  
+    .container .main .projectManagement .addProject-form .form-bg .form-container {  
+        margin: 7% auto;     
+        width: 500px;   
+    }     
+    .container .projectManagement .table .rowID {  
+        width: 2.5rem;   
+    }
+    
     .objectivesBtn {
         position: fixed;
         bottom: 3rem;
@@ -678,31 +629,6 @@
     .container .main .manageMembersDiv .editProject-form .addMemberBtn {
         right: calc(35% - 1rem);
 
-    }
-
-    .container .projectManagement .filterDiv {
-        font-size: 13px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-left: 4%;
-    }
-
-    .container .projectManagement .nav-buttons{
-        left: calc(4% + 4.2rem);
-    }
-
-    .container .main .projectManagement .addBtn {
-        bottom: 10px;
-
-        .add-user-btn {
-            font-size: 24px;
-        }
-    }
-
-    .container .main .projectManagement .addProject-form .form-bg .form-container {
-        margin: 7% auto;
-        width: 500px;
     }
 
     .dates {
@@ -718,39 +644,33 @@
         width: 50%;
     }
 
-    .container .projectManagement .table {
-        .rowID {
-            width: 2.5rem;
-        }
+   
+     .container .main .editContainer .form-container .editProject-form {   
+         height: 37rem;
+         width: calc(100% - 4rem);
+     }
+    .container .main .editContainer .form-container .editProject-form .specs div{
+        margin-top:0;
     }
-    
-    .container .main .editContainer{
-        margin-bottom: 7.5rem;    
-    }
-    .container .main .editContainer .form-container .editProject-form {
-        width: calc(100% - 4rem);
-        .specs .section1{
-            margin-bottom: 6rem;
-        }
-        .fm-content .section1 {
-            width: 40%;
-            float: left;
-        }
-
-        .fm-content .section2 {
-            width: 40%;
-            margin-left:10%;
-            margin-right: 1.5rem;
-            float: left;
-            margin-bottom: 3rem;
-        }
-
-        .fm-content div textarea{
-            width: calc(100% - .2rem); 
-            height: 10rem;
-            max-height: 13rem;
-        }
-    }
+    .container .main .editContainer .form-container .editProject-form .specs .section1 {  
+        margin-bottom: 6rem;  
+    }    
+    .container .main .editContainer .form-container .editProject-form .fm-content .section1 {    
+        width: 40%;      
+        float: left;    
+    }  
+    .container .main .editContainer .form-container .editProject-form .fm-content .section2 {   
+        width: 40%;   
+        margin-left: 10%;     
+        margin-right: 1.5rem;  
+        float: left;     
+        margin-bottom: 3rem;  
+    }    
+    .container .main .editContainer .form-container .editProject-form .fm-content div textarea {   
+        width: calc(100% - 0.2rem);  
+        height: 10rem;  
+        max-height: 13rem;   
+   }
 
     .form-bg {
         .newObjectiveTxt {
@@ -780,71 +700,73 @@
 }
 
 @media screen and (min-width: 950px){
-      .detailsContainer{
-        display:flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-        padding: 20px;
-        .detailsContainerTitle {
-            width: 96%;
-            .name i{
-                font-size: 200%;
-            }
-        }
-        
-        .detailsContainerDiv {
-            margin: 1px 1px;
-            width: 45%;
-            padding: 10px 2rem;
-            font-size: 106%;
-        }
+ .detailsContainer {   
+     display: flex;    
+     flex-wrap: wrap;      
+     gap: 20px;     
+     justify-content: center;       
+     padding: 20px;   
+ }     
+    .detailsContainer .detailsContainerTitle {    
+        width: 96%;   
+    }    
+    .detailsContainer .detailsContainerTitle .name i {  
+        font-size: 200%;    
+    }     
+    .detailsContainer .detailsContainerDiv {   
+        margin: 1px 1px;     
+        width: 45%;      
+        padding: 10px 2rem;     
+        font-size: 106%;   
     }
     
 }
 
 @media screen and (min-width: 1100px) {
-    .container .main .projectManagement{
-        .projectSelected {
-            right: 20%;
-        }
+    .container .main .projectManagement .projectSelected {  
+        right: 20%;   
+    }    
+    .container .main .projectManagement .addBtn .add-user-btn {      
+        font-size: 25px;     
+    }    
+    .container .main .projectManagement .addProject-form .form-bg .form-container {  
+        margin: 5% auto;   
+        width: 640px;   
+    }     
+    .container .projectManagement .table .project-list {     
+        font-size: 14px;  
+    }
+
+     .container .main .editContainer .form-container .editProject-form { 
+         width: calc(100% - 6rem);     
+         height: 100vh;
+            margin: 5px 4%;
     }
     
-    .container .main .projectManagement .addBtn {
-        bottom: 20px;
-
-        .add-user-btn {
-            font-size: 25px;
+    .container .main .editContainer .form-container .editProject-form .fm-content .section2 .datesEditForm {       
+        padding-top: .5rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+         .fechaIni, .fechaFin{
+            margin:0;
+            /* display: flex; */
+            flex-direction: column;
         }
+    }   
+    .container .main .editContainer .form-container .editProject-form .fm-content .section1 .datesEditForm label {      
+        margin-top: 2rem;   
+    }     
+    .container .main .editContainer .form-container .editProject-form .form-options {   
+        bottom: 1.5rem;  
     }
-    .container .main .projectManagement .addProject-form .form-bg .form-container {
-        margin: 5% auto;
-        width: 640px;
+    .container .main .editContainer div form div div div .table td{
+        font-size: 14px;
     }
-
-    .container .projectManagement .table {
-        .project-list {
-            font-size: 14px;
-        }
+    .container .main .editContainer{
+        
     }
-
-    .container .main .editContainer .form-container .editProject-form {
-        .fm-content .section1 {
-            .datesEditForm {
-                padding-top: 1rem;
-            }
-
-            .datesEditForm label {
-                margin-top: 2rem;
-            }
-        }
-
-        .form-options {
-            bottom: 1.5rem;
-        }
-
-    }
-
+    
     .form-bg {
         .addObjective-form {
             top: 40%;
@@ -874,17 +796,6 @@
 
     .cancelObj {
         left: 67%;
-    }
-
-    .datesEditForm {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        .fechaIni, .fechaFin{
-            margin:0;
-            display: flex;
-            flex-direction: column;
-        }
     }
 }
 
@@ -964,27 +875,21 @@
     }
 
     .editContainer div form div div div .table {
-        
-        table {
-            width: 95%;
-        }
-
-        .members-list{
-            td:nth-of-type(1):before {
-            content: "Nombre";
-            }
-            td:nth-of-type(3):before {
-                content: "Cargo";
-            }
-        }
-        
-        .objectiveG-list{
-            td:nth-of-type(1):before {
-            content: "No.";
-            }
-            td:nth-of-type(3):before {
-                content: "DescripciÃ³n";
-            }
+        table {     
+            width: 95%;  
+        }    
+        .members-list td:nth-of-type(1):before {   
+            content: "Nombre";    
+        }    
+        .members-list td:nth-of-type(2):before {     
+            content: "Cargo";   
+        }  
+        .objectiveG-list td:nth-of-type(1):before {    
+            content: "No.";    
+        }      
+        .objectiveG-list td:nth-of-type(2):before {   
+            content: "DescripciÃƒÂ³n";   
         }
     }
+     
 }

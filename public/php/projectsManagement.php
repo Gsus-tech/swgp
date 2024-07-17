@@ -46,7 +46,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="detailsContainer scroll">
                     <div class="detailsContainerTitle">
                         <div class="name">
-                            <i><?php echo $projectData[0]['nombre']?></i>
+                            <i><?php echo htmlspecialchars($projectData[0]['nombre'], ENT_QUOTES, 'UTF-8');?></i>
                         </div>
                         <div class="fechas">
                             <label class="fechaInicio">Fecha de inicio: <?php echo $d1?></label><br>
@@ -56,19 +56,19 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <div class="detailsContainerDiv">
                         <div class="descripcion">
                             <h3>Descripción:</h3>
-                            <i style="font-style: normal;"><?php echo $projectData[0]['descripción']?></i>
+                            <i style="font-style: normal;"><?php echo htmlspecialchars($projectData[0]['descripción'], ENT_QUOTES, 'UTF-8');?></i>
                         </div>
                     </div>
                     <div class="detailsContainerDiv">
                         <div class="meta">
                             <h3>Meta:</h3>
-                            <i style="font-style: normal;"><?php echo $projectData[0]['meta']?></i>
+                            <i style="font-style: normal;"><?php echo htmlspecialchars($projectData[0]['meta'], ENT_QUOTES, 'UTF-8');?></i>
                         </div>
                         <div class="objetivosGen">
                             <h3>Objetivos generales:</h3>
                         <?php   if(count($objectivesGData)!=0){
                                 for($i=0;$i<count($objectivesGData);$i++){
-                                    echo '<a style="font-style: normal;">'.$objectivesGData[$i]['id_objetivo'].':  '.$objectivesGData[$i]['contenido'].'</a><br>';
+                                    echo '<a style="font-style: normal;">'.$objectivesGData[$i]['id_objetivo'].':  '.htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
                                     $fl = true;
                                 } 
                             }else{
@@ -81,7 +81,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <h3>Objetivos específicos:</h3>
                         <?php   if(count($objectivesEData)!=0){
                                 for($i=0;$i<count($objectivesEData);$i++){
-                                    echo '<a style="font-style: normal;">'.$objectivesEData[$i]['id_objetivo'].':  '.$objectivesEData[$i]['contenido'].'</a><br>';
+                                    echo '<a style="font-style: normal;">'.$objectivesEData[$i]['id_objetivo'].':  '.htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
                                     $fl = true;
                                 } 
                             }else{
@@ -95,8 +95,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <?php   
                             if(count($integrantes)!=0){
                                 for($i=0;$i<count($integrantes);$i++){
-                                    echo '<a style="font-style: normal;margin: 1rem;">Nombre: '.$integrantes[$i]['nombre'].'</a><br>';
-                                    echo '<a style="font-style: normal;margin: 1rem;">Departamento:  '.$integrantes[$i]['departamento'].'</a><br><br>';
+                                    echo '<a style="font-style: normal;margin: 1rem;">Nombre: '.htmlspecialchars($integrantes[$i]['nombre'], ENT_QUOTES, 'UTF-8').'</a><br>';
+                                    echo '<a style="font-style: normal;margin: 1rem;">Departamento:  '.htmlspecialchars($integrantes[$i]['departamento'], ENT_QUOTES, 'UTF-8').'</a><br><br>';
                                     $fl = true;
                                 } 
                             }else{
@@ -130,14 +130,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 ?>
                 <!-- EDITAR PROYECTO -->
                 <div class="header">
-                    <h4>Gestión de Proyectos</h4>
+                    <h4>Editar Proyecto</h4>
                 </div>
                 <div class="editContainer scroll">
                 <div class="form-container">
-                    <div class="title"><h4>Editar proyecto</h4></div>   
+                    <!-- <div class="title"><h4>Editar proyecto</h4></div>    -->
                     <form class="editProject-form" id="basicInfo-form" onsubmit="return updateBasicInfo()"  method="POST" autocomplete="off">
                         <div class="fm-content">
-                            <div class="title"><h5>Datos generales:</h5></div>
+                            <div class="title"><h4>Datos generales:</h4></div>
                             <div class="section1">
                                 <label class="bold" for="Fname">Nombre del proyecto:</label><br>
                                 <input class="NameInput" type="text" name="Fname" id="Fname" placeholder="Nombre del Proyecto" title="Nombre del proyecto" required value="<?php echo $cR[0]['nombre'] ?>"
@@ -219,7 +219,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 
                             </div>
                             <br>
-                            <div class="section2">
+                            <div class="section2 metaDiv">
                             
                                 <label class="bold" for="Fmeta">Meta del proyecto:</label><br>
                                 <textarea type="text" name="Fmeta" id="Fmeta" placeholder="Introduzca la meta del proyecto" title="Meta del proyecto" required
@@ -228,22 +228,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div> 
                         </div> <!-- Fin de fm-content -->
 
-                        
-                        <div class="form-options">
-                            <button class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
-                            <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
-                            <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
-                        </div>
-                    </form> <!-- Fin de edit-user-form -->
-
-                    <form class="editProject-form" id="editProject-form" action="updateProject.php" method="POST" autocomplete="off">
                         <div class="fm-content specs">
                             <div class="section1">
-                            <div class="gestionIntegrantes"> 
+                                <div class="title mb1r"><h4>Datos de Integrantes:</h4></div>
+                                <div class="gestionIntegrantes"> 
                                     <div class="topTable flexAndSpaceDiv">
                                         <label class="bold" for="Fmeta">Integrantes del proyecto:</label><br>
                                         
-                                        <a id="manageProjectsLink" class="button addMemberBtn" href="gestionarMiembros.php?id=<?php echo $_GET['editProject']?>">Gestionar integrantes</a>
                                     </div>
                                     <div class="table">
                                         <table class="members-list">
@@ -253,7 +244,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                     <th class="rowCargo">Cargo</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="members-list-body">
                                             <?php
                                             $id=$_GET['editProject'];
                                             $p = array();
@@ -280,15 +271,131 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                     echo '</tr>';
                                                 }
                                             }else {
-                                                echo "<tr><td colspan='4'>No se encontraron integrantes registrados.</td>";
+                                                echo "<tr id='no-integrantes-row'><td colspan='2'>No se encontraron integrantes registrados.</td></tr>";
                                             }
                                             ?>
                                             </tbody>
                                         </table>
                                     </div> <!-- Fin de .table -->
                                 </div> <!-- Fin de .gestionIntegrantes -->
+
                             </div>
-                            <div class="section2 projectSpecs">
+                            <div class="section2">
+                                <div class="manageMembersDiv">
+                                <h4>Selecciona el integrante y haz click en añadir:</h4>
+
+                                 <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
+                                <i>Departamento:</i>
+                                <select name="filtroDepartamento" id="filtroDepartamento" class="comboBox" onchange="filtrarUsuariosPorDepartamento()">
+                                    <option value="noFilter">Todos los departamentos</option>
+                                    <?php
+                                    $deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                    $selectedFilter = $_GET['filterDepto'] ?? '';
+
+                                    if (count($deptos) > 0) {
+                                        foreach ($deptos as $index => $depto) {
+                                            $value = htmlspecialchars($depto['departamento'], ENT_QUOTES, 'UTF-8');
+                                            $selected = ($selectedFilter == $value) ? 'selected' : '';
+                                            echo "<option value='$value' $selected>$value</option>";
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                                </div>
+                                <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
+                                    <i>Usuario:</i>
+                                    <select name="listaUsuariosDisponibles" id="listaUsuariosDisponibles" class="comboBox">
+                                        <?php
+                                        $projectID = $_GET['editProject'];
+                                        $existinUsers = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?;", [$projectID], 'i');;
+                                    
+                                        if(isset($_GET['filterDepto'])){
+                                            $deptoF = $_GET['filterDepto'];
+                                            $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE departamento = ? AND rolUsuario = ?;", [$deptoF, 'EST','ss']);
+                                        }else{
+                                            $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE rolUsuario = 'EST';");
+                                        }
+                                        if(count($users)>0){
+                                            for($i=0;$i<count($users);$i++){
+                                                $userID = $users[$i]['id_usuario'];
+                                                $flag=false;
+                                                for($j=0;$j<count($existinUsers);$j++){
+                                                    if ($existinUsers[$j]['id_usuario']===$users[$i]['id_usuario']) {
+                                                        $flag=true;
+                                                    }
+                                                }
+                                                if ($flag===false) {
+                                                    $dto = htmlspecialchars($users[$i]['departamento'], ENT_QUOTES, 'UTF-8');
+                                                    $n = htmlspecialchars($users[$i]['nombre'], ENT_QUOTES, 'UTF-8');
+                                                    $usID = $users[$i]['id_usuario'];
+                                                    echo "<option value='$usID' data-depto='$dto'>$n</option>";
+                                                }
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
+                                    <i>Rol:</i>
+                                    <select name="tipoMiembro" id="tipoMiembro" class="comboBox">
+                                        <option value="0">Colaborador</option>
+                                        <option value="1">Responsable</option>
+                                    </select>
+                                </div>
+                                <a id="manageProjectsLink" class="button addMemberBtn" onclick="agregarMiembro()">Añadir</a>
+                                
+
+
+
+<script>
+    
+
+    
+
+
+    function ConfirmDeleteMember(idProyecto, idUsuario) {
+        if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
+            fetch(`deleteMember.php`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idProyecto, idUsuario })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error al eliminar miembro.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                            </div>
+                        </div>
+                        <div class="fm-content">
+                            <div class="section1 projectSpecs">
                             <div class="gestionObjetivos"> 
                             <div class="table"> 
                             <table class="objectiveG-list">
@@ -324,6 +431,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div> <!-- .gestionIntegrantes -->
                             </div>
                         </div>
+                        
+                        <div class="form-options">
+                            <button class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
+                            <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
+                            <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
+                        </div>
+                    </div>
                     </form> <!-- Fin de edit-user-form -->
 
 
@@ -483,7 +597,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div>
 
                 <!-- Formulario de alta de proyecto -->
-                <form class="addProject-form hide scroll" id="addProject-form" action="projectMng/addProject.php" method="POST" autocomplete="on">
+                <form class="addProject-form hide scroll" id="addProject-form" action="../controller/projectManager.php?addProject=true" method="POST" autocomplete="on">
                 <div class="form-bg">
                     <div class="form-container">
                         <div class="fm-content">
