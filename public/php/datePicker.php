@@ -1,9 +1,9 @@
 <!-- <label for="dia">día:</label> -->
-<select name="dia_<?php echo $idUnico?>" class="dia" id="dia_<?php echo $idUnico?>" title='dia'></select>
+<select name="dia_<?php echo $idUnico?>" class="dia comboBox" id="dia_<?php echo $idUnico?>" title='dia'></select>
 
 
 <!-- <label for="mes">mes:</label> -->
-<select name="mes_<?php echo $idUnico?>" class="mes" id='mes_<?php echo $idUnico?>' title='mes'>
+<select name="mes_<?php echo $idUnico?>" class="mes comboBox" id='mes_<?php echo $idUnico?>' title='mes'>
     <option value="1">Enero</option>
     <option value="2">Febrero</option>
     <option value="3">Marzo</option>
@@ -19,7 +19,7 @@
 </select>
 
 <!-- <label for="anio">año:</label> -->
-<select name="anio_<?php echo $idUnico?>" class="anio" id='anio_<?php echo $idUnico?>' title='año'>
+<select name="anio_<?php echo $idUnico?>" class="anio comboBox" id='anio_<?php echo $idUnico?>' title='año'>
     <?php
     $year = date("Y"); 
     for($i=0;$i<25;$i++){

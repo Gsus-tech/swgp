@@ -43,7 +43,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="header">
                     <h4>Gestión de Proyectos</h4>
                 </div>
-                <div class="detailsContainer">
+                <div class="detailsContainer scroll">
                     <div class="detailsContainerTitle">
                         <div class="name">
                             <i><?php echo $projectData[0]['nombre']?></i>
@@ -132,48 +132,77 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="header">
                     <h4>Gestión de Proyectos</h4>
                 </div>
-                <div class="editContainer">
+                <div class="editContainer scroll">
                 <div class="form-container">
-                    <div class="title"><h4>Editar proyecto:</h4></div>   
-                        <form class="editProject-form" id="editProject-form" action="updateProject.php" method="POST" autocomplete="off">
+                    <div class="title"><h4>Editar proyecto</h4></div>   
+                    <form class="editProject-form" id="basicInfo-form" onsubmit="return updateBasicInfo()"  method="POST" autocomplete="off">
                         <div class="fm-content">
+                            <div class="title"><h5>Datos generales:</h5></div>
                             <div class="section1">
-                            <input type="hidden" name="EditThisID" value="<?php echo $_GET['editProject']?>">
                                 <label class="bold" for="Fname">Nombre del proyecto:</label><br>
                                 <input class="NameInput" type="text" name="Fname" id="Fname" placeholder="Nombre del Proyecto" title="Nombre del proyecto" required value="<?php echo $cR[0]['nombre'] ?>"
                                 oninvalid="this.setCustomValidity('El nombre del proyecto es un campo necesario')" oninput="this.setCustomValidity('')"> 
                                 <br>
+
+                                <div class="deptoDiv">
+                                <label for="deptoAsign">Departamento asignado:</label>
+                                <select class="deptoAsign comboBox" id="deptoAsign" name="deptoAsign" style="margin-left:2rem;">
+                                    <?php
+                                    $Deptos = array();
+                                    $query = "SELECT DISTINCT departamento FROM tbl_usuarios;";
+                                    $Deptos = Crud::executeResultQuery($query);
+                                    $currentDto = $cR[0]['departamentoAsignado'];
+                                    if(count($Deptos)>0){
+                                        if(in_array($currentDto, $Deptos)){
+                                            for($i=0;$i<count($Deptos);$i++){
+                                                foreach($Deptos[$i] as $key=>$value){
+                                                    echo '<option value="'.$i.'" '.($currentDto == $value ? 'selected' : '').'>'.$value.'</option>';
+                                                }
+                                            }
+                                        }else{
+                                            for($i=0;$i<count($Deptos);$i++){
+                                                foreach($Deptos[$i] as $key=>$value){
+                                                    echo '<option value="'.$i.'">'.$value.'</option>';
+                                                }
+                                            }
+                                            echo '<option value="'.count($Deptos)+1 .' selected">'.$currentDto.'</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                                </div>
                             </div>
+                            <br>
                             <div class="section2">
                             <div class="datesEditForm">
                                     <div id="fechaIni" class="fechaIni">
                                         <label class="bold" for="fechaInicio">Fecha de inicio:</label><br>
                                         <div class="inline">
-                                            <?php setlocale(LC_TIME, 'es_MX'); $fechaFormateada = strftime("%d / %B / %Y", strtotime($cR[0]['fecha_inicio']));?>
-                                            <span><?php echo $fechaFormateada; ?></span>
-                                            <i id="editInitialDate" class="fa fa-edit button" title="Editar"></i>
+                                            <span id="displayDate1"><?php echo $cR[0]['fecha_inicio']; ?></span>
+                                            <i id="inDt-edit" onclick="initialDate()" class="fa fa-edit button" title="Editar"></i>
+                                            <i id="inDt-save" onclick="saveDate1()" class="fa fa-check-square-o button hide" title="Guardar"></i>
+                                            <i id="inDt-cancel" onclick="initialDate()" class="fa fa-times button hide" title="Cancelar"></i>
                                         </div>
-                                        <input type="hidden" name="thisDate_inicio" id="thisDate_inicio">
+                                        <input type="hidden" name="thisDate_inicio" id="thisDate_inicio" value="<?php echo $cR[0]['fecha_inicio']; ?>">
                                         <!-- datePicker -->
                                         <br>
-                                        <div class="initDatePicker hide">
+                                        <div id="initDatePicker" class="initDatePicker hide">
                                             <?php $idUnico = "inicio"; include 'datePicker.php'; ?>
-                                            <i id="saveDate1" class="fa fa-check-square-o button" title="Guardar"></i>
                                         </div>
                                     </div> 
                                     <div id="fechaFin" class="fechaFin">
                                         <label class="bold spacer" for="fechaCierre">Fecha de cierre:</label><br>
                                         <div class="inline">
-                                            <?php setlocale(LC_TIME, 'es_MX'); $fechaFormateada = strftime("%d / %B / %Y", strtotime($cR[0]['fecha_cierre']));?>
-                                            <span><?php echo $fechaFormateada; ?></span>
-                                            <i id="editFinalDate" class="fa fa-edit button" title="Editar"></i>
+                                            <span id="displayDate2"><?php echo $cR[0]['fecha_cierre']; ?></span>
+                                            <i id="fnDt-edit" onclick="finalDate()" class="fa fa-edit button" title="Editar"></i>
+                                            <i id="fnDt-save" onclick="saveDate2()" class="fa fa-check-square-o button hide" title="Guardar"></i>
+                                            <i id="fnDt-cancel" onclick="finalDate()" class="fa fa-times button hide" title="Cancelar"></i>
                                         </div>
-                                        <input type="hidden" name="thisDate_cierre" id="thisDate_cierre">
+                                        <input type="hidden" name="thisDate_cierre" id="thisDate_cierre" value="<?php echo $cR[0]['fecha_cierre']; ?>">
                                         <!-- datePicker -->
                                         <br>
-                                        <div class="endDatePicker hide">
+                                        <div id="endDatePicker" class="endDatePicker hide">
                                             <?php $idUnico = "cierre"; include 'datePicker.php'; ?>
-                                            <i id="saveDate2" class="fa fa-check-square-o button" title="Guardar"></i>
                                         </div>
                                     </div> 
                                 </div>
@@ -189,6 +218,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <br>
                                 
                             </div>
+                            <br>
                             <div class="section2">
                             
                                 <label class="bold" for="Fmeta">Meta del proyecto:</label><br>
@@ -198,7 +228,16 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div> 
                         </div> <!-- Fin de fm-content -->
 
-                        <div class="fm-content">
+                        
+                        <div class="form-options">
+                            <button class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
+                            <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
+                            <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
+                        </div>
+                    </form> <!-- Fin de edit-user-form -->
+
+                    <form class="editProject-form" id="editProject-form" action="updateProject.php" method="POST" autocomplete="off">
+                        <div class="fm-content specs">
                             <div class="section1">
                             <div class="gestionIntegrantes"> 
                                     <div class="topTable flexAndSpaceDiv">
@@ -249,8 +288,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     </div> <!-- Fin de .table -->
                                 </div> <!-- Fin de .gestionIntegrantes -->
                             </div>
-
-                            <div class="section2">
+                            <div class="section2 projectSpecs">
                             <div class="gestionObjetivos"> 
                             <div class="table"> 
                             <table class="objectiveG-list">
@@ -286,15 +324,12 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div> <!-- .gestionIntegrantes -->
                             </div>
                         </div>
-                        <div class="form-options">
-                            <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
-                            <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
-                            <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
-                        </div>
-                </form> <!-- Fin de edit-user-form -->
+                    </form> <!-- Fin de edit-user-form -->
 
 
-            </div> <!-- Fin de form-container --> 
+            </div> <!-- Fin de form-container -->   
+
+           <script src='../js/editProject.js'></script>
 
 
 
@@ -472,7 +507,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <br>
                             <label for="dropDownDepto">Departamento asignado:</label>
                             <!-- <br> -->
-                            <select class="dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
+                            <select class="dropDownDepto comboBox" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
                                 $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){

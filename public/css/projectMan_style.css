@@ -3,15 +3,17 @@
     background-color: #fff;
     width: 100%;
     height: 100%;
+    margin-bottom: 2rem;
 }
 
 .container .main .projectManagement .addBtn {
-    position: sticky;
+    position: fixed;
     width: fit-content;
     background-color: #0d8c7751;
     margin: 15px;
     border-radius: 50%;
     bottom: 10px;
+    left: 3rem;
     cursor: pointer;
 }
 
@@ -188,6 +190,12 @@
     background-color: #94300e;
 }
 
+.container .main{
+    .editContainer {
+        min-height: fit-content;
+    }
+}
+
 .container .main .editContainer .form-container {
     width: 100%;
     height: 100%;
@@ -206,20 +214,35 @@
         border-radius: 1em;
         transition: width .3s ease-in-out;
         margin: 5px 5%;
-
         .fm-content {
+            .projectSpecs{
+                margin-bottom: 6rem;
+            }
             padding: 1rem;
             .section1, .section2 {
                 width:100%;
                 margin-top:2rem;
+
+                .deptoDiv {
+                    margin-top: 1rem;
+                    .deptoAsign{
+                        margin-top:.5rem;
+                    }
+                }
+
                 .datesEditForm span {
                     width: 100%;
                     border: 1px solid --black;
                     box-sizing: border-box;
+                    font-size: 12px;
+                }
+
+                .datesEditForm div div select {
+                     font-size: 11px;
                 }
 
                 .datesEditForm i {
-                    margin-left: 1rem;
+                    margin-left: .5rem;
                 }
 
                 .datesEditForm i:hover {
@@ -231,15 +254,11 @@
                     font-family: 'Open Sans', sans-serif;
                     width: 100%;
                     max-height: 11rem;
-                    max-width: 125%;
-                    min-height: 10rem;
+                    min-height: 6rem;
+                    resize: none;
                     padding: 10px 17px;
                     margin: 8px 0;
                     box-sizing: border-box;
-                }
-
-                .gestionObjetivos{
-                    margin-bottom: 6rem;
                 }
             }
 
@@ -593,13 +612,12 @@
 }
 
 @media screen and (min-width: 600px){
-      .detailsContainer {
+    .detailsContainer {
         background-color: #3333338a;
         padding-top: 1rem;
-        position: absolute;
+        position: relative;
         width: -webkit-fill-available;
-        height: calc(fit-content + 3rem);
-        min-height: 100vh;
+        height: fit-content;
         .detailsContainerTitle {
             margin: 0 auto;
             background-color: var(--white);
@@ -628,7 +646,6 @@
     }
 
     .datesEditForm {
-        max-width: 32rem;
         display: flex;
         justify-content: space-between;
         gap: 20px;
@@ -676,7 +693,7 @@
     }
 
     .container .main .projectManagement .addBtn {
-        bottom: 15px;
+        bottom: 10px;
 
         .add-user-btn {
             font-size: 24px;
@@ -706,19 +723,18 @@
             width: 2.5rem;
         }
     }
-
+    
+    .container .main .editContainer{
+        margin-bottom: 7.5rem;    
+    }
     .container .main .editContainer .form-container .editProject-form {
         width: calc(100% - 4rem);
-        .fm-content div{
-            
+        .specs .section1{
+            margin-bottom: 6rem;
         }
         .fm-content .section1 {
             width: 40%;
             float: left;
-
-             .gestionObjetivos{
-                    margin-bottom: 7rem;
-                }
         }
 
         .fm-content .section2 {
@@ -729,19 +745,10 @@
             margin-bottom: 3rem;
         }
 
-        .fm-content .section2 textarea {
-            min-width: calc(100% - .2rem);
-            width: calc(100% - .2rem);
-            height: 10rem;
-            max-height: 25rem;
-        }
-
-        .fm-content .section1 textarea {
-            /* max-width: calc(100% - .2rem);
-            min-width: calc(100% - .2rem); */
+        .fm-content div textarea{
             width: calc(100% - .2rem); 
             height: 10rem;
-            max-height: 25rem;
+            max-height: 13rem;
         }
     }
 
@@ -762,6 +769,13 @@
 
     .cancelObj {
         left: 65%;
+    }
+
+    .datesEditForm {
+        display: inline;
+        .fechaFin{
+            margin-top: 2rem;
+        }
     }
 }
 
@@ -825,14 +839,6 @@
             }
         }
 
-        .fm-content .section2 textarea {
-            height: 8rem;
-        }
-
-        .fm-content .section1 textarea {
-            height: 8rem;
-        }
-
         .form-options {
             bottom: 1.5rem;
         }
@@ -868,6 +874,17 @@
 
     .cancelObj {
         left: 67%;
+    }
+
+    .datesEditForm {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        .fechaIni, .fechaFin{
+            margin:0;
+            display: flex;
+            flex-direction: column;
+        }
     }
 }
 
@@ -966,7 +983,7 @@
             content: "No.";
             }
             td:nth-of-type(3):before {
-                content: "Descripción";
+                content: "DescripciÃ³n";
             }
         }
     }

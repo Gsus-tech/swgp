@@ -286,6 +286,11 @@ body {
     .container .sidebar {
         position: fixed;
     }
+
+    .container .main .header {
+        position: fixed;
+        height: 3.5rem;
+    }
 }
 
 @media screen and (min-width: 800px) {
@@ -318,11 +323,6 @@ body {
         margin-left: 11rem;
         width: calc(100% - 10rem);
         min-height: 100vh;
-    }
-
-    .container .main .header {
-        position: fixed;
-        height: 3.5rem;
     }
 
     .container .main .header h4 {
