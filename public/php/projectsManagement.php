@@ -115,6 +115,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                <script src="../js/projectDetails.js"></script>
 
 
+
+
+
+
+
+
+
                <?php } elseif(isset($_GET['editProject'])){ 
                 $projectId = $_GET['editProject'] ?? null;
                 // Verificar si el ID es un entero
@@ -146,30 +153,32 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                                 <div class="deptoDiv">
                                 <label for="deptoAsign">Departamento asignado:</label>
-                                <select class="deptoAsign comboBox" id="deptoAsign" name="deptoAsign" style="margin-left:2rem;">
+                                <select class="deptoAsign comboBox" id="deptoAsign" name="deptoAsign" style="margin-left:2rem;" onchange="updateDeptoInput(this)">
                                     <?php
                                     $Deptos = array();
                                     $query = "SELECT DISTINCT departamento FROM tbl_usuarios;";
                                     $Deptos = Crud::executeResultQuery($query);
                                     $currentDto = $cR[0]['departamentoAsignado'];
+                                    echo "<script>console.log('$currentDto');</script>";
                                     if(count($Deptos)>0){
-                                        if(in_array($currentDto, $Deptos)){
+                                        if(Crud::isInArray($Deptos, $cR[0]['departamentoAsignado'])){
                                             for($i=0;$i<count($Deptos);$i++){
                                                 foreach($Deptos[$i] as $key=>$value){
-                                                    echo '<option value="'.$i.'" '.($currentDto == $value ? 'selected' : '').'>'.$value.'</option>';
+                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'" '.($currentDto == $value ? 'selected' : '').'>'.$value.'</option>';
                                                 }
                                             }
                                         }else{
                                             for($i=0;$i<count($Deptos);$i++){
                                                 foreach($Deptos[$i] as $key=>$value){
-                                                    echo '<option value="'.$i.'">'.$value.'</option>';
+                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'">'.$value.'</option>';
                                                 }
                                             }
-                                            echo '<option value="'.count($Deptos)+1 .' selected">'.$currentDto.'</option>';
+                                            echo '<option value="'.count($Deptos)+1 .'" selected>'.$currentDto.'</option>';
                                         }
                                     }
                                     ?>
                                 </select>
+                                <input type="hidden" id="eFdptoText" name="eFdptoText" value='<?php echo $cR[0]['departamentoAsignado'];?>'>
                                 </div>
                             </div>
                             <div class="section2">
@@ -177,7 +186,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     <div id="fechaIni" class="fechaIni">
                                         <label class="bold" for="fechaInicio">Fecha de inicio:</label><br>
                                         <div class="inline">
-                                            <span id="displayDate1"><?php echo $cR[0]['fecha_inicio']; ?></span>
+                                            <span id="displayDate1" name="displayDate1"><?php echo $cR[0]['fecha_inicio']; ?></span>
                                             <i id="inDt-edit" onclick="initialDate()" class="fa fa-edit button" title="Editar"></i>
                                             <i id="inDt-save" onclick="saveDate1()" class="fa fa-check-square-o button hide" title="Guardar"></i>
                                             <i id="inDt-cancel" onclick="initialDate()" class="fa fa-times button hide" title="Cancelar"></i>
@@ -192,7 +201,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     <div id="fechaFin" class="fechaFin">
                                         <label class="bold spacer" for="fechaCierre">Fecha de cierre:</label><br>
                                         <div class="inline">
-                                            <span id="displayDate2"><?php echo $cR[0]['fecha_cierre']; ?></span>
+                                            <span id="displayDate2" name="displayDate2"><?php echo $cR[0]['fecha_cierre']; ?></span>
                                             <i id="fnDt-edit" onclick="finalDate()" class="fa fa-edit button" title="Editar"></i>
                                             <i id="fnDt-save" onclick="saveDate2()" class="fa fa-check-square-o button hide" title="Guardar"></i>
                                             <i id="fnDt-cancel" onclick="finalDate()" class="fa fa-times button hide" title="Cancelar"></i>
@@ -227,12 +236,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div> 
                         </div> <!-- Fin de fm-content -->
 
+
+                        <!-- ADMINISTRAR INTEGRANTES DEL PROYECTO -->
                         <div class="title mb1r"><h4>Datos de Integrantes:</h4></div>
                         <div class="fm-content specs">
                             <div class="section1">
+                                <h4 class="mt1r ml1r" for="Fmeta">Integrantes del proyecto:</h4>
                                 <div class="gestionIntegrantes"> 
                                     <div class="topTable flexAndSpaceDiv">
-                                        <label class="bold" for="Fmeta">Integrantes del proyecto:</label><br>
                                         
                                     </div>
                                     <div class="table">
@@ -269,7 +280,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                     
                                                     }
                                                     $x = $p[$i]['id_usuario'];
-                                                    echo "<td><a class='fa fa-minus removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember($id,$x, this)'></a></td>";
+                                                    echo "<td><a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember($x, this)'></a></td>";
                                                     echo '</tr>';
                                                 }
                                             }else {
@@ -284,10 +295,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div>
                             <div class="section2">
                                 <div class="manageMembersDiv">
-                                <h4>Selecciona el integrante y haz click en añadir:</h4>
+                                <h4>Selecciona el integrante y haz click en 'añadir':</h4>
 
                                  <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
-                                <i>Departamento:</i>
+                                <i>Filtrar:</i>
                                 <select name="filtroDepartamento" id="filtroDepartamento" class="comboBox" onchange="filtrarUsuariosPorDepartamento()">
                                     <option value="noFilter">Todos los departamentos</option>
                                     <?php
@@ -344,50 +355,20 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         <option value="1">Responsable</option>
                                     </select>
                                 </div>
-                                <a id="manageProjectsLink" class="button addMemberBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)">Añadir</a>
-                                
-
-
-
-<script>
-
-    function ConfirmDeleteMember(idProyecto, idUsuario, buttonElement) {
-        const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
-        const opcionesOriginales = Array.from(usuariosSelect.options);
-        if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-            const fila = buttonElement.closest('tr');
-            const usuarioId = fila.dataset.usuarioId;
-            
-            fila.remove();
-
-        }
-    }
-
-
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                <input type="hidden" id="membersTableFlagAdd" name="membersTableFlagAdd" value="false">
+                                <input type="hidden" id="addedMembers" name="addedMembers" value="">
+                                <input type="hidden" id="membersTableFlagDel" name="membersTableFlagDel" value="false">
+                                <input type="hidden" id="removedMembers" name="removedMembers" value="">
+                                <a id="manageProjectsLink" class="button addRowBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)">Añadir</a>
                             </div>
                         </div>
                     </div>
 
+                    <!-- ADMINISTRAR OBJETIVOS DEL PROYECTO -->
                     <div class="title mb1r"><h4>Objetivos del proyecto:</h4></div>
                     <div class="fm-content">
-                        <div class="section1 projectSpecs">
+                        <div class="section1">
+                        <h4 class="mt1r ml1r">Objetivos generales:</h4>
                         <div class="gestionObjetivos"> 
                         <div class="table"> 
                         <table class="objectiveG-list">
@@ -421,6 +402,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </table>
                         </div> <!-- .table -->
                         </div> <!-- .gestionIntegrantes -->
+                    </div> <!-- .section1 -->  
+                        <div class="section2">
+                            <h4>Describe el objetivo general y haz clic en 'añadir':</h4>
+                            <textarea type="text" name="objetivoG" id="objetivoG" placeholder="Descripción del objetivo general" title="Descripción del objetivo general"></textarea>
+                            <a id="addObjectiveGBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'general')">Añadir</a>
                         </div>
                     </div>
                     
@@ -436,6 +422,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div> <!-- Fin de form-container -->   
 
            <script src='../js/editProject.js'></script>
+
+
+
+
+
 
 
 
@@ -644,9 +635,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <a id="cancel-AddProject" class="close-AddProject" onclick="cerrarFormulario()">Cancelar</a>
                             <button disabled name="sumbit-AddProject" class="sumbit-AddProject" id="sumbit-AddProject" type="submit">Crear proyecto</button>
                             </div>
-                            <br>
-                            <button disabled name="sumbit-AddProject-obj" class="sumbit-AddProject-obj" id="sumbit-AddProject-obj" type="submit">Crear e ir a definición de objetivos <span class="fa fa-arrow-right"></span></button>
-                           
                         </div>
                     </div>
                 </div> <!-- Fin de form-container --> 

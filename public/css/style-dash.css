@@ -557,6 +557,18 @@ body {
     margin-bottom: 1rem;
 }
 
+.mt1r {
+    margin-top: 1rem;
+}
+
+.mr1r {
+    margin-right: 1rem;
+}
+
+.ml1r {
+    margin-left: 1rem;
+}
+
 .mT-half {
     margin-top: .5rem;
 }

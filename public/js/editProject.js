@@ -1,6 +1,8 @@
 function updateBasicInfo(){
     console.log('Enviando el formulario');
     event.preventDefault();
+    revertDate('thisDate_inicio', 'displayDate1');
+    revertDate('thisDate_cierre', 'displayDate2');
     const form = document.getElementById('basicInfo-form');
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('editProject');
@@ -70,7 +72,7 @@ function saveDate2(){
         document.getElementById('thisDate_cierre').value = date;
         d2.textContent = date;
         convertDate('displayDate2');
-        initialDate();
+        finalDate();
     } else {
         alert("La fecha de cierre debe ser mayor a la fecha de inicio.");
     }
@@ -87,6 +89,15 @@ function convertDate(element) {
     const currentDate = d1.textContent.trim();
     const formattedDate = formatSpanishDate(currentDate);
     d1.textContent = formattedDate;
+}
+
+function revertDate(element, content){
+    const d = document.getElementById(content);
+    const d1 = document.getElementById(element);
+    const currentDate = d.textContent.trim();
+    const formattedDate = parseSpanishDate(currentDate);
+    d1.value = formattedDate;
+    console.log(d1.value);
 }
 
 function parseSpanishDate(dateString) {
@@ -112,6 +123,17 @@ function parseSpanishDate(dateString) {
 
     // Formatear a YYYY-MM-DD
     return `${year}-${monthNumber}-${dayPadded}`;
+}
+
+//Actualizar departamento asignado
+function updateDeptoInput(event) {
+    const eFdpto = document.getElementById('deptoAsign');
+    const eFdptoText = eFdpto.options[eFdpto.selectedIndex].text;
+    const eFdptoHidden = document.getElementById('eFdptoText');
+
+    eFdptoHidden.value = eFdptoText;
+
+    console.log(eFdptoHidden.value);
 }
 
 //Filtrar usuarios disponibles
@@ -161,7 +183,7 @@ function agregarMiembro(projectId) {
 
     nombreCelda.textContent = usuarioNombre;
     rolCelda.textContent = tipoMiembroTexto;
-    removeBtn.innerHTML = `<a class='fa fa-minus removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, ${projectId})'></a>`;
+    removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, ${projectId}, this)'></a>`;
     nuevaFila.appendChild(nombreCelda);
     nuevaFila.appendChild(rolCelda);
     nuevaFila.appendChild(removeBtn);
@@ -172,6 +194,56 @@ function agregarMiembro(projectId) {
     if (opcionAEliminar) {
         opcionAEliminar.remove();
     }
+    const addedMembersInput = document.getElementById('addedMembers');
+    let addedMembers = JSON.parse(addedMembersInput.value || '[]');
+    rol = tipoMiembroTexto == 'Colaborador' ? false : true;
+    addedMembers.push({ usuarioId, rol });
+    console.log(JSON.stringify(addedMembers));
+    membersTableAddChanged();
+    actualizarCamposOcultos(true, addedMembers);
+}
+
+//Eliminar miembro
+function ConfirmDeleteMember(idUsuario, buttonElement) {
+    const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
+    if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
+        const fila = buttonElement.closest('tr');
+        fila.remove();
+        const removedMembersInput = document.getElementById('removedMembers');
+        let removedMembers = JSON.parse(removedMembersInput.value || '[]');
+        removedMembers.push({ idUsuario });
+        console.log(JSON.stringify(removedMembers));
+        membersTableDelChanged();
+        actualizarCamposOcultos(false, removedMembers);
+    }
+}
+
+//Guardar cambios en miembros de equipo
+function membersTableAddChanged() {
+    const tableChangedInput = document.getElementById('membersTableFlagAdd');
+    tableChangedInput.value = "true";
+}
+//Guardar cambios en miembros de equipo
+function membersTableDelChanged() {
+    const tableChangedInput = document.getElementById('membersTableFlagDel');
+    tableChangedInput.value = "true";
+}
+
+
+
+function actualizarCamposOcultos(f, element) {
+    if(f==true){
+        const addedMembersInput = document.getElementById('addedMembers');
+        addedMembersInput.value = JSON.stringify(element);
+    }else{
+        const removedMembersInput = document.getElementById('removedMembers');
+        removedMembersInput.value = JSON.stringify(element);
+    }
+}
+
+//Agregar Objetivos
+function agregarObjetivo(projectId, tipo){
+    
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -182,28 +254,4 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     init();
-    
-    // const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
-    // const opcionesOriginales = Array.from(usuariosSelect.options);
-
-    // window.ConfirmDeleteMember = function(buttonElement) {
-    //     if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-    //         const fila = buttonElement.closest('tr');
-    //         const usuarioId = fila.dataset.usuarioId;
-    //         // Recuperar la opción del usuario y volver a agregarla al select
-    //         const usuarioNombre = fila.querySelector('td:first-child').textContent;
-    //         const usuarioOpcion = opcionesOriginales.find(opcion => opcion.value == usuarioId);
-    //         if (usuarioOpcion) {
-    //             const usuarioDepto = usuarioOpcion.getAttribute('data-depto');
-    //             const nuevaOpcion = document.createElement('option');
-    //             nuevaOpcion.value = usuarioId;
-    //             nuevaOpcion.setAttribute('data-depto', usuarioDepto);
-    //             nuevaOpcion.textContent = usuarioNombre;
-    //             usuariosSelect.appendChild(nuevaOpcion);
-    //         }
-            
-    //         fila.remove();
-
-    //     }
-    // }
 });

@@ -145,7 +145,7 @@
 .accountsSelected {
     justify-content: space-between;
     position: absolute;
-    top: 4rem;
+    top: .5rem;
     right: 8%;
 }
 
@@ -376,8 +376,7 @@
 
     .accountsSelected {
         position: absolute;
-        top: 4.5rem;
-        right: 20%;
+        right: 10%;
     }
 
     .openFilterDiv {

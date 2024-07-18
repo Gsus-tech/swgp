@@ -154,6 +154,12 @@
 .container .main .editContainer .form-container .editProject-form .fm-content div div div table{ 
     background-color: var(--white);
 }
+ .container .main .editContainer .form-container .editProject-form .fm-content .section2 .manageMembersDiv h4{
+    margin-bottom: 1.5rem;
+ }
+ .container .main .editContainer .form-container .editProject-form .fm-content .section2 .manageMembersDiv i{
+    font-style: normal;
+ }
 .container .main .editContainer .form-container .editProject-form .fm-content .section1, .container .main .editContainer .form-container .editProject-form .fm-content .section2 {  
     width: 100%;    
     margin-top: 2rem; 
@@ -429,7 +435,7 @@
     border: none;
 }
 
-.addMemberBtn {
+.addRowBtn {
     color: var(--white);
     padding: 3px 10px;
     margin-left: 10px;
@@ -439,7 +445,7 @@
     cursor: pointer;
 }
 
-.addMemberBtn:hover {
+.addRowBtn:hover {
     transition: background-color 0.3s, color 0.3s;
     font-size: 102%;
     background-color: #0b6d49;
@@ -536,6 +542,11 @@
     margin: 1rem 0 0.5rem 0;
 }
 
+.main .projectManagement .projectSelected {    
+    position: absolute;
+    top: .5rem;
+    right: 8%;
+}    
 
 @media screen and (min-width: 600px){
 
@@ -595,7 +606,7 @@
 
 @media screen and (min-width: 700px){
    .main .projectManagement .projectSelected .deleteAllShort {    
-        display: none;   
+        display: none;
     }    
     .main .projectManagement .projectSelected .deleteAll {    
         display: inline-flex;    
@@ -633,7 +644,6 @@
 
     .container .main .manageMembersDiv .editProject-form .addMemberBtn {
         right: calc(35% - 1rem);
-
     }
 
     .dates {
@@ -661,13 +671,13 @@
         display: flex;
     }
     .container .main .editContainer .form-container .editProject-form .fm-content .section1 {    
-        width: 40%;      
+        width: 45%;      
         float: left;
         flex-direction: column;
         align-items: stretch;
     }  
     .container .main .editContainer .form-container .editProject-form .fm-content .section2 {   
-        width: 40%;   
+        width: 45%;   
         margin-left: 10%;     
         margin-right: 1.5rem;  
         float: left;     
@@ -733,7 +743,7 @@
 
 @media screen and (min-width: 1100px) {
     .container .main .projectManagement .projectSelected {  
-        right: 20%;   
+        right: 10%;   
     }    
     .container .main .projectManagement .addBtn .add-user-btn {      
         font-size: 25px;     
@@ -791,26 +801,6 @@
     .cancelObj {
         left: 67%;
     }
-}
-
-.removeMemberBtn {
-    display: inline-block;
-    padding: 5px 5px;
-    font-size: 16px;
-    margin-left: 30%;
-    text-decoration: none;
-    background-color: #a2a2a2;
-    color: #000000;
-    border-color: #7c7c7c;
-    border-radius: 25px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.removeMemberBtn:hover {
-    background-color: #a32020a3;
-    border-color: #7c7c7c;
 }
 
 .redBorder {
@@ -886,4 +876,20 @@
         }
     }
      
+}
+
+
+.removeMemberBtn {
+    padding: 0 2px;
+    font-size: 10px;
+    color: #000000;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.removeMemberBtn:hover {
+    color: #dd0000;
+    border-color: #7c7c7c;
 }
