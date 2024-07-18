@@ -139,7 +139,7 @@ function filtrarUsuariosPorDepartamento() {
 }
 
 ///Agregar integrante de proyecto
-function agregarMiembro() {
+function agregarMiembro(projectId) {
     const usuarioId = document.getElementById('listaUsuariosDisponibles').value;
     const usuarioNombre = document.getElementById('listaUsuariosDisponibles').selectedOptions[0].text;
     const tipoMiembro = document.getElementById('tipoMiembro').value;
@@ -157,13 +157,14 @@ function agregarMiembro() {
     const nuevaFila = document.createElement('tr');
     const nombreCelda = document.createElement('td');
     const rolCelda = document.createElement('td');
+    const removeBtn = document.createElement('td');
 
     nombreCelda.textContent = usuarioNombre;
     rolCelda.textContent = tipoMiembroTexto;
-
+    removeBtn.innerHTML = `<a class='fa fa-minus removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, ${projectId})'></a>`;
     nuevaFila.appendChild(nombreCelda);
     nuevaFila.appendChild(rolCelda);
-
+    nuevaFila.appendChild(removeBtn);
     tablaBody.appendChild(nuevaFila);
 
     // Eliminar la opción del usuario del select de usuarios disponibles
@@ -179,6 +180,30 @@ document.addEventListener("DOMContentLoaded", function() {
         convertDate('displayDate1');
         convertDate('displayDate2');
     }
-
+    
     init();
+    
+    // const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
+    // const opcionesOriginales = Array.from(usuariosSelect.options);
+
+    // window.ConfirmDeleteMember = function(buttonElement) {
+    //     if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
+    //         const fila = buttonElement.closest('tr');
+    //         const usuarioId = fila.dataset.usuarioId;
+    //         // Recuperar la opción del usuario y volver a agregarla al select
+    //         const usuarioNombre = fila.querySelector('td:first-child').textContent;
+    //         const usuarioOpcion = opcionesOriginales.find(opcion => opcion.value == usuarioId);
+    //         if (usuarioOpcion) {
+    //             const usuarioDepto = usuarioOpcion.getAttribute('data-depto');
+    //             const nuevaOpcion = document.createElement('option');
+    //             nuevaOpcion.value = usuarioId;
+    //             nuevaOpcion.setAttribute('data-depto', usuarioDepto);
+    //             nuevaOpcion.textContent = usuarioNombre;
+    //             usuariosSelect.appendChild(nuevaOpcion);
+    //         }
+            
+    //         fila.remove();
+
+    //     }
+    // }
 });

@@ -136,8 +136,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="form-container">
                     <!-- <div class="title"><h4>Editar proyecto</h4></div>    -->
                     <form class="editProject-form" id="basicInfo-form" onsubmit="return updateBasicInfo()"  method="POST" autocomplete="off">
+                        <div class="title mb1r"><h4>Datos generales:</h4></div>
                         <div class="fm-content">
-                            <div class="title"><h4>Datos generales:</h4></div>
                             <div class="section1">
                                 <label class="bold" for="Fname">Nombre del proyecto:</label><br>
                                 <input class="NameInput" type="text" name="Fname" id="Fname" placeholder="Nombre del Proyecto" title="Nombre del proyecto" required value="<?php echo $cR[0]['nombre'] ?>"
@@ -172,7 +172,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 </select>
                                 </div>
                             </div>
-                            <br>
                             <div class="section2">
                             <div class="datesEditForm">
                                     <div id="fechaIni" class="fechaIni">
@@ -228,9 +227,9 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div> 
                         </div> <!-- Fin de fm-content -->
 
+                        <div class="title mb1r"><h4>Datos de Integrantes:</h4></div>
                         <div class="fm-content specs">
                             <div class="section1">
-                                <div class="title mb1r"><h4>Datos de Integrantes:</h4></div>
                                 <div class="gestionIntegrantes"> 
                                     <div class="topTable flexAndSpaceDiv">
                                         <label class="bold" for="Fmeta">Integrantes del proyecto:</label><br>
@@ -242,13 +241,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                 <tr>
                                                     <th class="rowNombre">Nombre de integrante</th>
                                                     <th class="rowCargo">Cargo</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody id="members-list-body">
                                             <?php
                                             $id=$_GET['editProject'];
                                             $p = array();
-                                            $query = "SELECT usuarios.nombre, integrantes.responsable 
+                                            $query = "SELECT usuarios.id_usuario, usuarios.nombre, integrantes.responsable 
                                             FROM tbl_integrantes integrantes JOIN tbl_usuarios usuarios 
                                             ON integrantes.id_usuario = usuarios.id_usuario WHERE integrantes.id_proyecto = ?";
                                             
@@ -263,15 +263,17 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                             }else{
                                                                 echo '<td>Colaborador</td>';
                                                             }
-                                                        }else{
+                                                        }elseif($p[$i]['nombre'] == $value){
                                                             echo '<td>'.$value.'</td>';
                                                         }
                                                     
                                                     }
+                                                    $x = $p[$i]['id_usuario'];
+                                                    echo "<td><a class='fa fa-minus removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember($id,$x, this)'></a></td>";
                                                     echo '</tr>';
                                                 }
                                             }else {
-                                                echo "<tr id='no-integrantes-row'><td colspan='2'>No se encontraron integrantes registrados.</td></tr>";
+                                                echo "<tr id='no-integrantes-row'><td colspan='3'>No se encontraron integrantes registrados.</td></tr>";
                                             }
                                             ?>
                                             </tbody>
@@ -342,35 +344,22 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         <option value="1">Responsable</option>
                                     </select>
                                 </div>
-                                <a id="manageProjectsLink" class="button addMemberBtn" onclick="agregarMiembro()">Añadir</a>
+                                <a id="manageProjectsLink" class="button addMemberBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)">Añadir</a>
                                 
 
 
 
 <script>
-    
 
-    
-
-
-    function ConfirmDeleteMember(idProyecto, idUsuario) {
+    function ConfirmDeleteMember(idProyecto, idUsuario, buttonElement) {
+        const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
+        const opcionesOriginales = Array.from(usuariosSelect.options);
         if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-            fetch(`deleteMember.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ idProyecto, idUsuario })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error al eliminar miembro.');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+            const fila = buttonElement.closest('tr');
+            const usuarioId = fila.dataset.usuarioId;
+            
+            fila.remove();
+
         }
     }
 
@@ -394,49 +383,52 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                             </div>
                         </div>
-                        <div class="fm-content">
-                            <div class="section1 projectSpecs">
-                            <div class="gestionObjetivos"> 
-                            <div class="table"> 
-                            <table class="objectiveG-list">
-                                <thead>
-                                    <tr>
-                                        <th class="rowIdObj">No.</th>
-                                        <th class="rowObjetivo">Descripcion de Objetivo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <?php
-                                $id=$_GET['editProject'];
-                                $p = array();
-                                $query = "SELECT id_objetivo, contenido 
-                                FROM tbl_objetivos WHERE id_proyecto = ? AND tipo = ?";
-                                
-                                $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
-                                if(count($p)>0){
-                                    for($i=0;$i<count($p);$i++){
-                                        echo '<tr>';
-                                        foreach($p[$i] as $key=>$value){
-                                            echo '<td>'.$value.'</td>';
-                                        }
-                                        echo '</tr>';
+                    </div>
+
+                    <div class="title mb1r"><h4>Objetivos del proyecto:</h4></div>
+                    <div class="fm-content">
+                        <div class="section1 projectSpecs">
+                        <div class="gestionObjetivos"> 
+                        <div class="table"> 
+                        <table class="objectiveG-list">
+                            <thead>
+                                <tr>
+                                    <th class="rowIdObj">No.</th>
+                                    <th class="rowObjetivo">Descripcion de Objetivo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            $id=$_GET['editProject'];
+                            $p = array();
+                            $query = "SELECT id_objetivo, contenido 
+                            FROM tbl_objetivos WHERE id_proyecto = ? AND tipo = ?";
+                            
+                            $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
+                            if(count($p)>0){
+                                for($i=0;$i<count($p);$i++){
+                                    echo '<tr>';
+                                    foreach($p[$i] as $key=>$value){
+                                        echo '<td>'.$value.'</td>';
                                     }
-                                }else {
-                                    echo "<tr><td colspan='4'>No se encontraron objetivos registrados.</td>";
+                                    echo '</tr>';
                                 }
-                                ?>
-                                </tbody>
-                            </table>
-                            </div> <!-- .table -->
-                            </div> <!-- .gestionIntegrantes -->
-                            </div>
+                            }else {
+                                echo "<tr><td colspan='4'>No se encontraron objetivos registrados.</td>";
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+                        </div> <!-- .table -->
+                        </div> <!-- .gestionIntegrantes -->
                         </div>
-                        
-                        <div class="form-options">
-                            <button class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
-                            <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
-                            <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
-                        </div>
+                    </div>
+                    
+                    <div class="form-options">
+                        <button class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
+                        <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
+                        <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
+                    </div>
                     </div>
                     </form> <!-- Fin de edit-user-form -->
 
