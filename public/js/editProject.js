@@ -1,9 +1,35 @@
+function confirmCancel(){
+    const btn = document.getElementById('sumbit-editProject');
+    if(btn.classList.contains('enabled')){
+        if(confirm('¡Advertencia!\nNo se guardarán los cambios realizados.\n¿Deseas continuar?')){
+            window.location.href = `projectsManagement.php`;
+        }
+    }else{
+        window.location.href = `projectsManagement.php`;
+    }
+}
+
+function activateBtn(){
+    const btn = document.getElementById('sumbit-editProject');
+    if(!btn.classList.contains('enabled')){
+        btn.disabled = false;
+        btn.classList.add('enabled')
+    }
+}
+function deactivateBtn(){
+    const btn = document.getElementById('sumbit-editProject');
+    if(btn.classList.contains('enabled')){
+        btn.disabled = true;
+        btn.classList.remove('enabled')
+    }
+}
+
 function updateBasicInfo(){
     console.log('Enviando el formulario');
     event.preventDefault();
     revertDate('thisDate_inicio', 'displayDate1');
     revertDate('thisDate_cierre', 'displayDate2');
-    const form = document.getElementById('basicInfo-form');
+    const form = document.getElementById('editProject-form');
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('editProject');
     const actionUrl = `../controller/projectManager.php?editProject=true&id=${id}`;
@@ -127,13 +153,11 @@ function parseSpanishDate(dateString) {
 
 //Actualizar departamento asignado
 function updateDeptoInput(event) {
-    const eFdpto = document.getElementById('deptoAsign');
+    const eFdpto = document.getElementById('deptoAssign');
     const eFdptoText = eFdpto.options[eFdpto.selectedIndex].text;
     const eFdptoHidden = document.getElementById('eFdptoText');
 
     eFdptoHidden.value = eFdptoText;
-
-    console.log(eFdptoHidden.value);
 }
 
 //Filtrar usuarios disponibles
@@ -183,7 +207,7 @@ function agregarMiembro(projectId) {
 
     nombreCelda.textContent = usuarioNombre;
     rolCelda.textContent = tipoMiembroTexto;
-    removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, ${projectId}, this)'></a>`;
+    removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
     nuevaFila.appendChild(nombreCelda);
     nuevaFila.appendChild(rolCelda);
     nuevaFila.appendChild(removeBtn);
@@ -198,14 +222,12 @@ function agregarMiembro(projectId) {
     let addedMembers = JSON.parse(addedMembersInput.value || '[]');
     rol = tipoMiembroTexto == 'Colaborador' ? false : true;
     addedMembers.push({ usuarioId, rol });
-    console.log(JSON.stringify(addedMembers));
-    membersTableAddChanged();
-    actualizarCamposOcultos(true, addedMembers);
+    membersTableChanged('add');
+    actualizarCamposOcultos('addedMembers', addedMembers);
 }
 
 //Eliminar miembro
 function ConfirmDeleteMember(idUsuario, buttonElement) {
-    const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
     if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
         const fila = buttonElement.closest('tr');
         fila.remove();
@@ -213,45 +235,201 @@ function ConfirmDeleteMember(idUsuario, buttonElement) {
         let removedMembers = JSON.parse(removedMembersInput.value || '[]');
         removedMembers.push({ idUsuario });
         console.log(JSON.stringify(removedMembers));
-        membersTableDelChanged();
-        actualizarCamposOcultos(false, removedMembers);
+        membersTableChanged('del');
+        actualizarCamposOcultos('removedMembers', removedMembers);
     }
 }
 
-//Guardar cambios en miembros de equipo
-function membersTableAddChanged() {
-    const tableChangedInput = document.getElementById('membersTableFlagAdd');
-    tableChangedInput.value = "true";
-}
-//Guardar cambios en miembros de equipo
-function membersTableDelChanged() {
-    const tableChangedInput = document.getElementById('membersTableFlagDel');
+function membersTableChanged(action){
+    const tableChangedInput = document.getElementById(action=='add'?'membersTableFlagAdd':'membersTableFlagDel');
     tableChangedInput.value = "true";
 }
 
 
-
-function actualizarCamposOcultos(f, element) {
-    if(f==true){
-        const addedMembersInput = document.getElementById('addedMembers');
-        addedMembersInput.value = JSON.stringify(element);
-    }else{
-        const removedMembersInput = document.getElementById('removedMembers');
-        removedMembersInput.value = JSON.stringify(element);
-    }
+function actualizarCamposOcultos(name, element) {
+    const addedMembersInput = document.getElementById(name);
+    addedMembersInput.value = JSON.stringify(element);
 }
 
 //Agregar Objetivos
 function agregarObjetivo(projectId, tipo){
-    
+    const tablaBody = document.getElementById(tipo=='general'?'objectiveG-list-body':'objectiveE-list-body');
+    const contenido = document.getElementById(tipo=='general'?'objetivoG':'objetivoE');
+
+    if(contenido.value.length < 10){
+        alert('Longitud mínima de 10 caracteres para la descripción del objetivo.');
+    }else{
+        // Verificar y eliminar la fila "No se encontraron objetivos registrados" si existe
+        const noObjGRow = document.getElementById(tipo=='general'?'no-objectiveG-row':'no-objectiveE-row');
+        if (noObjGRow) {
+            noObjGRow.remove();
+        }
+
+        //Calcular el nuevo ID del nuevo objetivo
+        const rows = tablaBody.getElementsByTagName('tr');
+        let maxId = 0;
+
+        for (let i = 0; i < rows.length; i++) {
+            const idObjetivo = parseInt(rows[i].getAttribute('value'));
+            if (idObjetivo > maxId) {
+                maxId = idObjetivo;
+            }
+        }
+
+        // Crear un nuevo ID
+        const newId = maxId + 1;
+
+
+        // Crear nueva fila y añadirla a la tabla
+        const nuevaFila = document.createElement('tr');
+        nuevaFila.setAttribute('value', newId);
+        const descriptionCelda = document.createElement('td');
+        descriptionCelda.setAttribute('class','descripcion');
+        const removeBtn = document.createElement('td');
+
+
+        descriptionCelda.textContent = contenido.value;
+        removeBtn.innerHTML = 
+        `<a class='fa fa-trash removeMemberBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'${tipo}',${projectId}, ${newId})\"></a>
+        <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
+        <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'${tipo}',${projectId},${newId})\"></a>`;
+        nuevaFila.appendChild(descriptionCelda);
+        nuevaFila.appendChild(removeBtn);
+        tablaBody.appendChild(nuevaFila);
+
+        //Guardar los datos en input hidden para actualizar la BD al confirmar los cambios
+        const addedObjectivesInput = document.getElementById(tipo=='general'?'addedObjG':'addedObjE');
+        let addedObjectives = JSON.parse(addedObjectivesInput.value || '[]');
+        const content = contenido.value;
+        addedObjectives.push({ newId,  content});
+        actualizarCamposOcultos(tipo=='general'?'addedObjG':'addedObjE', addedObjectives);
+        objectivesTableChanged(tipo, 'add');
+
+        contenido.value = "";
+    }
 }
 
+//Eliminar objetivos
+function DeleteObjective(element, type, projectId, objId){
+    console.log('tipo: ' + type + "\nProyecto: "+projectId);
+    if(confirm(`¿Estás seguro de que deseas eliminar este objetivo '${type}'?`)){
+        const fila = element.closest('tr');
+        fila.remove();
+        const removedObjInput = document.getElementById(type=='general'?'removedObjG':'removedObjE');
+        let removedObj = JSON.parse(removedObjInput.value || '[]');
+        removedObj.push({ objId });
+        objectivesTableChanged(type, 'del');
+        actualizarCamposOcultos(type=='general'?'removedObjG':'removedObjE', removedObj);
+        console.log(JSON.stringify(removedObj));
+
+    }
+}
+
+function objectivesTableChanged(type, action){
+    if(type=='general'){
+        const tableChangedInput = document.getElementById(action=='add'?'objGTableFlagAdd':'objGTableFlagDel');
+        tableChangedInput.value = "true";
+    }
+    if(type=='especifico'){
+        const tableChangedInput = document.getElementById(action=='add'?'objETableFlagAdd':'objETableFlagDel');
+        tableChangedInput.value = "true";
+    }
+}
+
+function objectivesTableUpdated(type){
+    if(type=='general'){
+        const tableChangedInput = document.getElementById('objGTableFlagUpd');
+        tableChangedInput.value = "true";
+    }
+    if(type=='especifico'){
+        const tableChangedInput = document.getElementById('objETableFlagUpd');
+        tableChangedInput.value = "true";
+    }
+}
+
+//editar objetivo
+function EditObjective(button) {
+    const fila = button.closest('tr');
+    const descripcionCelda = fila.querySelector('.descripcion');
+
+    // crear un textarea para editar la descripción
+    const textarea = document.createElement('textarea');
+    textarea.classList.add('editable');
+    textarea.value = descripcionCelda.textContent;
+    
+    // Encimar el textarea para editar el objetivo
+    descripcionCelda.textContent = '';
+    descripcionCelda.appendChild(textarea);
+
+    button.classList.add('hide');
+    fila.querySelector('.fa-save').classList.remove('hide');
+}
+//Guardar cambios
+function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
+    const fila = button.closest('tr');
+    const descripcionCelda = fila.querySelector('.descripcion');
+    const textarea = descripcionCelda.querySelector('textarea');
+
+    // Obtener el nuevo valor de la descripción
+    const nuevaDescripcion = textarea.value;
+    
+    // Ocultar el textarea y sobrescribir los datos
+    descripcionCelda.textContent = nuevaDescripcion;
+    button.classList.add('hide');
+    fila.querySelector('.fa-edit').classList.remove('hide');
+
+    const updatedObjInput = document.getElementById(tipo=='general'?'updatedObjG':'updatedObjE');
+    let updatedObj = JSON.parse(updatedObjInput.value || '[]');
+    updatedObj.push({ idObjetivo, tipo, nuevaDescripcion});
+    objectivesTableUpdated(tipo);
+    actualizarCamposOcultos(tipo=='general'?'updatedObjG':'updatedObjE', updatedObj);
+}
+
+
 document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('editProject-form');
+    const inputs = form.getElementsByTagName('input');
+    const textareas = form.getElementsByTagName('textarea');
+    const selectDto = document.getElementById('deptoAssign');
+    const date1 = document.getElementById('displayDate1');
+    const date2 = document.getElementById('displayDate2');
+    const initialValues = new Map();
+
     function init() {
         console.log("La página ha cargado completamente");
         convertDate('displayDate1');
         convertDate('displayDate2');
     }
+    function addEvents(){
+        for (let input of inputs) {
+            initialValues.set(input, input.value);
+        }    
+        for (let textarea of textareas) {
+            initialValues.set(textarea, textarea.value);
+        }
+        initialValues.set(selectDto, selectDto.value)
+        initialValues.set(date1, date1.value)
+        initialValues.set(date2, date2.value)
+        for (let input of inputs) {
+            input.addEventListener('input', procesarEvento);
+        }
+        for (let textarea of textareas) {
+            textarea.addEventListener('input', procesarEvento);
+        }
+        selectDto.addEventListener('input', procesarEvento);
+        date1.addEventListener('input', procesarEvento);
+        date2.addEventListener('input', procesarEvento);
+    }
+
+    function procesarEvento(event) {
+        const element = event.target;
+        if (initialValues.get(element) !== element.value) {
+            activateBtn();
+        }else{
+            deactivateBtn();
+        }
+    }
     
-    init();
+    init();    
+    addEvents();
 });

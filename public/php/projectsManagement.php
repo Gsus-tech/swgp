@@ -68,7 +68,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <h3>Objetivos generales:</h3>
                         <?php   if(count($objectivesGData)!=0){
                                 for($i=0;$i<count($objectivesGData);$i++){
-                                    echo '<a style="font-style: normal;">'.$objectivesGData[$i]['id_objetivo'].':  '.htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
+                                    $no = $i+1;
+                                    echo '<a style="font-style: normal;">'.$no.':  '.htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
                                     $fl = true;
                                 } 
                             }else{
@@ -81,7 +82,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <h3>Objetivos específicos:</h3>
                         <?php   if(count($objectivesEData)!=0){
                                 for($i=0;$i<count($objectivesEData);$i++){
-                                    echo '<a style="font-style: normal;">'.$objectivesEData[$i]['id_objetivo'].':  '.htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
+                                    $no = $i+1;
+                                    echo '<a style="font-style: normal;">'.$no.':  '.htmlspecialchars($objectivesEData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
                                     $fl = true;
                                 } 
                             }else{
@@ -107,7 +109,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <a id="returnToProjects" class="button redBtn" onclick="returnToProjectsList()" title="Lista de Proyectos"><i class="fa fa-arrow-circle-left"></i></a>
                     <div class="optionsDiv">
                         <a id="printDetails" class="button hide"><i class="fa fa-print" onclick="imprimirProyecto()" title="Imprimir"></i></a>
-                        <a id="editProject" class="button hide"><i class="fa fa-share-square-o" onclick="exportarProyecto()" title="Exportar"></i></a>
+                        <a id="shareProject" class="button hide"><i class="fa fa-share-square-o" onclick="exportarProyecto()" title="Exportar"></i></a>
+                        <a id="editProject" class="button hide"><i class="fa fa-edit" onclick="editarProyecto(<?php echo $projectID; ?>)" title="Editar"></i></a>
                         <a id="toggleDocumentOptions" class="button"><i class="fa fa-ellipsis-v" onclick="toggleDocumentOptions()" title="Opciones"></i></a>
                     </div>
                         
@@ -142,7 +145,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="editContainer scroll">
                 <div class="form-container">
                     <!-- <div class="title"><h4>Editar proyecto</h4></div>    -->
-                    <form class="editProject-form" id="basicInfo-form" onsubmit="return updateBasicInfo()"  method="POST" autocomplete="off">
+                    <form class="editProject-form" id="editProject-form" onsubmit="return updateBasicInfo()"  method="POST" autocomplete="off">
                         <div class="title mb1r"><h4>Datos generales:</h4></div>
                         <div class="fm-content">
                             <div class="section1">
@@ -153,7 +156,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                                 <div class="deptoDiv">
                                 <label for="deptoAsign">Departamento asignado:</label>
-                                <select class="deptoAsign comboBox" id="deptoAsign" name="deptoAsign" style="margin-left:2rem;" onchange="updateDeptoInput(this)">
+                                <select class="deptoAsign comboBox" id="deptoAssign" name="deptoAsign" style="margin-left:2rem;" onchange="updateDeptoInput(this)">
                                     <?php
                                     $Deptos = array();
                                     $query = "SELECT DISTINCT departamento FROM tbl_usuarios;";
@@ -164,13 +167,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         if(Crud::isInArray($Deptos, $cR[0]['departamentoAsignado'])){
                                             for($i=0;$i<count($Deptos);$i++){
                                                 foreach($Deptos[$i] as $key=>$value){
-                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'" '.($currentDto == $value ? 'selected' : '').'>'.$value.'</option>';
+                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'" '.($currentDto == $value ? 'selected' : '').'>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</option>';
                                                 }
                                             }
                                         }else{
                                             for($i=0;$i<count($Deptos);$i++){
                                                 foreach($Deptos[$i] as $key=>$value){
-                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'">'.$value.'</option>';
+                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</option>';
                                                 }
                                             }
                                             echo '<option value="'.count($Deptos)+1 .'" selected>'.$currentDto.'</option>';
@@ -275,12 +278,12 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                                 echo '<td>Colaborador</td>';
                                                             }
                                                         }elseif($p[$i]['nombre'] == $value){
-                                                            echo '<td>'.$value.'</td>';
+                                                            echo '<td>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</td>';
                                                         }
                                                     
                                                     }
                                                     $x = $p[$i]['id_usuario'];
-                                                    echo "<td><a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember($x, this)'></a></td>";
+                                                    echo "<td><a class='fa fa-user-times tableIconBtn' title='Remover integrante' onclick='ConfirmDeleteMember($x, this)'></a></td>";
                                                     echo '</tr>';
                                                 }
                                             }else {
@@ -293,76 +296,76 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 </div> <!-- Fin de .gestionIntegrantes -->
 
                             </div>
-                            <div class="section2">
-                                <div class="manageMembersDiv">
-                                <h4>Selecciona el integrante y haz click en 'añadir':</h4>
+                        <div class="section2">
+                            <div class="manageMembersDiv">
+                            <h4>Selecciona el integrante y haz click en 'añadir':</h4>
 
-                                 <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
-                                <i>Filtrar:</i>
-                                <select name="filtroDepartamento" id="filtroDepartamento" class="comboBox" onchange="filtrarUsuariosPorDepartamento()">
-                                    <option value="noFilter">Todos los departamentos</option>
+                                <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
+                            <i>Filtrar:</i>
+                            <select name="filtroDepartamento" id="filtroDepartamento" class="comboBox" onchange="filtrarUsuariosPorDepartamento()">
+                                <option value="noFilter">Todos los departamentos</option>
+                                <?php
+                                $deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
+                                $selectedFilter = $_GET['filterDepto'] ?? '';
+
+                                if (count($deptos) > 0) {
+                                    foreach ($deptos as $index => $depto) {
+                                        $value = htmlspecialchars($depto['departamento'], ENT_QUOTES, 'UTF-8');
+                                        $selected = ($selectedFilter == $value) ? 'selected' : '';
+                                        echo "<option value='$value' $selected>$value</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                            </div>
+                            <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
+                                <i>Usuario:</i>
+                                <select name="listaUsuariosDisponibles" id="listaUsuariosDisponibles" class="comboBox">
                                     <?php
-                                    $deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
-                                    $selectedFilter = $_GET['filterDepto'] ?? '';
-
-                                    if (count($deptos) > 0) {
-                                        foreach ($deptos as $index => $depto) {
-                                            $value = htmlspecialchars($depto['departamento'], ENT_QUOTES, 'UTF-8');
-                                            $selected = ($selectedFilter == $value) ? 'selected' : '';
-                                            echo "<option value='$value' $selected>$value</option>";
+                                    $projectID = $_GET['editProject'];
+                                    $existinUsers = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?;", [$projectID], 'i');;
+                                
+                                    if(isset($_GET['filterDepto'])){
+                                        $deptoF = $_GET['filterDepto'];
+                                        $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE departamento = ? AND rolUsuario = ?;", [$deptoF, 'EST','ss']);
+                                    }else{
+                                        $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE rolUsuario = 'EST';");
+                                    }
+                                    if(count($users)>0){
+                                        for($i=0;$i<count($users);$i++){
+                                            $userID = $users[$i]['id_usuario'];
+                                            $flag=false;
+                                            for($j=0;$j<count($existinUsers);$j++){
+                                                if ($existinUsers[$j]['id_usuario']===$users[$i]['id_usuario']) {
+                                                    $flag=true;
+                                                }
+                                            }
+                                            if ($flag===false) {
+                                                $dto = htmlspecialchars($users[$i]['departamento'], ENT_QUOTES, 'UTF-8');
+                                                $n = htmlspecialchars($users[$i]['nombre'], ENT_QUOTES, 'UTF-8');
+                                                $usID = $users[$i]['id_usuario'];
+                                                echo "<option value='$usID' data-depto='$dto'>$n</option>";
+                                            }
                                         }
                                     }
                                     ?>
                                 </select>
-                                </div>
-                                <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
-                                    <i>Usuario:</i>
-                                    <select name="listaUsuariosDisponibles" id="listaUsuariosDisponibles" class="comboBox">
-                                        <?php
-                                        $projectID = $_GET['editProject'];
-                                        $existinUsers = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?;", [$projectID], 'i');;
-                                    
-                                        if(isset($_GET['filterDepto'])){
-                                            $deptoF = $_GET['filterDepto'];
-                                            $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE departamento = ? AND rolUsuario = ?;", [$deptoF, 'EST','ss']);
-                                        }else{
-                                            $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE rolUsuario = 'EST';");
-                                        }
-                                        if(count($users)>0){
-                                            for($i=0;$i<count($users);$i++){
-                                                $userID = $users[$i]['id_usuario'];
-                                                $flag=false;
-                                                for($j=0;$j<count($existinUsers);$j++){
-                                                    if ($existinUsers[$j]['id_usuario']===$users[$i]['id_usuario']) {
-                                                        $flag=true;
-                                                    }
-                                                }
-                                                if ($flag===false) {
-                                                    $dto = htmlspecialchars($users[$i]['departamento'], ENT_QUOTES, 'UTF-8');
-                                                    $n = htmlspecialchars($users[$i]['nombre'], ENT_QUOTES, 'UTF-8');
-                                                    $usID = $users[$i]['id_usuario'];
-                                                    echo "<option value='$usID' data-depto='$dto'>$n</option>";
-                                                }
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
-                                    <i>Rol:</i>
-                                    <select name="tipoMiembro" id="tipoMiembro" class="comboBox">
-                                        <option value="0">Colaborador</option>
-                                        <option value="1">Responsable</option>
-                                    </select>
-                                </div>
-                                <input type="hidden" id="membersTableFlagAdd" name="membersTableFlagAdd" value="false">
-                                <input type="hidden" id="addedMembers" name="addedMembers" value="">
-                                <input type="hidden" id="membersTableFlagDel" name="membersTableFlagDel" value="false">
-                                <input type="hidden" id="removedMembers" name="removedMembers" value="">
-                                <a id="manageProjectsLink" class="button addRowBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)">Añadir</a>
                             </div>
+                            <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
+                                <i>Rol:</i>
+                                <select name="tipoMiembro" id="tipoMiembro" class="comboBox">
+                                    <option value="0">Colaborador</option>
+                                    <option value="1">Responsable</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="membersTableFlagAdd" name="membersTableFlagAdd" value="false">
+                            <input type="hidden" id="addedMembers" name="addedMembers" value="">
+                            <input type="hidden" id="membersTableFlagDel" name="membersTableFlagDel" value="false">
+                            <input type="hidden" id="removedMembers" name="removedMembers" value="">
+                            <a id="manageProjectsLink" class="button addRowBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)">Añadir</a>
                         </div>
                     </div>
+                </div>
 
                     <!-- ADMINISTRAR OBJETIVOS DEL PROYECTO -->
                     <div class="title mb1r"><h4>Objetivos del proyecto:</h4></div>
@@ -371,14 +374,15 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <h4 class="mt1r ml1r">Objetivos generales:</h4>
                         <div class="gestionObjetivos"> 
                         <div class="table"> 
-                        <table class="objectiveG-list">
+                        <table id="objectiveG-list" class="objectiveG-list">
                             <thead>
                                 <tr>
-                                    <th class="rowIdObj">No.</th>
+                                    <!-- <th class="rowIdObj">No.</th> -->
                                     <th class="rowObjetivo">Descripcion de Objetivo</th>
+                                    <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="objectiveG-list-body" class="objectiveG-list-body">
                             <?php
                             $id=$_GET['editProject'];
                             $p = array();
@@ -388,33 +392,107 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
                             if(count($p)>0){
                                 for($i=0;$i<count($p);$i++){
-                                    echo '<tr>';
+                                    echo '<tr value='.$p[$i]['id_objetivo'].'>';
                                     foreach($p[$i] as $key=>$value){
-                                        echo '<td>'.$value.'</td>';
+                                        if($value != $p[$i]['id_objetivo']){
+                                            echo '<td class="descripcion">'. htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</td>';
+                                        }
                                     }
+                                    $objId = $i+1;
+                                    echo "<td class='ObjTableOptions'>
+                                    <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'general',$id,$objId)\"></a>
+                                    <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
+                                    <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'general',$id,$objId)\"></a>
+                                    </td>";
                                     echo '</tr>';
                                 }
                             }else {
-                                echo "<tr><td colspan='4'>No se encontraron objetivos registrados.</td>";
+                                echo "<tr id='no-objectiveG-row'><td colspan='3'>No se encontraron objetivos registrados.</td>";
                             }
                             ?>
                             </tbody>
                         </table>
                         </div> <!-- .table -->
                         </div> <!-- .gestionIntegrantes -->
-                    </div> <!-- .section1 -->  
+                        </div> <!-- .section1 -->  
                         <div class="section2">
                             <h4>Describe el objetivo general y haz clic en 'añadir':</h4>
                             <textarea type="text" name="objetivoG" id="objetivoG" placeholder="Descripción del objetivo general" title="Descripción del objetivo general"></textarea>
+                            
+                            <input type="hidden" id="objGTableFlagAdd" name="objGTableFlagAdd" value="false">
+                            <input type="hidden" id="addedObjG" name="addedObjG" value="">
+                            <input type="hidden" id="objGTableFlagDel" name="objGTableFlagDel" value="false">
+                            <input type="hidden" id="removedObjG" name="removedObjG" value="">
+                            <input type="hidden" id="objGTableFlagUpd" name="objGTableFlagUpd" value="false">
+                            <input type="hidden" id="updatedObjG" name="updatedObjG" value="">
                             <a id="addObjectiveGBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'general')">Añadir</a>
                         </div>
                     </div>
-                    
-                    <div class="form-options">
-                        <button class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
-                        <a href="projectsManagement.php" id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
-                        <!-- <a href="setObjetivos.php?id=<?php echo $_GET['editProject']; ?>" class="objectivesBtn button icon-right" id="edit  Objectives">Editar objetivos del proyecto<i class="fa fa-arrow-circle-o-right"></i></a> -->
-                    </div>
+
+                    <br>
+                    <div class="fm-content">
+                        <div class="section1">
+                        <h4 class="mt1r ml1r">Objetivos específicos:</h4>
+                        <div class="gestionObjetivos"> 
+                        <div class="table"> 
+                        <table id="objectiveE-list" class="objectiveE-list">
+                            <thead>
+                                <tr>
+                                    <!-- <th class="rowIdObj">No.</th> -->
+                                    <th class="rowObjetivo">Descripcion de Objetivo</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="objectiveE-list-body" class="objectiveE-list-body">
+                            <?php
+                            $id=$_GET['editProject'];
+                            $p = array();
+                            $query = "SELECT id_objetivo, contenido 
+                            FROM tbl_objetivos WHERE id_proyecto = ? AND tipo = ?";
+                            
+                            $p = Crud::executeResultQuery($query, [$id, 'especifico'], "is");
+                            if(count($p)>0){
+                                for($i=0;$i<count($p);$i++){
+                                    echo '<tr value='.$p[$i]['id_objetivo'].'>';
+                                    foreach($p[$i] as $key=>$value){
+                                        if($value != $p[$i]['id_objetivo']){
+                                            echo '<td class="descripcion">'. htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</td>';
+                                        }
+                                    }
+                                    $objId = $i+1;
+                                    echo "<td class='ObjTableOptions'>
+                                    <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'especifico',$id,$objId)\"></a>
+                                    <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
+                                    <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'especifico',$id,$objId)\"></a>
+                                    </td>";
+                                    echo '</tr>';
+                                }
+                            }else {
+                                echo "<tr id='no-objectiveE-row'><td colspan='3'>No se encontraron objetivos registrados.</td>";
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+                        </div> <!-- .table -->
+                        </div> <!-- .gestionIntegrantes -->
+                        </div> <!-- .section1 -->  
+                        <div class="section2">
+                            <h4>Describe el objetivo específico y haz clic en 'añadir':</h4>
+                            <textarea type="text" name="objetivoE" id="objetivoE" placeholder="Descripción del objetivo específico" title="Descripción del objetivo específico"></textarea>
+                            
+                            <input type="hidden" id="objETableFlagAdd" name="objETableFlagAdd" value="false">
+                            <input type="hidden" id="addedObjE" name="addedObjE" value="">
+                            <input type="hidden" id="objETableFlagDel" name="objETableFlagDel" value="false">
+                            <input type="hidden" id="removedObjE" name="removedObjE" value="">
+                            <input type="hidden" id="objETableFlagUpd" name="objETableFlagUpd" value="false">
+                            <input type="hidden" id="updatedObjE" name="updatedObjE" value="">
+                            <a id="addObjectiveEBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'especifico')">Añadir</a>
+                        </div>
+                        
+                        <div class="form-options">
+                            <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
+                            <a id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
+                        </div>
                     </div>
                     </form> <!-- Fin de edit-user-form -->
 
@@ -447,7 +525,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="filterDiv closedFilterDiv">
                     <i id="historialProyectos" class="fa fa-history button" title="Historial de proyectos" style="margin-right:.5rem;"></i>
                     <i id="filterProjectsList" class="fa fa-sliders button" title="Filtrar resultados"></i>
-                    <!-- <button id="filtroFecha" class="filtroFecha button hide" disabled>Por porcentaje de avance</button> -->
                     <div class="dropDownFilter1 hide ">
                         <label for="filtersForRol">Departamento asignado:</label>
                         <select class="dropDownDeptoFilter comboBox" id="dropDownDeptoFilter" name="dropDownDeptoFilter" style="margin-left:2rem;">
@@ -518,7 +595,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         if ($fl == true) {
                                             ?>
                                             <td>
-                                                <!-- <a id="seeProject" class="fa fa-eye button" title="Ver detalles de proyecto" href="projectMng/projectDetails.php?id=<?php echo urlencode($currentId); ?>" style="color:#333;"></a> -->
                                                 <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?id=<?php echo urlencode($currentId); ?>"></a>
                                                 <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?cerrar=<?php echo urlencode($currentId); ?>"></a>
                                             </td>
@@ -550,7 +626,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         if($fl==true){
                                         ?>
                                         <td>
-                                            <!-- <a id="seeProject"class="fa fa-eye button" title="Ver detalles de proyecto" href="projectMng/projectDetails.php?id=<?php echo $p[$i][0];?>" style="color:#333;"></a> -->
                                             <a id="editProjectBtn"class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
                                             <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
                                         </td>

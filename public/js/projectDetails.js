@@ -6,6 +6,10 @@ function exportarProyecto(){
     alert('Exportando proyecto');
 }
 
+function editarProyecto(id){
+    window.location.href = `projectsManagement.php?editProject=${id}`;
+}
+
 function returnToProjectsList(){
     window.location.href = `projectsManagement.php`;
 }
@@ -13,8 +17,10 @@ function returnToProjectsList(){
 function toggleDocumentOptions(){
     const options = document.getElementById('toggleDocumentOptions');
     const print = document.getElementById('printDetails');
+    const share = document.getElementById('shareProject');
     const edit = document.getElementById('editProject');
 
+    share.classList.toggle('hide');
     options.classList.toggle('hide');
     print.classList.toggle('hide');
     edit.classList.toggle('hide');
