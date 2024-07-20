@@ -37,7 +37,7 @@ body {
 }
 
 .header {
-    width: 100%;
+    width: calc(100% - 3rem);
     display: block;
     top: 0;
     height: 3rem;
@@ -325,6 +325,9 @@ body {
         min-height: 100vh;
     }
 
+    .header {
+        width: calc(100% - 11rem);
+    }
     .container .main .header h4 {
         font-size: 16px;
     }
@@ -344,6 +347,9 @@ body {
 }
 
 .short {
+    .header{
+        width: calc(100% - 3rem);
+    }
     .sidebar {
         width: 1rem;
         text-align: center;
