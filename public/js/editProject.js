@@ -72,11 +72,12 @@ function saveDate1() {
         initialDate();
         const date2 = new Date(document.getElementById('thisDate_cierre').value);
         const valid2 = validateDate(date, date2);
-        if(!valid2){
+        if(valid2){
             const date2 = new Date(anioInicio, mesInicio - 1, diaInicio+1);
             const d2 = document.getElementById('displayDate2');
             d2.textContent = date2;
             convertDate('displayDate2');
+            activateBtn();
         }
     } else {
         alert("La fecha de inicio debe ser mayor o igual a la fecha actual.");
@@ -99,6 +100,7 @@ function saveDate2(){
         d2.textContent = date;
         convertDate('displayDate2');
         finalDate();
+        activateBtn();
     } else {
         alert("La fecha de cierre debe ser mayor a la fecha de inicio.");
     }
@@ -222,6 +224,7 @@ function agregarMiembro(projectId) {
     let addedMembers = JSON.parse(addedMembersInput.value || '[]');
     rol = tipoMiembroTexto == 'Colaborador' ? false : true;
     addedMembers.push({ usuarioId, rol });
+    activateBtn();
     membersTableChanged('add');
     actualizarCamposOcultos('addedMembers', addedMembers);
 }
@@ -304,6 +307,7 @@ function agregarObjetivo(projectId, tipo){
         addedObjectives.push({ newId,  content});
         actualizarCamposOcultos(tipo=='general'?'addedObjG':'addedObjE', addedObjectives);
         objectivesTableChanged(tipo, 'add');
+        activateBtn();
 
         contenido.value = "";
     }
@@ -405,7 +409,9 @@ document.addEventListener("DOMContentLoaded", function() {
             initialValues.set(input, input.value);
         }    
         for (let textarea of textareas) {
-            initialValues.set(textarea, textarea.value);
+            if (textarea.id != 'objetivoG' && textarea.id != 'objetivoE') {
+                initialValues.set(textarea, textarea.value);
+            }
         }
         initialValues.set(selectDto, selectDto.value)
         initialValues.set(date1, date1.value)
@@ -414,7 +420,9 @@ document.addEventListener("DOMContentLoaded", function() {
             input.addEventListener('input', procesarEvento);
         }
         for (let textarea of textareas) {
-            textarea.addEventListener('input', procesarEvento);
+            if (textarea.id != 'objetivoG' && textarea.id != 'objetivoE') {
+                textarea.addEventListener('input', procesarEvento);
+            }
         }
         selectDto.addEventListener('input', procesarEvento);
         date1.addEventListener('input', procesarEvento);

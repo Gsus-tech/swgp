@@ -1,11 +1,11 @@
 <?php
-session_start();    
+session_start();
 require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
-if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
-    if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD'){
-    ?>
+if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
+    if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD') {
+        ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,20 +26,18 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <div class="main">
             <?php
             if (isset($_GET['error'])) {
-                
                 $errorMsg = urldecode($_GET['error']);
                 echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
-
-            }elseif (isset($_GET['projectDetails'])) {
+            } elseif (isset($_GET['projectDetails'])) {
                 $projectID = $_GET['projectDetails'];
 
                 $projectData = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectID);
-                $objectivesGData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID,"tipo","general");
-                $objectivesEData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID,"tipo","especifico");
-                $integrantes = Crud::executeResultQuery('SELECT nombre,departamento,responsable FROM tbl_integrantes JOIN tbl_usuarios ON tbl_integrantes.id_usuario = tbl_usuarios.id_usuario WHERE tbl_integrantes.id_proyecto='.$projectID.';');
+                $objectivesGData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "general");
+                $objectivesEData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "especifico");
+                $integrantes = Crud::executeResultQuery('SELECT nombre,departamento,responsable FROM tbl_integrantes JOIN tbl_usuarios ON tbl_integrantes.id_usuario = tbl_usuarios.id_usuario WHERE tbl_integrantes.id_proyecto=' . $projectID . ';');
                 $d1 = date("m-d-Y", strtotime($projectData[0]['fecha_inicio']));
                 $d2 = date("m-d-Y", strtotime($projectData[0]['fecha_cierre']));
-               ?>
+                ?>
                 <div class="header">
                     <h4>Gestión de Proyectos</h4>
                 </div>
@@ -66,27 +64,27 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </div>
                         <div class="objetivosGen">
                             <h3>Objetivos generales:</h3>
-                        <?php   if(count($objectivesGData)!=0){
-                                for($i=0;$i<count($objectivesGData);$i++){
-                                    $no = $i+1;
-                                    echo '<a style="font-style: normal;">'.$no.':  '.htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
-                                    $fl = true;
-                                } 
-                            }else{
-                                echo '<a style="font-style: normal;color:#9a9a9a;">Aún no se han registrado objetivos específicos</a><br>';
-                            }?>
+                        <?php   if (count($objectivesGData) != 0) {
+                            for ($i = 0; $i < count($objectivesGData); $i++) {
+                                $no = $i + 1;
+                                echo '<a style="font-style: normal;">' . $no . ':  ' . htmlspecialchars($objectivesGData[$i]['contenido'], ENT_QUOTES, 'UTF-8') . '</a><br>';
+                                $fl = true;
+                            }
+                        } else {
+                            echo '<a style="font-style: normal;color:#9a9a9a;">Aún no se han registrado objetivos específicos</a><br>';
+                        }?>
                         </div>
                     </div>
                     <div class="detailsContainerDiv">
                         <div class="objetivosEsp">
                             <h3>Objetivos específicos:</h3>
-                        <?php   if(count($objectivesEData)!=0){
-                                for($i=0;$i<count($objectivesEData);$i++){
-                                    $no = $i+1;
-                                    echo '<a style="font-style: normal;">'.$no.':  '.htmlspecialchars($objectivesEData[$i]['contenido'], ENT_QUOTES, 'UTF-8').'</a><br>';
-                                    $fl = true;
-                                } 
-                            }else{
+                        <?php   if (count($objectivesEData) != 0) {
+                            for ($i = 0; $i < count($objectivesEData); $i++) {
+                                $no = $i + 1;
+                                echo '<a style="font-style: normal;">' . $no . ':  ' . htmlspecialchars($objectivesEData[$i]['contenido'], ENT_QUOTES, 'UTF-8') . '</a><br>';
+                                $fl = true;
+                            }
+                        } else {
                             echo '<a style="font-style: normal;color:#9a9a9a;">Aún no se han registrado objetivos específicos</a><br>';
                         }?>
                         </div>
@@ -94,16 +92,16 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <div class="detailsContainerDiv">
                         <div class="integrantes">
                             <h3 >Integrantes:</h3><br>
-                        <?php   
-                            if(count($integrantes)!=0){
-                                for($i=0;$i<count($integrantes);$i++){
-                                    echo '<a style="font-style: normal;margin: 1rem;">Nombre: '.htmlspecialchars($integrantes[$i]['nombre'], ENT_QUOTES, 'UTF-8').'</a><br>';
-                                    echo '<a style="font-style: normal;margin: 1rem;">Departamento:  '.htmlspecialchars($integrantes[$i]['departamento'], ENT_QUOTES, 'UTF-8').'</a><br><br>';
-                                    $fl = true;
-                                } 
-                            }else{
-                                echo '<a style="font-style: normal;margin: 1rem;color:#9a9a9a;">Aún no se han registrado integrantes</a><br>';
-                            }?>
+                        <?php
+                        if (count($integrantes) != 0) {
+                            for ($i = 0; $i < count($integrantes); $i++) {
+                                echo '<a style="font-style: normal;margin: 1rem;">Nombre: ' . htmlspecialchars($integrantes[$i]['nombre'], ENT_QUOTES, 'UTF-8') . '</a><br>';
+                                echo '<a style="font-style: normal;margin: 1rem;">Departamento:  ' . htmlspecialchars($integrantes[$i]['departamento'], ENT_QUOTES, 'UTF-8') . '</a><br><br>';
+                                $fl = true;
+                            }
+                        } else {
+                            echo '<a style="font-style: normal;margin: 1rem;color:#9a9a9a;">Aún no se han registrado integrantes</a><br>';
+                        }?>
                         </div>
                     </div>
                     <a id="returnToProjects" class="button redBtn" onclick="returnToProjectsList()" title="Lista de Proyectos"><i class="fa fa-arrow-circle-left"></i></a>
@@ -125,7 +123,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
 
-               <?php } elseif(isset($_GET['editProject'])){ 
+            <?php } elseif (isset($_GET['editProject'])) {
                 $projectId = $_GET['editProject'] ?? null;
                 // Verificar si el ID es un entero
                 if ($projectId === null || !filter_var($projectId, FILTER_VALIDATE_INT)) {
@@ -133,11 +131,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <script>
                     alert('No se encontro ningun proyecto con el ID proporcionado');
                     window.location.href = `projectsManagement.php`;
-                    </script>";       
-                }else{
-                
-                $cR=Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectId)
-                ?>
+                    </script>";
+                } else {
+                    $cR = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectId)
+                    ?>
                 <!-- EDITAR PROYECTO -->
                 <div class="header">
                     <h4>Editar Proyecto</h4>
@@ -163,20 +160,20 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $Deptos = Crud::executeResultQuery($query);
                                     $currentDto = $cR[0]['departamentoAsignado'];
                                     echo "<script>console.log('$currentDto');</script>";
-                                    if(count($Deptos)>0){
-                                        if(Crud::isInArray($Deptos, $cR[0]['departamentoAsignado'])){
-                                            for($i=0;$i<count($Deptos);$i++){
-                                                foreach($Deptos[$i] as $key=>$value){
-                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'" '.($currentDto == $value ? 'selected' : '').'>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</option>';
+                                    if (count($Deptos) > 0) {
+                                        if (Crud::isInArray($Deptos, $cR[0]['departamentoAsignado'])) {
+                                            for ($i = 0; $i < count($Deptos); $i++) {
+                                                foreach ($Deptos[$i] as $key => $value) {
+                                                    echo '<option value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '" ' . ($currentDto == $value ? 'selected' : '') . '>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</option>';
                                                 }
                                             }
-                                        }else{
-                                            for($i=0;$i<count($Deptos);$i++){
-                                                foreach($Deptos[$i] as $key=>$value){
-                                                    echo '<option value="'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'">'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</option>';
+                                        } else {
+                                            for ($i = 0; $i < count($Deptos); $i++) {
+                                                foreach ($Deptos[$i] as $key => $value) {
+                                                    echo '<option value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</option>';
                                                 }
                                             }
-                                            echo '<option value="'.count($Deptos)+1 .'" selected>'.$currentDto.'</option>';
+                                            echo '<option value="' . count($Deptos) + 1 . '" selected>' . $currentDto . '</option>';
                                         }
                                     }
                                     ?>
@@ -198,7 +195,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         <!-- datePicker -->
                                         <br>
                                         <div id="initDatePicker" class="initDatePicker hide">
-                                            <?php $idUnico = "inicio"; include 'datePicker.php'; ?>
+                                            <?php $idUnico = "inicio";
+                                            include 'datePicker.php'; ?>
                                         </div>
                                     </div> 
                                     <div id="fechaFin" class="fechaFin">
@@ -213,7 +211,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         <!-- datePicker -->
                                         <br>
                                         <div id="endDatePicker" class="endDatePicker hide">
-                                            <?php $idUnico = "cierre"; include 'datePicker.php'; ?>
+                                            <?php $idUnico = "cierre";
+                                            include 'datePicker.php'; ?>
                                         </div>
                                     </div> 
                                 </div>
@@ -260,33 +259,32 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             </thead>
                                             <tbody id="members-list-body">
                                             <?php
-                                            $id=$_GET['editProject'];
+                                            $id = $_GET['editProject'];
                                             $p = array();
                                             $query = "SELECT usuarios.id_usuario, usuarios.nombre, integrantes.responsable 
                                             FROM tbl_integrantes integrantes JOIN tbl_usuarios usuarios 
                                             ON integrantes.id_usuario = usuarios.id_usuario WHERE integrantes.id_proyecto = ?";
-                                            
+
                                             $p = Crud::executeResultQuery($query, [$id], "i");
-                                            if(count($p)>0){
-                                                for($i=0;$i<count($p);$i++){
+                                            if (count($p) > 0) {
+                                                for ($i = 0; $i < count($p); $i++) {
                                                     echo '<tr>';
-                                                    foreach($p[$i] as $key=>$value){
-                                                        if($p[$i]['responsable'] == $value){
-                                                            if($value == 1){
+                                                    foreach ($p[$i] as $key => $value) {
+                                                        if ($p[$i]['responsable'] == $value) {
+                                                            if ($value == 1) {
                                                                 echo '<td>Responsable de proyecto</td>';
-                                                            }else{
+                                                            } else {
                                                                 echo '<td>Colaborador</td>';
                                                             }
-                                                        }elseif($p[$i]['nombre'] == $value){
-                                                            echo '<td>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</td>';
+                                                        } elseif ($p[$i]['nombre'] == $value) {
+                                                            echo '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                                                         }
-                                                    
                                                     }
                                                     $x = $p[$i]['id_usuario'];
                                                     echo "<td><a class='fa fa-user-times tableIconBtn' title='Remover integrante' onclick='ConfirmDeleteMember($x, this)'></a></td>";
                                                     echo '</tr>';
                                                 }
-                                            }else {
+                                            } else {
                                                 echo "<tr id='no-integrantes-row'><td colspan='3'>No se encontraron integrantes registrados.</td></tr>";
                                             }
                                             ?>
@@ -323,24 +321,25 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <select name="listaUsuariosDisponibles" id="listaUsuariosDisponibles" class="comboBox">
                                     <?php
                                     $projectID = $_GET['editProject'];
-                                    $existinUsers = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?;", [$projectID], 'i');;
-                                
-                                    if(isset($_GET['filterDepto'])){
+                                    $existinUsers = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?;", [$projectID], 'i');
+                                    ;
+
+                                    if (isset($_GET['filterDepto'])) {
                                         $deptoF = $_GET['filterDepto'];
                                         $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE departamento = ? AND rolUsuario = ?;", [$deptoF, 'EST','ss']);
-                                    }else{
+                                    } else {
                                         $users = Crud::executeResultQuery("SELECT id_usuario,nombre,departamento FROM tbl_usuarios WHERE rolUsuario = 'EST';");
                                     }
-                                    if(count($users)>0){
-                                        for($i=0;$i<count($users);$i++){
+                                    if (count($users) > 0) {
+                                        for ($i = 0; $i < count($users); $i++) {
                                             $userID = $users[$i]['id_usuario'];
-                                            $flag=false;
-                                            for($j=0;$j<count($existinUsers);$j++){
-                                                if ($existinUsers[$j]['id_usuario']===$users[$i]['id_usuario']) {
-                                                    $flag=true;
+                                            $flag = false;
+                                            for ($j = 0; $j < count($existinUsers); $j++) {
+                                                if ($existinUsers[$j]['id_usuario'] === $users[$i]['id_usuario']) {
+                                                    $flag = true;
                                                 }
                                             }
-                                            if ($flag===false) {
+                                            if ($flag === false) {
                                                 $dto = htmlspecialchars($users[$i]['departamento'], ENT_QUOTES, 'UTF-8');
                                                 $n = htmlspecialchars($users[$i]['nombre'], ENT_QUOTES, 'UTF-8');
                                                 $usID = $users[$i]['id_usuario'];
@@ -384,21 +383,21 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </thead>
                             <tbody id="objectiveG-list-body" class="objectiveG-list-body">
                             <?php
-                            $id=$_GET['editProject'];
+                            $id = $_GET['editProject'];
                             $p = array();
                             $query = "SELECT id_objetivo, contenido 
                             FROM tbl_objetivos WHERE id_proyecto = ? AND tipo = ?";
-                            
+
                             $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
-                            if(count($p)>0){
-                                for($i=0;$i<count($p);$i++){
-                                    echo '<tr value='.$p[$i]['id_objetivo'].'>';
-                                    foreach($p[$i] as $key=>$value){
-                                        if($value != $p[$i]['id_objetivo']){
-                                            echo '<td class="descripcion">'. htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</td>';
+                            if (count($p) > 0) {
+                                for ($i = 0; $i < count($p); $i++) {
+                                    echo '<tr value=' . $p[$i]['id_objetivo'] . '>';
+                                    foreach ($p[$i] as $key => $value) {
+                                        if ($value != $p[$i]['id_objetivo']) {
+                                            echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                                         }
                                     }
-                                    $objId = $i+1;
+                                    $objId = $i + 1;
                                     echo "<td class='ObjTableOptions'>
                                     <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'general',$id,$objId)\"></a>
                                     <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
@@ -406,7 +405,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     </td>";
                                     echo '</tr>';
                                 }
-                            }else {
+                            } else {
                                 echo "<tr id='no-objectiveG-row'><td colspan='3'>No se encontraron objetivos registrados.</td>";
                             }
                             ?>
@@ -445,21 +444,21 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </thead>
                             <tbody id="objectiveE-list-body" class="objectiveE-list-body">
                             <?php
-                            $id=$_GET['editProject'];
+                            $id = $_GET['editProject'];
                             $p = array();
                             $query = "SELECT id_objetivo, contenido 
                             FROM tbl_objetivos WHERE id_proyecto = ? AND tipo = ?";
-                            
+
                             $p = Crud::executeResultQuery($query, [$id, 'especifico'], "is");
-                            if(count($p)>0){
-                                for($i=0;$i<count($p);$i++){
-                                    echo '<tr value='.$p[$i]['id_objetivo'].'>';
-                                    foreach($p[$i] as $key=>$value){
-                                        if($value != $p[$i]['id_objetivo']){
-                                            echo '<td class="descripcion">'. htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</td>';
+                            if (count($p) > 0) {
+                                for ($i = 0; $i < count($p); $i++) {
+                                    echo '<tr value=' . $p[$i]['id_objetivo'] . '>';
+                                    foreach ($p[$i] as $key => $value) {
+                                        if ($value != $p[$i]['id_objetivo']) {
+                                            echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                                         }
                                     }
-                                    $objId = $i+1;
+                                    $objId = $i + 1;
                                     echo "<td class='ObjTableOptions'>
                                     <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'especifico',$id,$objId)\"></a>
                                     <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
@@ -467,7 +466,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     </td>";
                                     echo '</tr>';
                                 }
-                            }else {
+                            } else {
                                 echo "<tr id='no-objectiveE-row'><td colspan='3'>No se encontraron objetivos registrados.</td>";
                             }
                             ?>
@@ -512,8 +511,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
                 </div>
-            <?php } } else{ ?>
-
+                <?php }
+            } else { ?>
             <div class="header">
                 <h4>Gestión de Proyectos</h4>
             </div>
@@ -531,13 +530,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <option value="noFilter"></option>
                             <?php
                                 $Deptos = Crud::getFiltersOptions('tbl_proyectos', 'departamentoAsignado');
-                                if(count($Deptos)>0){
-                                    for($i=0;$i<count($Deptos);$i++){
-                                        foreach($Deptos[$i] as $key=>$value){
-                                            echo '<option value='.$i.'>'.$value.'</option>';
-                                        }
+                            if (count($Deptos) > 0) {
+                                for ($i = 0; $i < count($Deptos); $i++) {
+                                    foreach ($Deptos[$i] as $key => $value) {
+                                        echo '<option value=' . $i . '>' . $value . '</option>';
                                     }
                                 }
+                            }
                             ?>
                         </select>
                     </div>
@@ -565,10 +564,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </thead>
                         <tbody>
                             <?php
-                            if(isset($_GET['search']) || isset($_GET['filterDto'])){ 
-                                if(isset($_GET['search'])){
-                                    $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);    
-                                }else{
+                            if (isset($_GET['search']) || isset($_GET['filterDto'])) {
+                                if (isset($_GET['search'])) {
+                                    $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);
+                                } else {
                                     $p = Crud::findRows("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "departamentoAsignado", $_GET['filterDto']);
                                 }
                                 if (!empty($p) && count($p) > 0) {
@@ -581,12 +580,12 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             if ($count == 0) {
                                                 $currentId = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
                                             }
-                                            if($value === $p[$i]['id_proyecto']){
+                                            if ($value === $p[$i]['id_proyecto']) {
                                                 echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
-                                            }else if($value === $p[$i]['nombre']){
+                                            } elseif ($value === $p[$i]['nombre']) {
                                                 $cId = htmlspecialchars($p[$i]['id_proyecto']);
                                                 echo "<td><i class='blueText' onclick=seeProjectAccount('$cId') title='Ver detalles de proyecto'>" . htmlspecialchars($value) . "</i></td>";
-                                            }else{
+                                            } else {
                                                 echo '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                                             }
                                             $fl = true;
@@ -602,38 +601,37 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             echo '</tr>';
                                         }
                                     }
-                                }else {
+                                } else {
                                     echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                                 }
-
-                            }else{
+                            } else {
                                 $p = Crud::selectData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC");
-                                if(count($p)>0){
-                                    for($i=0;$i<count($p);$i++){
+                                if (count($p) > 0) {
+                                    for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
                                         echo '<tr>';
-                                        foreach($p[$i] as $key=>$value){
-                                            if($value === $p[$i]['id_proyecto']){
+                                        foreach ($p[$i] as $key => $value) {
+                                            if ($value === $p[$i]['id_proyecto']) {
                                                 echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
-                                            }else if($value === $p[$i]['nombre']){
+                                            } elseif ($value === $p[$i]['nombre']) {
                                                 $cId = htmlspecialchars($p[$i]['id_proyecto']);
                                                 echo "<td><i class='blueText' onclick=seeProjectAccount('$cId') title='Ver detalles de proyecto'>" . htmlspecialchars($value) . "</i></td>";
-                                            }else{
+                                            } else {
                                                 echo '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                                             }
                                             $fl = true;
                                         }
-                                        if($fl==true){
-                                        ?>
+                                        if ($fl == true) {
+                                            ?>
                                         <td>
                                             <a id="editProjectBtn"class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
                                             <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
                                         </td>
-                                        <?php
-                                        echo '</tr>';
+                                            <?php
+                                            echo '</tr>';
                                         }
                                     }
-                                }else{
+                                } else {
                                     echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
                                 }
                             }
@@ -667,13 +665,15 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <div class="fechaInicio">
                                     <label for="fechaInicio">Fecha de inicio:</label><br>
                                     <!-- datePicker -->
-                                    <?php $idUnico = "inicio"; include 'datePicker.php'; ?>
+                                    <?php $idUnico = "inicio";
+                                    include 'datePicker.php'; ?>
                                 </div> 
                                 
                                 <div class="fechaCierre">
                                     <label for="fechaCierre">Fecha de cierre:</label><br>
                                     <!-- datePicker -->
-                                    <?php $idUnico = "cierre"; include 'datePicker.php'; ?>
+                                    <?php $idUnico = "cierre";
+                                    include 'datePicker.php'; ?>
                                 </div> 
                             </div>
                             <br>
@@ -682,13 +682,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <select class="dropDownDepto comboBox" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
                             <?php
                                 $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
-                                if(count($Deptos)>0){
-                                    for($i=0;$i<count($Deptos);$i++){
-                                        foreach($Deptos[$i] as $key=>$value){
-                                            echo '<option value='.$i.'>'.htmlspecialchars($value, ENT_QUOTES, 'UTF-8').'</option>';
-                                        }
+                            if (count($Deptos) > 0) {
+                                for ($i = 0; $i < count($Deptos); $i++) {
+                                    foreach ($Deptos[$i] as $key => $value) {
+                                        echo '<option value=' . $i . '>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</option>';
                                     }
                                 }
+                            }
                             ?>
                             <option value="other">Otro</option>
                             </select>
@@ -717,7 +717,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
             </div>
             <script src="../js/projectMng.js"></script>
-            <?php
+                               <?php
             }
             ?>
         </div>
@@ -728,18 +728,16 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 </body>
 </html>
 
-<?php
-    }else{
+        <?php
+    } else {
         echo "<script>
         alert('No cuentas con los permisos necesarios para acceder a esta página.');
         window.location.href = 'dashboard.php';
     </script>";
-    exit();
+        exit();
     }
-}
-else{
+} else {
     header("Location: ../index.php");
     exit();
 }
 ?>
-
