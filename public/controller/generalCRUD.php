@@ -201,7 +201,7 @@ class Crud
         }
     }
 
-    public static function executeNonResultQuery2($query, $params = [], $types = "") //unused - updated
+    public static function executeNonResultQuery2($query, $params = [], $types = "") // updated
     {
         include "db_connection.php";
         try {
