@@ -603,7 +603,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         }
                                     }
                                 } else {
-                                    echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
+                                    echo "<tr><td></td><td colspan='5'>No se encontraron proyectos registrados.</td></tr>";
                                 }
                             } else {
                                 $p = Crud::selectData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC");
