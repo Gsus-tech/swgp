@@ -72,11 +72,12 @@ function saveDate1() {
         initialDate();
         const date2 = new Date(document.getElementById('thisDate_cierre').value);
         const valid2 = validateDate(date, date2);
-        if(!valid2){
+        if(valid2){
             const date2 = new Date(anioInicio, mesInicio - 1, diaInicio+1);
             const d2 = document.getElementById('displayDate2');
             d2.textContent = date2;
             convertDate('displayDate2');
+            activateBtn();
         }
     } else {
         alert("La fecha de inicio debe ser mayor o igual a la fecha actual.");
@@ -99,6 +100,7 @@ function saveDate2(){
         d2.textContent = date;
         convertDate('displayDate2');
         finalDate();
+        activateBtn();
     } else {
         alert("La fecha de cierre debe ser mayor a la fecha de inicio.");
     }
@@ -123,7 +125,6 @@ function revertDate(element, content){
     const currentDate = d.textContent.trim();
     const formattedDate = parseSpanishDate(currentDate);
     d1.value = formattedDate;
-    console.log(d1.value);
 }
 
 function parseSpanishDate(dateString) {
@@ -189,7 +190,7 @@ function agregarMiembro(projectId) {
     const usuarioId = document.getElementById('listaUsuariosDisponibles').value;
     const usuarioNombre = document.getElementById('listaUsuariosDisponibles').selectedOptions[0].text;
     const tipoMiembro = document.getElementById('tipoMiembro').value;
-    const tipoMiembroTexto = tipoMiembro == '1' ? 'Responsable' : 'Colaborador';
+    const tipoMiembroTexto = tipoMiembro == '1' ? 'Responsable de proyecto' : 'Colaborador';
     const tablaBody = document.getElementById('members-list-body');
     const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
 
@@ -222,6 +223,7 @@ function agregarMiembro(projectId) {
     let addedMembers = JSON.parse(addedMembersInput.value || '[]');
     rol = tipoMiembroTexto == 'Colaborador' ? false : true;
     addedMembers.push({ usuarioId, rol });
+    activateBtn();
     membersTableChanged('add');
     actualizarCamposOcultos('addedMembers', addedMembers);
 }
@@ -229,14 +231,48 @@ function agregarMiembro(projectId) {
 //Eliminar miembro
 function ConfirmDeleteMember(idUsuario, buttonElement) {
     if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-        const fila = buttonElement.closest('tr');
-        fila.remove();
-        const removedMembersInput = document.getElementById('removedMembers');
-        let removedMembers = JSON.parse(removedMembersInput.value || '[]');
-        removedMembers.push({ idUsuario });
-        console.log(JSON.stringify(removedMembers));
-        membersTableChanged('del');
-        actualizarCamposOcultos('removedMembers', removedMembers);
+        let rowNumber = buttonElement.getAttribute('row');
+        const resultado = checkDependencies(idUsuario, rowNumber);
+        if(resultado==true){
+            if(confirm("Todas las actividades de este usuario quedaran a cargo del Responsable del proyecto.\n\nPuedes cambiar esto mas adelante en Gestión de actividades.\n\n¿Deseas continuar?")){
+                const fila = buttonElement.closest('tr');
+                fila.remove();
+                const removedMembersInput = document.getElementById('removedMembers');
+                let removedMembers = JSON.parse(removedMembersInput.value || '[]');
+                removedMembers.push({ idUsuario });
+                console.log(JSON.stringify(removedMembers));
+                membersTableChanged('del');
+                actualizarCamposOcultos('removedMembers', removedMembers);
+                activateBtn();
+            }
+        }else{
+            alert('Error al eliminar al usuario.\nAgrega un Responsable de proyecto antes de eliminar al Responsable actual.')
+        }
+    }
+}
+
+function checkDependencies(id, rowNumber) {
+    const tbody = document.getElementById('members-list-body');
+    const rows = tbody.getElementsByTagName('tr');
+    let flag =1;
+    let isRep=false;
+    let allReps=0;
+    for (let row of rows) {
+        const tds = row.getElementsByTagName('td');
+        if (flag === parseInt(rowNumber)) {
+            isRep = tds[1].textContent === 'Responsable de proyecto' ? true : false;
+            console.log(`isRep: ${isRep}`);
+        }
+        if(tds[1].textContent === 'Responsable de proyecto'){
+            allReps++;
+        }
+        flag++;
+    }
+
+    if(isRep === false || isRep === true && allReps >=2){
+        return true;
+    }else{
+        return false;
     }
 }
 
@@ -294,7 +330,7 @@ function agregarObjetivo(projectId, tipo){
         <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
         <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'${tipo}',${projectId},${newId})\"></a>`;
         nuevaFila.appendChild(descriptionCelda);
-        nuevaFila.appendChild(removeBtn);
+        nuevaFila.appendChild(removeBtn);   
         tablaBody.appendChild(nuevaFila);
 
         //Guardar los datos en input hidden para actualizar la BD al confirmar los cambios
@@ -304,6 +340,7 @@ function agregarObjetivo(projectId, tipo){
         addedObjectives.push({ newId,  content});
         actualizarCamposOcultos(tipo=='general'?'addedObjG':'addedObjE', addedObjectives);
         objectivesTableChanged(tipo, 'add');
+        activateBtn();
 
         contenido.value = "";
     }
@@ -313,15 +350,18 @@ function agregarObjetivo(projectId, tipo){
 function DeleteObjective(element, type, projectId, objId){
     console.log('tipo: ' + type + "\nProyecto: "+projectId);
     if(confirm(`¿Estás seguro de que deseas eliminar este objetivo '${type}'?`)){
-        const fila = element.closest('tr');
-        fila.remove();
-        const removedObjInput = document.getElementById(type=='general'?'removedObjG':'removedObjE');
-        let removedObj = JSON.parse(removedObjInput.value || '[]');
-        removedObj.push({ objId });
-        objectivesTableChanged(type, 'del');
-        actualizarCamposOcultos(type=='general'?'removedObjG':'removedObjE', removedObj);
-        console.log(JSON.stringify(removedObj));
-
+        let adv = type === 'general' ? true : confirm(`¡Advertencia!\nSe eliminarán las actividades vinculadas al cumplimiento de este objetivo.`);
+        if(adv){
+            const fila = element.closest('tr');
+            fila.remove();
+            const removedObjInput = document.getElementById(type=='general'?'removedObjG':'removedObjE');
+            let removedObj = JSON.parse(removedObjInput.value || '[]');
+            removedObj.push({ objId });
+            objectivesTableChanged(type, 'del');
+            actualizarCamposOcultos(type=='general'?'removedObjG':'removedObjE', removedObj);
+            console.log(JSON.stringify(removedObj));
+            activateBtn();
+        }
     }
 }
 
@@ -383,6 +423,7 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     updatedObj.push({ idObjetivo, tipo, nuevaDescripcion});
     objectivesTableUpdated(tipo);
     actualizarCamposOcultos(tipo=='general'?'updatedObjG':'updatedObjE', updatedObj);
+    activateBtn();
 }
 
 
@@ -405,7 +446,9 @@ document.addEventListener("DOMContentLoaded", function() {
             initialValues.set(input, input.value);
         }    
         for (let textarea of textareas) {
-            initialValues.set(textarea, textarea.value);
+            if (textarea.id != 'objetivoG' && textarea.id != 'objetivoE') {
+                initialValues.set(textarea, textarea.value);
+            }
         }
         initialValues.set(selectDto, selectDto.value)
         initialValues.set(date1, date1.value)
@@ -414,7 +457,9 @@ document.addEventListener("DOMContentLoaded", function() {
             input.addEventListener('input', procesarEvento);
         }
         for (let textarea of textareas) {
-            textarea.addEventListener('input', procesarEvento);
+            if (textarea.id != 'objetivoG' && textarea.id != 'objetivoE') {
+                textarea.addEventListener('input', procesarEvento);
+            }
         }
         selectDto.addEventListener('input', procesarEvento);
         date1.addEventListener('input', procesarEvento);
