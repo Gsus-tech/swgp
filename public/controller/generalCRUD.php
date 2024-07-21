@@ -201,7 +201,7 @@ class Crud
         }
     }
 
-    public static function executeNonResultQuery2($query, $params = [], $types = "") // updated
+    public static function executeNonResultQuery2($query, $params = [], $types = "", $destinationPage) // updated
     {
         include "db_connection.php";
         try {
@@ -210,14 +210,12 @@ class Crud
                 $stmt->bind_param($types, ...$params);
             }
             $stmt->execute();
-
-            if ($stmt->affected_rows > 0) {
-                echo "<script>console.log('Query executed successfully');</script>";
-            }
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             $error = $e->getCode();
             echo "<script>console.log('Error: $error');</script>";
+            header("Location: $destinationPage");
+
         }
     }
 

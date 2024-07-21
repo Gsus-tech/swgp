@@ -159,7 +159,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $query = "SELECT DISTINCT departamento FROM tbl_usuarios;";
                                     $Deptos = Crud::executeResultQuery($query);
                                     $currentDto = $cR[0]['departamentoAsignado'];
-                                    echo "<script>console.log('$currentDto');</script>";
+
                                     if (count($Deptos) > 0) {
                                         if (Crud::isInArray($Deptos, $cR[0]['departamentoAsignado'])) {
                                             for ($i = 0; $i < count($Deptos); $i++) {
@@ -281,7 +281,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                         }
                                                     }
                                                     $x = $p[$i]['id_usuario'];
-                                                    echo "<td><a class='fa fa-user-times tableIconBtn' title='Remover integrante' onclick='ConfirmDeleteMember($x, this)'></a></td>";
+                                                    $rowN = $i+1;
+                                                    echo "<td><a class='fa fa-user-times tableIconBtn' row='$rowN'  title='Remover integrante' onclick='ConfirmDeleteMember($x, this)'></a></td>";
                                                     echo '</tr>';
                                                 }
                                             } else {
@@ -723,7 +724,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div>
 
     </div> <!-- Fin de container -->
-
+    <?php if(isset($_GET['consultFailed'])){ echo "<script>alert('Hubo un error al realizar los cambios en la BD.\nIntenta de nuevo.)</script>"; }?>
     <script src="../js/init.js"></script>
 </body>
 </html>
