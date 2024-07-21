@@ -25,7 +25,7 @@
         <?php   if($_SESSION['rol']=='SAD' || $_SESSION['rol']=='ADM'){  ?>
             <li><a href="projectsManagement.php" title="Gestión de proyectos"><i class="fa fa-wrench"><span 
                 class="text">Gestión de proyectos</span></i></a></li>
-            <li><a href="projectFollowUp.php" title="Seguimiento de proyectos"><i class="fa fa-tasks"><span 
+            <li><a href="activityManagement.php" title="Seguimiento de proyectos"><i class="fa fa-tasks"><span 
                 class="text">Seguimiento de proyectos</span></i></a></li>
             <li><a href="support.php" title="Panel de soporte"><i class="fa fa-question"><span 
                 class="text">Gestión de soporte</span></i></a></li>
