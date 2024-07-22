@@ -10,7 +10,22 @@ function FiltersToggle(){
     });
 }
 
+function FilterResults(selectElement) {
+    const filterValue = selectElement.value;
+    const tbody = document.getElementById('activity-list-body');
+    const rows = tbody.getElementsByTagName('tr');
 
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const estado = row.cells[2].textContent;
+        
+        if (filterValue === 'noFilter' || estado === filterValue) {
+            row.classList.remove('hide');
+        } else {
+            row.classList.add('hide');
+        }
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     const checkboxes = document.querySelectorAll('.activity-checkbox');
@@ -51,3 +66,27 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 });
+
+function SelectThisRowAndDetails(element, tbodyName){
+    const tbody = document.getElementById(`${tbodyName}`);
+    const rows = tbody.getElementsByTagName('tr');
+    const state = element.classList.contains('rowSelected');
+    const textArea = document.getElementById('descriptionDetails');
+
+    for (let i = 0; i < rows.length; i++) {
+        if(rows[i].classList.contains('rowSelected')){
+            rows[i].classList.remove('rowSelected');
+        }
+    }
+    if(state===false){ 
+        const descripcionCelda = element.querySelector('.thisDescription');
+        const descripcionTexto = descripcionCelda ? descripcionCelda.textContent : 'Sin descripción';
+        textArea.value = descripcionTexto;
+        textArea.classList.remove('italic');
+        element.classList.add('rowSelected');
+    }else{
+        element.classList.remove('rowSelected');
+        textArea.value = '-- Selecciona una actividad --';
+        textArea.classList.add('italic');
+    }
+}

@@ -29,19 +29,19 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <h4 class="headerTitle">Gestión de actividades</h4>
                 <?php $pagina="activityManagement"; include 'topToolBar.php'; ?>
             </div>
-            <div class="activityManagement">
+            <div class="activityManagement scroll">
             
              <!-- Filtros de busqueda -->
              <div class="filterDiv closedFilterDiv" id="filterDiv">
                     <i id="filterSlidersIcon" class="fa fa-sliders button" title="Filtrar resultados" onclick="FiltersToggle()"></i>
                     <div class="dropDownFilter hide">
                         <label for="filtersForRol">Estado</label>
-                        <select class="dropDownEstadoFilter comboBox" id="dropDownEstadoFilter" name="dropDownEstadoFilter" style="margin-left:2rem;">
-                            <option value="noFilter"></option>
-                            <option value='1'>Pendientes</option>
-                            <option value='2'>En proceso</option>
-                            <option value='3'>Retrasadas</option>
-                            <option value='4'>Terminadas</option>
+                        <select class="dropDownEstadoFilter comboBox mL-2r" id="dropDownEstadoFilter" name="dropDownEstadoFilter" onchange="FilterResults(this)">
+                            <option value="noFilter">Todos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="en proceso">En proceso</option>
+                            <option value="retrasado">Retrasadas</option>
+                            <option value="finalizado">Terminadas</option>
                         </select>
                     </div>
                 </div>
@@ -76,7 +76,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $id = isset($_GET['id']) ? $_GET['id'] : "13" ; //Obtener primer valor del comboBox proyectos
                         }
                         $p = array();
-                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada 
+                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción
                         FROM tbl_actividades WHERE id_proyecto = ?";
 
                         $estados = [
@@ -90,20 +90,24 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN' onclick='SelectThisRow(this, \"activity-list-body\")'>";
+                                echo "<tr row='$rowN' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")'>";
                                 $value = $p[$i]['id_actividad'];
                                 echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
-                                $j=0;
-                                foreach($p[$i] as $key => $value) {
-                                    if($j==2){
+                                $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
+                                foreach ($camposMostrar as $campo) {
+                                    $value = $p[$i][$campo];
+                                    if ($campo == 'estadoActual') {
                                         $str = $value === null ? "<td><i>Sin especificar</i></td>" : '<td>' . $estados[$value] . '</td>';
-                                        echo $str;
-                                    }elseif($j>0){
+                                    }elseif($campo == 'fecha_estimada' && $value === null){
+                                        $str = "<td><i>Sin especificar</i></td>";
+                                    }elseif($campo == 'descripción'){
+                                        $str = "<td class='thisDescription' style='display:none;'>". htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ."</td>";
+                                    }else {
                                         $str = $value === null ? "<td><i>Sin especificar</i></td>" : '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
-                                        echo $str;
                                     }
-                                    $j++;
+                                    echo $str;
                                 }
+
                                 $x = $p[$i]['id_actividad'];
                                 echo "<td><a class='fa fa-trash tableIconBtn' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, this)'></a></td>";
                                 echo '</tr>';
@@ -120,7 +124,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <div class="line">
                         <div id="descriptionDiv" class="section1">
                             <label for="descriptionDetails">Descripción de la actividad:</label>
-                            <textarea disabled name="descriptionDetails" id="descriptionDetails" class="italic">-- Selecciona una actividad --</textarea>
+                            <textarea disabled name="descriptionDetails" id="descriptionDetails" class="textarea italic">-- Selecciona una actividad --</textarea>
                         </div>
                         <div class="section2 table">
                             <table id="reportsMade">
@@ -156,7 +160,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 </html>
 <?php
 }else{
-    echo "<script>console.log('No cuentas con los permisos necesarios para ingresar a esta página.')</script>";
+
+    echo "<script>
+    alert('No cuentas con los permisos necesarios para ingresar a esta página.')
+    window.location.href = `dashboard.php`;
+    </script>";
 }
 }
 else{
