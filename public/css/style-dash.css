@@ -295,6 +295,10 @@ body {
     font-style: italic;
 }
 
+.pB-120 {  
+    padding-bottom: 120px; 
+} 
+
 @media screen and (min-width: 650px) {
     .container .main {
         margin-left: 9rem;
@@ -603,6 +607,9 @@ body {
 
 .ml1r {
     margin-left: 1rem;
+}
+.mL-2r {
+    margin-left: 2rem;
 }
 
 .mT-half {

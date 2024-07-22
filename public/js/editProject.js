@@ -428,7 +428,6 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     activateBtn();
 }
 
-
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById('editProject-form');
     const inputs = form.getElementsByTagName('input');
@@ -442,6 +441,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("La página ha cargado completamente");
         convertDate('displayDate1');
         convertDate('displayDate2');
+        addPadding();
     }
     function addEvents(){
         for (let input of inputs) {
@@ -475,6 +475,11 @@ document.addEventListener("DOMContentLoaded", function() {
         }else{
             deactivateBtn();
         }
+    }
+
+    function addPadding(){
+        const mn = document.querySelector('.main');
+        mn.classList.add('pB-120');
     }
     
     init();    
