@@ -1,0 +1,72 @@
+.filterDiv {  
+    display: inline-block;  
+    border-radius: 25px;    
+    background-color: var(--navBtnBg);   
+    padding: 3px 1rem 7px 1rem; 
+    margin-right: 2.5rem; 
+    margin-top: 0.5rem;   
+    margin-left: 1rem;  
+    margin-bottom: 10px;    
+    font-size: 11px;
+} 
+.filterDiv:hover { 
+    background-color: #b0b0b0;   
+    transition: background-color 0.3s, color 0.3s;
+}
+.filterDiv .fa {  
+    font-size: 22px; 
+}
+
+.closedFilterDiv {
+    width: fit-content;
+    height: fit-content;
+}
+.openFilterDiv {
+    padding: 7px 20px;
+    width: clamp(13rem, 50vw, 18rem);
+    min-width: fit-content;
+    height: auto;
+
+    .fa-sliders {
+        display: none;
+    }
+
+    .dropDownFilter1 {
+        margin-left: 1rem;
+    }
+}
+
+.main .activityManagement .fm-content { 
+    margin: 20px; 
+    padding: 1px 1rem 5px 1rem;
+    border-radius: 20px;
+    background-color: #e2e2e2;
+}
+
+@media screen and (min-width: 800px) {
+    .filterDiv { 
+        font-size: 13px;      
+        display: flex;   
+        justify-content: space-between;   
+        align-items: center;     
+        margin-left: 4%;    
+    }  
+
+    textarea{
+        resize: none;
+    }
+    .fm-content{
+        display: grid;
+    }
+    .fm-content .section1, .fm-content .line .section2 {    
+        width: 45%;      
+        float: left;
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 1rem;
+        margin-left: 2%;
+    } 
+    .fm-content .line .section2 {    
+        margin-left: 5%;
+    } 
+}

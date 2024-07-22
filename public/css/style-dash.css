@@ -291,6 +291,10 @@ body {
     display: none;
 }
 
+.italic{
+    font-style: italic;
+}
+
 @media screen and (min-width: 650px) {
     .container .main {
         margin-left: 9rem;
@@ -317,6 +321,7 @@ body {
 }
 
 @media screen and (min-width: 800px) {
+    
     .container .sidebar {
         width: 9rem;
     }

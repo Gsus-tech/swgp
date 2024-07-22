@@ -80,6 +80,10 @@ table:hover {
     color: #1068f8;
 }
 
+.table table    tbody{
+    background-color: white;
+}
+
 @media screen and (min-width: 750px) {
 
 
