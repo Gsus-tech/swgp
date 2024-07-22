@@ -644,13 +644,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <!-- Boton de añadir proyecto -->
                 <div class="addBtn"><a id="showProjectFormBtn" title="Crear proyecto" class="fa fa-plus add-project-btn button" style="margin-top:0;"></a></div>
 
-                <div id="projectSelected" class="projectSelected hide">
+                <div id="projectSelected" class="selectedRowsOptions hide">
                     <select class="comboBox" name="actionSelected" id="actionSelected">
                         <option value="0"> - Seleccionar acción - </option>
                         <option value="delete">Cerrar proyecto(s)</option>
                     </select>
-                    <a id="applyAction" title="Aplicar acción a los proyectos seleccionadas" class="button apply deleteAll">Aplicar</a>
-                    <a id="applyAction2" title="Aplicar acción a los proyectos seleccionadas" class="button apply deleteAllShort fa fa-chevron-right"></a>
+                    <a id="applyAction" title="Aplicar acción a los proyectos seleccionadas" class="button apply normalBtn">Aplicar</a>
+                    <a id="applyAction2" title="Aplicar acción a los proyectos seleccionadas" class="button apply shortBtn fa fa-chevron-right"></a>
                 </div>
 
                 <!-- Formulario de alta de proyecto -->

@@ -277,6 +277,19 @@ body {
     display: none;
 }
 
+.selectedRowsOptions{    
+    position: absolute;
+    top: .5rem;
+    right: 8%;
+} 
+
+.selectedRowsOptions .shortBtn {
+    display: inline-flex;
+}
+
+.selectedRowsOptions .normalBtn {
+    display: none;
+}
 
 @media screen and (min-width: 650px) {
     .container .main {
@@ -291,6 +304,15 @@ body {
     .container .main .header {
         position: fixed;
         height: 3.5rem;
+    }
+}
+
+@media screen and (min-width: 700px){
+   .selectedRowsOptions .shortBtn {    
+        display: none;
+    }    
+    .selectedRowsOptions .normalBtn {    
+        display: inline-flex;    
     }
 }
 
@@ -540,6 +562,8 @@ body {
 .dropDownFilter {
     font-size: 11px;
 }
+
+
 
 @media screen and (min-width: 800px) {
     .dropDownFilter {
