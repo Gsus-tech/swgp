@@ -11,6 +11,7 @@
     --navBtnBg: #b0b0b051;
     --navBtnHover: #b0b0b0;
     --cancelBtn: #823015;
+    --rowSelected: #e0e0fc;
 }
 
 
@@ -589,3 +590,6 @@ body {
     }
 }
 
+.rowSelected{
+    background-color: var(--rowSelected);
+}

@@ -206,6 +206,7 @@ function agregarMiembro(projectId) {
     const rolCelda = document.createElement('td');
     const removeBtn = document.createElement('td');
 
+    nuevaFila.setAttribute('onclick', 'SelectThisRow(element, "members-list-body")')
     nombreCelda.textContent = usuarioNombre;
     rolCelda.textContent = tipoMiembroTexto;
     removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
@@ -319,6 +320,7 @@ function agregarObjetivo(projectId, tipo){
         // Crear nueva fila y añadirla a la tabla
         const nuevaFila = document.createElement('tr');
         nuevaFila.setAttribute('value', newId);
+        nuevaFila.setAttribute('onclick', `SelectThisRow(this, '${tablaBody.id}')`);
         const descriptionCelda = document.createElement('td');
         descriptionCelda.setAttribute('class','descripcion');
         const removeBtn = document.createElement('td');

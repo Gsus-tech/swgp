@@ -268,7 +268,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             $p = Crud::executeResultQuery($query, [$id], "i");
                                             if (count($p) > 0) {
                                                 for ($i = 0; $i < count($p); $i++) {
-                                                    echo '<tr>';
+                                                    echo "<tr onclick='SelectThisRow(this, \"members-list-body\")'>";
                                                     foreach ($p[$i] as $key => $value) {
                                                         if ($p[$i]['responsable'] == $value) {
                                                             if ($value == 1) {
@@ -392,7 +392,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
                             if (count($p) > 0) {
                                 for ($i = 0; $i < count($p); $i++) {
-                                    echo '<tr value=' . $p[$i]['id_objetivo'] . '>';
+                                    echo '<tr value=' . $p[$i]['id_objetivo'] . ' onclick="SelectThisRow(this, \'objectiveG-list-body\')">';
                                     foreach ($p[$i] as $key => $value) {
                                         if ($value != $p[$i]['id_objetivo']) {
                                             echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
@@ -453,7 +453,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = Crud::executeResultQuery($query, [$id, 'especifico'], "is");
                             if (count($p) > 0) {
                                 for ($i = 0; $i < count($p); $i++) {
-                                    echo '<tr value=' . $p[$i]['id_objetivo'] . '>';
+                                    echo '<tr value=' . $p[$i]['id_objetivo'] . 'onclick="SelectThisRow(this, \'objectiveE-list-body\')">';
                                     foreach ($p[$i] as $key => $value) {
                                         if ($value != $p[$i]['id_objetivo']) {
                                             echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
@@ -563,7 +563,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <th class="rowActions">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id='projects-list-body'>
                             <?php
                             if (isset($_GET['search']) || isset($_GET['filterDto'])) {
                                 if (isset($_GET['search'])) {
@@ -574,7 +574,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 if (!empty($p) && count($p) > 0) {
                                     for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
-                                        echo '<tr>';
+                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')">';
                                         $count = 0;
                                         $currentId = 0;
                                         foreach ($p[$i] as $key => $value) {
@@ -610,7 +610,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 if (count($p) > 0) {
                                     for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
-                                        echo '<tr>';
+                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')">';
                                         foreach ($p[$i] as $key => $value) {
                                             if ($value === $p[$i]['id_proyecto']) {
                                                 echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";

@@ -4,6 +4,7 @@ require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
+    if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || $_SESSION['responsable'] === true) {
     ?>
 
 <!DOCTYPE html>
@@ -44,7 +45,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </thead>
                         <tbody id="activity-list-body">
                         <?php
-                        $id = isset($_GET['id']) ? $_GET['id'] : "1" ; //Obtener primer valor del comboBox proyectos
+                        if($_SESSION['responsable'] === true){
+                            $id =  $_SESSION['projectSelected'];
+                        }else{
+                            $id = isset($_GET['id']) ? $_GET['id'] : "1" ; //Obtener primer valor del comboBox proyectos
+                        }
                         $p = array();
                         $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada 
                         FROM tbl_actividades WHERE id_proyecto = ?";
@@ -53,7 +58,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN'>";
+                                echo "<tr row='$rowN' onclick='SelectThisRow(this, \"activity-list-body\")'>";
                                 $value = $p[$i]['id_actividad'];
                                 echo "<td><input type='checkbox' class='activiy-checkbox' value='$value'></td>";
                                 $j=0;
@@ -79,14 +84,22 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div>
         </div>
 
-        
+        <script>
+
+
+            document.addEventListener("DOMContentLoaded", function() {
+
+            });
+        </script>
     </div> <!-- Fin de container -->
 
     <script src="../js/init.js"></script>
 </body>
 </html>
-
 <?php
+}else{
+    echo "<script>console.log('No cuentas con los permisos necesarios para ingresar a esta página.')</script>";
+}
 }
 else{
     header("Location: ../index.php");

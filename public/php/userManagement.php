@@ -186,7 +186,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <th class="rowActions">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="tableContent">
+                    <tbody id='users-list-body' class="tableContent">
                         <?php
                             $p = array();
                             if(isset($_GET['search'])){
@@ -216,8 +216,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 // Verificar si hay resultados después de filtrar
                                 if (count($filteredResults) > 0) {
                                     foreach ($filteredResults as $user) {
-                                        echo '<tr>';
-                                        // echo generateUserRow($user);
+                                        echo '<tr onclick="SelectThisRow(this, \'users-list-body\')">';                                        // echo generateUserRow($user);
                                         $row='';
                                         foreach ($user as $key => $value) {
                                             if ($value === $user['id_usuario']) {
