@@ -27,6 +27,24 @@ function FilterResults(selectElement) {
     }
 }
 
+function openAddForm(){
+    const filtros = document.getElementById('filterDiv');
+    filtros.scrollIntoView({
+        behavior: 'smooth'
+    });
+    const formDiv = document.getElementById('addActivity-form');
+    formDiv.classList.remove('hide');
+}
+
+function confirmCancelEdit(){
+    if(confirm('Cerrar formulario sin guardar los cambios?')){
+        const form = document.getElementById('activity-form');
+        const formDiv = document.getElementById('addActivity-form');
+        form.reset();
+        formDiv.classList.add('hide');
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const checkboxes = document.querySelectorAll('.activity-checkbox');
     const allBoxs = document.getElementById('selectAllActivities');
@@ -88,5 +106,17 @@ function SelectThisRowAndDetails(element, tbodyName){
         element.classList.remove('rowSelected');
         textArea.value = '-- Selecciona una actividad --';
         textArea.classList.add('italic');
+    }
+
+    
+}
+
+function doubleClickRow(element){
+    SelectThisRowAndDetails(element, "activity-list-body");
+    if(element.classList.contains('rowSelected')){
+        const textArea = document.getElementById('descriptionDetails');
+        textArea.scrollIntoView({
+            behavior: 'smooth'
+        });
     }
 }

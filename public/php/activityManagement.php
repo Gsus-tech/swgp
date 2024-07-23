@@ -15,7 +15,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - Panel de inicio</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style-dash.css">
-    <link rel="stylesheet" href="../css/style-userTools.css">
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/activities_style.css">
 </head>
@@ -90,7 +89,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")'>";
+                                echo "<tr row='$rowN' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
                                 echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
                                 $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
@@ -149,6 +148,123 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <h4>Mostrar contenido del reporte seleccionado</h4>
                 </div>
 
+                <div class="addBtn" onclick="openAddForm()"><a id="showUserFormBtn" title="Crear actividad" class="fa fa-plus"></a></div>
+
+
+                <div id="addActivity-form" class="addActivity-form hide">
+                    <form class="activity-form" id="activity-form" method="POST" autocomplete="off">
+                        <div class="formContainer">
+                            <div class="title"><h4>Form actividad:</h4></div>
+                            <?php
+
+                            ?>
+                            <input class='input' type="text" name="Fname" id="Fname" placeholder="Nombre de la actividad" title="Introduce un nombre identificador para la actividad" value="" required oninvalid="invalidField(this)" oninput="cleanInvalid(this)"> 
+                            <br>
+                            <!-- <label for="Fdescription">Descripción:</label> -->
+                            <textarea class='textarea' type="text" name="Fdescription" id="FdescriptionEdit" placeholder="Descripción" title="Descripción de la actividad"  required
+                            oninvalid="invalidField(this)" oninput="cleanInvalid(this)"></textarea>
+                            <br>
+                            <div class="fm-content">
+                                <div class="section1">
+                                    <div class="dates">
+                                        <label for="Fdate">Fecha estimada de finalización:</label><br>
+                                        <!-- datePicker -->
+                                        <?php $idUnico = "meta"; include 'datePicker.php'; ?>
+                                    </div>
+                                    <div class="noDate">
+                                        <input type="checkbox" class="checkBx" id="noDateSelected" name="noDateSelected" value="1">
+                                        <label for="noDateSelected" class="lbl">Sin fecha específica.</label>
+                                    </div>
+                                </div>
+
+                                <div class="selectDiv section2">
+                                <label for="userRespList" class="lbl">Selecciona al responsable de esta actividad:</label><br>
+                                        <?php
+                                        // $currentActivity = $_GET['activityID'];
+                                        $account = $_SESSION['id'];
+                                        $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
+                                        // $amIrep = Crud::executeResultQuery("SELECT integrantes.id_usuario FROM tbl_integrantes integrantes JOIN tbl_actividades actividades ON integrantes.id_proyecto = actividades.id_proyecto WHERE actividades.id_proyecto = '$id' AND actividades.id_actividad = '$currentActivity' AND actividades.id_usuario = '$account';");
+                                        // if(count($amIrep)>=1){$isThere = Crud::isInArray($amIrep, $account);}
+                                        // else{$isThere=false;}
+                                        if(count($users)>=1){
+                                            $ds = '';
+                                        echo "<select name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;' $ds>";
+                                            for($i=0;$i<count($users);$i++){
+                                                $flag=false;
+                                                $selected = '';
+                                                if ($users[$i][0]===$currentActivity) {
+                                                    $flag=true;
+                                                }
+                                                if ($flag===false) {
+                                                    if($users[$i][0] === $activityInfo[0][3]){
+                                                        $selected = 'selected';
+                                                    }
+                                                    echo '<option value='.$users[$i][0].'>'.$users[$i][1].'</option>';
+                                                }
+                                            }
+                                        }else{
+                                            echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
+                                            echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
+                                        }
+                                        ?>
+                                    </select>
+                                    <input type="hidden" name="myId" id="myId" value="<?php echo $_SESSION['id']; ?>">
+                                    <input type="hidden" name="responsableActividad" id="responsableActividad" value="<?php echo $users[0][0] ?>">
+                                </div>
+                            </div>
+                            <div class="selectDiv">
+                            <br><label for="objetivoList" class="lbl">Actividad relacionada al objetivo:</label>
+                                    <?php
+                                    $objetivos = Crud::executeResultQuery("SELECT objetivos.id_objetivo, objetivos.contenido FROM tbl_objetivos objetivos WHERE objetivos.id_proyecto = '$id' AND objetivos.tipo='especifico';");
+                                    $flag = false;
+                                    if(count($objetivos)>=1){
+                                        $flag = true;
+                                    echo "<select name='objetivoList' id='objetivoList' style='margin: .5rem 0 0 .5rem;' onchange='updateObjectiveDescription()'>";
+                                        for($i=0;$i<count($objetivos);$i++){
+                                            $selected = '';
+                                            if($objetivos[$i][0] === $activityInfo[0][4]){
+                                                $selected = 'selected';
+                                            }
+                                            echo '<option value='.$objetivos[$i][0].' '.$selected.'>Objetivo: '.$objetivos[$i][0].'</option>';
+                                        }
+                                    }else{
+                                        echo "<select disabled name='objetivoList' id='objetivoList' style='margin: .5rem 0 0 .5rem;'>";
+                                        echo "<option value='noObjectivesRegister'>Sin objetivos registrados</option>";
+                                    }
+                                    echo "</select>";
+                                    if($flag===true){
+                                        echo "<select class='hide' name='objectiveDescriptionList' id='objectiveDescriptionList'>";
+                                        for($i=0;$i<count($objetivos);$i++){
+                                            echo '<option value='.$objetivos[$i][0].'>'.$objetivos[$i][1].'</option>';
+                                        }
+                                        echo "</select>";
+                                    }
+                                    ?>
+                                <input type="hidden" name="objetivoEnlazado" id="objetivoEnlazado" value="<?php echo $objetivos[0][0] ?>">
+                            </div>
+                            <textarea disabled type="text" class="textarea" name="ObjectiveDescription" id="ObjectiveDescription"></textarea>
+
+                            
+                
+                            <div class="noDate">
+                                <?php
+                                $checked = '';
+                                    // if($amIrep == true){
+                                    //     $checked = 'checked';
+                                    // }
+                                echo "<input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' value='1' $checked>";
+                                ?>
+                                <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
+                            </div>
+                            <div class="form-options">
+                                <button disabled class="sumbit-newTask" id="sumbit-editTask" type="submit" onclick="return confirmUpdate()">Guardar cambios</button>
+                                <a id="cancel-editTask" class="close-newTask button" onclick="return confirmCancelEdit()">Cancelar</a>
+                            </div>
+                            <input type="hidden" name="idProyectoPage" value="<?php echo  $id; ?>">
+                        
+                        </div> <!-- Fin de form-container --> 
+                    </form> <!-- Fin de activity-form -->
+                </div>
             </div>
         </div>
 

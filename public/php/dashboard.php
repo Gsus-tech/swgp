@@ -14,7 +14,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - Panel de inicio</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style-dash.css">
-    <link rel="stylesheet" href="../css/style-userTools.css">
 </head>
 <body class="short">
     <div class="container"> 

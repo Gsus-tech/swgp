@@ -39,12 +39,7 @@
         margin-left: 1rem;
     }
 }
-.fm-content textarea{
-    resize: none;
-    height: 10rem;  
-    max-height: 13rem;
-    background-color: white;
-}
+
 
 .main .activityManagement .fm-content { 
     margin: 20px; 
@@ -52,6 +47,129 @@
     border-radius: 20px;
     background-color: #e2e2e2;
     padding: 1rem 20px;
+}
+
+.addBtn{
+    padding:6px;
+}
+.addBtn .fa{
+    font-size: 18px;
+}
+.addBtn:hover{
+    background-color:var(--hover-AddBtn);
+    .fa{
+        font-size: 19px;
+    }
+}
+
+
+.addActivity-form {
+    position: absolute;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    top: 0;
+    left: 0;
+    background-color: #000000c2;
+    padding: 2rem 0 5rem 0;
+}
+
+.activity-form {
+    width: 25rem;
+    margin: 0 auto;
+    background-color: #fff;
+    border-radius: 1em;
+    transition: width .3s ease-in-out;
+    padding: 1rem 1.5rem;
+}
+
+.formContainer .fm-content .section2 {   
+    margin-top: 3rem;
+}
+
+.formContainer .title {
+    display: flex;
+    margin-top: 1.33em;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.formContainer .dates select {
+    margin-top: .5rem;
+    margin-left: .5rem;
+}
+
+.formContainer .noDate {
+    display: flex;
+}
+
+.formContainer .noDate .lbl {
+    margin-top: 1rem;
+}
+
+.formContainer .noDate .checkBx {
+    margin-top: 1rem;
+    width: 2rem;
+}
+
+.formContainer .noDate .youMust {
+    background-color: #823015;
+}
+
+.formContainer .form-options {
+    margin: 1.5rem auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.formContainer .sumbit-newTask {
+    background-color: #676767;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 15px;
+}
+
+.formContainer .enabled {
+    background-color: #124734;
+    cursor: pointer;
+}
+
+.formContainer .close-newTask {
+    background-color: #823015;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+
+.input{
+    margin: 10px auto 0 auto;
+}
+
+.textarea {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 3rem;
+    height: 8rem;  
+    max-height: 13rem;
+    padding: 10px 17px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+    font-size: 15px;
+    resize: none;
+    background-color: white;
 }
 
 @media screen and (min-width: 800px) {
@@ -75,4 +193,66 @@
     .fm-content .line .section2 {    
         margin-left: 5%;
     } 
+
+    .activity-form{
+        width: calc(93% - 20rem);
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    .activity-form {
+        width: 45rem;
+    }
+
+    .formContainer .fm-content{
+        display: flex;
+    }
+    .formContainer .fm-content .section1 {
+        width: 60%;
+        float: left;
+        flex-direction: column;
+        align-items: stretch;
+    }  
+    .formContainer .fm-content .section2 {   
+        width: 35%;   
+        margin-left: 10px;     
+        margin-right: 1rem;  
+        float: left;     
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 0;
+    } 
+}
+
+
+@media (max-width: 600px) {
+    td:nth-of-type(1):before {
+        display:none;
+    }
+
+    td:nth-of-type(2):before {
+        content: "Actividad";
+    }
+
+    td:nth-of-type(3):before {
+        content: "Estado actual";
+    }
+
+    td:nth-of-type(4):before {
+        content: "Fecha de finalización";
+    }
+
+    td:nth-of-type(5):before {
+        content: "Fecha estimada";
+    }
+
+    td:nth-of-type(6):before {
+        content: "Acciones";
+    }
+}
+
+@media (max-height: 700px) {
+    .addActivity-form {
+        height: fit-content;
+    }
 }
