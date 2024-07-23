@@ -70,7 +70,7 @@
     top: 0;
     left: 0;
     background-color: #000000c2;
-    padding: 2rem 0 5rem 0;
+    padding: 1rem 0 5rem 0;
 }
 
 .activity-form {
@@ -81,7 +81,9 @@
     transition: width .3s ease-in-out;
     padding: 1rem 1.5rem;
 }
-
+.formContainer .fm-content .section1, .formContainer .fm-content .section2 {   
+    width: 100%;
+}
 .formContainer .fm-content .section2 {   
     margin-top: 3rem;
 }
@@ -154,6 +156,7 @@
 
 .input{
     margin: 10px auto 0 auto;
+    font-size: 15px;
 }
 
 .textarea {
@@ -170,6 +173,16 @@
     font-size: 15px;
     resize: none;
     background-color: white;
+}
+
+.formContainer .objetivoDisplay{
+    height: 4rem;
+}
+
+@media screen and (min-width: 600px){
+    .activity-form{
+        width: calc(80%);
+    }
 }
 
 @media screen and (min-width: 800px) {
@@ -195,7 +208,7 @@
     } 
 
     .activity-form{
-        width: calc(93% - 20rem);
+       width: calc(70%);
     }
 }
 

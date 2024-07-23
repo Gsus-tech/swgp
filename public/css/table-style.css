@@ -80,7 +80,7 @@ table:hover {
     color: #1068f8;
 }
 
-.table table    tbody{
+.table table tbody{
     background-color: white;
 }
 
@@ -121,6 +121,10 @@ table:hover {
 }
 
 @media (max-width: 650px) {
+    table:hover{
+        box-shadow: none;
+    }
+
     .header {
         height: 3.5rem;
     }

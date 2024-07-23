@@ -595,8 +595,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         if ($fl == true) {
                                             ?>
                                             <td>
-                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?id=<?php echo urlencode($currentId); ?>"></a>
-                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?cerrar=<?php echo urlencode($currentId); ?>"></a>
+                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo urlencode($currentId); ?>"></a>
+                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo urlencode($currentId); ?>"></a>
                                             </td>
                                             <?php
                                             echo '</tr>';

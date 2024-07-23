@@ -137,7 +137,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     <tr>
                                         <td colspan="2"><i>Selecciona una actividad</i></td>
                                     </tr>
-                                </tbody>    
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -179,34 +179,24 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                                 <div class="selectDiv section2">
                                 <label for="userRespList" class="lbl">Selecciona al responsable de esta actividad:</label><br>
-                                        <?php
-                                        // $currentActivity = $_GET['activityID'];
-                                        $account = $_SESSION['id'];
-                                        $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
-                                        // $amIrep = Crud::executeResultQuery("SELECT integrantes.id_usuario FROM tbl_integrantes integrantes JOIN tbl_actividades actividades ON integrantes.id_proyecto = actividades.id_proyecto WHERE actividades.id_proyecto = '$id' AND actividades.id_actividad = '$currentActivity' AND actividades.id_usuario = '$account';");
-                                        // if(count($amIrep)>=1){$isThere = Crud::isInArray($amIrep, $account);}
-                                        // else{$isThere=false;}
-                                        if(count($users)>=1){
-                                            $ds = '';
-                                        echo "<select name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;' $ds>";
-                                            for($i=0;$i<count($users);$i++){
-                                                $flag=false;
-                                                $selected = '';
-                                                if ($users[$i][0]===$currentActivity) {
-                                                    $flag=true;
-                                                }
-                                                if ($flag===false) {
-                                                    if($users[$i][0] === $activityInfo[0][3]){
-                                                        $selected = 'selected';
-                                                    }
-                                                    echo '<option value='.$users[$i][0].'>'.$users[$i][1].'</option>';
-                                                }
-                                            }
-                                        }else{
-                                            echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
-                                            echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
+                                    <?php
+                                    $account = $_SESSION['id'];
+                                    $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
+                                    
+                                    if(count($users)>=1){
+                                    echo "<select name='userRespList' id='userRespList' class='comboBox'>";
+                                        for($i=0;$i<count($users);$i++){
+                                            echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';
                                         }
-                                        ?>
+                                    }else{
+                                        echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
+                                        echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
+                                    }
+
+                                    echo "<input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' value='1' $checked>";
+                                    ?>
+                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
+                                        
                                     </select>
                                     <input type="hidden" name="myId" id="myId" value="<?php echo $_SESSION['id']; ?>">
                                     <input type="hidden" name="responsableActividad" id="responsableActividad" value="<?php echo $users[0][0] ?>">
@@ -219,13 +209,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $flag = false;
                                     if(count($objetivos)>=1){
                                         $flag = true;
-                                    echo "<select name='objetivoList' id='objetivoList' style='margin: .5rem 0 0 .5rem;' onchange='updateObjectiveDescription()'>";
+                                    echo "<select name='objetivoList' id='objetivoList' class='comboBox' onchange='updateObjectiveDescription(this)'>";
                                         for($i=0;$i<count($objetivos);$i++){
                                             $selected = '';
-                                            if($objetivos[$i][0] === $activityInfo[0][4]){
-                                                $selected = 'selected';
-                                            }
-                                            echo '<option value='.$objetivos[$i][0].' '.$selected.'>Objetivo: '.$objetivos[$i][0].'</option>';
+                                            echo '<option value='.$objetivos[$i]['id_objetivo'].' '.$selected.'>Objetivo: '.$objetivos[$i]['id_objetivo'].'</option>';
                                         }
                                     }else{
                                         echo "<select disabled name='objetivoList' id='objetivoList' style='margin: .5rem 0 0 .5rem;'>";
@@ -235,27 +222,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     if($flag===true){
                                         echo "<select class='hide' name='objectiveDescriptionList' id='objectiveDescriptionList'>";
                                         for($i=0;$i<count($objetivos);$i++){
-                                            echo '<option value='.$objetivos[$i][0].'>'.$objetivos[$i][1].'</option>';
+                                            echo '<option value='.$objetivos[$i]['id_objetivo'].'>'.$objetivos[$i]['contenido'].'</option>';
                                         }
                                         echo "</select>";
                                     }
                                     ?>
                                 <input type="hidden" name="objetivoEnlazado" id="objetivoEnlazado" value="<?php echo $objetivos[0][0] ?>">
                             </div>
-                            <textarea disabled type="text" class="textarea" name="ObjectiveDescription" id="ObjectiveDescription"></textarea>
+                            <textarea disabled type="text" class="textarea objetivoDisplay" name="ObjectiveDescription" id="ObjectiveDescription"></textarea>
 
                             
-                
-                            <div class="noDate">
-                                <?php
-                                $checked = '';
-                                    // if($amIrep == true){
-                                    //     $checked = 'checked';
-                                    // }
-                                echo "<input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' value='1' $checked>";
-                                ?>
-                                <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
-                            </div>
                             <div class="form-options">
                                 <button disabled class="sumbit-newTask" id="sumbit-editTask" type="submit" onclick="return confirmUpdate()">Guardar cambios</button>
                                 <a id="cancel-editTask" class="close-newTask button" onclick="return confirmCancelEdit()">Cancelar</a>
