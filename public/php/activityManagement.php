@@ -4,6 +4,7 @@ require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
+    if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || $_SESSION['responsable'] === true) {
     ?>
 
 <!DOCTYPE html>
@@ -14,7 +15,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - Panel de inicio</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style-dash.css">
-    <link rel="stylesheet" href="../css/style-userTools.css">
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/activities_style.css">
 </head>
@@ -28,14 +28,39 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <h4 class="headerTitle">Gestión de actividades</h4>
                 <?php $pagina="activityManagement"; include 'topToolBar.php'; ?>
             </div>
-            <div class="activityManagement">
+            <div class="activityManagement scroll">
             
+             <!-- Filtros de busqueda -->
+             <div class="filterDiv closedFilterDiv" id="filterDiv">
+                    <i id="filterSlidersIcon" class="fa fa-sliders button" title="Filtrar resultados" onclick="FiltersToggle()"></i>
+                    <div class="dropDownFilter hide">
+                        <label for="filtersForRol">Estado</label>
+                        <select class="dropDownEstadoFilter comboBox mL-2r" id="dropDownEstadoFilter" name="dropDownEstadoFilter" onchange="FilterResults(this)">
+                            <option value="noFilter">Todos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="en proceso">En proceso</option>
+                            <option value="retrasado">Retrasadas</option>
+                            <option value="finalizado">Terminadas</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div id="selectedRowsOptions" class="selectedRowsOptions hide">
+                    <select class="comboBox" name="actionSelected" id="actionSelected">
+                        <option value="0"> - Seleccionar acción - </option>
+                        <option value="delete">Eliminar actividad(es)</option>
+                    </select>
+                    <a id="applyAction" title="Aplicar acción a las actividades seleccionadas" class="button apply normalBtn">Aplicar</a>
+                    <a id="applyAction2" title="Aplicar acción a las actividades seleccionadas" class="button apply shortBtn fa fa-chevron-right"></a>
+                </div>
+
 
                 <div class="table">
                     <table class="activity-list">
                         <thead>
                             <tr>
-                                <th><input id='selectAllActivities' type='checkbox' class='activiy-checkbox' value='$value'></th>
+                                <th class="selectActivities"><input type="checkbox" id="selectAllActivities"></th>
                                 <th class="rowNombre">Actividad</th>
                                 <th class="rowCargo">Estado</th>
                                 <th class="rowCargo">Fecha de finalización</th>
@@ -44,26 +69,44 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </thead>
                         <tbody id="activity-list-body">
                         <?php
-                        $id = isset($_GET['id']) ? $_GET['id'] : "1" ; //Obtener primer valor del comboBox proyectos
+                        if($_SESSION['responsable'] === true){
+                            $id =  $_SESSION['projectSelected'];
+                        }else{
+                            $id = isset($_GET['id']) ? $_GET['id'] : "13" ; //Obtener primer valor del comboBox proyectos
+                        }
                         $p = array();
-                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada 
+                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción
                         FROM tbl_actividades WHERE id_proyecto = ?";
+
+                        $estados = [
+                            1 => 'pendiente',
+                            2 => 'en proceso',
+                            3 => 'finalizado',
+                            4 => 'retrasado'
+                        ];
 
                         $p = Crud::executeResultQuery($query, [$id], "i");
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN'>";
+                                echo "<tr row='$rowN' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
-                                echo "<td><input type='checkbox' class='activiy-checkbox' value='$value'></td>";
-                                $j=0;
-                                foreach($p[$i] as $key => $value) {
-                                    if($j>0){
+                                echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
+                                $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
+                                foreach ($camposMostrar as $campo) {
+                                    $value = $p[$i][$campo];
+                                    if ($campo == 'estadoActual') {
+                                        $str = $value === null ? "<td><i>Sin especificar</i></td>" : '<td>' . $estados[$value] . '</td>';
+                                    }elseif($campo == 'fecha_estimada' && $value === null){
+                                        $str = "<td><i>Sin especificar</i></td>";
+                                    }elseif($campo == 'descripción'){
+                                        $str = "<td class='thisDescription' style='display:none;'>". htmlspecialchars($value, ENT_QUOTES, 'UTF-8') ."</td>";
+                                    }else {
                                         $str = $value === null ? "<td><i>Sin especificar</i></td>" : '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
-                                        echo $str;
                                     }
-                                    $j++;
+                                    echo $str;
                                 }
+
                                 $x = $p[$i]['id_actividad'];
                                 echo "<td><a class='fa fa-trash tableIconBtn' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, this)'></a></td>";
                                 echo '</tr>';
@@ -76,17 +119,145 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </table>
                 </div>
 
+                <div class="fm-content">
+                    <div class="line">
+                        <div id="descriptionDiv" class="section1">
+                            <label for="descriptionDetails">Descripción de la actividad:</label>
+                            <textarea disabled name="descriptionDetails" id="descriptionDetails" class="textarea italic">-- Selecciona una actividad --</textarea>
+                        </div>
+                        <div class="section2 table">
+                            <table id="reportsMade">
+                                <thead>
+                                    <tr>
+                                        <th class="rowNombre">Reporte de actividad</th>
+                                        <th class="rowCargo">Fecha de creación</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reportsMade_tbody">
+                                    <tr>
+                                        <td colspan="2"><i>Selecciona una actividad</i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <div class="fm-content">
+                    <h4>Mostrar contenido del reporte seleccionado</h4>
+                </div>
+
+                <div class="addBtn" onclick="openAddForm()"><a id="showUserFormBtn" title="Crear actividad" class="fa fa-plus"></a></div>
+
+
+                <div id="addActivity-form" class="addActivity-form hide">
+                    <form class="activity-form" id="activity-form" method="POST" autocomplete="off">
+                        <div class="formContainer">
+                            <div class="title"><h4>Form actividad:</h4></div>
+                            <?php
+
+                            ?>
+                            <input class='input' type="text" name="Fname" id="Fname" placeholder="Nombre de la actividad" title="Introduce un nombre identificador para la actividad" value="" required oninvalid="invalidField(this)" oninput="cleanInvalid(this)"> 
+                            <br>
+                            <!-- <label for="Fdescription">Descripción:</label> -->
+                            <textarea class='textarea' type="text" name="Fdescription" id="FdescriptionEdit" placeholder="Descripción" title="Descripción de la actividad"  required
+                            oninvalid="invalidField(this)" oninput="cleanInvalid(this)"></textarea>
+                            <br>
+                            <div class="fm-content">
+                                <div class="section1">
+                                    <div class="dates">
+                                        <label for="Fdate">Fecha estimada de finalización:</label><br>
+                                        <!-- datePicker -->
+                                        <?php $idUnico = "meta"; include 'datePicker.php'; ?>
+                                    </div>
+                                    <div class="noDate">
+                                        <input type="checkbox" class="checkBx" id="noDateSelected" name="noDateSelected" value="1">
+                                        <label for="noDateSelected" class="lbl">Sin fecha específica.</label>
+                                    </div>
+                                </div>
+
+                                <div class="selectDiv section2">
+                                <label for="userRespList" class="lbl">Selecciona al responsable de esta actividad:</label><br>
+                                    <?php
+                                    $account = $_SESSION['id'];
+                                    $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
+                                    
+                                    if(count($users)>=1){
+                                    echo "<select name='userRespList' id='userRespList' class='comboBox'>";
+                                        for($i=0;$i<count($users);$i++){
+                                            echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';
+                                        }
+                                    }else{
+                                        echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
+                                        echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
+                                    }
+
+                                    echo "<input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' value='1' $checked>";
+                                    ?>
+                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
+                                        
+                                    </select>
+                                    <input type="hidden" name="myId" id="myId" value="<?php echo $_SESSION['id']; ?>">
+                                    <input type="hidden" name="responsableActividad" id="responsableActividad" value="<?php echo $users[0][0] ?>">
+                                </div>
+                            </div>
+                            <div class="selectDiv">
+                            <br><label for="objetivoList" class="lbl">Actividad relacionada al objetivo:</label>
+                                    <?php
+                                    $objetivos = Crud::executeResultQuery("SELECT objetivos.id_objetivo, objetivos.contenido FROM tbl_objetivos objetivos WHERE objetivos.id_proyecto = '$id' AND objetivos.tipo='especifico';");
+                                    $flag = false;
+                                    if(count($objetivos)>=1){
+                                        $flag = true;
+                                    echo "<select name='objetivoList' id='objetivoList' class='comboBox' onchange='updateObjectiveDescription(this)'>";
+                                        for($i=0;$i<count($objetivos);$i++){
+                                            $selected = '';
+                                            echo '<option value='.$objetivos[$i]['id_objetivo'].' '.$selected.'>Objetivo: '.$objetivos[$i]['id_objetivo'].'</option>';
+                                        }
+                                    }else{
+                                        echo "<select disabled name='objetivoList' id='objetivoList' style='margin: .5rem 0 0 .5rem;'>";
+                                        echo "<option value='noObjectivesRegister'>Sin objetivos registrados</option>";
+                                    }
+                                    echo "</select>";
+                                    if($flag===true){
+                                        echo "<select class='hide' name='objectiveDescriptionList' id='objectiveDescriptionList'>";
+                                        for($i=0;$i<count($objetivos);$i++){
+                                            echo '<option value='.$objetivos[$i]['id_objetivo'].'>'.$objetivos[$i]['contenido'].'</option>';
+                                        }
+                                        echo "</select>";
+                                    }
+                                    ?>
+                                <input type="hidden" name="objetivoEnlazado" id="objetivoEnlazado" value="<?php echo $objetivos[0][0] ?>">
+                            </div>
+                            <textarea disabled type="text" class="textarea objetivoDisplay" name="ObjectiveDescription" id="ObjectiveDescription"></textarea>
+
+                            
+                            <div class="form-options">
+                                <button disabled class="sumbit-newTask" id="sumbit-editTask" type="submit" onclick="return confirmUpdate()">Guardar cambios</button>
+                                <a id="cancel-editTask" class="close-newTask button" onclick="return confirmCancelEdit()">Cancelar</a>
+                            </div>
+                            <input type="hidden" name="idProyectoPage" value="<?php echo  $id; ?>">
+                        
+                        </div> <!-- Fin de form-container --> 
+                    </form> <!-- Fin de activity-form -->
+                </div>
             </div>
         </div>
 
-        
     </div> <!-- Fin de container -->
-
+    
+    <script src="../js/activityMng.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>
-
 <?php
+}else{
+
+    echo "<script>
+    alert('No cuentas con los permisos necesarios para ingresar a esta página.')
+    window.location.href = `dashboard.php`;
+    </script>";
+}
 }
 else{
     header("Location: ../index.php");

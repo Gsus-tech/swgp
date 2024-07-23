@@ -29,3 +29,16 @@ function closeAccountMenu(event) {
         document.removeEventListener('click', closeAccountMenu);
     }
 }
+
+function SelectThisRow(element, tbodyName){
+    const tbody = document.getElementById(`${tbodyName}`);
+    const rows = tbody.getElementsByTagName('tr');
+    const state = element.classList.contains('rowSelected');
+
+    for (let i = 0; i < rows.length; i++) {
+        if(rows[i].classList.contains('rowSelected')){
+            rows[i].classList.remove('rowSelected');
+        }
+    }
+    state===false ? element.classList.add('rowSelected') : element.classList.remove('rowSelected');
+}

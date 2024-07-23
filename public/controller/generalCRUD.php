@@ -295,13 +295,13 @@ class Crud
         $search = "%{$search}%";
     
         // Consulta
-        $searchQuery = " AND (id_proyecto LIKE ? OR nombre LIKE ? OR fecha_inicio LIKE ? OR fecha_cierre LIKE ?)";
+        $searchQuery = " AND (id_proyecto LIKE ? OR departamentoAsignado LIKE ? OR nombre LIKE ? OR fecha_inicio LIKE ? OR fecha_cierre LIKE ?)";
     
         $myQuery = "SELECT $fields FROM $table WHERE 1=1 $searchQuery ORDER BY $id $order;";
     
         try {
             $stmt = $conn->prepare($myQuery);
-            $stmt->bind_param("ssss", $search, $search, $search, $search);
+            $stmt->bind_param("sssss", $search, $search, $search, $search, $search);
             $stmt->execute();
             $result = $stmt->get_result();
             $data = $result->fetch_all(MYSQLI_ASSOC);

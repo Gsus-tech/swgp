@@ -134,21 +134,6 @@
     cursor: pointer;
 }
 
-.deleteAllShort {
-    display: inline-flex;
-}
-
-.deleteAll {
-    display: none;
-}
-
-.accountsSelected {
-    justify-content: space-between;
-    position: absolute;
-    top: .5rem;
-    right: 8%;
-}
-
 .container .main .userManagement table {
     .rowActions {
         width: 6.5rem;
@@ -280,14 +265,6 @@
         }
     }
 
-    .deleteAllShort {
-        display: none;
-    }
-
-    .deleteAll {
-        display: inline-flex;
-    }
-
     .container .userManagement .filterDiv {
         font-size: 13px;
         display: flex;
@@ -372,11 +349,6 @@
         .add-user-btn {
             font-size: 25px;
         }
-    }
-
-    .accountsSelected {
-        position: absolute;
-        right: 10%;
     }
 
     .openFilterDiv {

@@ -268,7 +268,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             $p = Crud::executeResultQuery($query, [$id], "i");
                                             if (count($p) > 0) {
                                                 for ($i = 0; $i < count($p); $i++) {
-                                                    echo '<tr>';
+                                                    echo "<tr onclick='SelectThisRow(this, \"members-list-body\")'>";
                                                     foreach ($p[$i] as $key => $value) {
                                                         if ($p[$i]['responsable'] == $value) {
                                                             if ($value == 1) {
@@ -392,7 +392,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = Crud::executeResultQuery($query, [$id, 'general'], "is");
                             if (count($p) > 0) {
                                 for ($i = 0; $i < count($p); $i++) {
-                                    echo '<tr value=' . $p[$i]['id_objetivo'] . '>';
+                                    echo '<tr value=' . $p[$i]['id_objetivo'] . ' onclick="SelectThisRow(this, \'objectiveG-list-body\')">';
                                     foreach ($p[$i] as $key => $value) {
                                         if ($value != $p[$i]['id_objetivo']) {
                                             echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
@@ -453,7 +453,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = Crud::executeResultQuery($query, [$id, 'especifico'], "is");
                             if (count($p) > 0) {
                                 for ($i = 0; $i < count($p); $i++) {
-                                    echo '<tr value=' . $p[$i]['id_objetivo'] . '>';
+                                    echo '<tr value=' . $p[$i]['id_objetivo'] . 'onclick="SelectThisRow(this, \'objectiveE-list-body\')">';
                                     foreach ($p[$i] as $key => $value) {
                                         if ($value != $p[$i]['id_objetivo']) {
                                             echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
@@ -563,7 +563,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <th class="rowActions">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id='projects-list-body'>
                             <?php
                             if (isset($_GET['search']) || isset($_GET['filterDto'])) {
                                 if (isset($_GET['search'])) {
@@ -574,7 +574,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 if (!empty($p) && count($p) > 0) {
                                     for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
-                                        echo '<tr>';
+                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')">';
                                         $count = 0;
                                         $currentId = 0;
                                         foreach ($p[$i] as $key => $value) {
@@ -595,8 +595,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         if ($fl == true) {
                                             ?>
                                             <td>
-                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?id=<?php echo urlencode($currentId); ?>"></a>
-                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?cerrar=<?php echo urlencode($currentId); ?>"></a>
+                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo urlencode($currentId); ?>"></a>
+                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo urlencode($currentId); ?>"></a>
                                             </td>
                                             <?php
                                             echo '</tr>';
@@ -610,7 +610,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 if (count($p) > 0) {
                                     for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
-                                        echo '<tr>';
+                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')">';
                                         foreach ($p[$i] as $key => $value) {
                                             if ($value === $p[$i]['id_proyecto']) {
                                                 echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
@@ -644,13 +644,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <!-- Boton de añadir proyecto -->
                 <div class="addBtn"><a id="showProjectFormBtn" title="Crear proyecto" class="fa fa-plus add-project-btn button" style="margin-top:0;"></a></div>
 
-                <div id="projectSelected" class="projectSelected hide">
+                <div id="projectSelected" class="selectedRowsOptions hide">
                     <select class="comboBox" name="actionSelected" id="actionSelected">
                         <option value="0"> - Seleccionar acción - </option>
                         <option value="delete">Cerrar proyecto(s)</option>
                     </select>
-                    <a id="applyAction" title="Aplicar acción a los proyectos seleccionadas" class="button apply deleteAll">Aplicar</a>
-                    <a id="applyAction2" title="Aplicar acción a los proyectos seleccionadas" class="button apply deleteAllShort fa fa-chevron-right"></a>
+                    <a id="applyAction" title="Aplicar acción a los proyectos seleccionadas" class="button apply normalBtn">Aplicar</a>
+                    <a id="applyAction2" title="Aplicar acción a los proyectos seleccionadas" class="button apply shortBtn fa fa-chevron-right"></a>
                 </div>
 
                 <!-- Formulario de alta de proyecto -->

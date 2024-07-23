@@ -43,7 +43,7 @@
                     <li><a href="#" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
                     class="text">Tablero Kanban</span></i></a></li>
                     <?php if($isMember[1]==true){ ?>
-                        <li><a href="userTools/taskManagement.php" title="Gestión de actividades"><i class="fa fa-gears"><span 
+                        <li><a href="activityManagement.php" title="Gestión de actividades"><i class="fa fa-gears"><span 
                         class="text">Gestión de actividades</span></i></a></li>
                     <?php } ?>
                     <li><a href="#" title="Seguimiento de actividades"><i class="fa fa-tasks"><span 

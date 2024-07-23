@@ -2,7 +2,7 @@
     --barColor1: #0b2484;
     --barColor2: #1d0271;
     --hover-items: hsl(26, 88%, 33%);
-    --hover-AddBtn: #124734;
+    --hover-AddBtn: #09be00;
     --black: #333;
     --white: #fff;
     --menuColor: #e0e2e1;
@@ -11,6 +11,7 @@
     --navBtnBg: #b0b0b051;
     --navBtnHover: #b0b0b0;
     --cancelBtn: #823015;
+    --rowSelected: #e0e0fc;
 }
 
 
@@ -276,6 +277,27 @@ body {
     display: none;
 }
 
+.selectedRowsOptions{    
+    position: absolute;
+    top: .5rem;
+    right: 8%;
+} 
+
+.selectedRowsOptions .shortBtn {
+    display: inline-flex;
+}
+
+.selectedRowsOptions .normalBtn {
+    display: none;
+}
+
+.italic{
+    font-style: italic;
+}
+
+.pB-120 {  
+    padding-bottom: 120px; 
+} 
 
 @media screen and (min-width: 650px) {
     .container .main {
@@ -293,7 +315,17 @@ body {
     }
 }
 
+@media screen and (min-width: 700px){
+   .selectedRowsOptions .shortBtn {    
+        display: none;
+    }    
+    .selectedRowsOptions .normalBtn {    
+        display: inline-flex;    
+    }
+}
+
 @media screen and (min-width: 800px) {
+    
     .container .sidebar {
         width: 9rem;
     }
@@ -540,6 +572,8 @@ body {
     font-size: 11px;
 }
 
+
+
 @media screen and (min-width: 800px) {
     .dropDownFilter {
         margin: 0 0;
@@ -574,6 +608,9 @@ body {
 .ml1r {
     margin-left: 1rem;
 }
+.mL-2r {
+    margin-left: 2rem;
+}
 
 .mT-half {
     margin-top: .5rem;
@@ -589,3 +626,6 @@ body {
     }
 }
 
+.rowSelected{
+    background-color: var(--rowSelected);
+}
