@@ -470,14 +470,6 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
             }
         }
-        //Validacion de entrada de datos
-        const forbiddenChars = /[\\*|"'<>@`$[\]{}();?=:&#]/g;
-        eUserName.addEventListener('input', function(){
-            this.value = this.value.replace(forbiddenChars, '');
-        });
-        eFdepto.addEventListener('input', function(){
-            this.value = this.value.replace(forbiddenChars, '');
-        });
 
         //Departamento select e introducir nuevo
         eDropBox.addEventListener('change', function(){
@@ -485,6 +477,53 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     }
 });
+
+function submitFormEditUser(){
+    var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
+    const eUserName = document.getElementById("Ename");
+    const eFdepto = document.getElementById("eFdepto");
+
+    if (regexEspeciales.test(eUserName.value)) {
+        eUserName.setCustomValidity('No se permiten caracteres especiales en el nombre.');
+        eUserName.classList.add('invalidField');
+        eUserName.reportValidity();
+        return false;
+    }
+    else if (eUserName.value.length < 8) {
+        eUserName.setCustomValidity('El nombre debe tener al menos 8 caracteres.');
+        eUserName.classList.add('invalidField');
+        eUserName.reportValidity();
+        return false;
+    }
+    else if (eUserName.value.length > 45) {
+        eUserName.setCustomValidity('Máximo 45 caracteres para el campo nombre.');
+        eUserName.classList.add('invalidField');
+        eUserName.reportValidity();
+        return false;
+    }
+
+    if (regexEspeciales.test(eFdepto.value)) {
+        eFdepto.setCustomValidity('No se permiten caracteres especiales.');
+        eFdepto.classList.add('invalidField');
+        eFdepto.reportValidity();
+        return false;
+    }
+    else if (eFdepto.value.length < 8) {
+        eFdepto.setCustomValidity('El nombre del departamento debe tener al menos 8 caracteres.');
+        eFdepto.classList.add('invalidField');
+        eFdepto.reportValidity();
+        return false;
+    }
+    else if (eFdepto.value.length > 45) {
+        eFdepto.setCustomValidity('Máximo 45 caracteres para el nombre del departamento.');
+        eFdepto.classList.add('invalidField');
+        eFdepto.reportValidity();
+        return false;
+    }
+
+    var form = document.getElementById('editUser-form');
+    form.action = "../controller/userManager.php?updateUser=true";
+}
 
 function toggleInput(){
     const eDepto = document.getElementById("Edepto");
@@ -496,20 +535,14 @@ function toggleInput(){
 function updateValue(){
     const eDepto = document.getElementById("Edepto");
     const eDropBox = document.getElementById('edropDownDepto');
-        const eFdepto = document.getElementById("eFdepto");
+    const eFdepto = document.getElementById("eFdepto");
     const selectedValue = eDropBox.value;
     if (selectedValue === 'other') {
-        eFdepto.value = "";    
-        if(eDepto.classList.contains('hide')){
-            eDepto.classList.remove('hide');
-            toggleFormBtn();
-        }
+        eFdepto.value = "";
+        eFdepto.type === 'hidden' ? eFdepto.type = 'text': eFdepto.type = 'text';
     } else{
         eFdepto.value = eDropBox.options[eDropBox.selectedIndex].text;
-        if(!eDepto.classList.contains('hide')){
-            eDepto.classList.add('hide');
-            toggleFormBtn();
-        }
+        eFdepto.type === 'text' ? eFdepto.type = 'hidden': eFdepto.type = 'hidden';
     }
 }
 

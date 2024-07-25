@@ -332,13 +332,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 if(isset($_GET['editId'])){ 
                     $cR = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
                     ?>
-                <form class="addUser-form" id="editUser-form" action="../controller/userManager.php?updateUser=true" method="POST" autocomplete="on">
+                <form id="editUser-form" class="addUser-form" onsubmit="return submitFormEditUser()" method="POST" autocomplete="on">
                 <div class="form-bg">
                     <div class="form-container">
                         <div class="fm-content">
                             <div class="title"><h4>Editar usuario:</h4></div>                            <!-- <label for="name">Nombre:</label> -->
                             <input type="hidden" name="EditThisID" value="<?php echo $_GET['editId']?>">
-                            <input class="input" type="text" name="Ename" id="Ename" value="<?php echo $cR[0]['nombre'] ?>" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
+                            <input class="input" type="text" name="Ename" id="Ename" value="<?php echo $cR[0]['nombre'] ?>" 
+                            placeholder="Nombre de usuario" title="Introducir nombre de usuario" oninput="resetField(this)"> 
                             <br>
                             
                             <label for="dropDownDepto">Departamento:</label>
@@ -356,14 +357,14 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             ?>
                             <option value="other">Otro</option>
                             </select>
-                            <div id="Edepto" class="Fdpto hide">
-                                <input type="text" name="eFdpto" id="eFdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
-                                oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
+                            <div id="Edepto" class="Fdpto">
+                                <input type="hidden" name="eFdpto" id="eFdepto" placeholder="Nuevo departamento" 
+                                title="Introducir departamento del usuario"  oninput="resetField(this)"> 
                             </div>
                             
                             <!-- <label for="mail">Correo:</label> -->
-                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0]['correo'] ?>" placeholder="Correo" title="Introducir correo del usuario" required
-                            oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
+                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0]['correo'] ?>" 
+                            placeholder="Correo" title="Introducir correo del usuario"  oninput="resetField(this)"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label><br>
                             <select class="comboBox comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
