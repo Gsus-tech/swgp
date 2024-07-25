@@ -157,7 +157,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
 const userRolDrop = document.getElementById('FcmbBox');
 function submitFormUser(){
     var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
-
+    const onlySpaces = /^\s*$/;
+    const doubleSpaces = /\s{2,}/;
+    const cadenasSinSentido = [
+        'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
+        'random','loremipsum','qwerty','asdfg','zxcv',
+        'nombre1','ghfjd','iiii','dummytext','blahblah',
+        'Usuario123','abcd1234','123','eeeee','aaaa'
+    ];
     if (regexEspeciales.test(userName.value)) {
         userName.setCustomValidity('No se permiten caracteres especiales en el nombre.');
         userName.classList.add('invalidField');
@@ -175,6 +182,10 @@ function submitFormUser(){
         userName.classList.add('invalidField');
         userName.reportValidity();
         return false;
+    }else if(onlySpaces.test(userName.value) || doubleSpaces.test(userName.value) || cadenasSinSentido.some(nonsensical => userName.value.includes(nonsensical))){
+        userName.setCustomValidity('Introduce un nombre de usuario válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
+        userName.reportValidity();
+        return false;
     }
 
     if(dropBox.value === 'noSelected'){
@@ -184,20 +195,24 @@ function submitFormUser(){
     }
 
     if (regexEspeciales.test(depto.value)) {
-        depto.setCustomValidity('No se permiten caracteres especiales en el nombre.');
+        depto.setCustomValidity('No se permiten caracteres especiales en el nombre del departamento.');
         depto.classList.add('invalidField');
         depto.reportValidity();
         return false;
     }
     else if (depto.value.length < 8) {
-        depto.setCustomValidity('El nombre debe tener al menos 8 caracteres.');
+        depto.setCustomValidity('El nombre del departamento debe tener al menos 8 caracteres.');
         depto.classList.add('invalidField');
         depto.reportValidity();
         return false;
     }
     else if (depto.value.length > 45) {
-        depto.setCustomValidity('Máximo 45 caracteres para el campo nombre.');
+        depto.setCustomValidity('Máximo 45 caracteres para el campo departamento.');
         depto.classList.add('invalidField');
+        depto.reportValidity();
+        return false;
+    }else if(onlySpaces.test(depto.value) || doubleSpaces.test(depto.value) || cadenasSinSentido.some(nonsensical => depto.value.includes(nonsensical))){
+        depto.setCustomValidity('Introduce un nombre de departamento válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
         depto.reportValidity();
         return false;
     }
