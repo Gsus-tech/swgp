@@ -20,12 +20,12 @@ password2.addEventListener("change", (e)=>{toggleFormBtn();});
 
 function toggleFormBtn(){
     if(userName.value != "" && depto.value != "" && mail.value != "" && password.value != ""  && password2.value != ""){
-        if(password.value == password2.value){
+        // if(password.value == password2.value){
             addUserButton.disabled=false;
             if(!document.getElementById('sumbit-AddUser').classList.contains('enabled')){
                 document.querySelector(".sumbit-AddUser").classList.toggle('enabled');
             }
-        }
+        // }
     }else{
         addUserButton.disabled=true;
         if(document.getElementById('sumbit-AddUser').classList.contains('enabled')){
@@ -33,21 +33,21 @@ function toggleFormBtn(){
         }
     }
 
-    if(password.value != password2.value){
-        if(!document.getElementById('FpasswordCon').classList.contains('wrongCP')){
-            document.getElementById('FpasswordCon').classList.toggle('wrongCP');
-        }
-        addUserButton.disabled=true;
-        if(document.getElementById('sumbit-AddUser').classList.contains('enabled')){
-            document.querySelector(".sumbit-AddUser").classList.toggle('enabled');
-        }
-    }
-    if(password.value == password2.value){
-        if(document.getElementById('FpasswordCon').classList.contains('wrongCP')){
-            document.getElementById('FpasswordCon').classList.toggle('wrongCP');
-        }
-    }
-} 
+    // if(password.value != password2.value){
+    //     if(!document.getElementById('FpasswordCon').classList.contains('wrongCP')){
+    //         document.getElementById('FpasswordCon').classList.toggle('wrongCP');
+    //     }
+    //     addUserButton.disabled=true;
+    //     if(document.getElementById('sumbit-AddUser').classList.contains('enabled')){
+    //         document.querySelector(".sumbit-AddUser").classList.toggle('enabled');
+    //     }
+    // }
+    // if(password.value == password2.value){
+    //     if(document.getElementById('FpasswordCon').classList.contains('wrongCP')){
+    //         document.getElementById('FpasswordCon').classList.toggle('wrongCP');
+    //     }
+    // }
+}
 
 //Departamento select e introducir nuevo
 const dropBox = document.getElementById('dropDownDepto');
@@ -133,11 +133,12 @@ document.addEventListener('DOMContentLoaded', function() {
 //Cerrar barra al hacer clic fuera del div
 document.addEventListener('DOMContentLoaded', (event) => {
     //Validacion de entrada de datos
-    const forbiddenChars = /[\\*|"'<>@`$[\]{}();?=:&#]/g;
-    userName.addEventListener('input', function(){
+    const forbiddenChars = /[<>`#*]/g;
+
+    depto.addEventListener('input', function(){
         this.value = this.value.replace(forbiddenChars, '');
     })
-    depto.addEventListener('input', function(){
+    userName.addEventListener('input', function(){
         this.value = this.value.replace(forbiddenChars, '');
     })
     //Boton de buscar
@@ -153,6 +154,137 @@ document.addEventListener('DOMContentLoaded', (event) => {
         }
     });
 });
+const userRolDrop = document.getElementById('FcmbBox');
+function submitFormUser(){
+    var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
+
+    if (regexEspeciales.test(userName.value)) {
+        userName.setCustomValidity('No se permiten caracteres especiales en el nombre.');
+        userName.classList.add('invalidField');
+        userName.reportValidity();
+        return false;
+    }
+    else if (userName.value.length < 8) {
+        userName.setCustomValidity('El nombre debe tener al menos 8 caracteres.');
+        userName.classList.add('invalidField');
+        userName.reportValidity();
+        return false;
+    }
+    else if (userName.value.length > 45) {
+        userName.setCustomValidity('Máximo 45 caracteres para el campo nombre.');
+        userName.classList.add('invalidField');
+        userName.reportValidity();
+        return false;
+    }
+
+    if(dropBox.value === 'noSelected'){
+        dropBox.setCustomValidity('Seleccione un departamento');
+        userName.reportValidity();
+        return false;
+    }
+
+    if (regexEspeciales.test(depto.value)) {
+        depto.setCustomValidity('No se permiten caracteres especiales en el nombre.');
+        depto.classList.add('invalidField');
+        depto.reportValidity();
+        return false;
+    }
+    else if (depto.value.length < 8) {
+        depto.setCustomValidity('El nombre debe tener al menos 8 caracteres.');
+        depto.classList.add('invalidField');
+        depto.reportValidity();
+        return false;
+    }
+    else if (depto.value.length > 45) {
+        depto.setCustomValidity('Máximo 45 caracteres para el campo nombre.');
+        depto.classList.add('invalidField');
+        depto.reportValidity();
+        return false;
+    }
+
+    const pC = politicaContrasena();
+    if(pC ==false){return false;}
+    
+    if(userRolDrop.value === 'noSelected'){
+        userRolDrop.setCustomValidity('Seleccione un tipo de usuario');
+        userRolDrop.reportValidity();
+        return false;
+    }
+
+    if(password.value != password2.value){
+        password2.setCustomValidity('Las contraseñas no coinciden.');
+        password2.classList.add('invalidField');   
+        password2.reportValidity();   
+        return false;
+    }
+
+    var form = document.getElementById('addUser-form');
+    form.action = "../controller/userManager.php?addUser=true";
+
+}
+
+function politicaContrasena(){
+    let r = true;
+
+    var lengthPattern = /.{8,45}/;
+    var uppercasePattern = /[A-Z]/;
+    var lowercasePattern = /[a-z]/;
+    var numberPattern = /[0-9]/;
+    var specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
+    var noSpacesPattern = /^\S*$/;
+    var noCommonSequencesPattern = /^(?!.*(123456|abcdef)).*$/;
+    var passwordValue = password.value;
+    let mensaje = "La contraseña debe incluir:"
+
+        // Validaciones
+        if (!lengthPattern.test(passwordValue)) {
+            mensaje += '\n- entre 8 y 45 caracteres';
+            // password.reportValidity();
+            r = false;
+        }
+        if (!uppercasePattern.test(passwordValue)) {
+            mensaje += '\n- una letra mayúscula';
+            // password.reportValidity();
+            r = false;
+        }
+        if (!lowercasePattern.test(passwordValue)) {
+            mensaje += '\n- una letra minúscula';
+            // password.reportValidity();
+            r = false;
+        }
+        if (!numberPattern.test(passwordValue)) {
+            mensaje += '\n- un número';
+            // password.reportValidity();
+            r = false;
+        }
+        if (!specialCharPattern.test(passwordValue)) {
+            mensaje += '\n- un carácter especial';
+            // password.reportValidity();
+            r = false;
+        }
+        if(r==false){
+            password.setCustomValidity(mensaje);
+            password.reportValidity();
+            return false;   
+        }
+        if (!noSpacesPattern.test(passwordValue)) {
+            password.setCustomValidity('La contraseña no debe contener espacios en blanco.');
+            password.reportValidity();
+            return false;
+        }
+        if (!noCommonSequencesPattern.test(passwordValue)) {
+            password.setCustomValidity('La contraseña no debe contener secuencias comunes como "123456" o "abcdef".');
+            password.reportValidity();
+            return false;
+        }
+    
+    return r;
+}
+
+function resetField(element){
+    element.setCustomValidity('')
+    element.classList.remove('invalidField');
+}
 
 function toggleSearchItems(){
     document.querySelector('.search-bar').classList.toggle('hide');
@@ -297,7 +429,11 @@ function seeUserAccount(idToSee){
 //Confirmar eliminar usuario
 function confirmDelete(idToEdit) {
     if(confirm("¿Estás seguro de que deseas eliminar esta cuenta?")){
-        window.location.href = `../controller/userManager.php?delete=true&deleteUser=${idToEdit}`;   
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = `../controller/userManager.php?delete=true&deleteUser=${idToEdit}`;
+        document.body.appendChild(form);
+        form.submit();  
     }else{
         return false;
     }

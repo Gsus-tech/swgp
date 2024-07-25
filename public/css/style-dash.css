@@ -299,6 +299,11 @@ body {
     padding-bottom: 120px; 
 } 
 
+.invalidField{
+    background-color: #fff5ce;
+    border-color: red;
+}
+
 @media screen and (min-width: 650px) {
     .container .main {
         margin-left: 9rem;

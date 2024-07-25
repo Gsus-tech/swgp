@@ -268,23 +268,25 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div>
 
                 <!-- Formulario de alta de usuario -->
-                <form class="addUser-form hide" id="addUser-form" action="../controller/userManager.php?addUser=true" method="POST" autocomplete="on">
+                <form class="addUser-form hide" id="addUser-form" 
+                onsubmit="return submitFormUser()" method="POST" autocomplete="on">
                 <div class="form-bg">
                     <div class="form-container">
                         <div class="fm-content">
-                            <div class="title"><h4>Agregar usuario:</h4></div>                            <!-- <label for="name">Nombre:</label> -->
-                            <input type="text" name="Fname" id="Fname" placeholder="Nombre de usuario" title="Introducir nombre de usuario" required oninvalid="this.setCustomValidity('El campo nombre es necesario')" oninput="this.setCustomValidity('')"> 
+                            <div class="title"><h4>Agregar usuario:</h4></div>             
+                            <input type="text" name="Fname" id="Fname" placeholder="Nombre de usuario" 
+                            title="Introducir nombre de usuario" oninput="resetField(this)"> 
                             <br>
 
                             <label for="dropDownDepto">Departamento:</label>
-                            <select class="comboBox dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
+                            <select class="comboBox dropDownDepto" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;" oninput="resetField(this)">
                             <?php
                                 $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                                 if(count($Deptos)>0){
+                                    echo '<option value="noSelected">Seleccione una opción</option>';
                                     for($i=0;$i<count($Deptos);$i++){
                                         foreach($Deptos[$i] as $key=>$value){
-                                            $selected = ($i == 1) ? 'selected' : '';
-                                            echo '<option value='.$i.' '.$selected.'>'.$value.'</option>';
+                                            echo '<option value='.$i.'>'.$value.'</option>';
                                         }
                                     }
                                 }
@@ -292,25 +294,26 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <option value="other">Otro</option>
                             </select>
                             <div id="Fdpto" class="Fdpto hide">
-                                <input type="text" name="Fdpto" id="Fdepto" placeholder="Nuevo departamento" title="Introducir departamento del usuario" required
-                                oninvalid="this.setCustomValidity('El campo departamento es necesario')" oninput="this.setCustomValidity('')"> 
+                                <input type="text" name="Fdpto" id="Fdepto" placeholder="Nuevo departamento" 
+                                title="Introducir departamento del usuario" oninput="resetField(this)"> 
                             </div>
 
                             <!-- <label for="mail">Correo:</label> -->
                             <input type="email" name="Fmail" id="Fmail" placeholder="Correo" title="Introducir correo del usuario" required
-                            oninvalid="this.setCustomValidity('Formato de correo incorrecto')" oninput="this.setCustomValidity('')"> 
+                            oninvalid="this.setCustomValidity('Formato de correo incorrecto');" oninput="resetField(this)"> 
                             <br>
                             <!-- <label for="dpto">Contraseña:</label> -->
-                            <input type="password" class="passInput" name="Fpassword" id="Fpassword" title="Introducir contraseña de la cuenta" placeholder="Contraseña" autocomplete="false" required
-                            oninvalid="this.setCustomValidity('Define una contraseña para la cuenta de usuario')" oninput="this.setCustomValidity('')">
+                            <input type="password" class="passInput" name="Fpassword" id="Fpassword" title="Introducir contraseña de la cuenta" 
+                            placeholder="Contraseña" autocomplete="false" oninput="resetField(this)">
                             <i id="passwordVisibility" name="passwordVisibility" class="fa fa-lock button" ></i> 
                             <br>
                             <!-- <label for="dpto">Confirmar contraseña:</label> -->
-                            <input type="password" class="passwordConField" name="FpasswordCon" id="FpasswordCon" title="Confirmar contraseña" placeholder="Confirmar contraseña" autocomplete="false" required
-                            oninvalid="this.setCustomValidity('Confirma la contraseña de la cuenta')" oninput="this.setCustomValidity('')"> 
+                            <input type="password" class="passwordConField" name="FpasswordCon" id="FpasswordCon" title="Confirmar contraseña" 
+                            placeholder="Confirmar contraseña" autocomplete="false" oninput="resetField(this)"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label>
-                            <select class="comboBox comboBoxUserType" id="FcmbBox" name="comboBoxUserType">
+                            <select class="comboBox comboBoxUserType" id="FcmbBox" name="comboBoxUserType" oninput="resetField(this)">
+                                <option value="noSelected">Seleccione una opción</option>
                                 <option value="EST">Usuario Estándar</option>
                                 <option value="SAD">Usuario Administrador</option>
                                 <option value="ADM">Super-Usuario</option>
