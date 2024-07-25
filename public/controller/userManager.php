@@ -2,8 +2,8 @@
 session_start();
 require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
-
 if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
+    
     $destination = "userManagement.php";
     
     if (isset($_GET['addUser']) && $_GET['addUser'] == 'true') {
@@ -32,6 +32,7 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
             $types = "i";
             
             if ($dependency == true) {
+                // echo "<script>console.log('about to break dependencies');</script>";
                 $resp = breakUserDependencies($id);
             }
             
@@ -112,7 +113,7 @@ function breakUserDependencies($id) {
         $updateQuery = "UPDATE tbl_actividades SET id_usuario = ? WHERE id_proyecto = ? AND id_actividad = ? AND id_usuario = ?";
         $updateParams = [$user, $project, $act, $id];
         $updateTypes = "iiii";
-        Crud::executeNonResultQuery($updateQuery, $updateParams, $updateTypes, null);
+        Crud::executeNonResultQuery2($updateQuery, $updateParams, $updateTypes);
     }
 }
 
