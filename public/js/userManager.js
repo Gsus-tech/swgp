@@ -469,7 +469,6 @@ document.addEventListener("DOMContentLoaded", function(){
         eUserName.addEventListener('change', (e)=>{toggleBtn();});
         eDepto.addEventListener('change', (e)=>{toggleBtn();});
         eMail.addEventListener('change', (e)=>{toggleBtn();});
-        eMail.addEventListener('input', (e)=>{checkEmail();});
         eUserName.addEventListener('keyup', (e)=>{toggleBtn();});
         eDepto.addEventListener('keyup', (e)=>{toggleBtn();});
         eMail.addEventListener('keyup', (e)=>{toggleBtn();});
@@ -487,18 +486,17 @@ document.addEventListener("DOMContentLoaded", function(){
             }
         }
 
-        function checkEmail(){
-            if (!eMail.checkValidity()) {
-                eMail.setCustomValidity('Formato de correo inválido.');
-            }
-        }
-
         //Departamento select e introducir nuevo
         eDropBox.addEventListener('change', function(){
             updateValue();
         });
     }
 });
+
+function invalidEmail(element){
+    element.setCustomValidity('Formato de correo inválido.');
+    element.classList.add('invalidField');
+}
 
 function submitFormEditUser(){
     var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
@@ -512,6 +510,7 @@ function submitFormEditUser(){
     ];
     const eUserName = document.getElementById("Ename");
     const eFdepto = document.getElementById("eFdepto");
+
     if (regexEspeciales.test(eUserName.value)) {
         eUserName.setCustomValidity('No se permiten caracteres especiales en el nombre.');
         eUserName.classList.add('invalidField');

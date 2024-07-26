@@ -300,7 +300,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                             <!-- <label for="mail">Correo:</label> -->
                             <input type="email" name="Fmail" id="Fmail" placeholder="Correo" title="Introducir correo del usuario" required
-                            oninvalid="this.setCustomValidity('Formato de correo incorrecto');" oninput="resetField(this)"> 
+                            oninvalid="invalidEmail(this)" oninput="resetField(this)"> 
                             <br>
                             <!-- <label for="dpto">Contraseña:</label> -->
                             <input type="password" class="passInput" name="Fpassword" id="Fpassword" title="Introducir contraseña de la cuenta" 
@@ -363,8 +363,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div>
                             
                             <!-- <label for="mail">Correo:</label> -->
-                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0]['correo'] ?>" 
-                            placeholder="Correo" title="Introducir correo del usuario"  oninput="resetField(this)"> 
+                            <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0]['correo'] ?>" placeholder="Correo"
+                            oninvalid="invalidEmail(this)" title="Introducir correo del usuario"  oninput="resetField(this)"> 
                             <br>
                             <label for="comboBoxUserType"> Permisos de usuario: </label><br>
                             <select class="comboBox comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
