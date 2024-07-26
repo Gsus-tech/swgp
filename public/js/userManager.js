@@ -493,6 +493,11 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 });
 
+function invalidEmail(element){
+    element.setCustomValidity('Formato de correo inválido.');
+    element.classList.add('invalidField');
+}
+
 function submitFormEditUser(){
     var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
     const onlySpaces = /^\s*$/;
@@ -547,7 +552,6 @@ function submitFormEditUser(){
         eFdepto.reportValidity();
         return false;
     }
-
     var form = document.getElementById('editUser-form');
     form.action = "../controller/userManager.php?updateUser=true";
 }
