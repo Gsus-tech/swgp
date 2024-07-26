@@ -469,6 +469,7 @@ document.addEventListener("DOMContentLoaded", function(){
         eUserName.addEventListener('change', (e)=>{toggleBtn();});
         eDepto.addEventListener('change', (e)=>{toggleBtn();});
         eMail.addEventListener('change', (e)=>{toggleBtn();});
+        eMail.addEventListener('input', (e)=>{checkEmail();});
         eUserName.addEventListener('keyup', (e)=>{toggleBtn();});
         eDepto.addEventListener('keyup', (e)=>{toggleBtn();});
         eMail.addEventListener('keyup', (e)=>{toggleBtn();});
@@ -483,6 +484,12 @@ document.addEventListener("DOMContentLoaded", function(){
                 if(document.getElementById('sumbit-editUser').classList.contains('enabled')){
                     document.getElementById("sumbit-editUser").classList.toggle('enabled');
                 }
+            }
+        }
+
+        function checkEmail(){
+            if (!eMail.checkValidity()) {
+                eMail.setCustomValidity('Formato de correo inválido.');
             }
         }
 
@@ -505,7 +512,6 @@ function submitFormEditUser(){
     ];
     const eUserName = document.getElementById("Ename");
     const eFdepto = document.getElementById("eFdepto");
-
     if (regexEspeciales.test(eUserName.value)) {
         eUserName.setCustomValidity('No se permiten caracteres especiales en el nombre.');
         eUserName.classList.add('invalidField');
@@ -547,7 +553,6 @@ function submitFormEditUser(){
         eFdepto.reportValidity();
         return false;
     }
-
     var form = document.getElementById('editUser-form');
     form.action = "../controller/userManager.php?updateUser=true";
 }
