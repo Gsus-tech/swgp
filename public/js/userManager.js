@@ -161,7 +161,7 @@ function submitFormUser(){
     const doubleSpaces = /\s{2,}/;
     const cadenasSinSentido = [
         'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
-        'random','loremipsum','qwerty','asdfg','zxcv',
+        'random','loremipsum','qwerty','asdf','zxcv',
         'nombre1','ghfjd','iiii','dummytext','blahblah',
         'Usuario123','abcd1234','123','eeeee','aaaa'
     ];
@@ -182,7 +182,7 @@ function submitFormUser(){
         userName.classList.add('invalidField');
         userName.reportValidity();
         return false;
-    }else if(onlySpaces.test(userName.value) || doubleSpaces.test(userName.value) || cadenasSinSentido.some(nonsensical => userName.value.includes(nonsensical))){
+    }else if(onlySpaces.test(userName.value) || doubleSpaces.test(userName.value) || cadenasSinSentido.some(nonsensical => userName.value.includes(nonsensical) || cadenasSinSentido.contains(userName.value))){
         userName.setCustomValidity('Introduce un nombre de usuario válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
         userName.reportValidity();
         return false;
@@ -211,7 +211,7 @@ function submitFormUser(){
         depto.classList.add('invalidField');
         depto.reportValidity();
         return false;
-    }else if(onlySpaces.test(depto.value) || doubleSpaces.test(depto.value) || cadenasSinSentido.some(nonsensical => depto.value.includes(nonsensical))){
+    }else if(onlySpaces.test(depto.value) || doubleSpaces.test(depto.value) || cadenasSinSentido.some(nonsensical => depto.value.includes(nonsensical)) || cadenasSinSentido.contains(userName.value)){
         depto.setCustomValidity('Introduce un nombre de departamento válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
         depto.reportValidity();
         return false;
@@ -495,6 +495,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
 function submitFormEditUser(){
     var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
+    const onlySpaces = /^\s*$/;
+    const doubleSpaces = /\s{2,}/;
+    const cadenasSinSentido = [
+        'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
+        'random','loremipsum','qwerty','asdf','zxcv',
+        'nombre1','ghfjd','iiii','dummytext','blahblah',
+        'Usuario123','abcd1234','123','eeeee','aaaa'
+    ];
     const eUserName = document.getElementById("Ename");
     const eFdepto = document.getElementById("eFdepto");
 
@@ -513,6 +521,10 @@ function submitFormEditUser(){
     else if (eUserName.value.length > 45) {
         eUserName.setCustomValidity('Máximo 45 caracteres para el campo nombre.');
         eUserName.classList.add('invalidField');
+        eUserName.reportValidity();
+        return false;
+    }else if(onlySpaces.test(eUserName.value) || doubleSpaces.test(eUserName.value) || cadenasSinSentido.some(nonsensical => eUserName.value.includes(nonsensical))){
+        eUserName.setCustomValidity('Introduce un nombre de usuario válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
         eUserName.reportValidity();
         return false;
     }
