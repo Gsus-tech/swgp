@@ -4,7 +4,7 @@ require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
-    if($_SESSION['rol']==='ADM'){
+    if($_SESSION['rol']=='SAD' || $_SESSION['rol']=='ADM'){ 
 ?>
 
 <!DOCTYPE html>
@@ -178,7 +178,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <table class="users-list">
                     <thead>
                         <tr>
-                            <th class="selectAccounts"><input type="checkbox" id="selectAllBoxes"></th>
+                            <?php
+                            if($_SESSION['rol']==='ADM'){ ?>
+                                <th class="selectAccounts"><input type="checkbox" id="selectAllBoxes"></th>
+                           <?php }
+                            ?>
                             <th class="rowName">Nombre</th>
                             <th class="rowRol">Rol de usuario</th>
                             <th class="rowMail">Correo Electrónico</th>
@@ -220,7 +224,9 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         $row='';
                                         foreach ($user as $key => $value) {
                                             if ($value === $user['id_usuario']) {
-                                                $row .= "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                                                if($_SESSION['rol']==='ADM'){
+                                                    $row .= "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                                                }
                                             } else if ($value === $user['nombre']) {
                                                 $cId = htmlspecialchars($user['id_usuario']);
                                                 $row .= "<td><i class='blueText' onclick=seeUserAccount('$cId') title='Ver detalles de cuenta'>" . htmlspecialchars($value) . "</i></td>";
@@ -236,10 +242,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         }
 
                                         $userId = htmlspecialchars($user['id_usuario']);
-                                        $row .= "<td>
-                                                    <a id='editUserBtn' class='fa fa-edit button' title='Editar cuenta' onclick='editUserAccount($userId)'></a>
-                                                    <a id='deleteUserBtn' class='fa fa-trash button' title='Eliminar cuenta' onclick='confirmDelete($userId)'></a>
-                                                </td>";
+                                        $row .= "<td><a id='editUserBtn' class='fa fa-edit button' title='Editar cuenta' onclick='editUserAccount($userId)'></a>";
+                                        if($_SESSION['rol']=='ADM' ){
+                                            $row .= "<a id='deleteUserBtn' class='fa fa-trash button' title='Eliminar cuenta' onclick='confirmDelete($userId)'></a>
+                                            </td>";
+                                        }else{
+                                            $row .= "</td>";
+                                        }
                                         echo $row;
                                         echo '</tr>';
                                     }
@@ -257,16 +266,19 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
            
             
 
-                <div class="addBtn"><a id="showUserFormBtn" title="Crear nueva cuenta de usuario" class="fa fa-user-plus add-user-btn"></a></div>
-                <div id="accountsSelected" class="selectedRowsOptions hide">
-                    <select class="comboBox" name="actionSelected" id="actionSelected">
-                        <option value="0"> - Seleccionar acción - </option>
-                        <option value="delete">Eliminar cuenta(s)</option>
-                    </select>
-                    <a id="applyAction" title="Aplicar acción a las cuentas seleccionadas" class="button apply normalBtn">Aplicar</a>
-                    <a id="applyAction2" title="Aplicar acción a las cuentas seleccionadas" class="button apply shortBtn fa fa-chevron-right"></a>
-                </div>
-
+                <?php
+                if($_SESSION['rol']=='ADM' ){
+                    ?>
+                    <div class="addBtn"><a id="showUserFormBtn" title="Crear nueva cuenta de usuario" class="fa fa-user-plus add-user-btn"></a></div>
+                    <div id="accountsSelected" class="selectedRowsOptions hide">
+                        <select class="comboBox" name="actionSelected" id="actionSelected">
+                            <option value="0"> - Seleccionar acción - </option>
+                            <option value="delete">Eliminar cuenta(s)</option>
+                        </select>
+                        <a id="applyAction" title="Aplicar acción a las cuentas seleccionadas" class="button apply normalBtn">Aplicar</a>
+                        <a id="applyAction2" title="Aplicar acción a las cuentas seleccionadas" class="button apply shortBtn fa fa-chevron-right"></a>
+                    </div>
+                    
                 <!-- Formulario de alta de usuario -->
                 <form class="addUser-form hide" id="addUser-form" 
                 onsubmit="return submitFormUser()" method="POST" autocomplete="on">
@@ -326,9 +338,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </div>
                     </div>
                 </div> <!-- Fin de form-container --> 
-                </form> <!-- Fin de user-form -->
-    
-                <?php 
+                </form> <!-- Fin de user-form -->`;
+                <?php
+                } else{
+                    echo '<div id="accountsSelected" class="selectedRowsOptions hide"></div>';
+                }
+
+                // Editar usuario
                 if(isset($_GET['editId'])){ 
                     $cR = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
                     ?>
@@ -366,12 +382,22 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <input class="input" type="email" name="Email" id="Email" value="<?php echo $cR[0]['correo'] ?>" placeholder="Correo"
                             oninvalid="invalidEmail(this)" title="Introducir correo del usuario"  oninput="resetField(this)"> 
                             <br>
+                            <?php
+                                if($_SESSION['rol']=='ADM'){
+                            ?>
                             <label for="comboBoxUserType"> Permisos de usuario: </label><br>
                             <select class="comboBox comboBoxUserType" id="FcmbBox2" name="comboBoxUserType">
                                 <option value="EST" <?php if ("EST" == $cR[0]['rolUsuario']) echo 'selected="selected"'; ?>>Usuario estándar</option>
                                 <option value="SAD" <?php if ("SAD" == $cR[0]['rolUsuario']) echo 'selected="selected"'; ?>>Usuario administrador</option>
                                 <option value="ADM" <?php if ("ADM" == $cR[0]['rolUsuario']) echo 'selected="selected"'; ?>>Super-usuario</option>
                             </select>
+                            <?php
+                                }else if($_SESSION['rol']=='SAD'){
+                                    $rolU = $cR[0]['rolUsuario'];
+                                    $_SESSION['editUser-rol'] = $rolU;
+                                    echo "<input type='hidden' name='comboBoxUserType' id='comboBoxUserType' value='$rolU'>";
+                                }
+                                ?>
                             <div class="form-options">
                                 <button disabled class="sumbit-AddUser" id="sumbit-editUser" type="submit" onclick="toggleInput()">Guardar cambios</button>
                                 <a href="userManagement.php" id="cancel-editUser" class="close-AddUser">Cancelar</a>
@@ -391,6 +417,11 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div> <!-- Fin de main -->
         
     </div> <!-- Fin de container -->
+    <?php
+    if($_SESSION['rol']=='ADM' ){
+        echo "<script src='../js/adminUserActions.js'></script>";
+    }
+    ?>
     <script src="../js/init.js"></script>
     <script src="../js/userManager.js"></script>
     <script>
@@ -401,7 +432,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             }
         });
     </script>
-    <?php } ?>
+    <?php 
+    } ?>
 </body>
 </html>
 
