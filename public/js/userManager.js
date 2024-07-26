@@ -114,8 +114,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('Fdepto').value = dropBox.options[dropBox.selectedIndex].text;
     searchButton.addEventListener('click', function() {
         const query = searchBar.value;
+        const onlySpaces = /^\s*$/;
         if (query) {
-            window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
+            if (onlySpaces.test(query)) {
+                searchBar.value = "";
+                toggleSearchItems()
+            }else{
+                window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
+            }
         } else {
             toggleSearchItems();
             moveSelectDiv(false, false);
@@ -530,6 +536,7 @@ function submitFormEditUser(){
         return false;
     }else if(onlySpaces.test(eUserName.value) || doubleSpaces.test(eUserName.value) || cadenasSinSentido.some(nonsensical => eUserName.value.includes(nonsensical))){
         eUserName.setCustomValidity('Introduce un nombre de usuario válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
+        eUserName.classList.add('invalidField');
         eUserName.reportValidity();
         return false;
     }
@@ -551,7 +558,13 @@ function submitFormEditUser(){
         eFdepto.classList.add('invalidField');
         eFdepto.reportValidity();
         return false;
+    }else if(onlySpaces.test(eFdepto.value) || doubleSpaces.test(eFdepto.value) || cadenasSinSentido.some(nonsensical => eFdepto.value.includes(nonsensical))){
+        eFdepto.setCustomValidity('Introduce un nombre de departamento válido.\nNo se admiten cadenas sin sentido o espacios dobles.');
+        eFdepto.classList.add('invalidField');
+        eFdepto.reportValidity();
+        return false;
     }
+
     var form = document.getElementById('editUser-form');
     form.action = "../controller/userManager.php?updateUser=true";
 }
