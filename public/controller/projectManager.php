@@ -197,7 +197,13 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
             $query = "INSERT INTO tbl_proyectos (nombre, descripción, meta, departamentoAsignado, fecha_inicio, fecha_cierre) 
                     VALUES (?, ?, ?, ?, ?, ?)";
             $params = [$name, $description, $metas, $depto, $fechaInicio, $fechaCierre];
-            Crud::executeNonResultQuery($query, $params, 'ssssss', $destination); 
+            Crud::executeNonResultQuery2($query, $params, 'ssssss', $destination); 
+
+            $newProjectId = Crud::getLastInserted('id_proyecto', 'tbl_proyectos');
+            $flag = $newProjectId != null ? true : false;
+            if($flag){
+                header("Location: ../php/projectsManagement.php?editProject=$newProjectId");
+            }
 
             exit;
         } catch (Exception $e) {

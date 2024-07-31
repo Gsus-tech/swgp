@@ -654,23 +654,24 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div>
 
                 <!-- Formulario de alta de proyecto -->
-                <form class="addProject-form hide scroll" id="addProject-form" action="../controller/projectManager.php?addProject=true" method="POST" autocomplete="on">
+                <form class="addProject-form hide scroll" id="addProject-form" onsubmit="return submitNewProject()" method="POST" autocomplete="on">
                 <div class="form-bg">
                     <div class="form-container">
                         <div class="fm-content">
                             <div class="title"><h4>Agregar proyecto:</h4></div> <br> 
                             <label for="Pname">Nombre del proyecto:</label>
-                            <input class="NameInput" type="text" name="Pname" id="Fname" placeholder="Nombre del Proyecto" title="Nombre del proyecto" required oninvalid="this.setCustomValidity('El nombre del proyecto es un campo necesario')" oninput="this.setCustomValidity('')"> 
+                            <input class="NameInput" type="text" name="Pname" id="Fname" placeholder="Nombre del Proyecto" 
+                            title="Nombre del proyecto" oninput="resetField(this)"> 
                             <br>
                             <div class="dates">
-                                <div class="fechaInicio">
+                                <div class="fechaInicio" id="fechaInicioDiv">
                                     <label for="fechaInicio">Fecha de inicio:</label><br>
                                     <!-- datePicker -->
                                     <?php $idUnico = "inicio";
                                     include 'datePicker.php'; ?>
                                 </div> 
                                 
-                                <div class="fechaCierre">
+                                <div class="fechaCierre" id="fechaCierreDiv">
                                     <label for="fechaCierre">Fecha de cierre:</label><br>
                                     <!-- datePicker -->
                                     <?php $idUnico = "cierre";
@@ -680,13 +681,14 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <br>
                             <label for="dropDownDepto">Departamento asignado:</label>
                             <!-- <br> -->
-                            <select class="dropDownDepto comboBox" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;">
+                            <select class="dropDownDepto comboBox" id="dropDownDepto" name="dropDownDepto" style="margin-left:2rem;" onchange='changeDepto()'>
                             <?php
                                 $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                             if (count($Deptos) > 0) {
                                 for ($i = 0; $i < count($Deptos); $i++) {
                                     foreach ($Deptos[$i] as $key => $value) {
-                                        echo '<option value=' . $i . '>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</option>';
+                                        $i==0 ? $selected = "selected" : $selected = ""; 
+                                        echo '<option value=' . $i .' '.$selected.'>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</option>';
                                     }
                                 }
                             }
@@ -694,22 +696,23 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <option value="other">Otro</option>
                             </select>
                             <div id="newDepto" class="newDepto hide">
-                            <input class="newDepto NameInput" type="text" name="newDepto" id="newDepto" placeholder="Departamento a cargo del proyecto..." title="Departamento asignado"> 
+                            <input class="NameInput" type="text" name="newDepto" id="newDeptoInput" placeholder="Departamento a cargo del proyecto..." 
+                            title="Departamento asignado"  oninput='resetField(this)'>
                             </div>
                             <div class="midSpacers"><br></div>
                             <label for="Fdescription">Descripción del proyecto:</label>
-                            <textarea type="text" name="Fdescription" id="Fdescription" placeholder="Descripción del Proyecto" title="Descripción del proyecto" required
-                            oninvalid="this.setCustomValidity('Escribe una descripcion del proyecto')" oninput='this.setCustomValidity("");this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
+                            <textarea type="text" name="Fdescription" id="Fdescription" placeholder="Descripción del Proyecto" title="Descripción del proyecto"
+                            oninput='resetField(this);this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
                             <br>
                             
                             <label for="Fmeta">Meta del proyecto:</label>
-                            <textarea type="text" name="Fmeta" id="Fmeta" placeholder="Introduzca la meta del proyecto" title="Meta del proyecto" required
-                            oninvalid="this.setCustomValidity('Define al menos una meta de proyecto')" oninput='this.setCustomValidity("");this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+                            <textarea type="text" name="Fmeta" id="Fmeta" placeholder="Introduzca la meta del proyecto" title="Meta del proyecto"
+                            oninput='resetField(this);this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea> 
                             <br>
                             
                             <div class="form-options">
                             <a id="cancel-AddProject" class="close-AddProject" onclick="cerrarFormulario()">Cancelar</a>
-                            <button disabled name="sumbit-AddProject" class="sumbit-AddProject" id="sumbit-AddProject" type="submit">Crear proyecto</button>
+                            <button name="sumbit-AddProject" class="sumbit-AddProject enabled" id="sumbit-AddProject" type="submit">Crear proyecto</button>
                             </div>
                         </div>
                     </div>
