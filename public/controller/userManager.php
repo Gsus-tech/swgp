@@ -2,7 +2,29 @@
 session_start();
 require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
-if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
+if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['updateUser'])) {
+    if ($_GET['updateUser'] == 'true') {
+        $idToUpdate = $_POST['EditThisID'];
+        $userName = (string)$_POST['Ename'];
+        $depto = (string)$_POST['eFdpto'];
+        $mail = $_POST['Email'];
+        if($_SESSION['rol']=='ADM'){
+            echo "<script>console.log('Soy admin');</script>";
+            $userType = $_POST['comboBoxUserType'];
+        }else{
+            $rol = array();
+            $rol = Crud::executeResultQuery('SELECT rolUsuario FROM tbl_usuarios WHERE id_usuario = ?', [$idToUpdate], 'i');
+            $userType = $rol[0]['rolUsuario'];
+        }
+
+    
+        $query = "UPDATE tbl_usuarios SET rolUsuario=?, nombre=?, correo=?, departamento=? WHERE id_usuario=?";
+        $params = [$userType, $userName, $mail, $depto, $idToUpdate];
+        $types = "ssssi";
+        $destination = "userManagement.php";
+        Crud::executeNonResultQuery($query, $params, $types, $destination);
+    }
+}else if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
     
     $destination = "userManagement.php";
     
@@ -41,18 +63,7 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }    
 
-    if (isset($_GET['updateUser']) && $_GET['updateUser'] == 'true') {
-        $idToUpdate = $_POST['EditThisID'];
-        $userName = (string)$_POST['Ename'];
-        $depto = (string)$_POST['eFdpto'];
-        $mail = $_POST['Email'];
-        $userType = $_POST['comboBoxUserType'];
     
-        $query = "UPDATE tbl_usuarios SET rolUsuario=?, nombre=?, correo=?, departamento=? WHERE id_usuario=?";
-        $params = [$userType, $userName, $mail, $depto, $idToUpdate];
-        $types = "ssssi";
-        Crud::executeNonResultQuery($query, $params, $types, $destination);
-    }
 } else {
     if (isset($_GET['deleteAccounts'])) {
         $ids = $_GET['deleteAccounts'];

@@ -244,6 +244,9 @@ class Crud
     public static function selectUserSearchData($fields, $table, $id, $order, $search) //updated
     {
         include "db_connection.php";
+        $search = trim($search);
+        $search = stripslashes($search);
+        $search = htmlspecialchars($search);
         $search = mysqli_real_escape_string($conn, $search);
         $data = array();
     

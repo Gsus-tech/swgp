@@ -11,124 +11,216 @@ const projectName = document.getElementById("Fname");
 const description = document.getElementById("Fdescription");
 const metas = document.getElementById("Fmeta");
 const addProjectButton = document.getElementById("sumbit-AddProject");
-const addProjectButton2 = document.getElementById("sumbit-AddProject-obj");
 const diaI = document.getElementById("dia_inicio");
 const mesI = document.getElementById("mes_inicio");
 const anioI = document.getElementById("anio_inicio");
 const diaC = document.getElementById("dia_cierre");
 const mesC = document.getElementById("mes_cierre");
 const anioC = document.getElementById("anio_cierre");
-
-projectName.addEventListener("keyup", (e)=>{toggleFormBtn();});
-description.addEventListener("keyup", (e)=>{toggleFormBtn();});
-metas.addEventListener("keyup", (e)=>{toggleFormBtn();});
-diaI.addEventListener("change", toggleFormBtn);
-diaC.addEventListener("change", toggleFormBtn);
-mesI.addEventListener("change", toggleFormBtn);
-mesC.addEventListener("change", toggleFormBtn);
-anioI.addEventListener("change", toggleFormBtn);
-anioC.addEventListener("change", toggleFormBtn);
+const newDepto = document.getElementById('newDepto');
 
 //Validar las fechas inicio y cierre
-function validateDate(dateIni, dateFin){
-    return dateIni <= dateFin;
+function validateDate(dateIni, dateFin) {
+    console.log(`${dateIni} > ${dateFin}`);
+    dateIni.setHours(0, 0, 0, 0);
+    dateFin.setHours(0, 0, 0, 0);
+    return dateIni > dateFin;
 }
 
-function toggleFormBtn(){
-    //Obtener el valor actualizado de las fechas
-    const diaInicio = parseInt(diaI.value);
-    const mesInicio = parseInt(mesI.value);
-    const anioInicio = parseInt(anioI.value);
-    const diaCierre = parseInt(diaC.value);
-    const mesCierre = parseInt(mesC.value);
-    const anioCierre = parseInt(anioC.value);
+function submitNewProject(){
 
-    //Convertir a formato Date
-    const date1 = new Date(anioInicio, mesInicio - 1, diaInicio);
-    const date2 = new Date(anioCierre, mesCierre - 1, diaCierre);
-    const today = new Date();
-
-    if(projectName.value != "" && description.value != "" && metas.value != ""){
-        //Validar fechas
-        const validateDate1 = validateDate(today, date1);
-        const validateDate2 = validateDate(date1, date2);
-
-        if(validateDate1 && validateDate2){
-            addProjectButton.disabled = false;
-            addProjectButton2.disabled = false;
-            if(!addProjectButton.classList.contains('enabled')){
-                addProjectButton.classList.add('enabled');
-            }
-            if(!addProjectButton2.classList.contains('enabled')){
-                addProjectButton2.classList.add('enabled');
-            }
-            newDepto2Validation();
-        } else {
-            disabledBtns();
-        }
-    } else {
-        disabledBtns();
+    let nameFlag = testRegex('Fname');
+    if(nameFlag === false){
+        return false;
     }
+    nameFlag = testLenght('min', 8, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('max', 45, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testValue('strict', 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+
+    if(validateDate(new Date(), new Date(anioI.value, mesI.value -1, diaI.value))){
+        mesI.setCustomValidity('Fecha de inicio inválida.\nEl proyecto no puede iniciar antes de la fecha actual.');
+        mesI.reportValidity();        
+        return false;
+    }
+    if(validateDate(new Date(anioI.value, mesI.value -1, diaI.value), new Date(anioC.value, mesC.value -1, diaC.value))){
+        mesC.setCustomValidity('Fecha de cierre inválida.\nLa fecha de cierre debe ser posterior a la fecha de inicio.');
+        mesC.reportValidity(); 
+        return false;
+    }
+
+
+    if (document.getElementById('dropDownDepto').value === 'other') {
+        let deptoFlag = testRegex('newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testLenght('min', 8, 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testLenght('max', 45, 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testValue('strict', 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+    }
+
+    
+    let descriptionFlag = testControlledTextInput('Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('min', 20, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('max', 1000, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testValue('light', 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+
+    let metaFlag = testControlledTextInput('Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testLenght('min', 20, 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testLenght('max', 1000, 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testValue('light', 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+     
+    var form = document.getElementById('addProject-form');
+    form.action = "../controller/projectManager.php?addProject=true";
 }
 
+function testRegex(elementId){
+    //Se valida la introduccion de caracteres especiales innecesarios para ciertos campos.
+    var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ.,-]/g;
+    const element = document.getElementById(`${elementId}`);
 
-const deptoSelected = document.getElementById('newDepto');
-deptoSelected.addEventListener('keyup', function(){
-    if(deptoSelected.value === ""){
-        disabledBtns();
+    if(regexEspeciales.test(element.value)){
+        element.setCustomValidity('No se permiten caracteres especiales en este campo.');
+        element.classList.add('invalidField');
+        element.reportValidity();
+        return false;
+    }
+    return true;
+}
+
+function testControlledTextInput(elementId){
+    //En esta funcion se validan las inyecciones de codigo comunes.
+    const injectionPatterns = [
+        '<script>','</script>','<img','onerror=',
+        'onload=','alert(','document.cookie',
+        '--',';--',';','/*','*/','@@','@',
+        'char(','nchar(','varchar(','nvarchar(',
+        'sysobjects','syscolumns','information_schema.tables'
+    ];
+    const element = document.getElementById(`${elementId}`);
+
+    function containsInjectionPattern() {
+        return injectionPatterns.find(pattern => element.value.includes(pattern.toLowerCase()));
+    }
+
+    const pattern = containsInjectionPattern(element.value);
+
+    if (pattern) {
+        element.setCustomValidity(`No se permite la expresión '${pattern}' en este campo.`);
+        element.classList.add('invalidField');
+        element.reportValidity();
+        return false;
+    }
+    return true;
+    
+}
+
+function testLenght(type, limit, elementId){
+    const element = document.getElementById(`${elementId}`);
+    if(type=='max'){
+        if (element.value.length > limit) {
+            element.setCustomValidity(`Máximo ${limit} caracteres para este campo.`);
+            element.classList.add('invalidField');
+            element.reportValidity();
+            return false;
+        }
     }else{
-        toggleFormBtn();
-    }
-});
-
-function newDepto2Validation(){
-    const selectedValue = dropDownDepto.value;
-    if (selectedValue === 'other') {
-        if(deptoSelected.value === ""){
-            disabledBtns();
-        }else{
-            addProjectButton.disabled=false;
-            addProjectButton2.disabled=false;
-            if(!document.getElementById('sumbit-AddProject').classList.contains('enabled')){
-                document.querySelector(".sumbit-AddProject").classList.toggle('enabled');
-            }
-            if(!document.getElementById('sumbit-AddProject-obj').classList.contains('enabled')){
-                document.querySelector(".sumbit-AddProject-obj").classList.toggle('enabled');
-            }
+        if (element.value.length < limit) {
+            element.setCustomValidity(`Mínimo ${limit} caracteres para este campo.`);
+            element.classList.add('invalidField');
+            element.reportValidity();
+            return false;
         }
     }
+    return true;
+}
+
+function testValue(type, elementId){
+    const element = document.getElementById(`${elementId}`);
+    const onlySpaces = /^\s*$/;
+    const doubleSpaces = /\s{2,}/;
+    const cadenasSinSentido = [
+        'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
+        'random','loremipsum','qwerty','asdf','zxcv',
+        'nombre1','ghfjd','iiii','dummytext','blahblah',
+        'Usuario123','abcd1234','123','eeeee','aaaa'
+    ];
+
+    if(onlySpaces.test(element.value) || cadenasSinSentido.some(nonsensical => element.value.includes(nonsensical))){
+        element.setCustomValidity('Introduce un nombre de proyecto válido.\nNo se admiten cadenas sin sentido.');
+        element.classList.add('invalidField');
+        element.reportValidity();
+        return false;
+    }
+    if(doubleSpaces.test(element.value) && type == 'strict'){
+        element.setCustomValidity('No se admiten espacios dobles en este campo.');
+        element.classList.add('invalidField');
+        element.reportValidity();
+        return false;
+    }
+    return true;
+}
+
+function resetField(element){
+    element.setCustomValidity('')
+    element.classList.remove('invalidField');
 }
 
 //Opciones departamento
-document.addEventListener('DOMContentLoaded', function () {
+function changeDepto() {
     const dropDownDepto = document.getElementById('dropDownDepto');
 
-    dropDownDepto.addEventListener('change', function() {
-        const selectedValue = dropDownDepto.value;
-        if (selectedValue === 'other') {
-            if(document.querySelector('.newDepto').classList.contains('hide')){
-                document.querySelector('.newDepto').classList.remove('hide');
-                
-                toggleFormBtn();
-            }
-            disabledBtns();
-        } else{
-            if(!document.querySelector('.newDepto').classList.contains('hide')){
-                document.querySelector('.newDepto').classList.add('hide');
-                toggleFormBtn();
-            }
+    const selectedValue = dropDownDepto.value;
+    if (selectedValue === 'other') {
+        if(document.querySelector('.newDepto').classList.contains('hide')){
+            document.querySelector('.newDepto').classList.remove('hide');
         }
-    });
-});
-
-function disabledBtns(){
-    addProjectButton.disabled=true;
-    addProjectButton2.disabled=true;
-    if(document.getElementById('sumbit-AddProject').classList.contains('enabled')){
-        document.querySelector(".sumbit-AddProject").classList.toggle('enabled');
-    }
-    if(document.getElementById('sumbit-AddProject-obj').classList.contains('enabled')){
-        document.querySelector(".sumbit-AddProject-obj").classList.toggle('enabled');
+    } else{
+        if(!document.querySelector('.newDepto').classList.contains('hide')){
+            document.querySelector('.newDepto').classList.add('hide');
+        }
     }
 }
 
@@ -148,21 +240,21 @@ document.getElementById("Fmeta").addEventListener("input", function(){
 
 function setDateInFormBtn(uniqueKey){
     const today = new Date();
-    var month = today.getMonth();
-    var day = today.getDate();
-
-    var d = document.getElementById("dia_"+uniqueKey);
-    var m = document.getElementById("mes_"+uniqueKey);
-    var y = document.getElementById("anio_"+uniqueKey);
-    
-    if(uniqueKey == 'cierre'){
-        day++;
-        d.selectedIndex = day;
-    }else{
-        d.selectedIndex = day;
+    const date = today;
+    if (uniqueKey === 'cierre') {
+        date.setDate(date.getDate() + 1);
     }
+    var month = date.getMonth();
+    var day = date.getDate();
+    var year = date.getFullYear();
+
+    const d = document.getElementById("dia_"+uniqueKey);
+    const m = document.getElementById("mes_"+uniqueKey);
+    const y = document.getElementById("anio_"+uniqueKey);
+    
+    d.selectedIndex = day-1;
     m.selectedIndex = month;
-    y.selectedIndex = 0;
+    y.selectedIndex = year == today.getFullYear() ? 0 : 1;
 }
 
 

@@ -18,11 +18,9 @@
     <!-- Menu de la barra lateral -->
     <nav class="scroll sidebar-menu-list"> 
         <ul>
-        <?php   if($_SESSION['rol']=='ADM'){  ?>
+        <?php   if($_SESSION['rol']=='SAD' || $_SESSION['rol']=='ADM'){  ?>
             <li><a href="userManagement.php" title="Gestión de usuarios"><i class="fa fa-users"><span 
                 class="text">Gestión de usuarios</span></i></a></li>
-        <?php } ?>
-        <?php   if($_SESSION['rol']=='SAD' || $_SESSION['rol']=='ADM'){  ?>
             <li><a href="projectsManagement.php" title="Gestión de proyectos"><i class="fa fa-wrench"><span 
                 class="text">Gestión de proyectos</span></i></a></li>
             <li><a href="activityManagement.php" title="Seguimiento de proyectos"><i class="fa fa-tasks"><span 
