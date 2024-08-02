@@ -147,8 +147,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <div class="fm-content">
                             <div class="section1">
                                 <label class="bold" for="Fname">Nombre del proyecto:</label><br>
-                                <input class="NameInput" type="text" name="Fname" id="Fname" placeholder="Nombre del Proyecto" title="Nombre del proyecto" required value="<?php echo $cR[0]['nombre'] ?>"
-                                oninvalid="this.setCustomValidity('El nombre del proyecto es un campo necesario')" oninput="this.setCustomValidity('')"> 
+                                <input class="NameInput" type="text" name="Fname" id="Fname" placeholder="Nombre del Proyecto" 
+                                title="Nombre del proyecto" value="<?php echo $cR[0]['nombre'] ?>"
+                                oninput="resetField(this)"> 
                                 <br>
 
                                 <div class="deptoDiv">
@@ -182,14 +183,17 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 </div>
                             </div>
                             <div class="section2">
-                            <div class="datesEditForm">
+                                <div class="datesEditForm">
                                     <div id="fechaIni" class="fechaIni">
-                                        <label class="bold" for="fechaInicio">Fecha de inicio:</label><br>
+                                        <label class="bold" for="fechaInicio" id="date1Label">Fecha de inicio:</label><br>
                                         <div class="inline">
+                                            <fieldset id="date1Fs">
                                             <span id="displayDate1" name="displayDate1"><?php echo $cR[0]['fecha_inicio']; ?></span>
-                                            <i id="inDt-edit" onclick="initialDate()" class="fa fa-edit button" title="Editar"></i>
-                                            <i id="inDt-save" onclick="saveDate1()" class="fa fa-check-square-o button hide" title="Guardar"></i>
-                                            <i id="inDt-cancel" onclick="initialDate()" class="fa fa-times button hide" title="Cancelar"></i>
+                                            </fieldset>    
+                                            
+                                            <i id="inDt-edit" onclick="initialDate()" class="fa fa-edit button" title="Editar" tabindex="0"></i>
+                                            <i id="inDt-save" onclick="saveDate1()" class="fa fa-check-square-o button hide" title="Guardar" tabindex="0"></i>
+                                            <i id="inDt-cancel" onclick="initialDate()" class="fa fa-times button hide" title="Cancelar" tabindex="0"></i>
                                         </div>
                                         <input type="hidden" name="thisDate_inicio" id="thisDate_inicio" value="<?php echo $cR[0]['fecha_inicio']; ?>">
                                         <!-- datePicker -->
@@ -200,13 +204,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         </div>
                                     </div> 
                                     <div id="fechaFin" class="fechaFin">
-                                        <label class="bold spacer" for="fechaCierre">Fecha de cierre:</label><br>
+                                        <label class="bold spacer" for="fechaCierre" id="date2Label">Fecha de cierre:</label><br>
                                         <div class="inline">
-                                            <span id="displayDate2" name="displayDate2"><?php echo $cR[0]['fecha_cierre']; ?></span>
-                                            <i id="fnDt-edit" onclick="finalDate()" class="fa fa-edit button" title="Editar"></i>
-                                            <i id="fnDt-save" onclick="saveDate2()" class="fa fa-check-square-o button hide" title="Guardar"></i>
-                                            <i id="fnDt-cancel" onclick="finalDate()" class="fa fa-times button hide" title="Cancelar"></i>
+                                            <fieldset id="date2Fs">
+                                                <span id="displayDate2" name="displayDate2"><?php echo $cR[0]['fecha_cierre']; ?></span>
+                                            </fieldset>
+                                            <i id="fnDt-edit" onclick="finalDate()" class="fa fa-edit button" title="Editar" tabindex="0"></i>
+                                            <i id="fnDt-save" onclick="saveDate2()" class="fa fa-check-square-o button hide" title="Guardar" tabindex="0"></i>
+                                            <i id="fnDt-cancel" onclick="finalDate()" class="fa fa-times button hide" title="Cancelar" tabindex="0"></i>
                                         </div>
+                                        <div class="hide mT-half" id="errorMessageDate2"><span class="invalidField">La fecha de cierre debe ser posterior a la fecha de inicio.</span></div>
                                         <input type="hidden" name="thisDate_cierre" id="thisDate_cierre" value="<?php echo $cR[0]['fecha_cierre']; ?>">
                                         <!-- datePicker -->
                                         <br>
@@ -223,17 +230,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <div class="section1">
 
                                 <label class="bold" for="Fdescription">Descripción del proyecto:</label><br>
-                                <textarea type="text" name="Fdescription" id="Fdescription" placeholder="Descripción del Proyecto" title="Descripción del proyecto" required
-                                oninvalid="this.setCustomValidity('Escribe una descripcion del proyecto')" oninput='this.setCustomValidity("");this.style.height = "";this.style.height = this.scrollHeight + "px"'><?php echo $cR[0]['descripción'] ?></textarea>
+                                <textarea type="text" name="Fdescription" id="Fdescription" placeholder="Descripción del Proyecto" title="Descripción del proyecto"
+                                oninput='resetField(this);this.style.height = "";this.style.height = this.scrollHeight + "px"'><?php echo $cR[0]['descripción'] ?></textarea>
                                 <br>
                                 
                             </div>
                             <br>
                             <div class="section2 metaDiv">
-                            
                                 <label class="bold" for="Fmeta">Meta del proyecto:</label><br>
-                                <textarea type="text" name="Fmeta" id="Fmeta" placeholder="Introduzca la meta del proyecto" title="Meta del proyecto" required
-                                oninvalid="this.setCustomValidity('Define al menos una meta de proyecto')" oninput='this.setCustomValidity("");this.style.height = "";this.style.height = this.scrollHeight + "px"'><?php echo $cR[0]['meta'] ?></textarea>
+                                <textarea type="text" name="Fmeta" id="Fmeta" placeholder="Introduzca la meta del proyecto" title="Meta del proyecto"
+                                oninput='resetField(this);this.style.height = "";this.style.height = this.scrollHeight + "px"'><?php echo $cR[0]['meta'] ?></textarea>
                                 
                             </div> 
                         </div> <!-- Fin de fm-content -->
@@ -362,7 +368,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <input type="hidden" id="addedMembers" name="addedMembers" value="">
                             <input type="hidden" id="membersTableFlagDel" name="membersTableFlagDel" value="false">
                             <input type="hidden" id="removedMembers" name="removedMembers" value="">
-                            <a id="manageProjectsLink" class="button addRowBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)">Añadir</a>
+                            <a id="manageProjectsLink" class="button addRowBtn" onclick="agregarMiembro(<?php echo $_GET['editProject'];?>)" tabindex="0">Añadir</a>
                         </div>
                     </div>
                 </div>
@@ -425,7 +431,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <input type="hidden" id="removedObjG" name="removedObjG" value="">
                             <input type="hidden" id="objGTableFlagUpd" name="objGTableFlagUpd" value="false">
                             <input type="hidden" id="updatedObjG" name="updatedObjG" value="">
-                            <a id="addObjectiveGBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'general')">Añadir</a>
+                            <a id="addObjectiveGBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'general')" tabindex="0">Añadir</a>
                         </div>
                     </div>
 
@@ -486,12 +492,12 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <input type="hidden" id="removedObjE" name="removedObjE" value="">
                             <input type="hidden" id="objETableFlagUpd" name="objETableFlagUpd" value="false">
                             <input type="hidden" id="updatedObjE" name="updatedObjE" value="">
-                            <a id="addObjectiveEBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'especifico')">Añadir</a>
+                            <a id="addObjectiveEBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'especifico')" tabindex="0">Añadir</a>
                         </div>
                         
                         <div class="form-options">
-                            <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit">Guardar cambios</button>
-                            <a id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()">Cancelar</a>
+                            <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit" tabindex="0">Guardar cambios</button>
+                            <a id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()" tabindex="0">Cancelar</a>
                         </div>
                     </div>
                     </form> <!-- Fin de edit-user-form -->
@@ -728,6 +734,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     </div> <!-- Fin de container -->
     <?php if(isset($_GET['consultFailed'])){ echo "<script>alert('Hubo un error al realizar los cambios en la BD.\nIntenta de nuevo.)</script>"; }?>
+    <script src="../js/validate.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>

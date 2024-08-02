@@ -25,10 +25,96 @@ function deactivateBtn(){
 }
 
 function updateBasicInfo(){
-    console.log('Enviando el formulario');
+
     event.preventDefault();
     revertDate('thisDate_inicio', 'displayDate1');
     revertDate('thisDate_cierre', 'displayDate2');
+    const date1 = document.getElementById('displayDate1');
+    const date2 = document.getElementById('displayDate2');
+
+    let nameFlag = testRegex('Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('min', 8, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('max', 45, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testValue('strict', 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+
+    if(date1.classList.contains('invalidField')){
+        document.getElementById('date1Label').scrollIntoView({ behavior: 'smooth' });
+        return false;
+    }
+
+    if(date2.classList.contains('invalidField')){
+        document.getElementById('date2Label').scrollIntoView({ behavior: 'smooth' });
+        return false;
+    }
+
+
+    if (document.getElementById('deptoAssign').value === 'other') {
+        let deptoFlag = testRegex('newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testLenght('min', 8, 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testLenght('max', 45, 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testValue('strict', 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+    }
+
+    
+    let descriptionFlag = testControlledTextInput('Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('min', 20, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('max', 1000, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testValue('light', 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+
+    let metaFlag = testControlledTextInput('Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testLenght('min', 20, 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testLenght('max', 1000, 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testValue('light', 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+     
+
     const form = document.getElementById('editProject-form');
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('editProject');
@@ -51,37 +137,38 @@ function finalDate(){
     document.getElementById('fnDt-cancel').classList.toggle('hide');
 }
 
-function validateDate(dateIni, dateFin){
-    return dateIni <= dateFin;
-}
-
 function saveDate1() {
     const today = new Date();
     const diaInicio = parseInt(document.getElementById("dia_inicio").value);
     const mesInicio = parseInt(document.getElementById("mes_inicio").value);
     const anioInicio = parseInt(document.getElementById("anio_inicio").value);
     const date = new Date(anioInicio, mesInicio - 1, diaInicio);
+    const d1 = document.getElementById('displayDate1');
+    const dFs = document.getElementById('date1Fs');
+
 
     const valid = validateDate(today, date);
+    document.getElementById('thisDate_inicio').value = date;
+    d1.textContent = date;
+    convertDate('displayDate1');
+    initialDate();
+    const date2 = new Date(document.getElementById('thisDate_cierre').value);
 
-    if (valid) {
-        const d1 = document.getElementById('displayDate1');
-        document.getElementById('thisDate_inicio').value = date;
-        d1.textContent = date;
-        convertDate('displayDate1');
-        initialDate();
-        const date2 = new Date(document.getElementById('thisDate_cierre').value);
+    // if (!valid) {
         const valid2 = validateDate(date, date2);
         if(valid2){
             const date2 = new Date(anioInicio, mesInicio - 1, diaInicio+1);
             const d2 = document.getElementById('displayDate2');
             d2.textContent = date2;
             convertDate('displayDate2');
-            activateBtn();
+            // activateBtn();
         }
-    } else {
-        alert("La fecha de inicio debe ser mayor o igual a la fecha actual.");
-    }
+        dFs.classList.remove('invalidField');
+        activateBtn();
+
+    // } else {
+    //     dFs.classList.add('invalidField');
+    // }
 }
 
 
@@ -91,25 +178,33 @@ function saveDate2(){
     const anioC = parseInt(document.getElementById("anio_cierre").value);
     const init = new Date(document.getElementById('thisDate_inicio').value);
     const date = new Date(anioC, mesC - 1, diaC);
+    const d2 = document.getElementById('displayDate2');
+    const dFs = document.getElementById('date2Fs');
+    const errorMsg = document.getElementById('errorMessageDate2');
 
     const valid = validateDate(init, date);
+    document.getElementById('thisDate_cierre').value = date;
+    d2.textContent = date;
+    convertDate('displayDate2');
+    finalDate();
 
-    if (valid) {
-        const d2 = document.getElementById('displayDate2');
-        document.getElementById('thisDate_cierre').value = date;
-        d2.textContent = date;
-        convertDate('displayDate2');
-        finalDate();
+    if (!valid) {
+        dFs.classList.remove('invalidField');
+        errorMsg.classList.add('hide');
         activateBtn();
     } else {
-        alert("La fecha de cierre debe ser mayor a la fecha de inicio.");
+        dFs.classList.add('invalidField');
+        errorMsg.classList.remove('hide');
     }
 }
 
+
 function formatSpanishDate(dateString) {
-    //Formatear fecha a español
+    //Convertir la fecha a formato en español
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+
+    const adjustedDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(adjustedDate);
 }
 
 function convertDate(element) {
