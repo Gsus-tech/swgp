@@ -229,20 +229,20 @@ filtros.addEventListener('click', function(){
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const dtoFilter = document.getElementById('dropDownDeptoFilter');
+    // const dtoFilter = document.getElementById('dropDownDeptoFilter');
 
-    dtoFilter.addEventListener('change', function() {
-        const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
-        const selectedValue = selectedOption.value;
-        const selectedText = selectedOption.textContent || selectedOption.innerText;
+    // dtoFilter.addEventListener('change', function() {
+    //     const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
+    //     const selectedValue = selectedOption.value;
+    //     const selectedText = selectedOption.textContent || selectedOption.innerText;
 
-        if (selectedValue === 'noFilter') {
-            window.location.href = `projectsManagement.php`;
-        } else {
-            const encodedText = encodeURIComponent(selectedText);
-            window.location.href = `projectsManagement.php?filterDto=${encodedText}`;
-        }
-    });
+    //     if (selectedValue === 'noFilter') {
+    //         window.location.href = `projectsManagement.php`;
+    //     } else {
+    //         const encodedText = encodeURIComponent(selectedText);
+    //         window.location.href = `projectsManagement.php?filterDto=${encodedText}`;
+    //     }
+    // });
 });
 
 function toggleFilterItems(){
@@ -337,3 +337,32 @@ document.addEventListener('DOMContentLoaded', (event) => {
     applyAction1.addEventListener('click', applyAction);
     applyAction2.addEventListener('click', applyAction);
 });
+
+function FilterResults(selectElement) {
+    const value = selectElement.value;
+    const options = selectElement.options;
+    let filterValue = '';
+
+    for (let i = 0; i < options.length; i++) {
+        if (options[i].value == value) {
+            filterValue = options[i].textContent;
+            break;
+        }
+    }
+
+    const tbody = document.getElementById('projects-list-body');
+    const rows = tbody.getElementsByTagName('tr');
+    // console.log(`Filter selected: ${filterValue}`);
+    
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const filter = row.cells[2].textContent;
+        // console.log(`Current row: ${filter}`);
+
+        if (filterValue === 'noFilter' || filter === filterValue) {
+            row.classList.remove('hide');
+        } else {
+            row.classList.add('hide');
+        }
+    }
+}
