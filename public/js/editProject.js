@@ -264,14 +264,14 @@ function filtrarUsuariosPorDepartamento() {
 
     const opciones = usuariosSelect.getElementsByTagName('option');
 
-    for (let i = 0; i < opciones.length; i++) {
+    for (let i = 1; i < opciones.length; i++) {
         const opcion = opciones[i];
         const depto = opcion.getAttribute('data-depto');
         
         if (departamento === 'noFilter' || departamento === depto) {
             opcion.style.display = 'block';
             if (firstVisible) {
-                opcion.selected = true;
+                // opcion.selected = true;
                 firstVisible = false;
             }
         } else {
@@ -282,46 +282,57 @@ function filtrarUsuariosPorDepartamento() {
 
 ///Agregar integrante de proyecto
 function agregarMiembro(projectId) {
-    const usuarioId = document.getElementById('listaUsuariosDisponibles').value;
+    const usersSelect = document.getElementById('listaUsuariosDisponibles');
+    const usuarioId = usersSelect.value;
     const usuarioNombre = document.getElementById('listaUsuariosDisponibles').selectedOptions[0].text;
-    const tipoMiembro = document.getElementById('tipoMiembro').value;
+    const rolSelect = document.getElementById('tipoMiembro');
+    const tipoMiembro = rolSelect.value;
     const tipoMiembroTexto = tipoMiembro == '1' ? 'Responsable de proyecto' : 'Colaborador';
     const tablaBody = document.getElementById('members-list-body');
     const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
 
-    // Verificar y eliminar la fila "No se encontraron integrantes registrados" si existe
-    const noIntegrantesRow = document.getElementById('no-integrantes-row');
-    if (noIntegrantesRow) {
-        noIntegrantesRow.remove();
+    if(usuarioId  === 'non'){
+        usersSelect.setCustomValidity('No has seleccionado un usuario.');
+        usersSelect.reportValidity();
     }
-
-    // Crear nueva fila y añadirla a la tabla
-    const nuevaFila = document.createElement('tr');
-    const nombreCelda = document.createElement('td');
-    const rolCelda = document.createElement('td');
-    const removeBtn = document.createElement('td');
-
-    nuevaFila.setAttribute('onclick', 'SelectThisRow(element, "members-list-body")')
-    nombreCelda.textContent = usuarioNombre;
-    rolCelda.textContent = tipoMiembroTexto;
-    removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
-    nuevaFila.appendChild(nombreCelda);
-    nuevaFila.appendChild(rolCelda);
-    nuevaFila.appendChild(removeBtn);
-    tablaBody.appendChild(nuevaFila);
-
-    // Eliminar la opción del usuario del select de usuarios disponibles
-    const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
-    if (opcionAEliminar) {
-        opcionAEliminar.remove();
+    else if(tipoMiembro === 'non'){
+        rolSelect.setCustomValidity('Define el rol del usuario dentro del proyecto.');
+        rolSelect.reportValidity();
+    }else{
+        // Verificar y eliminar la fila "No se encontraron integrantes registrados" si existe
+        const noIntegrantesRow = document.getElementById('no-integrantes-row');
+        if (noIntegrantesRow) {
+            noIntegrantesRow.remove();
+        }
+    
+        // Crear nueva fila y añadirla a la tabla
+        const nuevaFila = document.createElement('tr');
+        const nombreCelda = document.createElement('td');
+        const rolCelda = document.createElement('td');
+        const removeBtn = document.createElement('td');
+    
+        nuevaFila.setAttribute('onclick', 'SelectThisRow(element, "members-list-body")')
+        nombreCelda.textContent = usuarioNombre;
+        rolCelda.textContent = tipoMiembroTexto;
+        removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
+        nuevaFila.appendChild(nombreCelda);
+        nuevaFila.appendChild(rolCelda);
+        nuevaFila.appendChild(removeBtn);
+        tablaBody.appendChild(nuevaFila);
+    
+        // Eliminar la opción del usuario del select de usuarios disponibles
+        const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
+        if (opcionAEliminar) {
+            opcionAEliminar.remove();
+        }
+        const addedMembersInput = document.getElementById('addedMembers');
+        let addedMembers = JSON.parse(addedMembersInput.value || '[]');
+        rol = tipoMiembroTexto == 'Colaborador' ? false : true;
+        addedMembers.push({ usuarioId, rol });
+        activateBtn();
+        membersTableChanged('add');
+        actualizarCamposOcultos('addedMembers', addedMembers);
     }
-    const addedMembersInput = document.getElementById('addedMembers');
-    let addedMembers = JSON.parse(addedMembersInput.value || '[]');
-    rol = tipoMiembroTexto == 'Colaborador' ? false : true;
-    addedMembers.push({ usuarioId, rol });
-    activateBtn();
-    membersTableChanged('add');
-    actualizarCamposOcultos('addedMembers', addedMembers);
 }
 
 //Eliminar miembro

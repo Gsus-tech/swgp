@@ -325,7 +325,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div>
                             <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
                                 <i>Usuario:</i>
-                                <select name="listaUsuariosDisponibles" id="listaUsuariosDisponibles" class="comboBox">
+                                <select name="listaUsuariosDisponibles" id="listaUsuariosDisponibles" class="comboBox" onchange='resetField(this);'>
+                                <option value="non">- Selecciona un usuario -</option>
                                     <?php
                                     $projectID = $_GET['editProject'];
                                     $existinUsers = Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?;", [$projectID], 'i');
@@ -359,7 +360,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             </div>
                             <div id="addMemberDiv" class="topTable flexAndSpaceDiv">
                                 <i>Rol:</i>
-                                <select name="tipoMiembro" id="tipoMiembro" class="comboBox">
+                                <select name="tipoMiembro" id="tipoMiembro" class="comboBox" onchange='resetField(this);'>
+                                    <option value="non">- Selecciona un rol -</option>
                                     <option value="0">Colaborador</option>
                                     <option value="1">Responsable</option>
                                 </select>
