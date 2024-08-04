@@ -98,62 +98,6 @@ filterBtn.addEventListener('click', function(){
     moveSelectDiv(true, false);
 });
 
-//NEW VERSION
-document.addEventListener('DOMContentLoaded', function() {
-
-    var currentUrl = new URL(window.location.href);
-    var paramUrl = window.location.search;
-    var clsParam = paramUrl.substring(1);
-    var parametro = new URLSearchParams(clsParam);
-
-    const rolFilter = document.getElementById('filtersForRol');
-    rolFilter.addEventListener('change', function() {
-        const selectedValue = rolFilter.value;
-
-        if (parametro.has('search')) {
-            parametro.delete('search');
-        }
-
-        if (selectedValue === 'noFilter') {
-            parametro.delete('filterRol');
-            if (parametro.has('filterDto')) {
-                window.location.href = `${currentUrl.pathname}?${parametro.toString()}`;
-            } else {
-                window.location.href = `userManagement.php`;
-            }
-        } else {
-            parametro.set('filterRol', selectedValue);
-            var newUrl = `${currentUrl.origin}${currentUrl.pathname}?${parametro.toString()}`;
-            window.location.href = newUrl;
-        }
-    });
-
-    const dtoFilter = document.getElementById('filtersForDto');
-    dtoFilter.addEventListener('change', function() {
-        const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
-        const selectedValue = selectedOption.value;
-        const selectedText = selectedOption.textContent || selectedOption.innerText;
-
-        if (parametro.has('search')) {
-            parametro.delete('search');
-        }
-
-        if (selectedValue === 'noFilter') {
-            parametro.delete('filterDto');
-            if (parametro.has('filterRol')) {
-                window.location.href = `${currentUrl.pathname}?${parametro.toString()}`;
-            } else {
-                window.location.href = `userManagement.php`;
-            }
-        } else {
-            // const encodedText = encodeURIComponent(selectedText);
-            parametro.set('filterDto', selectedText);
-            var newUrl = `${currentUrl.origin}${currentUrl.pathname}?${parametro.toString()}`;
-            window.location.href = newUrl;
-        }
-    });
-});
-
 function toggleFilterItems(){
     document.querySelector('.dropDownFilter1').classList.toggle('hide');
     document.querySelector('.dropDownFilter2').classList.toggle('hide');
@@ -162,6 +106,71 @@ function toggleFilterItems(){
     document.querySelector('.nav-buttons').classList.toggle('hide')
 }
 
+
+function FilterResults(selectElement, name, cell, cell2) {
+    const otherSelect = document.getElementById(`${name}`);
+    const value = selectElement.value;
+    const options = selectElement.options;
+    let filterValue = '';
+    let value2 = '';
+    if(name == 'filtersForRol'){
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value == value) {
+                filterValue = i === 0 ? 'noFilter' : options[i].textContent.trim();
+                break;
+            }
+        }
+        value2 = otherSelect.value;
+        console.log(`Other filter: ${value2}`);
+    }else{
+        filterValue = value;
+        value2 = otherSelect.selectedIndex === 0 ? 'noFilter' : otherSelect.options[otherSelect.selectedIndex].textContent.trim();
+        console.log(`Other filter: ${value2}`);
+    }
+
+    //limpiar tabla del 0rows encontrados
+    const noResultsRow = document.getElementById('no-results-row');
+    if (noResultsRow) {
+        noResultsRow.remove();
+    }
+
+    const TwoFilters = otherSelect.value === 'noFilter' ? false : true;
+    console.log(`Two filters: ${TwoFilters}`);
+    const tbody = document.getElementById('users-list-body');
+    const rows = tbody.getElementsByTagName('tr');
+    let visibleRows = 0;
+    //Buscar los rows compatibles con el filtrado
+    for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const filter = row.cells[cell].textContent;
+        const filter2 = row.cells[cell2].textContent;
+        // console.log(`i es igual a: ${i}`);
+
+        // console.log(`Filters selected: 1: ${filterValue}      2: ${value2}\n`);
+        // console.log(`Row: 1: ${filter}     2: ${filter2}\n\n`);
+        if (TwoFilters == true && (filter === filterValue && filter2 === value2)) {
+            row.classList.remove('hide');
+            visibleRows++;
+            console.log('visible: true')
+        }
+        else if(TwoFilters == false && (filterValue === 'noFilter' || filter === filterValue)){
+            row.classList.remove('hide');
+            visibleRows++;
+        }
+        else {
+            row.classList.add('hide');
+        }
+    }
+
+    //Agregar el mensaje de 0 rows encontrados
+    if (visibleRows === 0) {
+        const newRow = tbody.insertRow();
+        newRow.id = 'no-results-row';
+        const newCell = newRow.insertCell(0);
+        newCell.colSpan = 6;
+        newCell.textContent = "No se encontraron resultados.";
+    }
+}
 
 //Cerrar filtros al hacer clic fuera del div
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -333,3 +342,4 @@ function updateValue(){
         eFdepto.type === 'text' ? eFdepto.type = 'hidden': eFdepto.type = 'hidden';
     }
 }
+

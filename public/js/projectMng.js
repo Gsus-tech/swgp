@@ -228,23 +228,6 @@ filtros.addEventListener('click', function(){
     toggleFilterItems()
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // const dtoFilter = document.getElementById('dropDownDeptoFilter');
-
-    // dtoFilter.addEventListener('change', function() {
-    //     const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
-    //     const selectedValue = selectedOption.value;
-    //     const selectedText = selectedOption.textContent || selectedOption.innerText;
-
-    //     if (selectedValue === 'noFilter') {
-    //         window.location.href = `projectsManagement.php`;
-    //     } else {
-    //         const encodedText = encodeURIComponent(selectedText);
-    //         window.location.href = `projectsManagement.php?filterDto=${encodedText}`;
-    //     }
-    // });
-});
-
 function toggleFilterItems(){
     filtros.classList.toggle('hide');
     document.querySelector('.filterDiv').classList.toggle('openFilterDiv');

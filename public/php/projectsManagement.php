@@ -535,7 +535,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <i id="filterProjectsList" class="fa fa-sliders button" title="Filtrar resultados"></i>
                     <div class="dropDownFilter1 hide ">
                         <label for="filtersForRol">Departamento asignado:</label>
-                        <select class="dropDownDeptoFilter comboBox" id="dropDownDeptoFilter" name="dropDownDeptoFilter" style="margin-left:2rem;" onchange="FilterResults(this)">
+                        <select class="dropDownDeptoFilter comboBox mL-2r" id="dropDownDeptoFilter" name="dropDownDeptoFilter" onchange="FilterResults(this)">
                             <option value="noFilter"></option>
                             <?php
                                 $Deptos = Crud::getFiltersOptions('tbl_proyectos', 'departamentoAsignado');

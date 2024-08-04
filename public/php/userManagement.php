@@ -130,32 +130,24 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <i id="filterUserList" class="fa fa-sliders button" title="Filtrar resultados"></i>
                     <div class="dropDownFilter1 hide">
                     <label for="filtersForRol">Por rol de usuario:</label>
-                    <?php 
-                        if(isset($_GET['filterRol'])){
-                            $selected = $_GET['filterRol'];
-                        }else{ $selected = ""; }
-                    ?>
-                    <select class="comboBox dropDownFilter" id="filtersForRol" name="filtersForRol">
+                    
+                    <select class="comboBox dropDownFilter" id="filtersForRol" name="filtersForRol" onchange="FilterResults(this, 'filtersForDto', 2, 4)">
                         <option value="noFilter"></option>
-                        <option value="EST" <?php $r = ($selected == "EST") ? "selected" : ""; echo $r; ?>>Usuario Estándar</option>
-                        <option value="SAD" <?php $r = ($selected == "SAD") ? "selected" : ""; echo $r; ?>>Usuario Administrador</option>
-                        <option value="ADM" <?php $r = ($selected == "ADM") ? "selected" : ""; echo $r; ?>>Super-Usuario</option>
+                        <option value="Estándar">Usuario Estándar</option>
+                        <option value="Administrador">Usuario Administrador</option>
+                        <option value="Super-Usuario">Super-Usuario</option>
                     </select>
                     </div>
                     <div class="dropDownFilter2 hide">
                     <label for="filtersForRol">Por departamento:</label>
-                    <select class="comboBox dropDownFilter" id="filtersForDto" name="filtersForDto">
+                    <select class="comboBox dropDownFilter" id="filtersForDto" name="filtersForDto" onchange="FilterResults(this, 'filtersForRol', 4, 2)">
                     <option value="noFilter"></option>
                         <?php
                         $filters = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
-                            if(isset($_GET['filterDto'])){
-                                $selected = $_GET['filterDto'];
-                            }else{ $selected = ""; }
                             for($i=0;$i<count($filters);$i++){
                                 foreach($filters[$i] as $key=>$value){
-                                    $r = ($selected == $value) ? "selected" : "";
-                                    echo '<option value=dto'.$i.' '.$r.'>'.$value.'</option>';
+                                    echo '<option value=dto'.$i.'>'.$value.'</option>';
                                 }
                             }
                         }else{
