@@ -100,3 +100,52 @@ function resetField(element){
     element.setCustomValidity('')
     element.classList.remove('invalidField');
 }
+
+
+function formatSpanishDate(dateString) {
+    //Convertir la fecha a formato en español
+    const date = new Date(dateString);
+
+    const adjustedDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(adjustedDate);
+}
+
+function convertDate(element) {
+    const d1 = document.getElementById(element);
+    const currentDate = d1.textContent.trim();
+    const formattedDate = formatSpanishDate(currentDate);
+    d1.textContent = formattedDate;
+}
+
+function revertDate(element, content){
+    const d = document.getElementById(content);
+    const d1 = document.getElementById(element);
+    const currentDate = d.textContent.trim();
+    const formattedDate = parseSpanishDate(currentDate);
+    d1.value = formattedDate;
+}
+
+function parseSpanishDate(dateString) {
+    const months = {
+        "enero": "01",
+        "febrero": "02",
+        "marzo": "03",
+        "abril": "04",
+        "mayo": "05",
+        "junio": "06",
+        "julio": "07",
+        "agosto": "08",
+        "septiembre": "09",
+        "octubre": "10",
+        "noviembre": "11",
+        "diciembre": "12"
+    };
+
+    // Extraer partes de la fecha
+    const [day, month, year] = dateString.toLowerCase().split(' de ');
+    const monthNumber = months[month];
+    const dayPadded = day.padStart(2, '0');
+
+    // Formatear a YYYY-MM-DD
+    return `${year}-${monthNumber}-${dayPadded}`;
+}
