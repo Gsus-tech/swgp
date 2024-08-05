@@ -58,7 +58,7 @@ onchange="this.setCustomValidity('')">
             }
             selectDias.appendChild(option);
         }
-        if(cDia!=0 && cDia <= dia.count){dia.value = cDia;}
+        if(cDia!=0 && cDia <= dia.options.length){dia.value = cDia;}
         else{dia.selected = '1';}
     }
 
