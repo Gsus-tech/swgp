@@ -152,17 +152,18 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
                 <div id="addActivity-form" class="addActivity-form hide">
-                    <form class="activity-form" id="activity-form" method="POST" autocomplete="off">
+                    <form class="activity-form" id="activity-form" onsubmit="return submitNewActivity()" method="POST" autocomplete="off">
                         <div class="formContainer">
-                            <div class="title"><h4>Form actividad:</h4></div>
+                            <div class="title"><h4>Nueva actividad de proyecto:</h4></div>
                             <?php
 
                             ?>
-                            <input class='input' type="text" name="Fname" id="Fname" placeholder="Nombre de la actividad" title="Introduce un nombre identificador para la actividad" value="" required oninvalid="invalidField(this)" oninput="cleanInvalid(this)"> 
+                            <input class='input' type="text" name="Fname" id="Fname" placeholder="Nombre de la actividad" 
+                            title="Introduce un nombre identificador para la actividad" value="" oninput="resetField(this)">  
                             <br>
                             <!-- <label for="Fdescription">Descripción:</label> -->
-                            <textarea class='textarea' type="text" name="Fdescription" id="FdescriptionEdit" placeholder="Descripción" title="Descripción de la actividad"  required
-                            oninvalid="invalidField(this)" oninput="cleanInvalid(this)"></textarea>
+                            <textarea class='textarea' type="text" name="Fdescription" id="Fdescription" placeholder="Descripción" 
+                            title="Descripción de la actividad" oninput="resetField(this)"></textarea>
                             <br>
                             <div class="fm-content">
                                 <div class="section1">
@@ -188,16 +189,19 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         for($i=0;$i<count($users);$i++){
                                             echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';
                                         }
+                                        $checked = '';
                                     }else{
+                                        $checked = 'checked';
                                         echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
                                         echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
                                     }
 
-                                    echo "<input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' value='1' $checked>";
-                                    ?>
-                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
-                                        
+                                    ?>  
                                     </select>
+                                    <br><br>
+                                    <input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' <?php echo $checked?>>
+                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
+
                                     <input type="hidden" name="myId" id="myId" value="<?php echo $_SESSION['id']; ?>">
                                     <input type="hidden" name="responsableActividad" id="responsableActividad" value="<?php echo $users[0][0] ?>">
                                 </div>
@@ -233,7 +237,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                             
                             <div class="form-options">
-                                <button disabled class="sumbit-newTask" id="sumbit-editTask" type="submit" onclick="return confirmUpdate()">Guardar cambios</button>
+                                <button class="sumbit-newTask enabled" id="sumbit-editTask" type="submit">Guardar cambios</button>
                                 <a id="cancel-editTask" class="close-newTask button" onclick="return confirmCancelEdit()">Cancelar</a>
                             </div>
                             <input type="hidden" name="idProyectoPage" value="<?php echo  $id; ?>">
@@ -246,6 +250,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     </div> <!-- Fin de container -->
     
+    <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
     <script src="../js/init.js"></script>
 </body>

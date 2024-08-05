@@ -120,3 +120,40 @@ function doubleClickRow(element){
         });
     }
 }
+
+//Agregar actividad - verificacion de los campos:
+function submitNewActivity(){
+    let nameFlag = testRegex('Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('min', 8, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('max', 45, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testValue('strict', 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+
+    let descriptionFlag = testControlledTextInput('Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('min', 20, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('max', 1000, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testValue('light', 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+}

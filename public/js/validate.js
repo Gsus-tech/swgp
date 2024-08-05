@@ -26,7 +26,7 @@ function testControlledTextInput(elementId){
     const injectionPatterns = [
         '<script>','</script>','<img','onerror=',
         'onload=','alert(','document.cookie',
-        '--',';--',';','/*','*/','@@','@',
+        '--',';--',';','/*','*/','@@',
         'char(','nchar(','varchar(','nvarchar(',
         'sysobjects','syscolumns','information_schema.tables'
     ];
