@@ -121,8 +121,66 @@ function doubleClickRow(element){
     }
 }
 
+function switchDatesState(){
+    const dia = document.getElementById("dia_meta");
+    const mes = document.getElementById("mes_meta");
+    const anio = document.getElementById("anio_meta");
+    const state = dia.disabled===true ? true : false;
+    dia.disabled = state==true ? false : true;
+    mes.disabled = state==true ? false : true;
+    anio.disabled = state==true ? false : true;
+}
+
+function switchRepState(element){
+    const select = document.getElementById('userRespList');
+    if(select.disabled == true){
+        element.setCustomValidity('Debido a la falta de miembros deberás ser el responsable de la actividad.');
+        element.reportValidity();
+        element.checked = true;
+
+        setTimeout(() => {
+            element.setCustomValidity('');
+        }, 4000);
+    }
+}
+
+function updateObjectiveDescription(element) {
+    const select = document.getElementById('objectiveDescriptionList');
+    select.value=element.value;
+    if(element.selectedIndex == 0){
+        var description = "";
+        document.getElementById('ObjectiveDescription').value = description;
+        document.getElementById('objetivoEnlazado').value = "";
+    }else{
+        var selectedOption = select.options[select.selectedIndex];
+        var description = selectedOption.text;
+        document.getElementById('ObjectiveDescription').value = description;
+        document.getElementById('objetivoEnlazado').value = element.value;
+    }
+}
+
+function getDateSelected(){
+    const d = parseInt(document.getElementById('dia_meta').value);
+    const m = parseInt(document.getElementById('mes_meta').value);
+    const y = parseInt(document.getElementById('anio_meta').value);
+
+    return new Date(y, m - 1, d);
+}
+
 //Agregar actividad - verificacion de los campos:
 function submitNewActivity(){
+
+
+    //Validar objetivo seleccionado
+    const selectObj = document.getElementById('objetivoList');
+    console.log(`${selectObj.value}`);
+    if(selectObj.value == 'noObjectivesRegister'){
+        selectObj.setCustomValidity('No hay objetivos registrados.\nSolicita al administrador agregar un objetivo del proyecto e intenta de nuevo.');
+        selectObj.reportValidity();
+        return false;
+    }
+    
+    //Validar nombre
     let nameFlag = testRegex('Fname');
     if(nameFlag === false){
         return false;
@@ -135,11 +193,12 @@ function submitNewActivity(){
     if(nameFlag === false){
         return false;
     }
-    nameFlag = testValue('strict', 'Fname');
+    nameFlag = testValue('strict', 'Fname', 'actividad');
     if(nameFlag === false){
         return false;
     }
 
+    //Validar descripcion
     let descriptionFlag = testControlledTextInput('Fdescription');
     if(descriptionFlag === false){
         return false;
@@ -154,6 +213,33 @@ function submitNewActivity(){
     }
     descriptionFlag = testValue('light', 'Fdescription');
     if(descriptionFlag === false){
+        return false;
+    }
+
+    //Validar fecha
+    if(document.getElementById('noDateSelected').checked == false){
+        let [year, month, day] = document.getElementById('projectInitDate').value.split('-');
+        const d1 = new Date(year, month -1, day);
+        [year, month, day] = document.getElementById('projectFinDate').value.split('-');
+        const d2 = new Date(year, month -1, day);
+        const date = getDateSelected();
+        const rp = document.getElementById('mes_meta');
+        if(!validateDate(date, d1)){
+            rp.setCustomValidity('La fecha estimada debe ser posterior a la fecha de inicio del proyecto.');
+            rp.reportValidity();
+            return false;
+        }
+        if(!validateDate(d2, date)){
+            rp.setCustomValidity('La fecha estimada debe ser previa a la fecha de cierre del proyecto.');
+            rp.reportValidity();
+            return false;
+        }   
+    }
+
+
+    if(selectObj.value == 'none'){
+        selectObj.setCustomValidity('Selecciona un objetivo para continuar.');
+        selectObj.reportValidity();
         return false;
     }
 }
