@@ -133,7 +133,7 @@ function switchDatesState(){
 
 function switchRepState(element){
     const select = document.getElementById('userRespList');
-    if(select.disabled == true){
+    if(select.classList.contains('noRepsEncountered')){
         element.setCustomValidity('Debido a la falta de miembros deberás ser el responsable de la actividad.');
         element.reportValidity();
         element.checked = true;
@@ -142,6 +142,25 @@ function switchRepState(element){
             element.setCustomValidity('');
         }, 4000);
     }
+    else if(element.checked == true){
+        select.disabled = true;
+        select.value = 'I';
+    }
+    else if(element.checked == false){
+        select.disabled = false;
+        select.selectedIndex = 0;
+    }
+
+}
+
+function updateRep(element) {
+    const input = document.getElementById('responsableActividad'); 
+    if (element.disabled === true) {
+        input.value = document.getElementById('myId').value;
+    } else {
+        input.value = element.value;
+    }
+    console.log(input.value);
 }
 
 function updateObjectiveDescription(element) {
@@ -169,11 +188,13 @@ function getDateSelected(){
 
 //Agregar actividad - verificacion de los campos:
 function submitNewActivity(){
-
-
+    
+    
     //Validar objetivo seleccionado
     const selectObj = document.getElementById('objetivoList');
-    console.log(`${selectObj.value}`);
+    const selectPer = document.getElementById('userRespList').disabled == false ? document.getElementById('userRespList') : false;
+   
+    
     if(selectObj.value == 'noObjectivesRegister'){
         selectObj.setCustomValidity('No hay objetivos registrados.\nSolicita al administrador agregar un objetivo del proyecto e intenta de nuevo.');
         selectObj.reportValidity();
@@ -236,10 +257,24 @@ function submitNewActivity(){
         }   
     }
 
+    if(selectPer == false && selectPer.value == 'none'){
+        selectPer.setCustomValidity('Selecciona un responsable para continuar.');
+        selectPer.reportValidity();
+        return false;
+    }
 
     if(selectObj.value == 'none'){
         selectObj.setCustomValidity('Selecciona un objetivo para continuar.');
         selectObj.reportValidity();
         return false;
     }
+
+    const form = document.getElementById('activity-form');
+    const actionUrl = `../controller/activityManager.php?addNew=true`;
+    form.action = actionUrl;
+    form.submit();
+}
+
+function DeleteActivity(id, element){
+    
 }

@@ -108,7 +108,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 }
 
                                 $x = $p[$i]['id_actividad'];
-                                echo "<td><a class='fa fa-trash tableIconBtn' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, this)'></a></td>";
+                                echo "<td><a class='fa fa-trash button' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, this)'></a></td>";
                                 echo '</tr>';
                             }
                         } else {
@@ -152,7 +152,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
                 <div id="addActivity-form" class="addActivity-form hide">
-                    <form class="activity-form" id="activity-form" onsubmit="return submitNewActivity()" method="POST" autocomplete="off">
+                    <form class="activity-form" id="activity-form" onsubmit="return submitNewActivity()" method="POST" autocomplete="on">
                         <div class="formContainer">
                             <div class="title"><h4>Nueva actividad de proyecto:</h4></div>
                             <?php
@@ -190,15 +190,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
                                     
                                     if(count($users)>=1){
-                                    echo "<select name='userRespList' id='userRespList' class='comboBox'>";
+                                    echo "<select name='userRespList' id='userRespList' class='comboBox' onchange='resetField(this); updateRep(this)'>";
+                                    echo "<option value='none'> - Selecciona un responsable - </option>";
                                         for($i=0;$i<count($users);$i++){
                                             echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';
                                         }
                                         $checked = '';
                                     }else{
                                         $checked = 'checked';
-                                        echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
-                                        echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
+                                        echo "<select disabled class='noRepsEncountered comboBox' name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
+                                        echo "<option value='noUsersRegister'>Sin resultados</option>";
                                     }
 
                                     ?>  
