@@ -63,29 +63,34 @@
 }
 
 
-.addActivity-form {
-    position: absolute;
-    width: -webkit-fill-available;
-    height: -webkit-fill-available;
-    top: 0;
-    left: 0;
-    background-color: #000000c2;
-    padding: 1rem 0 5rem 0;
+.container .main .addActivity-form {
+    width: 100%;  
+    height: 100%;    
+    position: fixed;  
+    top: 0;    
+    left: 2rem;
+    background: rgba(0, 0, 0, 0.8);
+    overflow-y: auto; 
 }
 
-.activity-form {
-    width: 25rem;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 1em;
-    transition: width .3s ease-in-out;
-    padding: 1rem 1.5rem;
+.container .main .activity-form {
+    margin: 4rem auto 0 auto;
+    background-color: #fff; 
+    border-radius: 1em;  
+    padding: 10px 2rem;    
+    transition: width 0.3s ease-in-out;
 }
+
 .formContainer .fm-content .section1, .formContainer .fm-content .section2 {   
     width: 100%;
 }
 .formContainer .fm-content .section2 {   
     margin-top: 3rem;
+}
+
+.selectDiv .noRepsEncountered{
+    width: 100%;
+    max-width: 100%;
 }
 
 .formContainer .title {

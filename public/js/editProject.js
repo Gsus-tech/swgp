@@ -25,10 +25,96 @@ function deactivateBtn(){
 }
 
 function updateBasicInfo(){
-    console.log('Enviando el formulario');
+
     event.preventDefault();
     revertDate('thisDate_inicio', 'displayDate1');
     revertDate('thisDate_cierre', 'displayDate2');
+    const date1 = document.getElementById('displayDate1');
+    const date2 = document.getElementById('displayDate2');
+
+    let nameFlag = testRegex('Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('min', 8, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('max', 45, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testValue('strict', 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+
+    if(date1.classList.contains('invalidField')){
+        document.getElementById('date1Label').scrollIntoView({ behavior: 'smooth' });
+        return false;
+    }
+
+    if(date2.classList.contains('invalidField')){
+        document.getElementById('date2Label').scrollIntoView({ behavior: 'smooth' });
+        return false;
+    }
+
+
+    if (document.getElementById('deptoAssign').value === 'other') {
+        let deptoFlag = testRegex('newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testLenght('min', 8, 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testLenght('max', 45, 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+        deptoFlag = testValue('strict', 'newDeptoInput');
+        if (deptoFlag === false) {
+            return false;
+        }
+    }
+
+    
+    let descriptionFlag = testControlledTextInput('Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('min', 20, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('max', 1000, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testValue('light', 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+
+    let metaFlag = testControlledTextInput('Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testLenght('min', 20, 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testLenght('max', 1000, 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+    metaFlag = testValue('light', 'Fmeta');
+    if(metaFlag === false){
+        return false;
+    }
+     
+
     const form = document.getElementById('editProject-form');
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('editProject');
@@ -51,37 +137,38 @@ function finalDate(){
     document.getElementById('fnDt-cancel').classList.toggle('hide');
 }
 
-function validateDate(dateIni, dateFin){
-    return dateIni <= dateFin;
-}
-
 function saveDate1() {
     const today = new Date();
     const diaInicio = parseInt(document.getElementById("dia_inicio").value);
     const mesInicio = parseInt(document.getElementById("mes_inicio").value);
     const anioInicio = parseInt(document.getElementById("anio_inicio").value);
     const date = new Date(anioInicio, mesInicio - 1, diaInicio);
+    const d1 = document.getElementById('displayDate1');
+    const dFs = document.getElementById('date1Fs');
+
 
     const valid = validateDate(today, date);
+    document.getElementById('thisDate_inicio').value = date;
+    d1.textContent = date;
+    convertDate('displayDate1');
+    initialDate();
+    const date2 = new Date(document.getElementById('thisDate_cierre').value);
 
-    if (valid) {
-        const d1 = document.getElementById('displayDate1');
-        document.getElementById('thisDate_inicio').value = date;
-        d1.textContent = date;
-        convertDate('displayDate1');
-        initialDate();
-        const date2 = new Date(document.getElementById('thisDate_cierre').value);
+    // if (!valid) {
         const valid2 = validateDate(date, date2);
         if(valid2){
             const date2 = new Date(anioInicio, mesInicio - 1, diaInicio+1);
             const d2 = document.getElementById('displayDate2');
             d2.textContent = date2;
             convertDate('displayDate2');
-            activateBtn();
+            // activateBtn();
         }
-    } else {
-        alert("La fecha de inicio debe ser mayor o igual a la fecha actual.");
-    }
+        dFs.classList.remove('invalidField');
+        activateBtn();
+
+    // } else {
+    //     dFs.classList.add('invalidField');
+    // }
 }
 
 
@@ -91,65 +178,24 @@ function saveDate2(){
     const anioC = parseInt(document.getElementById("anio_cierre").value);
     const init = new Date(document.getElementById('thisDate_inicio').value);
     const date = new Date(anioC, mesC - 1, diaC);
+    const d2 = document.getElementById('displayDate2');
+    const dFs = document.getElementById('date2Fs');
+    const errorMsg = document.getElementById('errorMessageDate2');
 
     const valid = validateDate(init, date);
+    document.getElementById('thisDate_cierre').value = date;
+    d2.textContent = date;
+    convertDate('displayDate2');
+    finalDate();
 
-    if (valid) {
-        const d2 = document.getElementById('displayDate2');
-        document.getElementById('thisDate_cierre').value = date;
-        d2.textContent = date;
-        convertDate('displayDate2');
-        finalDate();
+    if (!valid) {
+        dFs.classList.remove('invalidField');
+        errorMsg.classList.add('hide');
         activateBtn();
     } else {
-        alert("La fecha de cierre debe ser mayor a la fecha de inicio.");
+        dFs.classList.add('invalidField');
+        errorMsg.classList.remove('hide');
     }
-}
-
-function formatSpanishDate(dateString) {
-    //Formatear fecha a español
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
-}
-
-function convertDate(element) {
-    const d1 = document.getElementById(element);
-    const currentDate = d1.textContent.trim();
-    const formattedDate = formatSpanishDate(currentDate);
-    d1.textContent = formattedDate;
-}
-
-function revertDate(element, content){
-    const d = document.getElementById(content);
-    const d1 = document.getElementById(element);
-    const currentDate = d.textContent.trim();
-    const formattedDate = parseSpanishDate(currentDate);
-    d1.value = formattedDate;
-}
-
-function parseSpanishDate(dateString) {
-    const months = {
-        "enero": "01",
-        "febrero": "02",
-        "marzo": "03",
-        "abril": "04",
-        "mayo": "05",
-        "junio": "06",
-        "julio": "07",
-        "agosto": "08",
-        "septiembre": "09",
-        "octubre": "10",
-        "noviembre": "11",
-        "diciembre": "12"
-    };
-
-    // Extraer partes de la fecha
-    const [day, month, year] = dateString.toLowerCase().split(' de ');
-    const monthNumber = months[month];
-    const dayPadded = day.padStart(2, '0');
-
-    // Formatear a YYYY-MM-DD
-    return `${year}-${monthNumber}-${dayPadded}`;
 }
 
 //Actualizar departamento asignado
@@ -169,14 +215,14 @@ function filtrarUsuariosPorDepartamento() {
 
     const opciones = usuariosSelect.getElementsByTagName('option');
 
-    for (let i = 0; i < opciones.length; i++) {
+    for (let i = 1; i < opciones.length; i++) {
         const opcion = opciones[i];
         const depto = opcion.getAttribute('data-depto');
         
         if (departamento === 'noFilter' || departamento === depto) {
             opcion.style.display = 'block';
             if (firstVisible) {
-                opcion.selected = true;
+                // opcion.selected = true;
                 firstVisible = false;
             }
         } else {
@@ -187,46 +233,57 @@ function filtrarUsuariosPorDepartamento() {
 
 ///Agregar integrante de proyecto
 function agregarMiembro(projectId) {
-    const usuarioId = document.getElementById('listaUsuariosDisponibles').value;
+    const usersSelect = document.getElementById('listaUsuariosDisponibles');
+    const usuarioId = usersSelect.value;
     const usuarioNombre = document.getElementById('listaUsuariosDisponibles').selectedOptions[0].text;
-    const tipoMiembro = document.getElementById('tipoMiembro').value;
+    const rolSelect = document.getElementById('tipoMiembro');
+    const tipoMiembro = rolSelect.value;
     const tipoMiembroTexto = tipoMiembro == '1' ? 'Responsable de proyecto' : 'Colaborador';
     const tablaBody = document.getElementById('members-list-body');
     const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
 
-    // Verificar y eliminar la fila "No se encontraron integrantes registrados" si existe
-    const noIntegrantesRow = document.getElementById('no-integrantes-row');
-    if (noIntegrantesRow) {
-        noIntegrantesRow.remove();
+    if(usuarioId  === 'non'){
+        usersSelect.setCustomValidity('No has seleccionado un usuario.');
+        usersSelect.reportValidity();
     }
-
-    // Crear nueva fila y añadirla a la tabla
-    const nuevaFila = document.createElement('tr');
-    const nombreCelda = document.createElement('td');
-    const rolCelda = document.createElement('td');
-    const removeBtn = document.createElement('td');
-
-    nuevaFila.setAttribute('onclick', 'SelectThisRow(element, "members-list-body")')
-    nombreCelda.textContent = usuarioNombre;
-    rolCelda.textContent = tipoMiembroTexto;
-    removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
-    nuevaFila.appendChild(nombreCelda);
-    nuevaFila.appendChild(rolCelda);
-    nuevaFila.appendChild(removeBtn);
-    tablaBody.appendChild(nuevaFila);
-
-    // Eliminar la opción del usuario del select de usuarios disponibles
-    const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
-    if (opcionAEliminar) {
-        opcionAEliminar.remove();
+    else if(tipoMiembro === 'non'){
+        rolSelect.setCustomValidity('Define el rol del usuario dentro del proyecto.');
+        rolSelect.reportValidity();
+    }else{
+        // Verificar y eliminar la fila "No se encontraron integrantes registrados" si existe
+        const noIntegrantesRow = document.getElementById('no-integrantes-row');
+        if (noIntegrantesRow) {
+            noIntegrantesRow.remove();
+        }
+    
+        // Crear nueva fila y añadirla a la tabla
+        const nuevaFila = document.createElement('tr');
+        const nombreCelda = document.createElement('td');
+        const rolCelda = document.createElement('td');
+        const removeBtn = document.createElement('td');
+    
+        nuevaFila.setAttribute('onclick', 'SelectThisRow(element, "members-list-body")')
+        nombreCelda.textContent = usuarioNombre;
+        rolCelda.textContent = tipoMiembroTexto;
+        removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
+        nuevaFila.appendChild(nombreCelda);
+        nuevaFila.appendChild(rolCelda);
+        nuevaFila.appendChild(removeBtn);
+        tablaBody.appendChild(nuevaFila);
+    
+        // Eliminar la opción del usuario del select de usuarios disponibles
+        const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
+        if (opcionAEliminar) {
+            opcionAEliminar.remove();
+        }
+        const addedMembersInput = document.getElementById('addedMembers');
+        let addedMembers = JSON.parse(addedMembersInput.value || '[]');
+        rol = tipoMiembroTexto == 'Colaborador' ? false : true;
+        addedMembers.push({ usuarioId, rol });
+        activateBtn();
+        membersTableChanged('add');
+        actualizarCamposOcultos('addedMembers', addedMembers);
     }
-    const addedMembersInput = document.getElementById('addedMembers');
-    let addedMembers = JSON.parse(addedMembersInput.value || '[]');
-    rol = tipoMiembroTexto == 'Colaborador' ? false : true;
-    addedMembers.push({ usuarioId, rol });
-    activateBtn();
-    membersTableChanged('add');
-    actualizarCamposOcultos('addedMembers', addedMembers);
 }
 
 //Eliminar miembro

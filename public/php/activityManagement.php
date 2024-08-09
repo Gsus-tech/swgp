@@ -75,7 +75,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $id = isset($_GET['id']) ? $_GET['id'] : "13" ; //Obtener primer valor del comboBox proyectos
                         }
                         $p = array();
-                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción
+                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario
                         FROM tbl_actividades WHERE id_proyecto = ?";
 
                         $estados = [
@@ -108,7 +108,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 }
 
                                 $x = $p[$i]['id_actividad'];
-                                echo "<td><a class='fa fa-trash tableIconBtn' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, this)'></a></td>";
+                                $y = $p[$i]['id_usuario'];
+                                echo "<td><a class='fa fa-trash button' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, $y)'></a></td>";
                                 echo '</tr>';
                             }
                         } else {
@@ -152,17 +153,23 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
                 <div id="addActivity-form" class="addActivity-form hide">
-                    <form class="activity-form" id="activity-form" method="POST" autocomplete="off">
+                    <form class="activity-form" id="activity-form" onsubmit="return submitNewActivity()" method="POST" autocomplete="on">
                         <div class="formContainer">
-                            <div class="title"><h4>Form actividad:</h4></div>
+                            <div class="title"><h4>Nueva actividad de proyecto:</h4></div>
                             <?php
-
+                                //Get project info
+                                $projectDates = Crud::executeResultQuery("SELECT fecha_inicio, fecha_cierre FROM tbl_proyectos WHERE id_proyecto = ?", [$id], 'i');
+                                $d1 = $projectDates[0]['fecha_inicio'];
+                                $d2 = $projectDates[0]['fecha_cierre'];
+                                echo "<input type='hidden' id='projectInitDate' value='$d1'>";
+                                echo "<input type='hidden' id='projectFinDate' value='$d2'>";
                             ?>
-                            <input class='input' type="text" name="Fname" id="Fname" placeholder="Nombre de la actividad" title="Introduce un nombre identificador para la actividad" value="" required oninvalid="invalidField(this)" oninput="cleanInvalid(this)"> 
+                            <input class='input' type="text" name="Fname" id="Fname" placeholder="Nombre de la actividad" 
+                            title="Introduce un nombre identificador para la actividad" value="" oninput="resetField(this)">  
                             <br>
                             <!-- <label for="Fdescription">Descripción:</label> -->
-                            <textarea class='textarea' type="text" name="Fdescription" id="FdescriptionEdit" placeholder="Descripción" title="Descripción de la actividad"  required
-                            oninvalid="invalidField(this)" oninput="cleanInvalid(this)"></textarea>
+                            <textarea class='textarea' type="text" name="Fdescription" id="Fdescription" placeholder="Descripción" 
+                            title="Descripción de la actividad" oninput="resetField(this)"></textarea>
                             <br>
                             <div class="fm-content">
                                 <div class="section1">
@@ -172,7 +179,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         <?php $idUnico = "meta"; include 'datePicker.php'; ?>
                                     </div>
                                     <div class="noDate">
-                                        <input type="checkbox" class="checkBx" id="noDateSelected" name="noDateSelected" value="1">
+                                        <input type="checkbox" class="checkBx" id="noDateSelected" name="noDateSelected" value="1" oninput="switchDatesState()">
                                         <label for="noDateSelected" class="lbl">Sin fecha específica.</label>
                                     </div>
                                 </div>
@@ -184,20 +191,24 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
                                     
                                     if(count($users)>=1){
-                                    echo "<select name='userRespList' id='userRespList' class='comboBox'>";
+                                    echo "<select name='userRespList' id='userRespList' class='comboBox' onchange='resetField(this); updateRep(this)'>";
+                                    echo "<option value='none'> - Selecciona un responsable - </option>";
                                         for($i=0;$i<count($users);$i++){
                                             echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';
                                         }
+                                        $checked = '';
                                     }else{
-                                        echo "<select disabled name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
-                                        echo "<option value='noUsersRegister'>No se han registrado usuarios para este proyecto</option>";
+                                        $checked = 'checked';
+                                        echo "<select disabled class='noRepsEncountered comboBox' name='userRespList' id='userRespList' style='margin: .5rem 0 0 .5rem;'>";
+                                        echo "<option value='noUsersRegister'>Sin resultados</option>";
                                     }
 
-                                    echo "<input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' value='1' $checked>";
-                                    ?>
-                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
-                                        
+                                    ?>  
                                     </select>
+                                    <br><br>
+                                    <input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' <?php echo $checked?> oninput="switchRepState(this)">
+                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
+
                                     <input type="hidden" name="myId" id="myId" value="<?php echo $_SESSION['id']; ?>">
                                     <input type="hidden" name="responsableActividad" id="responsableActividad" value="<?php echo $users[0][0] ?>">
                                 </div>
@@ -207,15 +218,15 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     <?php
                                     $objetivos = Crud::executeResultQuery("SELECT objetivos.id_objetivo, objetivos.contenido FROM tbl_objetivos objetivos WHERE objetivos.id_proyecto = '$id' AND objetivos.tipo='especifico';");
                                     $flag = false;
+                                    echo "<select name='objetivoList' id='objetivoList' class='comboBox' onchange='resetField(this);updateObjectiveDescription(this)'>";
                                     if(count($objetivos)>=1){
                                         $flag = true;
-                                    echo "<select name='objetivoList' id='objetivoList' class='comboBox' onchange='updateObjectiveDescription(this)'>";
+                                    echo "<option value='none'>- Selecciona un objetivo -</option>";
                                         for($i=0;$i<count($objetivos);$i++){
                                             $selected = '';
                                             echo '<option value='.$objetivos[$i]['id_objetivo'].' '.$selected.'>Objetivo: '.$objetivos[$i]['id_objetivo'].'</option>';
                                         }
                                     }else{
-                                        echo "<select disabled name='objetivoList' id='objetivoList' style='margin: .5rem 0 0 .5rem;'>";
                                         echo "<option value='noObjectivesRegister'>Sin objetivos registrados</option>";
                                     }
                                     echo "</select>";
@@ -233,7 +244,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                             
                             <div class="form-options">
-                                <button disabled class="sumbit-newTask" id="sumbit-editTask" type="submit" onclick="return confirmUpdate()">Guardar cambios</button>
+                                <button class="sumbit-newTask enabled" id="sumbit-editTask" type="submit">Guardar cambios</button>
                                 <a id="cancel-editTask" class="close-newTask button" onclick="return confirmCancelEdit()">Cancelar</a>
                             </div>
                             <input type="hidden" name="idProyectoPage" value="<?php echo  $id; ?>">
@@ -246,6 +257,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     </div> <!-- Fin de container -->
     
+    <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
     <script src="../js/init.js"></script>
 </body>

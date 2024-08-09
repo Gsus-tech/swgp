@@ -120,3 +120,188 @@ function doubleClickRow(element){
         });
     }
 }
+
+function switchDatesState(){
+    const dia = document.getElementById("dia_meta");
+    const mes = document.getElementById("mes_meta");
+    const anio = document.getElementById("anio_meta");
+    const state = dia.disabled===true ? true : false;
+    dia.disabled = state==true ? false : true;
+    mes.disabled = state==true ? false : true;
+    anio.disabled = state==true ? false : true;
+}
+
+function switchRepState(element){
+    const select = document.getElementById('userRespList');
+    if(select.classList.contains('noRepsEncountered')){
+        element.setCustomValidity('Debido a la falta de miembros deberás ser el responsable de la actividad.');
+        element.reportValidity();
+        element.checked = true;
+
+        setTimeout(() => {
+            element.setCustomValidity('');
+        }, 4000);
+    }
+    else if(element.checked == true){
+        select.disabled = true;
+        select.value = 'I';
+    }
+    else if(element.checked == false){
+        select.disabled = false;
+        select.selectedIndex = 0;
+    }
+
+}
+
+function updateRep(element) {
+    const input = document.getElementById('responsableActividad'); 
+    if (element.disabled === true) {
+        input.value = document.getElementById('myId').value;
+    } else {
+        input.value = element.value;
+    }
+    console.log(input.value);
+}
+
+function updateObjectiveDescription(element) {
+    const select = document.getElementById('objectiveDescriptionList');
+    select.value=element.value;
+    if(element.selectedIndex == 0){
+        var description = "";
+        document.getElementById('ObjectiveDescription').value = description;
+        document.getElementById('objetivoEnlazado').value = "";
+    }else{
+        var selectedOption = select.options[select.selectedIndex];
+        var description = selectedOption.text;
+        document.getElementById('ObjectiveDescription').value = description;
+        document.getElementById('objetivoEnlazado').value = element.value;
+    }
+}
+
+function getDateSelected(){
+    const d = parseInt(document.getElementById('dia_meta').value);
+    const m = parseInt(document.getElementById('mes_meta').value);
+    const y = parseInt(document.getElementById('anio_meta').value);
+
+    return new Date(y, m - 1, d);
+}
+
+//Agregar actividad - verificacion de los campos:
+function submitNewActivity(){
+    
+    
+    //Validar objetivo seleccionado
+    const selectObj = document.getElementById('objetivoList');
+    const selectPer = document.getElementById('userRespList').disabled == false ? document.getElementById('userRespList') : false;
+   
+    
+    if(selectObj.value == 'noObjectivesRegister'){
+        selectObj.setCustomValidity('No hay objetivos registrados.\nSolicita al administrador agregar un objetivo del proyecto e intenta de nuevo.');
+        selectObj.reportValidity();
+        return false;
+    }
+    
+    //Validar nombre
+    let nameFlag = testRegex('Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('min', 8, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('max', 45, 'Fname');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testValue('strict', 'Fname', 'actividad');
+    if(nameFlag === false){
+        return false;
+    }
+
+    //Validar descripcion
+    let descriptionFlag = testControlledTextInput('Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('min', 20, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testLenght('max', 1000, 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+    descriptionFlag = testValue('light', 'Fdescription');
+    if(descriptionFlag === false){
+        return false;
+    }
+
+    //Validar fecha
+    if(document.getElementById('noDateSelected').checked == false){
+        let [year, month, day] = document.getElementById('projectInitDate').value.split('-');
+        const d1 = new Date(year, month -1, day);
+        [year, month, day] = document.getElementById('projectFinDate').value.split('-');
+        const d2 = new Date(year, month -1, day);
+        const date = getDateSelected();
+        const rp = document.getElementById('mes_meta');
+        if(!validateDate(date, d1)){
+            rp.setCustomValidity('La fecha estimada debe ser posterior a la fecha de inicio del proyecto.');
+            rp.reportValidity();
+            return false;
+        }
+        if(!validateDate(d2, date)){
+            rp.setCustomValidity('La fecha estimada debe ser previa a la fecha de cierre del proyecto.');
+            rp.reportValidity();
+            return false;
+        }   
+    }
+
+    if(selectPer == false && selectPer.value == 'none'){
+        selectPer.setCustomValidity('Selecciona un responsable para continuar.');
+        selectPer.reportValidity();
+        return false;
+    }
+
+    if(selectObj.value == 'none'){
+        selectObj.setCustomValidity('Selecciona un objetivo para continuar.');
+        selectObj.reportValidity();
+        return false;
+    }
+
+    const form = document.getElementById('activity-form');
+    const actionUrl = `../controller/activityManager.php?addNew=true`;
+    form.action = actionUrl;
+    form.submit();
+}
+
+function DeleteActivity(id, rep) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
+        // Crear un formulario
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '../controller/activityManager.php';
+
+        const deleteInput = document.createElement('input');
+        deleteInput.type = 'hidden';
+        deleteInput.name = 'delete';
+        deleteInput.value = 'true';
+        form.appendChild(deleteInput);
+
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = id;
+        form.appendChild(idInput);
+
+        const repInput = document.createElement('input');
+        repInput.type = 'hidden';
+        repInput.name = 'rep';
+        repInput.value = rep;
+        form.appendChild(repInput);
+
+        // Agregar el formulario al documento y enviarlo
+        document.body.appendChild(form);
+        form.submit();
+    }
+}

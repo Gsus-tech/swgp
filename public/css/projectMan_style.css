@@ -117,8 +117,8 @@
     margin: 8px 0;     
     box-sizing: border-box; 
     font-family: 'Open Sans', sans-serif; 
+    resize: none;
 } 
-
 
 .container .main .editContainer {  
     width: 100%; 
@@ -169,7 +169,12 @@
 .container .main .editContainer .form-container .editProject-form .fm-content .section1 .deptoDiv .deptoAsign, .container .main .editContainer .form-container .editProject-form .fm-content .section2 .deptoDiv .deptoAsign {   
     margin-top: 0.5rem;
 } 
-.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm span {  
+.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm fieldset{  
+    width:fit-content;
+    padding: 5px 10px;
+    float:left;
+} 
+.container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm fieldset span {  
     width: 100%;   
     border: 1px solid --black;   
     box-sizing: border-box;   
