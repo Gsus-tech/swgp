@@ -305,3 +305,8 @@ function DeleteActivity(id, rep) {
         form.submit();
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    paginateTable('activity-list-body', 8, 'pagination');
+    
+})

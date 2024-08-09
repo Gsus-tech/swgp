@@ -343,3 +343,7 @@ function updateValue(){
     }
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    paginateTable('users-list-body', 7, 'pagination');
+    
+})

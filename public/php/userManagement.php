@@ -254,6 +254,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         ?>
                     </tbody>
                 </table>
+                <div class="pagination" id="pagination"></div>
+
                 </div> <!-- Fin de table -->               
            
             
@@ -414,6 +416,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         echo "<script src='../js/adminUserActions.js'></script>";
     }
     ?>
+    <script src="../js/tablePagination.js"></script>
     <script src="../js/init.js"></script>
     <script src="../js/userManager.js"></script>
     <script>

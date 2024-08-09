@@ -84,6 +84,25 @@ table:hover {
     background-color: white;
 }
 
+.pagination {
+    margin-top: 10px;
+    text-align: center;
+}
+.pagination button {
+    margin: 2px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: var(--white);
+    cursor: pointer;
+}
+.pagination button.active {
+    background-color: #585858;
+    color: white;
+}
+.pagination button:hover {
+    background-color: #ddd;
+}
+
 @media screen and (min-width: 750px) {
 
 

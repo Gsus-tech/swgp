@@ -507,7 +507,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
             </div> <!-- Fin de form-container -->   
 
-           <script src='../js/editProject.js'></script>
+            <script src='../js/editProject.js'></script>
 
 
 
@@ -647,6 +647,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             ?>
                         </tbody>
                     </table>
+                    <div class="pagination" id="pagination"></div>
+
                 </div> <!-- Fin de table -->      
          
                 <!-- Boton de añadir proyecto -->
@@ -728,6 +730,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </form> <!-- Fin de project-form -->
 
             </div>
+            <script src="../js/tablePagination.js"></script>
             <script src="../js/projectMng.js"></script>
                                <?php
             }

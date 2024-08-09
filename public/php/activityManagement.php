@@ -118,6 +118,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         ?>
                         </tbody>
                     </table>
+                    <div class="pagination" id="pagination"></div>
                 </div>
 
                 <div class="fm-content">
@@ -256,7 +257,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div>
 
     </div> <!-- Fin de container -->
-    
+    <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
     <script src="../js/init.js"></script>
