@@ -275,6 +275,33 @@ function submitNewActivity(){
     form.submit();
 }
 
-function DeleteActivity(id, element){
-    
+function DeleteActivity(id, rep) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
+        // Crear un formulario
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '../controller/activityManager.php';
+
+        const deleteInput = document.createElement('input');
+        deleteInput.type = 'hidden';
+        deleteInput.name = 'delete';
+        deleteInput.value = 'true';
+        form.appendChild(deleteInput);
+
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'id';
+        idInput.value = id;
+        form.appendChild(idInput);
+
+        const repInput = document.createElement('input');
+        repInput.type = 'hidden';
+        repInput.name = 'rep';
+        repInput.value = rep;
+        form.appendChild(repInput);
+
+        // Agregar el formulario al documento y enviarlo
+        document.body.appendChild(form);
+        form.submit();
+    }
 }

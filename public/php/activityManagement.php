@@ -75,7 +75,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $id = isset($_GET['id']) ? $_GET['id'] : "13" ; //Obtener primer valor del comboBox proyectos
                         }
                         $p = array();
-                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción
+                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario
                         FROM tbl_actividades WHERE id_proyecto = ?";
 
                         $estados = [
@@ -108,7 +108,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 }
 
                                 $x = $p[$i]['id_actividad'];
-                                echo "<td><a class='fa fa-trash button' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, this)'></a></td>";
+                                $y = $p[$i]['id_usuario'];
+                                echo "<td><a class='fa fa-trash button' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, $y)'></a></td>";
                                 echo '</tr>';
                             }
                         } else {
