@@ -349,3 +349,7 @@ function FilterResults(selectElement) {
         }
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    paginateTable('projects-list-body', 8, 'pagination');
+})

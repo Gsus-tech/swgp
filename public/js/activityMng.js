@@ -70,7 +70,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-
     //Cerrar barra al hacer clic fuera del div
     const filterDiv = document.getElementById('filterDiv');
     document.addEventListener('click', function(event) {
@@ -107,8 +106,6 @@ function SelectThisRowAndDetails(element, tbodyName){
         textArea.value = '-- Selecciona una actividad --';
         textArea.classList.add('italic');
     }
-
-    
 }
 
 function doubleClickRow(element){
@@ -145,12 +142,12 @@ function switchRepState(element){
     else if(element.checked == true){
         select.disabled = true;
         select.value = 'I';
+        updateRep(document.getElementById('userRespList'));
     }
     else if(element.checked == false){
         select.disabled = false;
         select.selectedIndex = 0;
     }
-
 }
 
 function updateRep(element) {
@@ -160,7 +157,6 @@ function updateRep(element) {
     } else {
         input.value = element.value;
     }
-    console.log(input.value);
 }
 
 function updateObjectiveDescription(element) {
@@ -187,14 +183,11 @@ function getDateSelected(){
 }
 
 //Agregar actividad - verificacion de los campos:
-function submitNewActivity(){
-    
-    
+function submitNewActivity(){    
     //Validar objetivo seleccionado
     const selectObj = document.getElementById('objetivoList');
     const selectPer = document.getElementById('userRespList').disabled == false ? document.getElementById('userRespList') : false;
-   
-    
+       
     if(selectObj.value == 'noObjectivesRegister'){
         selectObj.setCustomValidity('No hay objetivos registrados.\nSolicita al administrador agregar un objetivo del proyecto e intenta de nuevo.');
         selectObj.reportValidity();
@@ -257,10 +250,14 @@ function submitNewActivity(){
         }   
     }
 
-    if(selectPer == false && selectPer.value == 'none'){
-        selectPer.setCustomValidity('Selecciona un responsable para continuar.');
-        selectPer.reportValidity();
-        return false;
+    if(document.getElementById('makeMeResp').checked == false){
+        if(selectPer == false && selectPer.value == 'none'){
+            selectPer.setCustomValidity('Selecciona un responsable para continuar.');
+            selectPer.reportValidity();
+            return false;
+        }
+    }else{
+        console.log(`rep: ${document.getElementById('responsableActividad').value}`)
     }
 
     if(selectObj.value == 'none'){
@@ -305,3 +302,8 @@ function DeleteActivity(id, rep) {
         form.submit();
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    paginateTable('activity-list-body', 8, 'pagination');
+    
+})

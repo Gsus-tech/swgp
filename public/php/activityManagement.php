@@ -118,6 +118,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         ?>
                         </tbody>
                     </table>
+                    <div class="pagination" id="pagination"></div>
                 </div>
 
                 <div class="fm-content">
@@ -206,8 +207,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     ?>  
                                     </select>
                                     <br><br>
-                                    <input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' <?php echo $checked?> oninput="switchRepState(this)">
-                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label>
+                                    <!-- <input type='checkbox' class='checkBx' id='makeMeResp' name='makeMeResp' <?php echo $checked?> oninput="switchRepState(this, <?php echo $_SESSION['id'] ?>)">
+                                    <label for="makeMeResp" class="lbl">Yo seré responsable de la actividad.</label> -->
 
                                     <input type="hidden" name="myId" id="myId" value="<?php echo $_SESSION['id']; ?>">
                                     <input type="hidden" name="responsableActividad" id="responsableActividad" value="<?php echo $users[0][0] ?>">
@@ -256,7 +257,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div>
 
     </div> <!-- Fin de container -->
-    
+    <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
     <script src="../js/init.js"></script>
