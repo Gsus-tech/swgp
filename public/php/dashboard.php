@@ -13,7 +13,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <meta name="viewport" content="width=device-width" initial-scale=1.0″>
     <title>SWGP - Panel de inicio</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
-    <link rel="stylesheet" href="../css/style-dash.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -25,9 +26,85 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <h4 class="headerTitle">Dashboard</h4>
                 <?php $pagina="dashboard"; include 'topToolBar.php'; ?>
             </div>
-            <div class="contentDiv">
-            [Contenido de la pagina]
+
+            <?php
+            $projectId = $_SESSION['projectSelected'];
+
+            // Consulta para obtener todas las actividades del proyecto seleccionado
+            $query = "SELECT * FROM tbl_actividades WHERE id_proyecto = ?";
+            $actividades = Crud::executeResultQuery($query, [$projectId], 'i');
+            
+            // Inicializar arrays para cada estado
+            $pendientes = [];
+            $en_proceso = [];
+            $retrasadas = [];
+            $terminadas = [];
+            
+            if ($actividades) {
+                foreach ($actividades as $actividad) {
+                    switch ($actividad['estadoActual']) {
+                        case 1:
+                            $pendientes[] = $actividad;
+                            break;
+                        case 2:
+                            $en_proceso[] = $actividad;
+                            break;
+                        case 3:
+                            $retrasadas[] = $actividad;
+                            break;
+                        case 4:
+                            $terminadas[] = $actividad;
+                            break;
+                    }
+                }
+            }
+            ?>
+
+<div class="kanban-board">
+    <div class="kanban-column">
+        <h2>Pendientes</h2>
+        <?php foreach ($pendientes as $tarea): ?>
+            <div class="kanban-item">
+                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
+                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
             </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div class="kanban-column">
+        <h2>En proceso</h2>
+        <?php foreach ($en_proceso as $tarea): ?>
+            <div class="kanban-item">
+                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
+                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div class="kanban-column">
+        <h2>Retrasadas</h2>
+        <?php foreach ($retrasadas as $tarea): ?>
+            <div class="kanban-item">
+                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
+                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <div class="kanban-column">
+        <h2>Terminadas</h2>
+        <?php foreach ($terminadas as $tarea): ?>
+            <div class="kanban-item">
+                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
+                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+
+
+
         </div>
 
         
