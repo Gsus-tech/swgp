@@ -50,10 +50,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $en_proceso[] = $actividad;
                             break;
                         case 3:
-                            $retrasadas[] = $actividad;
-                            break;
-                        case 4:
                             $terminadas[] = $actividad;
+                            break;
+                            case 4:
+                            $retrasadas[] = $actividad;
                             break;
                     }
                 }
@@ -61,46 +61,47 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             ?>
 
 <div class="kanban-board">
-    <div class="kanban-column">
+    <div class="kanban-column" id="pendientes" ondragover="allowDrop(event)" ondrop="drop(event, 1)">
         <h2>Pendientes</h2>
         <?php foreach ($pendientes as $tarea): ?>
-            <div class="kanban-item">
+            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
                 <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
                 <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <div class="kanban-column">
+    <div class="kanban-column" id="en_proceso" ondragover="allowDrop(event)" ondrop="drop(event, 2)">
         <h2>En proceso</h2>
         <?php foreach ($en_proceso as $tarea): ?>
-            <div class="kanban-item">
+            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
                 <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
                 <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <div class="kanban-column">
+    <div class="kanban-column" id="retrasadas" ondragover="allowDrop(event)" ondrop="drop(event, 3)">
         <h2>Retrasadas</h2>
         <?php foreach ($retrasadas as $tarea): ?>
-            <div class="kanban-item">
+            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
                 <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
                 <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
             </div>
         <?php endforeach; ?>
     </div>
 
-    <div class="kanban-column">
+    <div class="kanban-column" id="terminadas" ondragover="allowDrop(event)" ondrop="drop(event, 4)">
         <h2>Terminadas</h2>
         <?php foreach ($terminadas as $tarea): ?>
-            <div class="kanban-item">
+            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
                 <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
                 <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
             </div>
         <?php endforeach; ?>
     </div>
 </div>
+
 
 
 
