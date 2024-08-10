@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" 
     href="assets/font-awesome-4.7.0/css/font-awesome.min.css">    
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/login-style.css">
 </head>
 <body>
     <div class="limiter">

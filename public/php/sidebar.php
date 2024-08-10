@@ -25,7 +25,7 @@
                 class="text">Gestión de proyectos</span></i></a></li>
             <li><a href="activityManagement.php" title="Seguimiento de proyectos"><i class="fa fa-tasks"><span 
                 class="text">Seguimiento de proyectos</span></i></a></li>
-            <li><a href="support.php" title="Panel de soporte"><i class="fa fa-question"><span 
+            <li><a href="#" title="Panel de soporte"><i class="fa fa-question"><span 
                 class="text">Gestión de soporte</span></i></a></li>
                         
         <?php } ?>

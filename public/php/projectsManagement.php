@@ -14,7 +14,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <meta http-equiv=»Content-Type» content=»text/html; charset=ISO-8859-1″ />
     <title>SWGP - Panel de inicio</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
-    <link rel="stylesheet" href="../css/style-dash.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/projectMan_style.css">
     <link rel="stylesheet" href="../css/table-style.css">
 </head>

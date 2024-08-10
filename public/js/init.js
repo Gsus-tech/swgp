@@ -42,3 +42,41 @@ function SelectThisRow(element, tbodyName){
     }
     state===false ? element.classList.add('rowSelected') : element.classList.remove('rowSelected');
 }
+
+
+
+
+
+
+
+
+//Funciones del tablero Kanban
+function allowDrop(event) {
+    event.preventDefault();
+    event.target.classList.add('drag-over');
+}
+
+// Manejar el evento dragstart
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+// Manejar el evento drop
+function drop(event, newState) {
+    event.preventDefault();
+    const taskId = event.dataTransfer.getData("text");
+    const taskElement = document.getElementById(taskId);
+    event.target.appendChild(taskElement);
+
+    // Remover la clase drag-over
+    event.target.classList.remove('drag-over');
+
+    // Obtener el ID de la tarea
+    const id = taskId.split('-')[1];
+
+    // Enviar solicitud AJAX para actualizar el estado de la tarea en la base de datos
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "updateTaskState.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("id=" + id + "&estado=" + newState);
+}

@@ -14,7 +14,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <meta name="viewport" content="width=device-width" initial-scale=1.0″>
     <title>SWGP - Panel de inicio</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
-    <link rel="stylesheet" href="../css/style-dash.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/userMan_style.css">
     <link rel="stylesheet" href="../css/table-style.css">
 </head>
