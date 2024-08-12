@@ -188,11 +188,9 @@ class Crud
                 $stmt->bind_param($types, ...$params);
             }
             $stmt->execute();
+            echo "<script>window.location.href = '../php/$destinationPage';</script>";
+            exit();
 
-            if ($stmt->affected_rows > 0) {
-                echo "<script>window.location.href = '../php/$destinationPage';</script>";
-                exit();
-            }
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             $error = $e->getCode();

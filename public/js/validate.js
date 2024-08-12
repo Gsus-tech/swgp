@@ -26,7 +26,7 @@ function testControlledTextInput(elementId){
     const injectionPatterns = [
         '<script>','</script>','<img','onerror=',
         'onload=','alert(','document.cookie',
-        '--',';--',';','/*','*/','@@',
+        '--',';--',';','/*','*/','@@', "' OR '1'='1",
         'char(','nchar(','varchar(','nvarchar(',
         'sysobjects','syscolumns','information_schema.tables'
     ];
@@ -82,7 +82,7 @@ function testValue(type, elementId, elementTagName){
     ];
 
     if(onlySpaces.test(element.value) || cadenasSinSentido.some(nonsensical => element.value.includes(nonsensical))){
-        element.setCustomValidity(`Introduce un nombre de ${elementTagName} válido.\nNo se admiten cadenas sin sentido.`);
+        element.setCustomValidity(`Este campo de ${elementTagName} no admite cadenas sin sentido.`);
         element.classList.add('invalidField');
         element.reportValidity();
         return false;

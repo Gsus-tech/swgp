@@ -15,27 +15,36 @@ searchBtn.addEventListener('click', function(){
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+    const injectionPatterns = [
+        '<script>', '</script>', '<img', 'onerror=',
+        'onload=', 'alert(', 'document.cookie',
+        '--', ';--', ';', '/*', '*/', '@@', "OR '1'='1",
+        'char(', 'nchar(', 'varchar(', 'nvarchar(',
+        'sysobjects', 'syscolumns', 'information_schema.tables'
+    ];
+    
     const searchBar = document.getElementById('search-bar');
     const searchButton = document.getElementById('searchAccount');
+    
     searchButton.addEventListener('click', function() {
-        const query = searchBar.value;
-        const onlySpaces = /^\s*$/;
+        const query = searchBar.value.trim().toLowerCase(); // Normaliza la entrada
         if (query) {
-            if (onlySpaces.test(query)) {
-                searchBar.value = "";
-                toggleSearchItems()
-            }else{
+            const foundInjectionPattern = injectionPatterns.some(pattern => query.includes(pattern.toLowerCase()));
+            if (!foundInjectionPattern) {
                 window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
+            } else {
+                alert('Por favor, ingresa una consulta de búsqueda válida sin patrones especiales.');
+                toggleSearchItems();
             }
         } else {
             toggleSearchItems();
-            moveSelectDiv(false, false);
         }
     });
-
-    // Opción adicional: Permitir la búsqueda al presionar Enter
+    
+    // Manejar el evento Enter en la barra de búsqueda
     searchBar.addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
+            event.preventDefault(); // Evitar el comportamiento predeterminado
             searchButton.click();
         }
     });

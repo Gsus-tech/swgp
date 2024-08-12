@@ -186,7 +186,8 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <?php
                             $p = array();
                             if(isset($_GET['search'])){
-                                $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $_GET['search']);
+                                $busqueda = Crud::antiNaughty($_GET['search']);
+                                $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $busqueda);
                             }
                             elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
                                 $p = Crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);

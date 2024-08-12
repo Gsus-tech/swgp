@@ -113,6 +113,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </div>
                         
                 </div>   <!-- Fin detailsContainer -->
+                <script src="../js/validate.js"></script>
                <script src="../js/projectDetails.js"></script>
 
 
@@ -506,7 +507,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
             </div> <!-- Fin de form-container -->   
-
+            <script src="../js/validate.js"></script>
             <script src='../js/editProject.js'></script>
 
 
@@ -555,7 +556,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="nav-buttons">
                     <i id="searchProject" class="fa fa-search button" title="Buscar proyecto"></i>
                     <input type="text" id="search-bar" class="search-bar input hide" placeholder="Buscar...">
-                    <i id="searchProyecto" class="fa fa-search button hide" title="Buscar" href="userManagement.php?search="></i>
+                    <i id="searchProyecto" class="fa fa-search button hide" title="Buscar"></i>
                 </div>
 
                 <!-- Listado de proyectos registrados -->
@@ -730,6 +731,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </form> <!-- Fin de project-form -->
 
             </div>
+            <script src="../js/validate.js"></script>
             <script src="../js/tablePagination.js"></script>
             <script src="../js/projectMng.js"></script>
                                <?php
@@ -739,7 +741,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     </div> <!-- Fin de container -->
     <?php if(isset($_GET['consultFailed'])){ echo "<script>alert('Hubo un error al realizar los cambios en la BD.\nIntenta de nuevo.)</script>"; }?>
-    <script src="../js/validate.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>

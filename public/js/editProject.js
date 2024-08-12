@@ -44,7 +44,7 @@ function updateBasicInfo(){
     if(nameFlag === false){
         return false;
     }
-    nameFlag = testValue('strict', 'Fname');
+    nameFlag = testValue('strict', 'Fname', 'proyecto');
     if(nameFlag === false){
         return false;
     }
@@ -73,7 +73,7 @@ function updateBasicInfo(){
         if (deptoFlag === false) {
             return false;
         }
-        deptoFlag = testValue('strict', 'newDeptoInput');
+        deptoFlag = testValue('strict', 'newDeptoInput', 'proyecto');
         if (deptoFlag === false) {
             return false;
         }
@@ -92,7 +92,7 @@ function updateBasicInfo(){
     if(descriptionFlag === false){
         return false;
     }
-    descriptionFlag = testValue('light', 'Fdescription');
+    descriptionFlag = testValue('light', 'Fdescription', 'proyecto');
     if(descriptionFlag === false){
         return false;
     }
@@ -109,7 +109,7 @@ function updateBasicInfo(){
     if(metaFlag === false){
         return false;
     }
-    metaFlag = testValue('light', 'Fmeta');
+    metaFlag = testValue('light', 'Fmeta', 'proyecto');
     if(metaFlag === false){
         return false;
     }
