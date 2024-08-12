@@ -101,7 +101,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <?php endforeach; ?>
     </div>
 </div>
-
+ 
 
 
 

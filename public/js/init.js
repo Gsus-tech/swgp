@@ -56,7 +56,7 @@ function allowDrop(event) {
     event.target.classList.add('drag-over');
 }
 
-// Manejar el evento dragstart
+// Manejar el evento dragstart 
 function drag(event) {
     event.dataTransfer.setData("text", event.target.id);
 }
