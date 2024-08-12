@@ -130,11 +130,12 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 if ($projectId === null || !filter_var($projectId, FILTER_VALIDATE_INT)) {
                     echo "
                     <script>
-                    alert('No se encontro ningun proyecto con el ID proporcionado');
-                    window.location.href = `projectsManagement.php`;
+                        alert('ID de proyecto inválido.');
+                        window.location.href = 'projectsManagement.php';                  
                     </script>";
                 } else {
-                    $cR = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectId)
+                    $cR = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectId);
+                    if(count($cR) != 0){
                     ?>
                 <!-- EDITAR PROYECTO -->
                 <div class="header">
@@ -510,18 +511,21 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             <script src="../js/validate.js"></script>
             <script src='../js/editProject.js'></script>
 
-
-
-
-
-
-
-
-
-
-
                 </div>
-                <?php }
+                <?php }else{
+                    echo "
+                    <script>
+                        alert('Búsqueda sin resultados. ID de proyecto no encontrado.');
+                        window.location.href = 'projectsManagement.php';
+                    </script>";
+                }}
+
+
+
+
+
+
+                
             } else { ?>
             <div class="header">
                 <h4>Gestión de Proyectos</h4>

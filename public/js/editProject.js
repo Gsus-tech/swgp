@@ -353,6 +353,27 @@ function agregarObjetivo(projectId, tipo){
     if(contenido.value.length < 10){
         alert('Longitud mínima de 10 caracteres para la descripción del objetivo.');
     }else{
+        const cadenasSinSentido = [
+            'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
+            'random','loremipsum','qwerty','asdf','zxcv',
+            'nombre1','ghfjd','iiii','dummytext','blahblah',
+            'Usuario123','abcd1234','123','eeee','aaaa', 'uuuu',
+            'Proyecto123', '123Usuario', '123Proyecto', 'oooo'
+        ];
+
+        if(cadenasSinSentido.some(nonsensical => contenido.value.includes(nonsensical))){
+            if(!confirm("Se detecto cadenas sin sentido dentro de la descripción del objetivo\nDeseas continuar?")){
+                return false;
+            }
+        }
+
+        const onlySpaces = /^\s*$/;
+        if(onlySpaces.test(contenido.value)){
+            if(!confirm("El texto introducido solo contiene espacios.\nDeseas continuar?")){
+                return false;
+            }
+        }
+
         // Verificar y eliminar la fila "No se encontraron objetivos registrados" si existe
         const noObjGRow = document.getElementById(tipo=='general'?'no-objectiveG-row':'no-objectiveE-row');
         if (noObjGRow) {
