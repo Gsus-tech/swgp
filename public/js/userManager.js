@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!foundInjectionPattern) {
                 window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
             } else {
-                alert('Por favor, ingresa una consulta de búsqueda válida sin patrones especiales.');
+                alert('Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parametros de búsqueda.');
                 toggleSearchItems();
             }
         } else {
