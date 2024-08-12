@@ -471,16 +471,12 @@ function objectivesTableUpdated(type){
 function EditObjective(button) {
     const fila = button.closest('tr');
     const descripcionCelda = fila.querySelector('.descripcion');
-
-    // crear un textarea para editar la descripción
     const textarea = document.createElement('textarea');
     textarea.classList.add('editable');
-    textarea.value = descripcionCelda.textContent;
-    
-    // Encimar el textarea para editar el objetivo
-    descripcionCelda.textContent = '';
+    textarea.value = br2nl(descripcionCelda.innerHTML); // Uso de innerHTML
+    console.log("Texto convertido para edición: ", textarea.value); // Debugging
+    descripcionCelda.innerHTML = ''; // Limpia la celda
     descripcionCelda.appendChild(textarea);
-
     button.classList.add('hide');
     fila.querySelector('.fa-save').classList.remove('hide');
 }
@@ -493,8 +489,29 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     // Obtener el nuevo valor de la descripción
     const nuevaDescripcion = textarea.value;
     
+    const cadenasSinSentido = [
+        'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
+        'random','loremipsum','qwerty','asdf','zxcv',
+        'nombre1','ghfjd','iiii','dummytext','blahblah',
+        'Usuario123','abcd1234','123','eeee','aaaa', 'uuuu',
+        'Proyecto123', '123Usuario', '123Proyecto', 'oooo'
+    ];
+
+    if(cadenasSinSentido.some(nonsensical => nuevaDescripcion.includes(nonsensical))){
+        if(!confirm("Se detecto cadenas sin sentido dentro de la descripción del objetivo\nDeseas continuar?")){
+            return false;
+        }
+    }
+
+    const onlySpaces = /^\s*$/;
+    if(onlySpaces.test(nuevaDescripcion)){
+        if(!confirm("El texto introducido solo contiene espacios.\nDeseas continuar?")){
+            return false;
+        }
+    }
+
     // Ocultar el textarea y sobrescribir los datos
-    descripcionCelda.textContent = nuevaDescripcion;
+    descripcionCelda.innerHTML = nl2br(nuevaDescripcion);
     button.classList.add('hide');
     fila.querySelector('.fa-edit').classList.remove('hide');
 
@@ -504,6 +521,15 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     objectivesTableUpdated(tipo);
     actualizarCamposOcultos(tipo=='general'?'updatedObjG':'updatedObjE', updatedObj);
     activateBtn();
+}
+
+function nl2br(str) {
+    // if (typeof str !== 'string') return str;
+    return str.replace(/(\r\n|\n\r|\r|\n)/g, '<br>');
+}
+
+function br2nl(str) {
+    return str.replace(/<br\s*\/?>/gi, '\n');
 }
 
 document.addEventListener("DOMContentLoaded", function() {

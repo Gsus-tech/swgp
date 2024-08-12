@@ -403,11 +403,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             if (count($p) > 0) {
                                 for ($i = 0; $i < count($p); $i++) {
                                     echo '<tr value=' . $p[$i]['id_objetivo'] . ' onclick="SelectThisRow(this, \'objectiveG-list-body\')">';
-                                    foreach ($p[$i] as $key => $value) {
-                                        if ($value != $p[$i]['id_objetivo']) {
-                                            echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
-                                        }
-                                    }
+                                    
+                                    $value = $p[$i]['contenido'];
+                                    $value = str_replace("\\n", "\n", $value); // Corrige los dobles slashes si están presentes
+                                    $textoS = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                                    $textoF = nl2br($textoS);
+                                    echo '<td class="descripcion">' . $textoF . '</td>';
+                                        
                                     $objId = $i + 1;
                                     echo "<td class='ObjTableOptions'>
                                     <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'general',$id,$objId)\"></a>
@@ -466,7 +468,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     echo '<tr value=' . $p[$i]['id_objetivo'] . 'onclick="SelectThisRow(this, \'objectiveE-list-body\')">';
                                     foreach ($p[$i] as $key => $value) {
                                         if ($value != $p[$i]['id_objetivo']) {
-                                            echo '<td class="descripcion">' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+                                            $textoS = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+                                            $textoF = nl2br($textoS);
+                                            echo '<td class="descripcion">' . $textoF . '</td>';
                                         }
                                     }
                                     $objId = $i + 1;
