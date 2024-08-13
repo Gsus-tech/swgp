@@ -38,13 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
     }
    
     if (isset($_POST['delete']) && $_POST['delete'] == 'true' && isset($_POST['id']) && isset($_POST['rep'])) {
-        echo "<script>console.log('Deleting activity')</script>";
         $id = $_POST['id'];
         $rep = $_POST['rep'];
         $project = $_SESSION['projectSelected'];
         $query = "DELETE FROM tbl_actividades WHERE id_proyecto = ? AND id_actividad = ? AND id_usuario = ?";
         $params = [$project, $id, $rep];
         $types = "iii";
+        $destination = "../php/activityManagement.php?id=$project";
         Crud::executeNonResultQuery2($query, $params, $types, $destination);
     }
     echo"<script>window.location.href = `$destination`;</script>";
