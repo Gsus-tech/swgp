@@ -250,14 +250,10 @@ function submitNewActivity(){
         }   
     }
 
-    if(document.getElementById('makeMeResp').checked == false){
-        if(selectPer == false && selectPer.value == 'none'){
-            selectPer.setCustomValidity('Selecciona un responsable para continuar.');
-            selectPer.reportValidity();
-            return false;
-        }
-    }else{
-        console.log(`rep: ${document.getElementById('responsableActividad').value}`)
+    if(selectPer == false && selectPer.value == 'none'){
+        selectPer.setCustomValidity('Selecciona un responsable para continuar.');
+        selectPer.reportValidity();
+        return false;
     }
 
     if(selectObj.value == 'none'){

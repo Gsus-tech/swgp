@@ -510,6 +510,16 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
         }
     }
 
+    if(nuevaDescripcion.length < 10){
+        alert("Minimo 10 caracteres para este campo");
+        return false;
+    }
+
+    if(nuevaDescripcion.length > 1000){
+        alert("Máximo  caracteres para este campo");
+        return false;
+    }
+
     // Ocultar el textarea y sobrescribir los datos
     descripcionCelda.innerHTML = nl2br(nuevaDescripcion);
     button.classList.add('hide');
