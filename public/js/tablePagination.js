@@ -25,6 +25,8 @@ function paginateTable(tbodyId, rowsPerPage, paginationId) {
             const btn = paginationButton(i);
             pagination.appendChild(btn);
         }
+        // displayTable(rows, rowsPerPage, 1); // Siempre reinicia en la primera página
+
     }
 
     function paginationButton(page) {

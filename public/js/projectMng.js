@@ -338,34 +338,51 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function FilterResults(selectElement) {
-    const value = selectElement.value;
-    const options = selectElement.options;
-    let filterValue = '';
+    const selectedValue = selectElement.value; 
+    const allRows = document.querySelectorAll('#projects-list-body tr');
+    const selectedOption = Array.from(selectElement.options).find(option => option.value === selectedValue);
+    const filterValue = selectedOption ? selectedOption.textContent : '';
+    let visibleRowCount = 0;
 
-    for (let i = 0; i < options.length; i++) {
-        if (options[i].value == value) {
-            filterValue = options[i].textContent;
-            break;
+    // Oculta o muestra filas basadas en el filtro seleccionado
+    allRows.forEach(row => {
+        const cellValue = row.cells[2].textContent.trim();
+        if (cellValue === filterValue) {
+            row.style.display = ''; // Muestra la fila
+            visibleRowCount++; 
+        } else {
+            row.style.display = 'none'; // Oculta la fila
         }
+    });
+
+    // Actualiza el texto del filtro aplicado
+    const currentFilterDisplay = document.getElementById('currentFilter');
+    if (currentFilterDisplay) { // Asegurarse de que el elemento exista antes de intentar actualizarlo
+        currentFilterDisplay.textContent = selectedValue !== 'noFilter' ? `Filtro aplicado: ${filterValue}` : 'No hay filtro aplicado';
     }
 
-    const tbody = document.getElementById('projects-list-body');
-    const rows = tbody.getElementsByTagName('tr');
-    // console.log(`Filter selected: ${filterValue}`);
-    
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const filter = row.cells[2].textContent;
-        // console.log(`Current row: ${filter}`);
+    const pagination = document.getElementById('pagination');
+    console.log(selectedValue);
+    if (selectedValue === 'noFilter') {
+        pagination.style.display = '';
+        const activeButton = document.querySelector('#pagination .active');
 
-        if (filterValue === 'noFilter' || filter === filterValue) {
-            row.classList.remove('hide');
-        } else {
-            row.classList.add('hide');
+        // Verifica si el botón existe para evitar errores
+        if (activeButton) {
+            activeButton.click(); // Hacer el clic para que se actualice la tabla
         }
+    } else {
+        pagination.style.display = 'none';
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
-    paginateTable('projects-list-body', 8, 'pagination');
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.toString() === "") {
+        paginateTable('projects-list-body', 8, 'pagination');
+    } else {
+        const pagination = document.getElementById('pagination');
+        pagination.style.display = 'none';
+    }
 })
