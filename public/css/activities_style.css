@@ -45,7 +45,7 @@
     margin: 20px; 
     padding: 1px 1rem 5px 1rem;
     border-radius: 20px;
-    background-color: #e2e2e2;
+    background-color: var(--divBgColor);
     padding: 1rem 20px;
 }
 

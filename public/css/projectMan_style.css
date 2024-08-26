@@ -1,6 +1,6 @@
 
 .container .main .projectManagement {    
-    background-color: #fff;    
+    /* background-color: #fff;     */
     width: 100%;   
     margin-bottom: 2rem; 
 } 
@@ -42,7 +42,7 @@
     background-color: var(--navBtnHover); 
 }  
 .container .projectManagement .nav-buttons .fa:hover {  
-    color: var(--hover-items);  
+    color: var(--hover-item);  
     transition: background-color 0.3s, color 0.3s; 
 }  
 .container .projectManagement .filterDiv {  
@@ -123,12 +123,12 @@
 .container .main .editContainer {  
     width: 100%; 
     height: 100%;  
-    background-color: var(--white);
+    /* background-color: var(--white); */
 } 
 .container .main .editContainer .form-container {  
     width: 100%; 
     height: 100%;
-    background-color: var(--white); 
+    /* background-color: var(--white);  */
 } 
 .container .main .editContainer .form-container .title {   
     display: flex;
@@ -148,7 +148,7 @@
 .container .main .editContainer .form-container .editProject-form .fm-content { 
     padding: 1px 1rem 5px 1rem;
     border-radius: 20px;
-    background-color: #e2e2e2;
+    background-color: var(--divBgColor);
 }
 .container .main .editContainer .form-container .editProject-form .fm-content div div div table{ 
     background-color: var(--white);
@@ -173,6 +173,7 @@
     width:fit-content;
     padding: 5px 10px;
     float:left;
+    background-color: var(--sysBgColor);
 } 
 .container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm fieldset span {  
     width: 100%;   
@@ -187,7 +188,7 @@
     margin-left: 0.5rem;
 } 
 .container .main .editContainer .form-container .editProject-form .fm-content .datesEditForm i:hover {     
-    color: hsl(36, 100%, 35%);     
+    color: white;     
     transition: background-color 0.3s, color 0.3s;
 }  .container .main .editContainer .form-container .editProject-form .fm-content textarea { 
     font-family: 'Open Sans', sans-serif;  
@@ -200,9 +201,10 @@
     box-sizing: border-box;
 } 
 .container .main .editContainer .form-container .editProject-form .form-options { 
-    position: fixed;  
-    bottom: 1rem;   
-    left: 5rem; 
+    position: fixed;   
+    right: 3rem;
+    bottom: 1rem;
+    margin-top: 10px
 } 
 .container .main .editContainer .form-container .editProject-form .form-options .sumbit-editProject {  
     background-color: #67676769;    
@@ -752,7 +754,8 @@
         margin-top: 2rem;   
     }     
     .container .main .editContainer .form-container .editProject-form .form-options {   
-        bottom: 1.5rem;  
+        right: 5rem;
+        bottom: 1rem;  
     }
     .container .main .editContainer div form div div div .table td{
         font-size: 14px;

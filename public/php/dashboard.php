@@ -15,6 +15,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css">
+
 </head>
 <body class="short">
     <div class="container"> 
@@ -23,7 +25,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
             <div class="header flexAndSpaceDiv">
-                <h4 class="headerTitle">Dashboard</h4>
+                <h4 class="headerTitle">Gestión de proyecto</h4>
                 <?php $pagina="dashboard"; include 'topToolBar.php'; ?>
             </div>
 
@@ -33,7 +35,19 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             // Consulta para obtener todas las actividades del proyecto seleccionado
             $query = "SELECT * FROM tbl_actividades WHERE id_proyecto = ?";
             $actividades = Crud::executeResultQuery($query, [$projectId], 'i');
+
+            // Consulta para obtener los miembros de las actividades
+            $query2 = "SELECT tbl_usuarios.id_usuario, tbl_usuarios.nombre FROM tbl_usuarios JOIN tbl_actividades ON tbl_usuarios.id_usuario = tbl_actividades.id_usuario WHERE tbl_actividades.id_proyecto = ?";
+            $participantes = Crud::executeResultQuery($query2, [$projectId], 'i');
+            $arrayParticipantes = array();
+
+            if ($participantes) {
+                foreach($participantes as $participante){
+                    $arrayParticipantes[$participante['id_usuario']] = $participante['nombre'];
+                }
+            }
             
+
             // Inicializar arrays para cada estado
             $pendientes = [];
             $en_proceso = [];
@@ -60,50 +74,109 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             }
             ?>
 
-<div class="kanban-board">
-    <div class="kanban-column" id="pendientes" ondragover="allowDrop(event)" ondrop="drop(event, 1)">
-        <h2>Pendientes</h2>
-        <?php foreach ($pendientes as $tarea): ?>
-            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
-                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
-                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
 
-    <div class="kanban-column" id="en_proceso" ondragover="allowDrop(event)" ondrop="drop(event, 2)">
-        <h2>En proceso</h2>
-        <?php foreach ($en_proceso as $tarea): ?>
-            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
-                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
-                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <div class="kanban-column" id="retrasadas" ondragover="allowDrop(event)" ondrop="drop(event, 3)">
-        <h2>Retrasadas</h2>
-        <?php foreach ($retrasadas as $tarea): ?>
-            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
-                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
-                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
-
-    <div class="kanban-column" id="terminadas" ondragover="allowDrop(event)" ondrop="drop(event, 4)">
-        <h2>Terminadas</h2>
-        <?php foreach ($terminadas as $tarea): ?>
-            <div class="kanban-item" id='task-<?php echo $tarea["id"]; ?>' draggable="true" ondragstart="drag(event)">
-                <h3><?php echo htmlspecialchars($tarea['nombre_actividad']); ?></h3>
-                <p><?php echo htmlspecialchars($tarea['fecha_estimada']); ?></p>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
+<!--   TESTING KANBAN DASHBOARDS   -->
  
 
+<div class="kanban-title"><h2>Tablero de actividades</h2></div>
+<div class="kanban-board">
+    <!-- Columna de pendientes -->
+    <div class="tasks" data-plugin="dragula" id="pendientes">
+        <h5 class="mt-0 task-header text-uppercase">Pendientes (<?php echo count($pendientes); ?>)</h5>
+        <div id="task-list-one" class="task-list-items">
+            <?php foreach ($pendientes as $tarjeta) : ?>
+                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                    <div class="card-body p-3" >
+                        <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
+                        <span class="badge green-flag">lol</span>
+                        <h5 class="pt-10">
+                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                        </h5>
+                        <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
+                        <p class="mb-0 hide"><?php 
+                        echo htmlspecialchars($tarjeta['descripción']); ?>
+                        </p>
+                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                    </div> <!-- end card-body -->
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
+    <!-- Columna de en proceso -->
+    <div class="tasks" data-plugin="dragula" id="proceso">
+        <h5 class="mt-0 task-header text-uppercase">En Proceso (<?php echo count($en_proceso); ?>)</h5>
+        <div id="task-list-two" class="task-list-items">
+            <?php foreach ($en_proceso as $tarjeta) : ?>
+                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                    <div class="card-body p-3" >
+                        <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
+                        <!-- <span class="badge bg-danger">lol</span> -->
+                        <h5 class="pt-10">
+                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                        </h5>
+                        <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
+                        <p class="mb-0 hide"><?php 
+                        echo htmlspecialchars($tarjeta['descripción']); ?>
+                        </p>
+                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                    </div> <!-- end card-body -->
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Columna de retrasadas -->
+    <div class="tasks" data-plugin="dragula" id="retrasadas">
+        <h5 class="mt-0 task-header text-uppercase">Retrasadas (<?php echo count($retrasadas); ?>)</h5>
+        <div id="task-list-three" class="task-list-items">
+            <?php foreach ($retrasadas as $tarjeta) : ?>
+                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                    <div class="card-body p-3" >
+                        <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
+                        <!-- <span class="badge bg-danger">lol</span> -->
+                        <h5 class="pt-10">
+                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                        </h5>
+                        <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
+                        <p class="mb-0 hide"><?php 
+                        echo htmlspecialchars($tarjeta['descripción']); ?>
+                        </p>
+                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                    </div> <!-- end card-body -->
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
+    <!-- Columna de terminadas -->
+    <div class="tasks" data-plugin="dragula" id="terminadas">
+        <h5 class="mt-0 task-header text-uppercase">Terminadas (<?php echo count($terminadas); ?>)</h5>
+        <div id="task-list-four" class="task-list-items">
+            <?php foreach ($terminadas as $tarjeta) : ?>
+                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                    <div class="card-body p-3">
+                        <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
+                        <!-- <span class="badge bg-danger">lol</span> -->
+                        <h5 class="pt-10">
+                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                        </h5>
+                        <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
+                        <p class="mb-0 hide"><?php 
+                        echo htmlspecialchars($tarjeta['descripción']); ?>
+                        </p>
+                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                    </div> <!-- end card-body -->
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--    END OF TESTING KANBAN DASHBOARDS    -->
 
 
         </div>
@@ -112,6 +185,12 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     </div> <!-- Fin de container -->
 
     <script src="../js/init.js"></script>
+    <script src="../js/dashboard.js"></script>
+
+    <!-- Dragula -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
+    <script src="../js/ui/component.dragula.js"></script>
+
 </body>
 </html>
 
