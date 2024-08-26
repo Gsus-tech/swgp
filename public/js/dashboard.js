@@ -149,6 +149,10 @@ function moveCard(targetColumnId, cardId) {
         actualizarContador(sourceColumnId);
 
 
+        //Cerrar menu
+        const menu = document.querySelector('.opciones-tarjetas');
+        if (menu) menu.remove();
+
         // Codigo para actualizar en la base de datos
         // updateCardColumn(cardId, targetColumnId);
     }
