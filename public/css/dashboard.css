@@ -1,4 +1,4 @@
-
+/* 
 .kanban-board {
     display: flex;
     justify-content: space-around;
@@ -21,4 +21,175 @@
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+} */
+
+
+
+
+
+/* Estructura del tablero */
+.main{
+    padding-bottom: 3rem;
+}
+.kanban-board {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #dae9ff;
+    padding-bottom:2rem;
+    margin: 20px;
+    border-radius: 20px;
+}
+.kanban-title{
+    padding: 20px;
+    background-color: #dae9ff;
+    margin: 20px;
+    border-radius: 20px;
+}
+.kanban-title h2{ 
+    margin: 0 auto;
+}
+.tasks {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    margin: 0 10px;
+    padding: 15px;
+    height:fit-content;
+}
+.task-header {
+    font-weight: 600;
+    color: #5d6e89;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Estilo de las tarjetas */
+.task-list-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    min-height: 50px;
+}
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: box-shadow 0.3s ease;
+}
+.card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.emptyTaskDivMsj{
+    color:#7b7b7b;
+    font-size:13px;
+    font-style:italic;
+    margin: auto auto;
+}
+
+/* Contenido dentro de las tarjetas */
+.dropdown-item .fa{
+    background-color: black;
+    margin: auto;
+    padding: .3px 1px;
+    border-radius: 25px;
+    font-size: 15px; 
+}
+.badge {
+    /* display: inline-block;
+    float: left; */
+    padding: 0.25em 0.4em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+.red-flag { background-color: red; color: #fff; }
+.blue-flag { background-color:  rgb(255, 255, 0); color: #fff; }
+.green-flag { background-color: rgb(0, 128, 0); color: #fff; }
+.rdFlag{ color: rgb(255, 0, 0); }
+.grFlag{ color: rgb(0, 128, 0); }
+.ylFlag{ color: rgb(255, 255, 0); }
+
+
+.text-bg-secondary { background-color: #6c757d; color: #fff; }
+.card-body h5{
+    font-size: 14px;
+}
+.text-body {
+    color: #333;
+    font-weight: 600;
+    text-decoration: none;
+}
+.text-muted {
+    color: #adb5bd;
+}
+
+/* Rep y opciones */
+.avatar-xs {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.dropdown-toggle {
+    cursor: pointer;
+}
+.dropdown-menu {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.float-end{
+    float: right;
+}
+.cardMenu {
+    position: relative;
+    left: calc(100% - 5px);
+    margin-top: 5px;
+}
+
+.opciones-tarjetas{
+    display: grid;
+    position: relative;
+    /* left: calc(100% - 3.3rem); */
+    background-color: white;
+    width: fit-content;
+    padding: 3px 0;
+    font-size: 12px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+.dropdown-item{
+    border-radius: 10px;
+    padding: 2px 8px;
+    text-decoration:none;
+    margin-bottom: 3px;
+    color: #7c7c7c;
+}
+.dropdown-item:hover{
+    background-color: #7c7c7c;
+    color: white;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .kanban-board {
+        flex-direction: column;
+    }
+    .tasks {
+        margin-bottom: 20px;
+    }
+}
+
+.pt-10{
+    padding-top: 10px;
 }
