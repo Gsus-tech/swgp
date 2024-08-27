@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function() {
         //Codigo para actualizar la posicion de la actividad en la BD
         actualizarContador(target.id);
         actualizarContador(source.id);
+        const col = getColumnaId(target.id);
+        updateCardColumn(el.getAttribute('data-card-id'), col);
     });
 
     function checkForEmptyContainers(containers) {

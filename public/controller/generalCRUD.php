@@ -4,6 +4,17 @@ namespace Controller\GeneralCrud;
 
 class Crud
 {
+    private $mysqli;
+
+    public function __construct() {
+        // Aquí estableces la conexión a la base de datos
+        include "db_connection.php";
+        $this->mysqli = new \mysqli($sname, $userN, $pass, $db_name);
+
+        if ($this->mysqli->connect_error) {
+            die('Error de Conexión (' . $this->mysqli->connect_errno . ') ' . $this->mysqli->connect_error);
+        }
+    }
 
     public static function selectData($fields, $table, $id, $order)
     {
@@ -412,4 +423,8 @@ class Crud
              return false;
          }
      }
+
+     public function getMysqliConnection() {
+        return $this->mysqli;
+    }
 }

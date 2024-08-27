@@ -47,6 +47,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         $destination = "../php/activityManagement.php?id=$project";
         Crud::executeNonResultQuery2($query, $params, $types, $destination);
     }
+
+
+
+    if (isset($_GET['actId']) && isset($_GET['moveToColumn'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $cardId = filter_var($_GET['actId'], FILTER_VALIDATE_INT);
+        $columnId = filter_var($_GET['moveToColumn'], FILTER_VALIDATE_INT);
+    
+        if ($cardId !== false && $columnId !== false) {
+            $cardIdEscaped = $mysqli->real_escape_string($cardId);
+            $columnIdEscaped = $mysqli->real_escape_string($columnId);
+    
+            $sql = "UPDATE tbl_actividades SET estadoActual = '$columnIdEscaped' WHERE id_actividad = '$cardIdEscaped' AND id_proyecto = '". $_SESSION['projectSelected'] ."'";
+    
+            if ($mysqli->query($sql) === TRUE) {
+                if ($mysqli->affected_rows > 0) {
+                    echo json_encode(['success' => true, 'message' => 'Actividad actualizada.']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se encontró la actividad o no se realizaron cambios.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al actualizar la actividad: ' . $mysqli->error]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+    }
+    
     echo"<script>window.location.href = `$destination`;</script>";
 }else{
     echo"<script>window.location.href = `$destination`;</script>";

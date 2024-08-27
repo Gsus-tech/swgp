@@ -64,10 +64,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $en_proceso[] = $actividad;
                             break;
                         case 3:
-                            $terminadas[] = $actividad;
+                            $retrasadas[] = $actividad;
                             break;
                             case 4:
-                            $retrasadas[] = $actividad;
+                            $terminadas[] = $actividad;
                             break;
                     }
                 }
@@ -78,9 +78,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 <!--   TESTING KANBAN DASHBOARDS   -->
  
 
-<div class="kanban-title"><h2>Tablero de actividades</h2></div>
-<div class="kanban-board">
-    <!-- Columna de pendientes -->
+<div class="kanban">
+    <div class="kanban-title"><h2>Tablero de actividades</h2></div>
+    <div class="kanban-board">
+        <!-- Columna de pendientes -->
     <div class="tasks" data-plugin="dragula" id="pendientes">
         <h5 class="mt-0 task-header text-uppercase">Pendientes (<?php echo count($pendientes); ?>)</h5>
         <div id="task-list-one" class="task-list-items">
@@ -88,7 +89,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
-                        <span class="badge green-flag">lol</span>
+                        <!-- <span class="badge green-flag">lol</span> -->
                         <h5 class="pt-10">
                             <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
@@ -170,6 +171,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div>
             <?php endforeach; ?>
         </div>
+    </div>
     </div>
 </div>
 

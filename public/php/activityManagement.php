@@ -76,13 +76,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         }
                         $p = array();
                         $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario
-                        FROM tbl_actividades WHERE id_proyecto = ?";
+                        FROM tbl_actividades WHERE id_proyecto = ? ORDER BY id_actividad";
 
                         $estados = [
                             1 => 'pendiente',
                             2 => 'en proceso',
-                            3 => 'finalizado',
-                            4 => 'retrasado'
+                            3 => 'retrasado',
+                            4 => 'finalizado'
                         ];
 
                         $p = Crud::executeResultQuery($query, [$id], "i");
