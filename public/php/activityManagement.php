@@ -4,7 +4,17 @@ require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
-    if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || $_SESSION['responsable'] === true) {
+    $allow = false;
+
+    if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){ $allow = true;}
+    else{
+        $access=array();
+        $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = ? AND id_proyecto = ?";
+        $access = Crud::executeResultQuery($query, [$_SESSION['id'], $_SESSION['projectSelected']], 'ii');
+        $allow = $access[0]['responsable'] == 1 ? true : false;
+    }
+        
+    if ($allow) {
     ?>
 
 <!DOCTYPE html>
@@ -26,7 +36,15 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <div class="main">
             <div class="header flexAndSpaceDiv">
                 <h4 class="headerTitle">Gestión de actividades</h4>
-                <?php $pagina="activityManagement"; include 'topToolBar.php'; ?>
+                <?php 
+                $needsSelect=array();
+                $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = ? AND responsable = ?";
+                $params = [$_SESSION['id'],1];
+                $needsSelect = Crud::executeResultQuery($query, $params, 'ii');
+                if(count($needsSelect) > 1 || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
+                    $pagina="activityManagement"; include 'topToolBar.php'; 
+                }
+                    ?>
             </div>
             <div class="activityManagement scroll">
             
@@ -265,11 +283,21 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 </html>
 <?php
 }else{
-
-    echo "<script>
-    alert('No cuentas con los permisos necesarios para ingresar a esta página.')
-    window.location.href = `dashboard.php`;
-    </script>";
+    if($_SESSION['responsable'] === true){
+        $getMyProject=array();
+        $query = "SELECT id_proyecto FROM tbl_integrantes WHERE id_usuario = ? AND responsable = ?";
+        $params = [$_SESSION['id'],1];
+        $getMyProject = Crud::executeResultQuery($query, $params, 'ii');
+        $_SESSION['projectSelected'] = $getMyProject[0]['id_proyecto'];
+        echo "<script>
+        window.location.href = `activityManagement.php`;
+        </script>";
+    }else{
+        echo "<script>
+        alert('No cuentas con los permisos necesarios para ingresar a esta página.')
+        window.location.href = `dashboard.php`;
+        </script>";
+    }
 }
 }
 else{

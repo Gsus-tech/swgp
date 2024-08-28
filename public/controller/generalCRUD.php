@@ -30,6 +30,8 @@ class Crud
             }
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
         return $data;
     }
@@ -46,6 +48,8 @@ class Crud
             header("Location: ../php/$route");
         } catch (mysqli_sql_exception $e) {
             echo "Error al eliminar los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
     }
 
@@ -67,6 +71,8 @@ class Crud
         } catch (Exception $e) {
             $m = $e->getMessage();
             echo "<script>console.log('Error al obtener los datos: $m ')</script>";
+        } finally {
+            $conn->close();
         }
         return $data;
     }
@@ -88,6 +94,8 @@ class Crud
             }
         } catch (Exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
         return $data;
     }
@@ -110,6 +118,8 @@ class Crud
             }
         } catch (Exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
         return $data;
     }
@@ -132,6 +142,8 @@ class Crud
             }
         } catch (Exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
         return $data;
     }
@@ -157,6 +169,8 @@ class Crud
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
     
         return $data;
@@ -184,6 +198,8 @@ class Crud
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener el último ID insertado: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
 
         return $last_inserted_id;
@@ -207,6 +223,8 @@ class Crud
             $error = $e->getCode();
             echo "<script>window.location.href = '../php/$destinationPage?error=$error';</script>";
             exit();
+        } finally {
+            $conn->close();
         }
     }
 
@@ -225,6 +243,8 @@ class Crud
             echo "<script>console.log('Error: $error');</script>";
             header("Location: $destinationPage");
 
+        } finally {
+            $conn->close();
         }
     }
 
@@ -245,6 +265,8 @@ class Crud
         } catch (mysqli_sql_exception $e) {
             $error = $e->getCode();
             echo "<script>console.log('Error: $error');</script>";
+        } finally {
+            $conn->close();
         }
         return $data;
     }
@@ -294,6 +316,8 @@ class Crud
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
     
         return $data;
@@ -320,6 +344,8 @@ class Crud
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
     
         return $data;
@@ -342,6 +368,8 @@ class Crud
             $stmt->close();
         } catch (mysqli_sql_exception $e) {
             echo "Error al obtener los datos: " . $e->getMessage();
+        } finally {
+            $conn->close();
         }
 
         return $data;
@@ -383,6 +411,8 @@ class Crud
             $error = $e->getCode();
             echo "<script>window.location.href = '../php/$destinationPage?error=$error';</script>";
             exit();
+        } finally {
+            $conn->close();
         }
     }
     

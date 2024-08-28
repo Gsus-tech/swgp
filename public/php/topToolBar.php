@@ -37,16 +37,24 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
 ?>
 <div class="topToolBar">
     <?php
-    if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsable+2']==true){
+    // if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsable+2']==true){
+        if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['varios-proyectos']==true){
         ?>
         <a class="topBarText">Proyecto seleccionado:</a>
             <?php
-            if($_SESSION['responsable+2']==true){
+            // if($_SESSION['responsable+2']==true){
+            //     echo "<form id='switchForm' method='post' action=''>";
+            //     echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
+            //     $user_id=$_SESSION['id'];
+            //     $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
+            // }
+            if(isset($_SESSION['varios-proyectos']) && $_SESSION['varios-proyectos']==true){
                 echo "<form id='switchForm' method='post' action=''>";
                 echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
                 $user_id=$_SESSION['id'];
-                $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
-            }else{
+                $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ?;", [$user_id], 'i');
+            }
+            else{
                 echo "<select name='listProyectos' id='listProyectos' class='listProyectos'>";
                 $filters = Controller\GeneralCrud\Crud::executeResultQuery('SELECT id_proyecto,nombre FROM tbl_proyectos;');
             }
@@ -62,7 +70,7 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             ?>
     </select>
     <?php
-    if($_SESSION['responsable+2']==true){
+    if(isset($_SESSION['varios-proyectos']) && $_SESSION['varios-proyectos']==true){
         echo "<input type='hidden' name='selectedProject' id='selectedProject'>";
         echo "</form>";
         echo "<input type='hidden' id='listProyectos'>";
