@@ -232,9 +232,13 @@ document.addEventListener("DOMContentLoaded", function(){
         const eUserName = document.getElementById("Ename");
         const eDepto = document.getElementById("Edepto");
         const eDropBox = document.getElementById('edropDownDepto');
+        const userDropBox = document.getElementById('FcmbBox2');
         const eFdepto = document.getElementById("eFdepto");
         const eMail = document.getElementById("Email");
         eDropBox.addEventListener('change', (e)=>{toggleBtn();});
+        if(userDropBox){
+            userDropBox.addEventListener('change', (e)=>{toggleBtn();});
+        }
         eUserName.addEventListener('change', (e)=>{toggleBtn();});
         eDepto.addEventListener('change', (e)=>{toggleBtn();});
         eMail.addEventListener('change', (e)=>{toggleBtn();});

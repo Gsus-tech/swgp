@@ -90,7 +90,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         if($_SESSION['responsable'] === true){
                             $id =  $_SESSION['projectSelected'];
                         }else{
-                            $id = isset($_GET['id']) ? $_GET['id'] : "13" ; //Obtener primer valor del comboBox proyectos
+                            $id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['projectSelected'] ; //Obtener primer valor del comboBox proyectos
                         }
                         $p = array();
                         $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario

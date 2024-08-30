@@ -4,25 +4,28 @@ require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['updateUser'])) {
     if ($_GET['updateUser'] == 'true') {
-        $idToUpdate = $_POST['EditThisID'];
-        $userName = (string)$_POST['Ename'];
-        $depto = (string)$_POST['eFdpto'];
-        $mail = $_POST['Email'];
-        if($_SESSION['rol']=='ADM'){
-            echo "<script>console.log('Soy admin');</script>";
-            $userType = $_POST['comboBoxUserType'];
+        $idToUpdate = isset($_POST['EditThisID']) ? (int)$_POST['EditThisID'] : null;
+        $userName = Crud::antiNaughty((string)$_POST['Ename']);
+        $depto = Crud::antiNaughty((string)$_POST['eFdpto']);
+        $mail = filter_var($_POST['Email'], FILTER_SANITIZE_EMAIL);
+        if($idToUpdate != null && !containsSpecialCharacters($userName) && !containsSpecialCharacters($depto)){
+            if($_SESSION['rol']=='ADM'){
+                $userType = htmlspecialchars($_POST['comboBoxUserType'], ENT_QUOTES, 'UTF-8');
+                $query = "UPDATE tbl_usuarios SET rolUsuario=?, nombre=?, correo=?, departamento=? WHERE id_usuario=?";
+                $params = [$userType, $userName, $mail, $depto, $idToUpdate];
+                $types = "ssssi";
+            }else{
+                $query = "UPDATE tbl_usuarios SET nombre=?, correo=?, departamento=? WHERE id_usuario=?";
+                $params = [$userName, $mail, $depto, $idToUpdate];
+                $types = "sssi";
+            }
+            $destination = "userManagement.php";
+            Crud::executeNonResultQuery($query, $params, $types, $destination);
         }else{
-            $rol = array();
-            $rol = Crud::executeResultQuery('SELECT rolUsuario FROM tbl_usuarios WHERE id_usuario = ?', [$idToUpdate], 'i');
-            $userType = $rol[0]['rolUsuario'];
+            error_log("Intento fallido de actualización: El formato de alguno de los datos no era correcto.", 0);
+            header('Location: ../php/userManagement.php?error='. urlencode('Intento fallido de actualización. ID de usuario inválido o no proporcionado.'));
+            exit();
         }
-
-    
-        $query = "UPDATE tbl_usuarios SET rolUsuario=?, nombre=?, correo=?, departamento=? WHERE id_usuario=?";
-        $params = [$userType, $userName, $mail, $depto, $idToUpdate];
-        $types = "ssssi";
-        $destination = "userManagement.php";
-        Crud::executeNonResultQuery($query, $params, $types, $destination);
     }
 }else if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
     
@@ -30,18 +33,29 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
     
     if (isset($_GET['addUser']) && $_GET['addUser'] == 'true') {
         if ($_POST['Fpassword'] === $_POST['FpasswordCon']) {
-            $userName = Crud::antiNaughty((string)$_POST['Fname']);
+            $userName = Crud::antiNaughty((string)$_POST['Uname']);
             $depto = Crud::antiNaughty((string)$_POST['Fdpto']);
-            $mail = Crud::antiNaughty($_POST['Fmail']);
+            $mail = filter_var($_POST['Fmail'], FILTER_SANITIZE_EMAIL);
             $password = md5($_POST['Fpassword']);
-            $userType = $_POST['comboBoxUserType'];
+            $userType = htmlspecialchars($_POST['comboBoxUserType'], ENT_QUOTES, 'UTF-8');
             
-            $query = "INSERT INTO tbl_usuarios (rolUsuario, nombre, correo, contrasena, departamento, nickname) 
-                      VALUES (?, ?, ?, ?, ?, ?)";
-            $params = [$userType, $userName, $mail, $password, $depto, $userName];
-            $types = "ssssss";
-            
-            Crud::executeNonResultQuery($query, $params, $types, $destination);
+            if (!containsSpecialCharacters($userName) && !containsSpecialCharacters($depto)) {
+                $query = "INSERT INTO tbl_usuarios (rolUsuario, nombre, correo, contrasena, departamento, nickname)
+                        VALUES (?, ?, ?, ?, ?, ?)";
+                $params = [$userType, $userName, $mail, $password, $depto, $userName];
+                $types = "ssssss";
+                
+                Crud::executeNonResultQuery($query, $params, $types, $destination);
+            }
+            else {
+                error_log("Intento fallido de creación de cuenta. El formato de alguno de los datos no era correcto.", 0);
+                header('Location: ../php/userManagement.php?error='. urlencode('Intento fallido de creación de cuenta. Formato de datos no válido.'));
+                exit();
+            }
+        }else {
+            error_log("Intento fallido de creación de cuenta. Las contraseñas no coinciden.", 0);
+            header('Location: ../php/userManagement.php?error='. urlencode('Intento fallido de creación de cuenta. Las contraseñas no coincidieron.'));
+            exit();
         }
     }
 
@@ -54,12 +68,13 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
             $types = "i";
             
             if ($dependency == true) {
-                // echo "<script>console.log('about to break dependencies');</script>";
                 $resp = breakUserDependencies($id);
             }
-            
             Crud::executeNonResultQuery($query, $params, $types, $destination);
-            echo "<script>window.location.href = '../php/userManagement.php';</script>";
+        } else {
+            error_log("Intento fallido de eliminación de cuenta. El id proporcionado es inválido.", 0);
+            header('Location: ../php/userManagement.php?error='. urlencode('Intento fallido de eliminación de cuenta. El id proporcionado es inválido.'));
+            exit();
         }
     }    
 
@@ -71,6 +86,14 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
         $idsArray = array_filter($idsArray, 'is_numeric');
     
         if (!empty($idsArray)) {
+
+            foreach ($idsArray as $id) {
+                $dependency = checkForDependencies($id);
+                if ($dependency == true) {
+                    $resp = breakUserDependencies($id);
+                }
+            }
+
             $placeholders = implode(',', array_fill(0, count($idsArray), '?'));
             $query = "DELETE FROM tbl_usuarios WHERE id_usuario IN ($placeholders)";
             $params = $idsArray;
@@ -124,7 +147,15 @@ function breakUserDependencies($id) {
         $updateQuery = "UPDATE tbl_actividades SET id_usuario = ? WHERE id_proyecto = ? AND id_actividad = ? AND id_usuario = ?";
         $updateParams = [$user, $project, $act, $id];
         $updateTypes = "iiii";
-        Crud::executeNonResultQuery2($updateQuery, $updateParams, $updateTypes);
+        Crud::executeNonResultQuery2($updateQuery, $updateParams, $updateTypes, "../php/userManagement.php");
     }
 }
 
+function containsSpecialCharacters($string) {
+    $pattern = '/[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/';
+    if (preg_match($pattern, $string)) {
+        return true;
+    } else {
+        return false;
+    }
+}
