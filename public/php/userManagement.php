@@ -25,10 +25,6 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
         <?php
-        if (isset($_GET['error'])) {
-            $errorMsg = urldecode($_GET['error']);
-            echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
-        }
 
         if(isset($_GET['detailsId'])){
             $id=$_GET['detailsId'];
@@ -187,16 +183,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = array();
                             if(isset($_GET['search'])){
                                 $busqueda = Crud::antiNaughty($_GET['search']);
-                                $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $busqueda);
-                            }
-                            elseif(isset($_GET['filterRol']) && isset($_GET['filterDto'])){
-                                $p = Crud::findRows2Condition('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol'], 'departamento', $_GET['filterDto']);
-                            }
-                            elseif(isset($_GET['filterDto'])){
-                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'departamento', $_GET['filterDto']);
-                            }
-                            elseif(isset($_GET['filterRol'])){
-                                $p = Crud::findRows('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', 'rolUsuario', $_GET['filterRol']);
+                                $clear = Crud::containsMaliciousPattern($busqueda);
+                                if(!$clear){
+                                    $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $busqueda);
+                                }else{
+                                    echo "<script>alert('Se detectaron patrones maliciosos en la búsqueda.\\nIntenta de nuevo con diferentes parámetros de búsqueda.');</script>";
+                                    $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
+                                }
                             }
                             else{
                                 $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
@@ -281,7 +274,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <div class="form-container">
                         <div class="fm-content">
                             <div class="title"><h4>Agregar usuario:</h4></div>             
-                            <input type="text" name="Fname" id="Fname" placeholder="Nombre de usuario" 
+                            <input type="text" name="Uname" id="Fname" placeholder="Nombre de usuario" 
                             title="Introducir nombre de usuario" oninput="resetField(this)"> 
                             <br>
 
@@ -413,6 +406,10 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         
     </div> <!-- Fin de container -->
     <?php
+     if (isset($_GET['error'])) {
+        $errorMsg = urldecode($_GET['error']);
+        echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
+    }
     if($_SESSION['rol']=='ADM' ){
         echo "<script src='../js/adminUserActions.js'></script>";
     }

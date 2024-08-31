@@ -39,9 +39,15 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                     $accountProjects = Crud::executeResultQuery($query, $params, $types);
                     $_SESSION['responsable'] = Crud::isInArray($accountProjects, 1);
                     $_SESSION['responsable+2'] = Crud::isInArrayOver1Time($accountProjects, 1);
+
+                    $queryForProjectCount = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = ?";
+                    $memberIn=array();
+                    $memberIn = Crud::executeResultQuery($queryForProjectCount, $params, $types);
+                    $_SESSION['varios-proyectos'] = count($memberIn) > 1 ? true : false;
                 } else {
                     $_SESSION['responsable'] = false;
                     $_SESSION['responsable+2'] = false;
+                    $_SESSION['varios-proyectos'] = false;
                 }
                 header("Location: ../php/dashboard.php");
                 exit();

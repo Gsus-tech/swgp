@@ -154,29 +154,8 @@ function moveCard(targetColumnId, cardId) {
         if (menu) menu.remove();
 
         // Codigo para actualizar en la base de datos
-        // updateCardColumn(cardId, targetColumnId);
+        updateCardColumn(cardId, targetColumnId);
     }
-}
-
-function updateCardColumn(button, cardId, targetColumnId) {
-    fetch('updateCardColumn.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `cardId=${encodeURIComponent(cardId)}&columnId=${encodeURIComponent(targetColumnId)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Tarjeta actualizada correctamente en la base de datos.');
-        } else {
-            console.error('Error al actualizar la tarjeta:', data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error en la solicitud AJAX:', error);
-    });
 }
 
 function actualizarContador(columnId) {
@@ -192,7 +171,6 @@ function actualizarContador(columnId) {
                 taskContainer.style.border = 'none';
         }
     } else {
-        console.log('No non-task message found  .');
         if (!noTasksMessage) {
             const placeholder = document.createElement('div');
                 placeholder.className = 'emptyTaskDivMsj';
@@ -208,4 +186,35 @@ function actualizarContador(columnId) {
     const cardCount = column.querySelectorAll('.card').length;
     const [columnName] = titleElement.textContent.split(' (');
     titleElement.textContent = `${columnName} (${cardCount})`;
+}
+
+function getColumnaId(name){
+    const getIds = {
+        1: 'task-list-one',
+        2: 'task-list-two',
+        3: 'task-list-three',
+        4: 'task-list-four'
+    };
+    const IdsInverted = Object.fromEntries(Object.entries(getIds).map(([key, value]) => [value, key]));
+    return IdsInverted[name];
+}
+
+
+function updateCardColumn(cardId, targetColumnId) {
+    console.log('URL: activityManager.php?actId=' + encodeURIComponent(cardId) + '&moveToColumn=' + encodeURIComponent(targetColumnId));
+    fetch('../controller/activityManager.php?actId=' + encodeURIComponent(cardId) + '&moveToColumn=' + encodeURIComponent(targetColumnId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log('PHP response:', data);
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+    // console.log(`Updating card : ${cardId}`);
+    // console.log(`Moving to column : ${targetColumnId}`);
 }

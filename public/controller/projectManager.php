@@ -160,7 +160,7 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_GET['addProject']) && $_GET['addProject'] == 'true') {
         $name = Crud::antiNaughty((string)$_POST['Pname']);
-        $dp = $_POST['dropDownDepto'];
+        $dp = Crud::antiNaughty((string)$_POST['dropDownDepto']);;
         $Deptos = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
         $depto = '';
 
