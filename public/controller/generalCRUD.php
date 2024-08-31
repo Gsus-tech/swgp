@@ -454,6 +454,27 @@ class Crud
          }
      }
 
+    public static function containsMaliciousPattern($input) {
+        $maliciousPatterns = [
+            '/<script\b[^>]*>(.*?)<\/script>/is',
+            '/\bSELECT\b|\bDELETE\b|\bINSERT\b|\bUPDATE\b|\bDROP\b/i',
+            '/--|#|\/\*/', 
+            '/\' OR \'1\'=\'1\'/', 
+            '/\'1\'=\'1\'/', 
+            '/OR 1=1/',
+            '/\' OR \'a\'=\'a\'/',
+            '/\' OR \'\'=\'\'/'
+        ];
+
+        foreach ($maliciousPatterns as $pattern) {
+            if (preg_match($pattern, $input)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+
      public function getMysqliConnection() {
         return $this->mysqli;
     }

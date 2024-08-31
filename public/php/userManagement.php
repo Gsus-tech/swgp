@@ -183,7 +183,13 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $p = array();
                             if(isset($_GET['search'])){
                                 $busqueda = Crud::antiNaughty($_GET['search']);
-                                $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $busqueda);
+                                $clear = Crud::containsMaliciousPattern($busqueda);
+                                if(!$clear){
+                                    $p = Crud::selectUserSearchData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC", $busqueda);
+                                }else{
+                                    echo "<script>alert('Se detectaron patrones maliciosos en la búsqueda.\\nIntenta de nuevo con diferentes parámetros de búsqueda.');</script>";
+                                    $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
+                                }
                             }
                             else{
                                 $p = Crud::selectData('id_usuario,nombre,rolUsuario,correo,departamento', 'tbl_usuarios', "id_usuario", "DESC");
