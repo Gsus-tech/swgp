@@ -215,6 +215,4 @@ function updateCardColumn(cardId, targetColumnId) {
     .catch(error => {
         console.error('Error en la solicitud AJAX:', error);
     });
-    // console.log(`Updating card : ${cardId}`);
-    // console.log(`Moving to column : ${targetColumnId}`);
 }

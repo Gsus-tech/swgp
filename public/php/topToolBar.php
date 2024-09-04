@@ -4,7 +4,7 @@
 if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsable']==true){
     $proyectos = Controller\GeneralCrud\Crud::getFiltersOptions('tbl_proyectos', 'id_proyecto');
     if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD'){
-        if(isset($_GET['id'])){
+        if(isset($_GET['id']) && filter_var($_GET['id'], FILTER_VALIDATE_INT) !== false){
             $selectedP = $_GET['id'];
             $_SESSION['projectSelected'] = $selectedP;
         }elseif($_SESSION['projectSelected'] != 0){
@@ -17,68 +17,57 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
     }
     
     if($_SESSION['responsable']==true){
-            if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selectedProject'])) {
-                $selectedP = $_POST['selectedProject'];
-                $_SESSION['projectSelected'] = $selectedP;
-                // echo "<script>console.log('$selectedP');</script>";
-            }elseif($_SESSION['projectSelected'] != 0){
-                $selectedP = $_SESSION['projectSelected'];
-            }
-            else{ 
-                $selected=0;
-                $user_id=$_SESSION['id'];
-                $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
-                $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
-            }
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['selectedProject']) && filter_var($_POST['selectedProject'], FILTER_VALIDATE_INT) !== false) {
+            $selectedP = (int)$_POST['selectedProject'];
+            $_SESSION['projectSelected'] = $selectedP;
+        }elseif($_SESSION['projectSelected'] != 0){
+            $selectedP = $_SESSION['projectSelected'];
+        }
+        else{ 
+            $selected=0;
+            $user_id=$_SESSION['id'];
+            $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
+            $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
+        }
     }
-    // $abtn = $_SESSION['projectSelected'];
-    // echo"<script> console.log('is this set: `$abtn`');</script>";
-    
 ?>
 <div class="topToolBar">
     <?php
-    // if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsable+2']==true){
-        if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['varios-proyectos']==true){
-        ?>
-        <a class="topBarText">Proyecto seleccionado:</a>
-            <?php
-            // if($_SESSION['responsable+2']==true){
-            //     echo "<form id='switchForm' method='post' action=''>";
-            //     echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
-            //     $user_id=$_SESSION['id'];
-            //     $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1;");
-            // }
-            if(isset($_SESSION['varios-proyectos']) && $_SESSION['varios-proyectos']==true){
-                echo "<form id='switchForm' method='post' action=''>";
-                echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
-                $user_id=$_SESSION['id'];
-                $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ?;", [$user_id], 'i');
+    if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['varios-proyectos']==true){
+        
+        echo "<a class='topBarText'>Proyecto seleccionado:</a>";
+        
+        if(isset($_SESSION['varios-proyectos']) && $_SESSION['varios-proyectos']==true){
+            echo "<form id='switchForm' method='post' action=''>";
+            echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
+            $user_id=$_SESSION['id'];
+            $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ?;", [$user_id], 'i');
+        }
+        else{
+            echo "<select name='listProyectos' id='listProyectos' class='listProyectos'>";
+            $filters = Controller\GeneralCrud\Crud::executeResultQuery('SELECT id_proyecto,nombre FROM tbl_proyectos;');
+        }
+        if(count($filters)>0){
+            for($i=0;$i<count($filters);$i++){
+                $selected = ($selectedP == $filters[$i]['id_proyecto']) ? 'selected' : '';
+                echo '<option value='.$filters[$i]['id_proyecto'].' ' . $selected .'>'.htmlspecialchars($filters[$i]['nombre'], ENT_QUOTES, 'UTF-8').'</option>';
             }
-            else{
-                echo "<select name='listProyectos' id='listProyectos' class='listProyectos'>";
-                $filters = Controller\GeneralCrud\Crud::executeResultQuery('SELECT id_proyecto,nombre FROM tbl_proyectos;');
-            }
-            if(count($filters)>0){
-                for($i=0;$i<count($filters);$i++){
-                    $selected = ($selectedP == $filters[$i]['id_proyecto']) ? 'selected' : '';
-                    echo '<option value='.$filters[$i]['id_proyecto'].' ' . $selected .'>'.htmlspecialchars($filters[$i]['nombre'], ENT_QUOTES, 'UTF-8').'</option>';
-                }
-            }
-            else{
-                echo '<option>No hay proyectos registrados</option>';
-            }
-            ?>
-    </select>
-    <?php
-    if(isset($_SESSION['varios-proyectos']) && $_SESSION['varios-proyectos']==true){
-        echo "<input type='hidden' name='selectedProject' id='selectedProject'>";
-        echo "</form>";
-        echo "<input type='hidden' id='listProyectos'>";
-    }else{
-        echo "<input type='hidden' id='listProyectosRes'>";
-        echo "<input type='hidden' id='selectedProject'>";
-        echo "<input type='hidden' id='switchForm'>";
-    }
+        }
+        else{
+            echo '<option>No hay proyectos registrados</option>';
+        }
+        
+        echo "</select>";
+
+        if(isset($_SESSION['varios-proyectos']) && $_SESSION['varios-proyectos']==true){
+            echo "<input type='hidden' name='selectedProject' id='selectedProject'>";
+            echo "</form>";
+            echo "<input type='hidden' id='listProyectos'>";
+        }else{
+            echo "<input type='hidden' id='listProyectosRes'>";
+            echo "<input type='hidden' id='selectedProject'>";
+            echo "<input type='hidden' id='switchForm'>";
+        }
     }else{
         echo "<input type='hidden' id='listProyectos'>";
         echo "<input type='hidden' id='listProyectosRes'>";
