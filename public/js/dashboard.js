@@ -148,6 +148,8 @@ function moveCard(targetColumnId, cardId) {
         //Actualizar datos columna origen
         actualizarContador(sourceColumnId);
 
+        //Actualizar el porcentaje del proyecto
+        updateProjectPercentage();
 
         //Cerrar menu
         const menu = document.querySelector('.opciones-tarjetas');
@@ -215,6 +217,20 @@ function updateCardColumn(cardId, targetColumnId) {
     .catch(error => {
         console.error('Error en la solicitud AJAX:', error);
     });
+}
+
+function updateProjectPercentage(){
+    const containers = document.querySelector('.kanban');
+    const totalCardCount = containers.querySelectorAll('.card').length;
+    const column = document.getElementById('task-list-four');
+    const cardCount = column.querySelectorAll('.card').length;
+    
+    var percent = totalCardCount > 0 ? (cardCount / totalCardCount)*100 : 0;
+
+    const  progressBar = document.getElementById('progress-bar-div');
+
+    progressBar.style = `width: ${percent}%;`;
+    progressBar.innerText = `${percent}%`;
 }
 
 document.addEventListener("DOMContentLoaded", function() {

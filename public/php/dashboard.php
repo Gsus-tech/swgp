@@ -57,7 +57,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <a id="progressIcon" class="button" title="Porcentaje de progreso"><i class="fa fa-percent"> del proyecto</i></a>
                 
                 <div class="progress-bar hide">
-                    <div class="progress" style="width: <?php echo $porcentaje; ?>%;">
+                    <div id="progress-bar-div" class="progress" style="width: <?php echo $porcentaje; ?>%;">
                         <?php echo round($porcentaje, 2); ?>%
                     </div>
                 </div>
