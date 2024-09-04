@@ -44,6 +44,7 @@
     padding: 20px;
     background-color: #dae9ff;
     margin: 20px;
+    margin-top: 10px;
     border-radius: 20px;
 }
 .kanban-title h2{ 
@@ -177,6 +178,50 @@
     background-color: #7c7c7c;
     color: white;
 }
+
+.nav-buttons {
+    width: fit-content;
+    border-radius: 25px;
+    background-color: #b0b0b051;   
+    margin: 10px 0 0 2rem;
+    padding: 5px;
+}
+
+.nav-buttons .fa {   
+    padding-top: 3px; 
+    padding-bottom: 5px;  
+    margin: 2px 5px;  
+    font-size: 15px;   
+    color: var(--black);
+}  
+
+.nav-buttons:hover {   
+    background-color: var(--navBtnHover); 
+}  
+.nav-buttons .fa:hover {  
+    color: var(--hover-item);  
+    transition: background-color 0.3s, color 0.3s; 
+}  
+
+.progress-bar {
+    width: 100%;
+    background-color: #fbdbdb;
+    border-radius: 25px;
+    overflow: hidden;
+    height: 30px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #4caf50;
+    text-align: center;
+    line-height: 30px; /* Alinear el texto verticalmente */
+    color: white;
+    font-weight: bold;
+    width: 0%; /* Ancho inicial de la barra */
+    transition: width 0.5s ease;
+}
+
 
 
 

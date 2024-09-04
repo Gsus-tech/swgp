@@ -216,3 +216,29 @@ function updateCardColumn(cardId, targetColumnId) {
         console.error('Error en la solicitud AJAX:', error);
     });
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const progressIcon = document.getElementById('progressIcon');
+    const progressDiv = document.querySelector('.progressIcon-div');;
+
+    progressIcon.addEventListener('click', function(){
+        progressDiv.style = "width:90%;";
+        progressIcon.classList.add('hide');
+        document.querySelector('.progress-bar').classList.remove('hide');
+    })
+
+    document.addEventListener('click', function(event) {
+        if(!progressDiv.classList.contains('hide')){
+            const closeBar = progressDiv.contains(event.target);     
+            if (!closeBar) {
+                if(!document.querySelector('.progress-bar').classList.contains('hide')){
+                    progressDiv.style = "width:fit-content;";
+                    document.querySelector('.progress-bar').classList.add('hide');
+                    progressIcon.classList.remove('hide');
+                }
+            }
+        }
+    });
+});
+

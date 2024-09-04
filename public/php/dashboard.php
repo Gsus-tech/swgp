@@ -36,6 +36,35 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             $query = "SELECT * FROM tbl_actividades WHERE id_proyecto = ?";
             $actividades = Crud::executeResultQuery($query, [$projectId], 'i');
 
+            function calcularPorcentaje($totalActividades, $actividadesCompletadas) {
+                if ($totalActividades == 0) {
+                    return 0;
+                }
+                return ($actividadesCompletadas / $totalActividades) * 100;
+            }
+            $totalActividades = count($actividades);
+            $actividadesCompletadas = 0;
+            if ($actividades) {
+                foreach ($actividades as $actividad) {
+                    $actividad['estadoActual'] == 4 ? $actividadesCompletadas++ : false;
+                }
+            }
+            $porcentaje = calcularPorcentaje($totalActividades, $actividadesCompletadas);
+            ?>
+
+            <!-- Barra de progreso del proyecto -->
+            <div class="nav-buttons progressIcon-div">
+                <a id="progressIcon" class="button" title="Porcentaje de progreso"><i class="fa fa-percent"> del proyecto</i></a>
+                
+                <div class="progress-bar hide">
+                    <div class="progress" style="width: <?php echo $porcentaje; ?>%;">
+                        <?php echo round($porcentaje, 2); ?>%
+                    </div>
+                </div>
+            </div>
+
+            <?php
+            
             // Consulta para obtener los miembros de las actividades
             $query2 = "SELECT tbl_usuarios.id_usuario, tbl_usuarios.nombre FROM tbl_usuarios JOIN tbl_actividades ON tbl_usuarios.id_usuario = tbl_actividades.id_usuario WHERE tbl_actividades.id_proyecto = ?";
             $participantes = Crud::executeResultQuery($query2, [$projectId], 'i');
@@ -66,7 +95,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         case 3:
                             $retrasadas[] = $actividad;
                             break;
-                            case 4:
+                        case 4:
                             $terminadas[] = $actividad;
                             break;
                     }
