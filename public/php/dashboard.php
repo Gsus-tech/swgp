@@ -36,6 +36,35 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             $query = "SELECT * FROM tbl_actividades WHERE id_proyecto = ?";
             $actividades = Crud::executeResultQuery($query, [$projectId], 'i');
 
+            function calcularPorcentaje($totalActividades, $actividadesCompletadas) {
+                if ($totalActividades == 0) {
+                    return 0;
+                }
+                return ($actividadesCompletadas / $totalActividades) * 100;
+            }
+            $totalActividades = count($actividades);
+            $actividadesCompletadas = 0;
+            if ($actividades) {
+                foreach ($actividades as $actividad) {
+                    $actividad['estadoActual'] == 4 ? $actividadesCompletadas++ : false;
+                }
+            }
+            $porcentaje = calcularPorcentaje($totalActividades, $actividadesCompletadas);
+            ?>
+
+            <!-- Barra de progreso del proyecto -->
+            <div class="nav-buttons progressIcon-div">
+                <a id="progressIcon" class="button" title="Porcentaje de progreso"><i class="fa fa-percent"> del proyecto</i></a>
+                
+                <div class="progress-bar hide">
+                    <div id="progress-bar-div" class="progress" style="width: <?php echo $porcentaje; ?>%;">
+                        <?php echo round($porcentaje, 2); ?>%
+                    </div>
+                </div>
+            </div>
+
+            <?php
+            
             // Consulta para obtener los miembros de las actividades
             $query2 = "SELECT tbl_usuarios.id_usuario, tbl_usuarios.nombre FROM tbl_usuarios JOIN tbl_actividades ON tbl_usuarios.id_usuario = tbl_actividades.id_usuario WHERE tbl_actividades.id_proyecto = ?";
             $participantes = Crud::executeResultQuery($query2, [$projectId], 'i');
@@ -66,7 +95,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         case 3:
                             $retrasadas[] = $actividad;
                             break;
-                            case 4:
+                        case 4:
                             $terminadas[] = $actividad;
                             break;
                     }
@@ -86,7 +115,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">Pendientes (<?php echo count($pendientes); ?>)</h5>
         <div id="task-list-one" class="task-list-items">
             <?php foreach ($pendientes as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge green-flag">lol</span> -->
@@ -109,7 +138,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">En Proceso (<?php echo count($en_proceso); ?>)</h5>
         <div id="task-list-two" class="task-list-items">
             <?php foreach ($en_proceso as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
@@ -132,7 +161,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">Retrasadas (<?php echo count($retrasadas); ?>)</h5>
         <div id="task-list-three" class="task-list-items">
             <?php foreach ($retrasadas as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
@@ -155,7 +184,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">Terminadas (<?php echo count($terminadas); ?>)</h5>
         <div id="task-list-four" class="task-list-items">
             <?php foreach ($terminadas as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3">
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->

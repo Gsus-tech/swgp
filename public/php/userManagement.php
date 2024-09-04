@@ -158,7 +158,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="nav-buttons">
                     <i id="searchUser" class="fa fa-search button" title="Buscar cuenta"></i>
                     <input type="text" id="search-bar" class="search-bar input hide" placeholder="Buscar...">
-                    <i id="searchAccount" class="fa fa-search button hide" title="Buscar" href="userManagement.php?search="></i>
+                    <i id="searchAccount" class="fa fa-search button hide" title="Buscar"></i>
                 </div>
             
                 <!-- Tabla de usuarios -->

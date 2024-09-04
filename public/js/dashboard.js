@@ -148,6 +148,8 @@ function moveCard(targetColumnId, cardId) {
         //Actualizar datos columna origen
         actualizarContador(sourceColumnId);
 
+        //Actualizar el porcentaje del proyecto
+        updateProjectPercentage();
 
         //Cerrar menu
         const menu = document.querySelector('.opciones-tarjetas');
@@ -215,6 +217,44 @@ function updateCardColumn(cardId, targetColumnId) {
     .catch(error => {
         console.error('Error en la solicitud AJAX:', error);
     });
-    // console.log(`Updating card : ${cardId}`);
-    // console.log(`Moving to column : ${targetColumnId}`);
 }
+
+function updateProjectPercentage(){
+    const containers = document.querySelector('.kanban');
+    const totalCardCount = containers.querySelectorAll('.card').length;
+    const column = document.getElementById('task-list-four');
+    const cardCount = column.querySelectorAll('.card').length;
+    
+    var percent = totalCardCount > 0 ? (cardCount / totalCardCount)*100 : 0;
+
+    const  progressBar = document.getElementById('progress-bar-div');
+
+    progressBar.style = `width: ${percent}%;`;
+    progressBar.innerText = `${percent}%`;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const progressIcon = document.getElementById('progressIcon');
+    const progressDiv = document.querySelector('.progressIcon-div');;
+
+    progressIcon.addEventListener('click', function(){
+        progressDiv.style = "width:90%;";
+        progressIcon.classList.add('hide');
+        document.querySelector('.progress-bar').classList.remove('hide');
+    })
+
+    document.addEventListener('click', function(event) {
+        if(!progressDiv.classList.contains('hide')){
+            const closeBar = progressDiv.contains(event.target);     
+            if (!closeBar) {
+                if(!document.querySelector('.progress-bar').classList.contains('hide')){
+                    progressDiv.style = "width:fit-content;";
+                    document.querySelector('.progress-bar').classList.add('hide');
+                    progressIcon.classList.remove('hide');
+                }
+            }
+        }
+    });
+});
+

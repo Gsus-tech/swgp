@@ -8,15 +8,14 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
 
     
     if (isset($_GET['editProject']) && $_GET['editProject'] == 'true' && isset($_GET['id'])) {
-        $id =  $_GET['id'];
+        $id =  (int)$_GET['id'];
         $destination = $destination ."?editProject=". $id;
         //Actualizar tbl_integrantes
         if($_POST['membersTableFlagAdd'] === 'true'){
-            echo "<script>console.log('QUERY: AddMember');</script>";
             $addedMembers = json_decode($_POST['addedMembers'], true);
             foreach ($addedMembers as $member) {
-                $newMember = $member['usuarioId'];
-                $rolGiven = $member['rol'];
+                $newMember = (int)$member['usuarioId'];
+                $rolGiven = (int)$member['rol'];
                 $query = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, ?)";
                 $params = [$newMember, $id, $rolGiven];
                 $types = "ssi";
@@ -189,7 +188,8 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         $fechaCierre = sprintf('%04d-%02d-%02d', $año2, $mes2, $dia2);
 
         if (!checkdate($mes1, $dia1, $año1) || !checkdate($mes2, $dia2, $año2)) {
-            echo "Invalid date provided.";
+            $er = json_encode("Fechas inválidas.");
+            header("Location: $destination?error=$er");
             exit;
         }
 
@@ -215,3 +215,5 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
 }else{
     header("Location: $destination");
 }
+
+

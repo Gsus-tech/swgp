@@ -79,9 +79,7 @@ body {
 }
 
 .container .sidebar {
-    /* background-image: linear-gradient(180deg, #1d0271 10%, #1e3aa2 100%); */
     background-image: linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
-
     position: fixed;
     color: var(--white);
     width: 7rem;
@@ -91,7 +89,6 @@ body {
     left: 0;
     box-sizing: content-box;
     z-index: 2;
-    /* transition: width .2s ease-in-out; */
 }
 
 .container .sidebar .sidebartop {
@@ -111,7 +108,6 @@ body {
 .container .sidebar .sidebartop .sidebar-logo img {
     height: auto;
     width: 100%;
-    cursor: pointer;
 }
 
 .container .sidebar .sidebar-divider {

@@ -3,9 +3,9 @@
     <!-- Encabezado de barra -->
     <div class="sidebartop">
         <div class="sidebar-logo">
-            <a id="LogoBtn" href="dashboard.php" title="Dashboard">
+            <span id="LogoBtn" title="Dashboard">
                 <img src="../assets/logoCBC.png">
-            </a>
+            </span>
         </div>
 
         <div class="sidebar-menu">
@@ -19,6 +19,8 @@
     <nav class="scroll sidebar-menu-list"> 
         <ul>
         <?php   if($_SESSION['rol']=='SAD' || $_SESSION['rol']=='ADM'){  ?>
+            <li><a href="dashboard.php" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
+                    class="text">Tablero Kanban</span></i></a></li>
             <li><a href="userManagement.php" title="Gestión de usuarios"><i class="fa fa-users"><span 
                 class="text">Gestión de usuarios</span></i></a></li>
             <li><a href="projectsManagement.php" title="Gestión de proyectos"><i class="fa fa-wrench"><span 
@@ -38,7 +40,7 @@
                 $isMember[1] = Controller\GeneralCrud\Crud::isInArray($data2, 1);
                 
                 if($isMember[0]==true){ ?>
-                    <li><a href="#" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
+                    <li><a href="dashboard.php" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
                     class="text">Tablero Kanban</span></i></a></li>
                     <?php if($isMember[1]==true){ ?>
                         <li><a href="activityManagement.php" title="Gestión de actividades"><i class="fa fa-gears"><span 

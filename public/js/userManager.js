@@ -16,38 +16,55 @@ searchBtn.addEventListener('click', function(){
 
 document.addEventListener('DOMContentLoaded', function() {
     const injectionPatterns = [
-        '<script>', '</script>', '<img', 'onerror=',
-        'onload=', 'alert(', 'document.cookie',
-        '--', ';--', ';', '/*', '*/', '@@', "OR '1'='1",
-        'char(', 'nchar(', 'varchar(', 'nvarchar(',
-        'sysobjects', 'syscolumns', 'information_schema.tables'
-    ];
-    
-    const searchBar = document.getElementById('search-bar');
-    const searchButton = document.getElementById('searchAccount');
-    
-    searchButton.addEventListener('click', function() {
-        const query = searchBar.value.trim().toLowerCase(); // Normaliza la entrada
-        if (query) {
-            const foundInjectionPattern = injectionPatterns.some(pattern => query.includes(pattern.toLowerCase()));
-            if (!foundInjectionPattern) {
-                window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
-            } else {
-                alert('Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parametros de búsqueda.');
-                toggleSearchItems();
-            }
-        } else {
-            toggleSearchItems();
-        }
-    });
-    
-    // Manejar el evento Enter en la barra de búsqueda
-    searchBar.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Evitar el comportamiento predeterminado
-            searchButton.click();
-        }
-    });
+       /<script\b[^>]*>(.*?)<\/script>/gi,
+       /<img\b[^>]*onerror=/gi,
+       /<img\b[^>]*onload=/gi,
+       /alert\(/gi,
+       /document\.cookie/gi,
+       /--/g,
+       /;--/g,
+       /;/g,
+       /\/\*/g,
+       /\*\//g,
+       /@@/g,
+       /or\s*['"]?\s*1\s*=\s*1/gi,
+       /or\s*['"]?\s*\w\s*=\s*\w/gi,
+       /['"]?\s*or\s*['"]?1['"]?\s*=\s*['"]?1['"]?/gi,
+       /['"]?\s*or\s*['"]?\w['"]?\s*=\s*['"]?\w['"]?/gi,
+       /char\(/gi,
+       /nchar\(/gi,
+       /varchar\(/gi,
+       /nvarchar\(/gi,
+       /sysobjects/gi,
+       /syscolumns/gi,
+       /information_schema\.tables/gi
+   ];
+   
+   const searchBar = document.getElementById('search-bar');
+   const searchButton = document.getElementById('searchAccount');
+   
+   searchButton.addEventListener('click', function() {
+       const query = searchBar.value.trim().toLowerCase(); 
+       if (query) {
+           const foundInjectionPattern = injectionPatterns.some(pattern => pattern.test(query));
+           if (!foundInjectionPattern) {
+               window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
+           } else {
+               alert('Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parámetros de búsqueda.');
+               toggleSearchItems();
+           }
+       } else {
+           toggleSearchItems();
+       }
+   });
+   
+   // Manejar el evento Enter en la barra de búsqueda
+   searchBar.addEventListener('keypress', function(event) {
+       if (event.key === 'Enter') {
+           event.preventDefault();
+           searchButton.click();
+       }
+   });
 });
 
 //Cerrar barra al hacer clic fuera del div
