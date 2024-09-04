@@ -222,7 +222,13 @@
     transition: width 0.5s ease;
 }
 
-
+.tmc {
+    border: 1px solid #ffd485;
+    background-color: #fff3d4;
+}
+.tmc:hover {
+    background-color: #ffe2a2;
+}
 
 
 /* Responsive */

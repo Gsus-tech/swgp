@@ -115,7 +115,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">Pendientes (<?php echo count($pendientes); ?>)</h5>
         <div id="task-list-one" class="task-list-items">
             <?php foreach ($pendientes as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge green-flag">lol</span> -->
@@ -138,7 +138,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">En Proceso (<?php echo count($en_proceso); ?>)</h5>
         <div id="task-list-two" class="task-list-items">
             <?php foreach ($en_proceso as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
@@ -161,7 +161,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">Retrasadas (<?php echo count($retrasadas); ?>)</h5>
         <div id="task-list-three" class="task-list-items">
             <?php foreach ($retrasadas as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
@@ -184,7 +184,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <h5 class="mt-0 task-header text-uppercase">Terminadas (<?php echo count($terminadas); ?>)</h5>
         <div id="task-list-four" class="task-list-items">
             <?php foreach ($terminadas as $tarjeta) : ?>
-                <div class="card mb-0" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
+                <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3">
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
