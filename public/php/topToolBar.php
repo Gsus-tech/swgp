@@ -41,7 +41,14 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             echo "<form id='switchForm' method='post' action=''>";
             echo "<select name='listProyectosRes' id='listProyectosRes' class='listProyectos'>";
             $user_id=$_SESSION['id'];
-            $filters = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ?;", [$user_id], 'i');
+            $filterOpt = isset($filterOpt) && $filterOpt===true ? true : false;
+            if($filterOpt===true){
+                $query = "SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ? AND integrantes.responsable = 1;";
+                $filters = Controller\GeneralCrud\Crud::executeResultQuery($query, [$user_id], 'i');
+            }else{    
+                $query = "SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ?;";
+                $filters = Controller\GeneralCrud\Crud::executeResultQuery($query, [$user_id], 'i');
+            }
         }
         else{
             echo "<select name='listProyectos' id='listProyectos' class='listProyectos'>";

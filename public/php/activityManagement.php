@@ -42,7 +42,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 $params = [$_SESSION['id'],1];
                 $needsSelect = Crud::executeResultQuery($query, $params, 'ii');
                 if(count($needsSelect) > 1 || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
-                    $pagina="activityManagement"; include 'topToolBar.php'; 
+                    $filterOpt=true; $pagina="activityManagement"; include 'topToolBar.php'; 
                 }
                     ?>
             </div>
