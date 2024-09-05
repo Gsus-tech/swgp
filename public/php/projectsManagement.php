@@ -47,11 +47,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 // Comprobar si el proyecto existe
                 if (!$projectData || count($projectData) == 0) {
                     echo "<script>
-                    alert('ID de proyecto no registrado.');
-                    window.location.href = 'projectsManagement.php?projectDetails=" . $_SESSION['projectSelected'] . "';
-                </script>";
-                exit;
-                
+                        alert('ID de proyecto no registrado.');
+                        window.location.href = 'projectsManagement.php?projectDetails=" . $_SESSION['projectSelected'] . "';
+                    </script>";
+                    exit;
                 }
                 $_SESSION['projectSelected'] = $projectID;
                 $objectivesGData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "general");

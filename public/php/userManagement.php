@@ -334,7 +334,27 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                 // Editar usuario
                 if(isset($_GET['editId'])){ 
-                    $cR = Crud::findRow('id_usuario,rolUsuario,nombre,correo,departamento', 'tbl_usuarios', "id_usuario", $_GET['editId']);
+                    $thisId = filter_var($_GET['editId'], FILTER_VALIDATE_INT);
+                    if($thisId === false){
+                        // Si el ID del proyecto no es un entero válido
+                        echo "<script>
+                            alert('ID de usuario no válido.');
+                            window.location.href = 'userManagement.php';
+                        </script>";
+                        exit;
+                    }
+
+                    $query = "SELECT id_usuario,rolUsuario,nombre,correo,departamento FROM `tbl_usuarios` WHERE id_usuario = ?";
+                    $cR = Crud::executeResultQuery($query, [$thisId], 'i');
+
+                    // Comprobar si el usuario existe
+                    if (!$cR || count($cR) == 0) {
+                        echo "<script>
+                            alert('ID de usuario no registrado.');
+                            window.location.href = 'userManagement.php';
+                        </script>";
+                        exit;
+                    }
                     ?>
                 <form id="editUser-form" class="addUser-form" onsubmit="return submitFormEditUser()" method="POST" autocomplete="on">
                 <div class="form-bg">
