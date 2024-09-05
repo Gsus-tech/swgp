@@ -203,7 +203,6 @@ function getColumnaId(name){
 
 
 function updateCardColumn(cardId, targetColumnId) {
-    console.log('URL: activityManager.php?actId=' + encodeURIComponent(cardId) + '&moveToColumn=' + encodeURIComponent(targetColumnId));
     fetch('../controller/activityManager.php?actId=' + encodeURIComponent(cardId) + '&moveToColumn=' + encodeURIComponent(targetColumnId), {
         method: 'POST',
         headers: {
