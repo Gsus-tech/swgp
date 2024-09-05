@@ -71,6 +71,15 @@
     text-decoration: none;
     color: #333;
 }  
+.container .projectManagement .table .project-list .fa-check-square {
+    color: #00720b;
+}  
+.container .projectManagement .table .project-list .fa-check-square:hover {
+    padding: 1px 3px;
+    border-radius: 10px;
+    background-color: #00720b;
+    color: #8bf600;
+}  
 .container .projectManagement .table .project-list th {
     background-color: #f2f2f2;
 }  
