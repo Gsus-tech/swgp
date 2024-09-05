@@ -203,7 +203,6 @@ function getColumnaId(name){
 
 
 function updateCardColumn(cardId, targetColumnId) {
-    console.log('URL: activityManager.php?actId=' + encodeURIComponent(cardId) + '&moveToColumn=' + encodeURIComponent(targetColumnId));
     fetch('../controller/activityManager.php?actId=' + encodeURIComponent(cardId) + '&moveToColumn=' + encodeURIComponent(targetColumnId), {
         method: 'POST',
         headers: {
@@ -226,6 +225,7 @@ function updateProjectPercentage(){
     const cardCount = column.querySelectorAll('.card').length;
     
     var percent = totalCardCount > 0 ? (cardCount / totalCardCount)*100 : 0;
+    percent = percent.toFixed(2);
 
     const  progressBar = document.getElementById('progress-bar-div');
 

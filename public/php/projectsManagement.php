@@ -28,18 +28,40 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             if (isset($_GET['error'])) {
                 $errorMsg = urldecode($_GET['error']);
                 echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
-            } elseif (isset($_GET['projectDetails'])) {
-                $projectID = $_GET['projectDetails'];
-
-                $projectData = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectID);
+            }elseif (isset($_GET['projectDetails'])) {
+                $projectID = filter_var($_GET['projectDetails'], FILTER_VALIDATE_INT);
+            
+                if ($projectID === false) {
+                    // Si el ID del proyecto no es un entero válido
+                    echo "<script>
+                        alert('ID de proyecto no válido.');
+                        window.location.href = 'projectsManagement.php?projectDetails=" . $_SESSION['projectSelected'] . "';
+                    </script>";
+                    exit;
+                }
+            
+                // Consulta para obtener los datos del proyecto
+                $query = "SELECT * FROM `tbl_proyectos` WHERE id_proyecto = ?";
+                $projectData = Crud::executeResultQuery($query, [$projectID], 'i');
+            
+                // Comprobar si el proyecto existe
+                if (!$projectData || count($projectData) == 0) {
+                    echo "<script>
+                        alert('ID de proyecto no registrado.');
+                        window.location.href = 'projectsManagement.php?projectDetails=" . $_SESSION['projectSelected'] . "';
+                    </script>";
+                    exit;
+                }
+                $_SESSION['projectSelected'] = $projectID;
                 $objectivesGData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "general");
                 $objectivesEData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "especifico");
                 $integrantes = Crud::executeResultQuery('SELECT nombre,departamento,responsable FROM tbl_integrantes JOIN tbl_usuarios ON tbl_integrantes.id_usuario = tbl_usuarios.id_usuario WHERE tbl_integrantes.id_proyecto=' . $projectID . ';');
                 $d1 = date("m-d-Y", strtotime($projectData[0]['fecha_inicio']));
                 $d2 = date("m-d-Y", strtotime($projectData[0]['fecha_cierre']));
                 ?>
-                <div class="header">
-                    <h4>Gestión de Proyectos</h4>
+                <div class="header flexAndSpaceDiv">
+                    <h4 class="headerTitle">Gestión de Proyectos</h4>
+                    <?php $pagina="projectsManagement"; $projectDetails=true; include 'topToolBar.php'; ?>
                 </div>
                 <div class="detailsContainer scroll">
                     <div class="detailsContainerTitle">
@@ -525,12 +547,27 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 }}
 
 
-
-
-
-
                 
-            } else { ?>
+            } else { 
+                function getActPercentage($id){
+                    $query = "SELECT estadoActual FROM tbl_actividades WHERE id_proyecto = ?";
+                    $params = [$id];
+                    $actP = Crud::executeResultQuery($query, $params, 'i');
+                    $totalActividades = count($actP);
+                    $actividadesCompletadas = 0;
+                    for($j=0; $j<$totalActividades; $j++){
+                        if((int)$actP[$j]['estadoActual'] === 4){
+                            $actividadesCompletadas++;
+                        }
+                    }
+                    if($actividadesCompletadas > 0){
+                        return number_format(($actividadesCompletadas / $totalActividades) * 100, 2);
+                    }else{
+                        return 0;
+                    }
+                    
+                }
+                ?>
             <div class="header">
                 <h4>Gestión de Proyectos</h4>
             </div>
@@ -586,12 +623,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 if (isset($_GET['search'])) {
                                     $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);
                                 } else {
-                                    $p = Crud::findRows("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "departamentoAsignado", $_GET['filterDto']);
+                                    $query = "SELECT id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre FROM tbl_proyectos WHERE departamentoAsignado = ? AND estado = ?";
+                                    $params = [$_GET['filterDto'],1];
+                                    $p = Crud::executeResultQuery($query, $params, 'ii');
                                 }
                                 if (!empty($p) && count($p) > 0) {
                                     for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
-                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')">';
+                                        $percentage = 0;
+                                        $percentage = getActPercentage($p[$i]['id_proyecto']);      
+                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')" p-p="' . $percentage . '" p-i="' . $p[$i]['id_proyecto'] . '">';
                                         $count = 0;
                                         $currentId = 0;
                                         foreach ($p[$i] as $key => $value) {
@@ -610,12 +651,15 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             $count++;
                                         }
                                         if ($fl == true) {
-                                            ?>
-                                            <td>
-                                                <a id="editProjectBtn" class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo urlencode($currentId); ?>"></a>
-                                                <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo urlencode($currentId); ?>"></a>
-                                            </td>
-                                            <?php
+                                            echo "<td>";
+                                            echo "<a id='editProjectBtn' class='fa fa-edit button' title='Editar proyecto' href='projectsManagement.php?editProject=" . $p[$i]['id_proyecto'] . "'></a>";
+                                            
+                                        if((int)$percentage != 100){
+                                                echo "<a id='$currentId' class='fa fa-check-square button' title='Cerrar proyecto' onclick='concluirProyecto(this)'></a>";
+                                            }else{
+                                                echo "<a id='$currentId' class='fa fa-close button' title='Cerrar proyecto' onclick='cerrarProyecto(this)'></a>";
+                                            }
+                                            echo "</td>";
                                             echo '</tr>';
                                         }
                                     }
@@ -623,11 +667,17 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     echo "<tr><td></td><td colspan='5'>No se encontraron proyectos registrados.</td></tr>";
                                 }
                             } else {
-                                $p = Crud::selectData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC");
+                                
+                                $query = "SELECT id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre FROM tbl_proyectos WHERE estado = ? ORDER BY id_proyecto DESC";
+                                $params = [1];
+                                $p = Crud::executeResultQuery($query, $params, 'i');
                                 if (count($p) > 0) {
                                     for ($i = 0; $i < count($p); $i++) {
                                         $fl = false;
-                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')">';
+                                        $percentage = 0;
+                                        $percentage = getActPercentage($p[$i]['id_proyecto']);   
+                                        $currentId = $p[$i]['id_proyecto'];   
+                                        echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')" p-p="' . $percentage . '" p-i="' . $p[$i]['id_proyecto'] . '">';
                                         foreach ($p[$i] as $key => $value) {
                                             if ($value === $p[$i]['id_proyecto']) {
                                                 echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
@@ -640,12 +690,15 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             $fl = true;
                                         }
                                         if ($fl == true) {
-                                            ?>
-                                        <td>
-                                            <a id="editProjectBtn"class="fa fa-edit button" title="Editar proyecto" href="projectsManagement.php?editProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
-                                            <a id="closeProject" class="fa fa-close button" title="Cerrar proyecto" href="projectsManagement.php?endProject=<?php echo $p[$i]['id_proyecto'];?>"></a>
-                                        </td>
-                                            <?php
+                                            echo "<td>";
+                                            echo "<a id='editProjectBtn' class='fa fa-edit button' title='Editar proyecto' href='projectsManagement.php?editProject=" . $p[$i]['id_proyecto'] . "'></a>";
+                                            
+                                        if((int)$percentage == 100){
+                                                echo "<a id='$currentId' class='fa fa-check-square button' title='Cerrar proyecto' onclick='concluirProyecto(this)'></a>";
+                                            }else{
+                                                echo "<a id='$currentId' class='fa fa-close button' title='Cerrar proyecto' onclick='cerrarProyecto(this)'></a>";
+                                            }
+                                            echo "</td>";
                                             echo '</tr>';
                                         }
                                     }

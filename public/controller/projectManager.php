@@ -209,7 +209,42 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
         }
-    }else{
+    }
+    
+    if (isset($_GET['cierreProyecto'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $proyectoId = filter_var($_GET['cierreProyecto'], FILTER_VALIDATE_INT);
+    
+        if ($proyectoId !== false) {
+            $sql = "UPDATE tbl_proyectos SET estado = ? WHERE id_proyecto = ?";
+            $stmt = $mysqli->prepare($sql);
+    
+            if ($stmt) {
+                $estado = 0;
+                $stmt->bind_param('ii', $estado, $proyectoId);
+    
+                // Ejecutar la consulta
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode(['success' => true, 'message' => 'Proyecto finalizado.']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se encontró el proyecto o no se realizaron cambios.']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al finalizar el proyecto: ' . $stmt->error]);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+    }
+    
+
+    else{
         header("Location: $destination");
     }
 }else{

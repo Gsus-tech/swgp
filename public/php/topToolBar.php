@@ -91,9 +91,14 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
         dtoFilter.addEventListener('change', function() {
             const selectedOption = dtoFilter.options[dtoFilter.selectedIndex];
             const selectedValue = selectedOption.value;
-
-            window.location.href = `<?php echo $pagina ?>.php?id=${selectedValue}`;
-        
+            <?php 
+                
+                if(isset($projectDetails) && $projectDetails===true){
+                    echo "window.location.href = '{$pagina}.php?projectDetails=' + selectedValue;";
+                }else{
+                    echo "window.location.href = '{$pagina}.php?id=' + selectedValue;";
+                }
+            ?>
             });
         });
 

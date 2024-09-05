@@ -333,7 +333,7 @@ class Crud
         // Consulta
         $searchQuery = " AND (id_proyecto LIKE ? OR departamentoAsignado LIKE ? OR nombre LIKE ? OR fecha_inicio LIKE ? OR fecha_cierre LIKE ?)";
     
-        $myQuery = "SELECT $fields FROM $table WHERE 1=1 $searchQuery ORDER BY $id $order;";
+        $myQuery = "SELECT $fields FROM $table WHERE estado=1 AND 1=1 $searchQuery ORDER BY $id $order;";
     
         try {
             $stmt = $conn->prepare($myQuery);
