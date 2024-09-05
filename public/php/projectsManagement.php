@@ -28,18 +28,41 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             if (isset($_GET['error'])) {
                 $errorMsg = urldecode($_GET['error']);
                 echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
-            } elseif (isset($_GET['projectDetails'])) {
-                $projectID = $_GET['projectDetails'];
-
-                $projectData = Crud::findRow("*", "tbl_proyectos", "id_proyecto", $projectID);
+            }elseif (isset($_GET['projectDetails'])) {
+                $projectID = filter_var($_GET['projectDetails'], FILTER_VALIDATE_INT);
+            
+                if ($projectID === false) {
+                    // Si el ID del proyecto no es un entero válido
+                    echo "<script>
+                        alert('ID de proyecto no válido.');
+                        window.location.href = 'projectsManagement.php?projectDetails=" . $_SESSION['projectSelected'] . "';
+                    </script>";
+                    exit;
+                }
+            
+                // Consulta para obtener los datos del proyecto
+                $query = "SELECT * FROM `tbl_proyectos` WHERE id_proyecto = ?";
+                $projectData = Crud::executeResultQuery($query, [$projectID], 'i');
+            
+                // Comprobar si el proyecto existe
+                if (!$projectData || count($projectData) == 0) {
+                    echo "<script>
+                    alert('ID de proyecto no registrado.');
+                    window.location.href = 'projectsManagement.php?projectDetails=" . $_SESSION['projectSelected'] . "';
+                </script>";
+                exit;
+                
+                }
+                $_SESSION['projectSelected'] = $projectID;
                 $objectivesGData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "general");
                 $objectivesEData = Crud::findRow2Condition("id_objetivo,contenido", "tbl_objetivos", "id_proyecto", $projectID, "tipo", "especifico");
                 $integrantes = Crud::executeResultQuery('SELECT nombre,departamento,responsable FROM tbl_integrantes JOIN tbl_usuarios ON tbl_integrantes.id_usuario = tbl_usuarios.id_usuario WHERE tbl_integrantes.id_proyecto=' . $projectID . ';');
                 $d1 = date("m-d-Y", strtotime($projectData[0]['fecha_inicio']));
                 $d2 = date("m-d-Y", strtotime($projectData[0]['fecha_cierre']));
                 ?>
-                <div class="header">
-                    <h4>Gestión de Proyectos</h4>
+                <div class="header flexAndSpaceDiv">
+                    <h4 class="headerTitle">Gestión de Proyectos</h4>
+                    <?php $pagina="projectsManagement"; $projectDetails=true; include 'topToolBar.php'; ?>
                 </div>
                 <div class="detailsContainer scroll">
                     <div class="detailsContainerTitle">
