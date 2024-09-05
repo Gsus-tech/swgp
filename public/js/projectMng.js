@@ -392,6 +392,67 @@ function FilterResults(selectElement) {
     }
 }
 
+function cerrarProyecto(element){
+    let closestElement = element;
+    while (closestElement && !closestElement.hasAttribute('p-p')) {
+        closestElement = closestElement.parentElement;
+    }
+    const percentage = closestElement.getAttribute('p-p');
+    const projectId = closestElement.getAttribute('p-i');
+    let ready = percentage === 100 ? true : false;
+
+    if(!ready){
+        if(confirm(`El proyecto se encuentra con el ${percentage}% de avance.\nSi lo cierras ahora no alcanzaras el 100%.\n\n¿Deseas continuar?`)){
+            ready = true;
+        }
+    }
+
+
+    if(ready && confirm('¿Estas seguro que deseas terminar este proyecto?')){
+        fetch('../controller/projectManager.php?cierreProyecto=' + encodeURIComponent(projectId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('PHP response:', data);
+            finalReport(projectId);
+        })
+        .catch(error => {
+            console.error('Error en la solicitud AJAX:', error);
+        });
+    }
+}
+
+function concluirProyecto(element){
+    let closestElement = element;
+    while (closestElement && !closestElement.hasAttribute('p-i')) {
+        closestElement = closestElement.parentElement;
+    }
+    const projectId = closestElement.getAttribute('p-i');
+    if(confirm("¡Enhorabuena!\nHaz finalizado este proyecto.\n\nConfirma la acción para continuar...")){
+        fetch('../controller/projectManager.php?cierreProyecto=' + encodeURIComponent(projectId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('PHP response:', data);
+            finalReport(projectId);
+        })
+        .catch(error => {
+            console.error('Error en la solicitud AJAX:', error);
+        });
+    }
+}
+
+function finalReport(id){
+    window.location.href = `projectsManagement.php`;
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     const queryParams = new URLSearchParams(window.location.search);
