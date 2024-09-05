@@ -31,6 +31,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
             <?php
             $projectId = $_SESSION['projectSelected'];
+            // Consulta para identificar si el usuario es responsable del proyecto
+            $query = "SELECT responsable FROM tbl_integrantes WHERE id_proyecto = ? AND id_usuario = ?";
+            $amIrep = Crud::executeResultQuery($query, [$projectId, $_SESSION['id']], 'ii');
 
             // Consulta para obtener todas las actividades del proyecto seleccionado
             $query = "SELECT * FROM tbl_actividades WHERE id_proyecto = ?";
@@ -123,10 +126,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
                         <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
-                        <p class="mb-0 hide"><?php 
+                        <p class="mb-0 hide"><?php
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
-                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                        <?php 
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        }else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        }
+                        ?>
                     </div> <!-- end card-body -->
                 </div>
             <?php endforeach; ?>
@@ -149,7 +158,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <p class="mb-0 hide"><?php 
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
-                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                        <?php 
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        }else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        }
+                        ?>
                     </div> <!-- end card-body -->
                 </div>
             <?php endforeach; ?>
@@ -172,8 +187,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <p class="mb-0 hide"><?php 
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
-                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
-                    </div> <!-- end card-body -->
+                        <?php 
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        } else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        }
+                        ?>                    </div> <!-- end card-body -->
                 </div>
             <?php endforeach; ?>
         </div>
@@ -195,7 +215,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <p class="mb-0 hide"><?php 
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
-                        <i class="fa fa-plus-square button cardMenu" title="Opciones"></i>
+                        <?php 
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        } else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
+                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        }
+                        ?>
                     </div> <!-- end card-body -->
                 </div>
             <?php endforeach; ?>
@@ -205,23 +231,20 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 </div>
 
 
-
-
 <!--    END OF TESTING KANBAN DASHBOARDS    -->
-
-
-        </div>
-
-        
+        </div>     
     </div> <!-- Fin de container -->
 
     <script src="../js/init.js"></script>
-    <script src="../js/dashboard.js"></script>
-
-    <!-- Dragula -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
-    <script src="../js/ui/component.dragula.js"></script>
-
+    <?php
+    if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario'] || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
+        echo '<script src="../js/dashboard.js"></script>';
+        echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>';
+        echo '<script src="../js/ui/component.dragula.js"></script>';
+    }else{
+        echo '<script src="../js/dashboard-actions.js"></script>';
+    }
+    ?>
 </body>
 </html>
 
