@@ -42,3 +42,31 @@ function SelectThisRow(element, tbodyName){
     }
     state===false ? element.classList.add('rowSelected') : element.classList.remove('rowSelected');
 }
+
+
+//Funcion para hacer solicitudes AJAX reutilizables.
+function makeAjaxRequest(url, method, data = null, successCallback, errorCallback) {
+    fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: data ? new URLSearchParams(data) : null,
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            successCallback(data);
+        } else {
+            errorCallback(data.message || 'Ocurrió un error desconocido');
+        }
+    })
+    .catch(error => {
+        errorCallback(error.message);
+    });
+}
