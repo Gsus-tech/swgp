@@ -160,17 +160,22 @@ function updateRep(element) {
 }
 
 function updateObjectiveDescription(element) {
-    const select = document.getElementById('objectiveDescriptionList');
+    const idName = element.id == 'objetivoList' ? 'ObjectiveDescription' : 'editObjectiveDescription';
+    const idName2 = element.id == 'objetivoList' ? 'objetivoEnlazado' : 'editObjetivoEnlazado';
+    const selectName = element.id == 'objetivoList' ? 'objectiveDescriptionList' : 'editObjectiveDescriptionList';
+    const select = document.getElementById(selectName);
     select.value=element.value;
     if(element.selectedIndex == 0){
         var description = "";
-        document.getElementById('ObjectiveDescription').value = description;
-        document.getElementById('objetivoEnlazado').value = "";
+        document.getElementById(idName).value = description;
+        document.getElementById(idName2).value = "";
     }else{
         var selectedOption = select.options[select.selectedIndex];
         var description = selectedOption.text;
-        document.getElementById('ObjectiveDescription').value = description;
-        document.getElementById('objetivoEnlazado').value = element.value;
+        console.log(`Description: ${description}`);
+        console.log(`Objetivo enlazado: ${element.value}`);
+        document.getElementById(idName).value = description;
+        document.getElementById(idName2).value = element.value;
     }
 }
 
@@ -298,6 +303,216 @@ function DeleteActivity(id, rep) {
         form.submit();
     }
 }
+
+const editButtons = document.querySelectorAll('.editActivityJs');
+editButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        createEditForm(button); 
+    });
+});
+
+function createEditForm(element) {
+    console.log('Creando formulario');
+    let closestElement = element;
+    while (closestElement && !closestElement.hasAttribute('u-d')) {
+        closestElement = closestElement.parentElement;
+    }
+    idAct = closestElement.getAttribute('a-d');
+    
+    // Verificar si el formulario ya existe
+    if (document.getElementById('editActivityForm')) {
+        console.log('El formulario ya existe');
+        return;
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+
+    // Crear el formulario 
+    const formContainer = document.createElement('div');
+    formContainer.id = 'editActivityForm';
+    formContainer.className = 'editActivity-form';
+
+    formContainer.innerHTML = `
+        <div id="addActivity-form" class="addActivity-form">
+        <form class="activity-form" id="edit-activity-form" onsubmit="return submitEditActivity()" method="POST">
+            <div class="formContainer">
+                <div class="title"><h4>Editar Actividad:</h4></div>
+                <input type="text" class="input" name="Fname" id="editFname" placeholder="Nombre de la actividad" required>
+                <textarea class="textarea" name="Fdescription" id="editFdescription" placeholder="Descripción de la actividad"></textarea>
+                
+                <div class="fm-content">
+                    <div class="section1">
+                        <div class="dates">
+                            <label for="editFdate">Fecha estimada de finalización:</label>
+                            <br>
+                            <input type="date" name="Fdate" class="dateCalendar" id="editFdate" value="${today}" required lang="es">
+                        </div>  
+                    </div>
+                    <div class="selectDiv section2">
+                        <label for="editUserRespList">Responsable:</label><br>
+                        <select name="userRespList" class='comboBox' id="editUserRespList">
+                            
+                        </select>
+                    </div>
+                </div>
+                <div class="selectDiv">
+                    <br><label for="objetivoList" class="lbl">Actividad relacionada al objetivo:</label>
+                    <select name='objetivoList' id='editObjetivoList' class='comboBox' onchange='resetField(this);updateObjectiveDescription(this)'>
+                    </select>
+                    <select class='hide' name='objectiveDescriptionList' id='editObjectiveDescriptionList'>
+                    </select>
+                    <input type="hidden" name="objetivoEnlazado" id="editObjetivoEnlazado">
+
+                </div>
+                <textarea disabled type="text" class="textarea objetivoDisplay" name="ObjectiveDescription" id="editObjectiveDescription"></textarea>
+                <div class="form-options">
+                    <button class="sumbit-newTask enabled" type="submit">Guardar cambios</button>
+                    <button class="close-newTask button" onclick="closeEditForm()">Cancelar</button>
+                </div>
+            </div>
+        </form>
+        </div>
+    `;
+    formContainer.style = "display: flex;"
+    
+    const divH = document.querySelector('.activityManagement ');
+    divH.appendChild(formContainer);
+    setOptionsRep('editUserRespList');
+    setOptionsObjectives('editObjetivoList');
+    updateFormData(idAct);
+}
+
+// Destruir el formulario de edición
+function closeEditForm() {
+    const form = document.getElementById('editActivityForm');
+    if (form) {
+        form.remove(); 
+    }
+}
+
+function submitEditActivity() {
+    // Aquí puedes hacer tus validaciones y enviar los datos
+    alert('Formulario enviado');
+    closeEditForm(); 
+    return false
+}
+
+function setOptionsRep(idName){
+    const select = document.getElementById(idName);
+    const url = `../controller/activityManager.php?getMembers=true`;
+    makeAjaxRequest(
+        url,
+        'POST',
+        null,
+        function (data) { 
+            // Vaciar el <select> antes de llenarlo
+            select.innerHTML = '';
+
+            // Crear una opción por defecto
+            const defaultOption = document.createElement('option');
+            defaultOption.value = 'none';
+            defaultOption.setAttribute('ob-id', 'none');
+            defaultOption.textContent = '- Selecciona un responsable -';
+            select.appendChild(defaultOption);
+
+            // Llenar el <select> con los integrantes del proyecto
+            data.members.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id_usuario;
+                option.textContent = member.nombre;
+                select.appendChild(option);
+            });
+        },
+        function (errorMessage) { // errorCallback
+            console.error('Error al obtener la información de la actividad:', errorMessage);
+        }
+    );
+}
+
+function setOptionsObjectives(idName){
+    const select = document.getElementById(idName);
+    const desSelect = document.getElementById('editObjectiveDescriptionList');
+    const url = `../controller/activityManager.php?getObjectives=true`;
+    makeAjaxRequest(
+        url,
+        'POST',
+        null,
+        function (data) {
+            // Vaciar el <select> antes de llenarlo
+            select.innerHTML = '';
+
+            // Crear una opción por defecto
+            const defaultOption = document.createElement('option');
+            defaultOption.value = 'none';
+            defaultOption.setAttribute('ob-id', 'none');
+            defaultOption.textContent = '- Selecciona un objetivo -';
+            select.appendChild(defaultOption);
+
+            // Llenar el <select> con los objetivos del proyecto
+            let piv = 1;
+            data.objectives.forEach(objective => {
+                const option = document.createElement('option');
+                option.value = piv;
+                option.textContent = `Objetivo: ${piv}`
+                option.setAttribute('ob-id', objective.id_objetivo);
+                select.appendChild(option);
+                
+                const optionDes = document.createElement('option');
+                optionDes.value = piv;
+                optionDes.textContent = objective.contenido;
+                desSelect.appendChild(optionDes);
+                piv++;
+            });
+        },
+        function (errorMessage) { // errorCallback
+            console.error('Error al obtener la información de la actividad:', errorMessage);
+        }
+    );
+
+}
+
+function updateFormData(activityId) {
+    const url = `../controller/activityManager.php?getActivityInfo=true&activityId=${encodeURIComponent(activityId)}`;
+    
+    makeAjaxRequest(url, 'POST', null, function(response) {
+        // Manejo exitoso de la respuesta
+        const data = response.data;
+
+        // Llenar el formulario con los datos de la actividad
+        document.getElementById('editFname').value = data.nombre_actividad;
+        document.getElementById('editFdescription').value = data.descripción;
+        document.getElementById('editFdate').value = data.fecha_estimada;
+        document.getElementById('editUserRespList').value = data.id_usuario;
+        const select = document.getElementById('editObjetivoList');
+        let fl = false;
+        let piv = 0;
+        while(!fl){
+            for (let i = 0; i < select.options.length; i++) {
+                const option = select.options[i];
+                if (option.getAttribute('ob-id') == data.id_objetivo) {
+                    select.selectedIndex = i;
+                    fl=true;
+                    break;
+                }
+                piv++;
+            }
+            if(piv > (select.options.length * 10)){
+                // fl=true;
+                // console.alert('error al cargar el objetivo de la actividad.');
+            }
+        }
+        document.getElementById('editObjectiveDescription').value = data.objetivo_descripcion;
+        
+        // Mostrar una descripción si está disponible
+        document.getElementById('ObjectiveDescription').value = data.objectiveDescription || 'Descripción no disponible'; 
+    }, 
+    function(error) {
+        // Manejo de errores
+        console.error('Error en la solicitud:', error);
+        alert('No se pudo cargar la actividad.');
+    });
+}
+
 
 document.addEventListener('DOMContentLoaded', function() {
     paginateTable('activity-list-body', 8, 'pagination');
