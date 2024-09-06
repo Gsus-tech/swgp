@@ -304,6 +304,32 @@ body {
     border-color: red;
 }
 
+.dateCalendar, .comboBox{
+    margin-top: 5px;
+    padding: 0.5rem;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: white;
+    color: #333; 
+    width: fit-content;
+    height: 35px; 
+    line-height: 1.2;
+    font-family: 'Open Sans', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra */
+}
+
+.dateCalendar:hover, .comboBox:hover{
+    border-color: #888;
+}
+
+.dateCalendar:focus, .comboBox:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
 @media screen and (min-width: 650px) {
     .container .main {
         margin-left: 9rem;
