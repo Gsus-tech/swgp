@@ -192,15 +192,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             title="Descripción de la actividad" oninput="resetField(this)"></textarea>
                             <br>
                             <div class="fm-content">
-                                <div class="section1">
-                                    <div class="dates">
+                                <div class="section1" style="margin-bottom:0;">
+                                    <div class="dates" end-date="<?php echo $d2; ?>" ini-date="<?php echo $d1; ?>">
                                         <label for="Fdate">Fecha estimada de finalización:</label><br>
                                         <!-- datePicker -->
-                                        <?php $idUnico = "meta"; include 'datePicker.php'; ?>
-                                    </div>
-                                    <div class="noDate">
-                                        <input type="checkbox" class="checkBx" id="noDateSelected" name="noDateSelected" value="1" oninput="switchDatesState()">
-                                        <label for="noDateSelected" class="lbl">Sin fecha específica.</label>
+                                        <input type="date" name="Fdate" class="dateCalendar" onchange="resetField(this)" id="Fdate" value="<?php echo $d2; ?>" lang="es">
                                     </div>
                                 </div>
 

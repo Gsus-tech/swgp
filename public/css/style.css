@@ -660,3 +660,38 @@ body {
 .rowSelected{
     background-color: var(--rowSelected);
 }
+
+
+
+#calendar {
+    display: inline-block;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-family: Arial, sans-serif;
+}
+
+.calendar-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar-table th, .calendar-table td {
+    width: 14%;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.highlight-day {
+    background-color: orange;
+    color: white;
+}
+
+.dateCalendar{
+    margin-top: 10px;
+}
