@@ -107,7 +107,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
+                                echo "<tr row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
                                 echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
                                 $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
@@ -127,7 +127,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                                 $x = $p[$i]['id_actividad'];
                                 $y = $p[$i]['id_usuario'];
-                                echo "<td><a class='fa fa-trash button' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, $y)'></a></td>";
+                                echo "<td><a class='fa fa-trash button' row='$rowN'  title='Eliminar actividad' onclick='DeleteActivity($x, $y)'></a>";
+                                echo "<a class='fa fa-edit button editActivityJs' row='$rowN'  title='Editar actividad'></a></td>";
                                 echo '</tr>';
                             }
                         } else {
@@ -191,15 +192,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             title="Descripción de la actividad" oninput="resetField(this)"></textarea>
                             <br>
                             <div class="fm-content">
-                                <div class="section1">
-                                    <div class="dates">
+                                <div class="section1" style="margin-bottom:0;">
+                                    <div class="dates" end-date="<?php echo $d2; ?>" ini-date="<?php echo $d1; ?>">
                                         <label for="Fdate">Fecha estimada de finalización:</label><br>
                                         <!-- datePicker -->
-                                        <?php $idUnico = "meta"; include 'datePicker.php'; ?>
-                                    </div>
-                                    <div class="noDate">
-                                        <input type="checkbox" class="checkBx" id="noDateSelected" name="noDateSelected" value="1" oninput="switchDatesState()">
-                                        <label for="noDateSelected" class="lbl">Sin fecha específica.</label>
+                                        <input type="date" name="Fdate" class="dateCalendar" onchange="resetField(this)" id="Fdate" value="<?php echo $d2; ?>" lang="es">
                                     </div>
                                 </div>
 
@@ -260,7 +257,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <input type="hidden" name="objetivoEnlazado" id="objetivoEnlazado" value="<?php echo $objetivos[0][0] ?>">
                             </div>
                             <textarea disabled type="text" class="textarea objetivoDisplay" name="ObjectiveDescription" id="ObjectiveDescription"></textarea>
-
                             
                             <div class="form-options">
                                 <button class="sumbit-newTask enabled" id="sumbit-editTask" type="submit">Guardar cambios</button>
