@@ -215,10 +215,10 @@ function submitEditActivity() {
     id = parseInt(id);
     console.log(`id actividad: ${id}`);
     if(Number.isInteger(id)){
-        const form = document.getElementById('activity-form');
+        const form = document.getElementById('edit-activity-form');
+        console.log(`../controller/activityManager.php?editActivity=true&editId=${id}`);
         const actionUrl = `../controller/activityManager.php?editActivity=true&editId=${id}`;
         form.action = actionUrl;
-        console.log('submiting');
         form.submit();
         return true;
     }else{
@@ -371,7 +371,7 @@ function createEditForm(element) {
     formContainer.className = 'editActivity-form';
 
     formContainer.innerHTML = `
-        <div id="addActivity-form" class="addActivity-form">
+        <div id="editActivity-form" class="addActivity-form">
         <form class="activity-form" id="edit-activity-form" onsubmit="return submitEditActivity()" method="POST">
             <div class="formContainer">
                 <div class="title" ><h4>Editar Actividad:</h4></div>
@@ -411,7 +411,8 @@ function createEditForm(element) {
         </form>
         </div>
     `;
-    formContainer.style = "display: flex;"
+
+    formContainer.style = "display: none;"
     
     const divH = document.querySelector('.activityManagement ');
     divH.appendChild(formContainer);
@@ -419,6 +420,7 @@ function createEditForm(element) {
     setOptionsObjectives('editObjetivoList');
     setLimitDates();
     updateFormData(idAct);
+    formContainer.style = "display: flex;"
 }
 
 // Destruir el formulario de edición
