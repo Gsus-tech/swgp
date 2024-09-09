@@ -815,7 +815,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         exit();
     }
 } else {
-    header("Location: ../index.php");
+    header("Location: dashboard.php");
     exit();
 }
 ?>
