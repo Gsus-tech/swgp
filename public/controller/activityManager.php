@@ -33,12 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         Crud::executeNonResultQuery($sql, $params, 'iisssi', $destination);
     }
 
-    if (isset($_GET['editId']) && $_GET['editActivity'] == 'true') {   
+    if (isset($_GET['editId']) && filter_var($_GET['editId'], FILTER_VALIDATE_INT) !== false && $_GET['editActivity'] === 'true') {
         $name = Crud::antiNaughty((string)$_POST['Fname']);
         $description = Crud::antiNaughty((string)$_POST['Fdescription']);
-        $responsable = (int)$_POST['responsableActividad'];
+        $responsable = (int)$_POST['userRespList'];
         $projectID = $_SESSION['projectSelected'];
-        $idObjetivo = (int)$_POST['objetivoEnlazado'];
+        $idObjetivo = (int)$_POST['objetivoList'];
+        $activityId = (int)$_GET['editId']; 
         //Validar fecha ->
         $fechaTermino = $_POST['Fdate'];
         $format = 'Y-m-d';
@@ -50,16 +51,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             $destination = "../php/activityManagement.php";
         }					
 
-        if (!$fechaValida && !$fechaValida->format($format) === $fechaTermino) {
-            $destination .= "?error=" . urlencode('Error en el registro de la fecha. Formato de datos incorrecto.');
-            $fechaTermino = (new DateTime())->format('Y-m-d');
-        }
+        // if (!$fechaValida || $fechaValida->format($format) !== $fechaTermino) {
+        //     $destination .= "?error=" . urlencode('Error en el registro de la fecha. Formato de datos incorrecto.');
+        //     $fechaTermino = (new DateTime())->format('Y-m-d'); // Usar la fecha actual si la validación falla
+        // }
 
         $sql = "UPDATE `tbl_actividades` 
             SET `nombre_actividad` = ?, `descripción` = ?, `id_usuario` = ?, `fecha_estimada` = ?, `id_objetivo` = ? 
             WHERE `id_actividad` = ? AND `id_proyecto` = ?";
         $params = [$name, $description, $responsable, $fechaTermino, $idObjetivo, $activityId, $projectID];
-        Crud::executeNonResultQuery($sql, $params, 'iisssi', $destination);
+        Crud::executeNonResultQuery($sql, $params, 'ssisiii', $destination);
     }
    
     if (isset($_POST['delete']) && $_POST['delete'] == 'true' && isset($_POST['id']) && isset($_POST['rep'])) {
