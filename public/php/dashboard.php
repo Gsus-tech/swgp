@@ -243,7 +243,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         echo '<script src="../js/ui/component.dragula.js"></script>';
     }else{
         echo '<script src="../js/dashboard-actions.js"></script>';
-    }
+    } 
     ?>
 </body>
 </html>
