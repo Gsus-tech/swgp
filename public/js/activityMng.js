@@ -388,7 +388,7 @@ function createEditForm(element) {
                     </div>
                     <div class="selectDiv section2">
                         <label for="editUserRespList">Responsable:</label><br>
-                        <select name="userRespList" class='comboBox' id="editUserRespList">
+                        <select name="userRespList" class='comboBox' id="editUserRespList" oninput="resetField(this)">
                             
                         </select>
                     </div>

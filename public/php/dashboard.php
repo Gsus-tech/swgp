@@ -34,7 +34,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             // Consulta para identificar si el usuario es responsable del proyecto
             $query = "SELECT responsable FROM tbl_integrantes WHERE id_proyecto = ? AND id_usuario = ?";
             $amIrep = Crud::executeResultQuery($query, [$projectId, $_SESSION['id']], 'ii');
-
             // Consulta para obtener todas las actividades del proyecto seleccionado
             $query = "SELECT * FROM tbl_actividades WHERE id_proyecto = ?";
             $actividades = Crud::executeResultQuery($query, [$projectId], 'i');
@@ -237,7 +236,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     <script src="../js/init.js"></script>
     <?php
-    if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario'] || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
+    if((int)$amIrep[0]['responsable'] === 1 || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
         echo '<script src="../js/dashboard.js"></script>';
         echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>';
         echo '<script src="../js/ui/component.dragula.js"></script>';
