@@ -218,10 +218,14 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
     
         if ($proyectoId !== false) {
             $sql = "UPDATE tbl_proyectos SET estado = ? WHERE id_proyecto = ?";
+            if(isset($_GET['success']) && $_GET['success'] === 'true'){
+                $estado = 2;
+            }else{
+                $estado = 0;    
+            }
             $stmt = $mysqli->prepare($sql);
     
             if ($stmt) {
-                $estado = 0;
                 $stmt->bind_param('ii', $estado, $proyectoId);
     
                 // Ejecutar la consulta

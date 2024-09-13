@@ -25,10 +25,31 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
             <?php
+            function getActPercentage($id){
+                $query = "SELECT estadoActual FROM tbl_actividades WHERE id_proyecto = ?";
+                $params = [$id];
+                $actP = Crud::executeResultQuery($query, $params, 'i');
+                $totalActividades = count($actP);
+                if($totalActividades != 0){
+                    $actividadesCompletadas = 0;
+                    for($j=0; $j<$totalActividades; $j++){
+                        if((int)$actP[$j]['estadoActual'] === 4){
+                            $actividadesCompletadas++;
+                        }
+                    }
+                    if($actividadesCompletadas > 0){
+                        return number_format(($actividadesCompletadas / $totalActividades) * 100, 2);
+                    }else{
+                        return 0;
+                    }
+                }else{
+                    return 0;
+                }
+            }
             if (isset($_GET['error'])) {
                 $errorMsg = urldecode($_GET['error']);
                 echo "<script>alert('Codigo de error capturado: $errorMsg')</script>";
-            }elseif (isset($_GET['projectDetails'])) {
+            } elseif (isset($_GET['projectDetails'])) {
                 $projectID = filter_var($_GET['projectDetails'], FILTER_VALIDATE_INT);
             
                 if ($projectID === false) {
@@ -146,7 +167,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
 
-            <?php } elseif (isset($_GET['editProject'])) {
+                <?php   
+            } elseif (isset($_GET['editProject'])) {
                 $projectId = $_GET['editProject'] ?? null;
                 // Verificar si el ID es un entero
                 if ($projectId === null || !filter_var($projectId, FILTER_VALIDATE_INT)) {
@@ -533,9 +555,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </form> <!-- Fin de edit-user-form -->
 
 
-            </div> <!-- Fin de form-container -->   
-            <script src="../js/validate.js"></script>
-            <script src='../js/editProject.js'></script>
+                </div> <!-- Fin de form-container -->   
+                <script src="../js/validate.js"></script>
+                <script src='../js/editProject.js'></script>
 
                 </div>
                 <?php }else{
@@ -548,31 +570,25 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
                 
-            } else { 
-                function getActPercentage($id){
-                    $query = "SELECT estadoActual FROM tbl_actividades WHERE id_proyecto = ?";
-                    $params = [$id];
-                    $actP = Crud::executeResultQuery($query, $params, 'i');
-                    $totalActividades = count($actP);
-                    $actividadesCompletadas = 0;
-                    for($j=0; $j<$totalActividades; $j++){
-                        if((int)$actP[$j]['estadoActual'] === 4){
-                            $actividadesCompletadas++;
-                        }
-                    }
-                    if($actividadesCompletadas > 0){
-                        return number_format(($actividadesCompletadas / $totalActividades) * 100, 2);
-                    }else{
-                        return 0;
-                    }
-                    
-                }
+            } else if(isset($_GET['project-histoy'])){
                 ?>
-            <div class="header">
-                <h4>Gestión de Proyectos</h4>
-            </div>
+                <div class="header">
+                    <h4>Historial de Proyectos</h4>
+                </div>
+                
+                <div class="projectManagement">
+                
+                </div>
+                
+                <?php
 
-            <div class="projectManagement">
+            } else { 
+                ?>
+                <div class="header">
+                    <h4>Gestión de Proyectos</h4>
+                </div>
+
+                <div class="projectManagement">
 
 
                 <!-- Filtros de busqueda -->
@@ -614,14 +630,17 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <th class="rowName">Departamento asignado</th>
                                 <th class="rowFechaIni">Fecha de inicio</th>
                                 <th class="rowFechaFin">Fecha de cierre</th>
-                                <th class="rowActions">Acciones</th>
+                                <th class="rowEstado">Estado</th>
+                                <?php
+                                if (isset($_GET['search'])) { echo "<th class='rowActions'>Acciones</th>"; }
+                                ?>
                             </tr>
                         </thead>
                         <tbody id='projects-list-body'>
                             <?php
                             if (isset($_GET['search']) || isset($_GET['filterDto'])) {
                                 if (isset($_GET['search'])) {
-                                    $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);
+                                    $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre,estado", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);
                                 } else {
                                     $query = "SELECT id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre FROM tbl_proyectos WHERE departamentoAsignado = ? AND estado = ?";
                                     $params = [$_GET['filterDto'],1];
@@ -638,13 +657,19 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         foreach ($p[$i] as $key => $value) {
                                             if ($count == 0) {
                                                 $currentId = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-                                            }
-                                            if ($value === $p[$i]['id_proyecto']) {
-                                                echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
-                                            } elseif ($value === $p[$i]['nombre']) {
+                                                echo "<td><input type='checkbox' class='project-checkbox' value='$currentId'></td>";
+                                            } 
+                                            elseif ($count === 1) {
                                                 $cId = htmlspecialchars($p[$i]['id_proyecto']);
                                                 echo "<td><i class='blueText' onclick=seeProjectAccount('$cId') title='Ver detalles de proyecto'>" . htmlspecialchars($value) . "</i></td>";
-                                            } else {
+                                            } elseif($count === 5){
+                                                $estados = [
+                                                    0 => 'Cancelado',
+                                                    1 => 'Abierto',
+                                                    2 => 'Concluido'
+                                                ];
+                                                echo '<td>' . htmlspecialchars($estados[(int)$value], ENT_QUOTES, 'UTF-8') . '</td>';
+                                            }else {
                                                 echo '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                                             }
                                             $fl = true;
@@ -654,7 +679,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             echo "<td>";
                                             echo "<a id='editProjectBtn' class='fa fa-edit button' title='Editar proyecto' href='projectsManagement.php?editProject=" . $p[$i]['id_proyecto'] . "'></a>";
                                             
-                                        if((int)$percentage != 100){
+                                            if((int)$percentage == 100){
                                                 echo "<a id='$currentId' class='fa fa-check-square button' title='Cerrar proyecto' onclick='concluirProyecto(this)'></a>";
                                             }else{
                                                 echo "<a id='$currentId' class='fa fa-close button' title='Cerrar proyecto' onclick='cerrarProyecto(this)'></a>";
@@ -791,11 +816,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div> <!-- Fin de form-container --> 
                 </form> <!-- Fin de project-form -->
 
-            </div>
-            <script src="../js/validate.js"></script>
-            <script src="../js/tablePagination.js"></script>
-            <script src="../js/projectMng.js"></script>
-                               <?php
+                </div>
+                <script src="../js/validate.js"></script>
+                <script src="../js/tablePagination.js"></script>
+                <script src="../js/projectMng.js"></script>
+                                <?php
             }
             ?>
         </div>

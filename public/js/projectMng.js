@@ -406,9 +406,7 @@ function cerrarProyecto(element){
             ready = true;
         }
     }
-
-
-    if(ready && confirm('¿Estas seguro que deseas terminar este proyecto?')){
+    if(ready && confirm('¿Estás seguro que deseas terminar este proyecto?')){
         fetch('../controller/projectManager.php?cierreProyecto=' + encodeURIComponent(projectId), {
             method: 'POST',
             headers: {
@@ -431,9 +429,12 @@ function concluirProyecto(element){
     while (closestElement && !closestElement.hasAttribute('p-i')) {
         closestElement = closestElement.parentElement;
     }
-    const projectId = closestElement.getAttribute('p-i');
-    if(confirm("¡Enhorabuena!\nHaz finalizado este proyecto.\n\nConfirma la acción para continuar...")){
-        fetch('../controller/projectManager.php?cierreProyecto=' + encodeURIComponent(projectId), {
+        const projectId = closestElement.getAttribute('p-i');
+    const urlString = `../controller/projectManager.php?cierreProyecto=${encodeURIComponent(projectId)}`;
+    console.log(urlString); // Verificar la URL construida
+
+    if (confirm("¡Enhorabuena!\nHaz finalizado este proyecto.\n\nConfirma la acción para continuar...")) {
+        fetch(urlString + "&success=true", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
