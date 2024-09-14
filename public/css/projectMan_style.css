@@ -557,6 +557,16 @@
     margin: 1rem 0 0.5rem 0;
 }
 
+.redStateBg{
+    background-color: #7b0101;
+    color: white;
+}
+
+.greenStateBg{
+    background-color: #065f04;
+    color: white;
+}
+
 @media screen and (min-width: 600px){
 
     .datesEditForm {

@@ -264,7 +264,6 @@ function toggleFilterItems(){
     filtros.classList.toggle('hide');
     document.querySelector('.filterDiv').classList.toggle('openFilterDiv');
     document.querySelector('.filterDiv').classList.toggle('closedFilterDiv');
-    // document.querySelector('.filtroFecha').classList.toggle('hide');
     document.querySelector('.nav-buttons').classList.toggle('hide');
     document.querySelector('.dropDownFilter1').classList.toggle('hide');
     document.querySelector('.fa-history').classList.toggle('hide');    
@@ -415,7 +414,6 @@ function cerrarProyecto(element){
         })
         .then(response => response.text())
         .then(data => {
-            console.log('PHP response:', data);
             finalReport(projectId);
         })
         .catch(error => {
@@ -442,7 +440,6 @@ function concluirProyecto(element){
         })
         .then(response => response.text())
         .then(data => {
-            console.log('PHP response:', data);
             finalReport(projectId);
         })
         .catch(error => {
@@ -464,3 +461,8 @@ document.addEventListener('DOMContentLoaded', function() {
         pagination.style.display = 'none';
     }
 })
+
+function projectHistory(){
+    console.log('opening');
+    window.location.href = `projectsManagement.php?project-history`;
+}

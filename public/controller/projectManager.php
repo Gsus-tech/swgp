@@ -247,12 +247,44 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     
+    if (isset($_GET['reactivate'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $proyectoId = filter_var($_GET['reactivate'], FILTER_VALIDATE_INT);
+    
+        if ($proyectoId !== false) {
+            $sql = "UPDATE tbl_proyectos SET estado = ? WHERE id_proyecto = ?";
+            $estado = 1;
+            $stmt = $mysqli->prepare($sql);
+    
+            if ($stmt) {
+                $stmt->bind_param('ii', $estado, $proyectoId);
+    
+                // Ejecutar la consulta
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        $_SESSION['project-reactivated']=true;
+                        echo json_encode(['success' => true, 'message' => 'Proyecto reactivado.']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se encontró el proyecto o no se realizaron cambios.']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al reactivar el proyecto: ' . $stmt->error]);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+    }
 
     else{
-        header("Location: $destination");
+        header("Location: $destination?project-histoy");
     }
 }else{
-    header("Location: $destination");
+    header("Location: $destination?project-histoy");
 }
 
 

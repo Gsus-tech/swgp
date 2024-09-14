@@ -570,18 +570,122 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
                 
-            } else if(isset($_GET['project-histoy'])){
+            } else if(isset($_GET['project-history'])){
                 ?>
                 <div class="header">
                     <h4>Historial de Proyectos</h4>
                 </div>
                 
                 <div class="projectManagement">
-                
-                </div>
-                
-                <?php
+                    <!-- Filtros de busqueda -->
+                    <div class="filterDiv closedFilterDiv">
+                        <i id="filterProjectsList" class="fa fa-sliders button" title="Filtrar resultados"></i>
+                        <div class="dropDownFilters hide ">
+                            <h3>Filtrar por:</h3>
+                            <div>
+                            <select class="dropDownDeptoFilter comboBox mL-2r" id="dropDownDeptoFilter" name="dropDownDeptoFilter" onchange="FilterHistoryResults(this)">
+                                <option value="noFilter">- Departamento asignado -</option>
+                                <?php
+                                    $Deptos = Crud::getFiltersOptions('tbl_proyectos', 'departamentoAsignado');
+                                if (count($Deptos) > 0) {
+                                    for ($i = 0; $i < count($Deptos); $i++) {
+                                        foreach ($Deptos[$i] as $key => $value) {
+                                            echo '<option value=' . $i . '>' . $value . '</option>';
+                                        }
+                                    }
+                                }
+                                ?>
+                            </select>
+                            </div>
+                            <div>
+                            <select class="dropDownDeptoFilter comboBox mL-2r" id="dropDownStateFilter" name="dropDownStateFilter" onchange="FilterHistoryResults(this)">
+                                <option value="noFilter">- Estado del proyecto -</option>
+                                <option value="concluded">Concluido</option>
+                                <option value="canceled">Cancelado</option>
+                            </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabla de historial de proyectos -->
+                    <div class="table">
+                        <table class="project-list hoverTable">
+                            <thead>
+                                <tr>
+                                    <th class="selectProjects"><input type="checkbox" id="selectAllBoxes"></th>
+                                    <th class="rowName">Nombre del proyecto</th>
+                                    <th class="rowName">Departamento asignado</th>
+                                    <th class="rowFechaIni">Estado final</th>
+                                    <th class="rowFechaFin">Progreso alcanzado</th>
+                                    <th class="rowEstado">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id='projects-list-body'>
+                                <?php
+                                    $query = "SELECT id_proyecto, nombre, departamentoAsignado, estado 
+                                    FROM tbl_proyectos 
+                                    WHERE estado = ? OR estado = ?
+                                    ORDER BY id_proyecto DESC";
+                          
+                                    $params = [0, 2];
+                                    $p = Crud::executeResultQuery($query, $params, 'ii');
+                                    if (count($p) > 0) {
+                                        for ($i = 0; $i < count($p); $i++) {
+                                            $fl = false;
+                                            $percentage = 0;
+                                            $percentage = getActPercentage($p[$i]['id_proyecto']);   
+                                            $currentId = $p[$i]['id_proyecto'];   
+                                            echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')" p-p="' . $percentage . '" p-i="' . $p[$i]['id_proyecto'] . '">';
+                                            $count = 0;
+                                            foreach ($p[$i] as $key => $value) {
+                                                if ($count===0) {
+                                                    echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
+                                                } elseif ($count===3) {
+                                                    $estados = [
+                                                        0 => 'Cancelado',
+                                                        1 => 'Abierto',
+                                                        2 => 'Concluido'
+                                                    ];
+                                                    $color = (int)$value === 0 ? 'redStateBg' : 'greenStateBg';
+                                                    echo '<td class="' . $color . '" >' . htmlspecialchars($estados[(int)$value], ENT_QUOTES, 'UTF-8') . '</td>';
+                                                }else {
+                                                    $cId = htmlspecialchars($p[$i]['id_proyecto']);
+                                                    echo "<td>" . htmlspecialchars($value) . "</td>";
+                                                } 
+                                                $fl = true;
+                                                $count++;
+                                            }
+                                            echo '<td>' . htmlspecialchars($percentage, ENT_QUOTES, 'UTF-8') . '%</td>';
+                                            if ($fl == true) {
+                                                    echo "<td>";                                                
+                                                if($p[$i]['estado'] == 0){
+                                                        echo "<a id='reactivate' class='fa fa-retweet button' title='Reactivar proyecto' onclick='reactivateProject(this)'></a>";
+                                                    }
+                                                    echo "<a class='fa fa-file-pdf-o button' title='Ver reporte de proyecto' onclick='seePojectReport(this)'></a></td>";
+                                                    echo "<a class='fa fa-trash button' title='Eliminar proyecto permanentemente' onclick='deleteProject(this)'></a></td>";
+                                                    echo '</tr>';
+                                            }
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='6'>No se encontraron resultados.</td></tr>";
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                        <div class="pagination" id="pagination"></div>
 
+                    </div> <!-- Fin de table -->   
+               
+                <script src="../js/projectHistory.js"></script>
+                <?php
+                if(isset($_SESSION['project-reactivated']) && $_SESSION['project-reactivated']===true){
+                    $_SESSION['project-reactivated']=false;
+                    echo "<script>
+                        window.addEventListener('load', function(){
+                            alert('Proyecto reactivado con éxito.');    
+                        });
+                    </script>";              
+                }
             } else { 
                 ?>
                 <div class="header">
@@ -593,7 +697,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                 <!-- Filtros de busqueda -->
                 <div class="filterDiv closedFilterDiv">
-                    <i id="historialProyectos" class="fa fa-history button" title="Historial de proyectos" style="margin-right:.5rem;"></i>
+                    <i id="historialProyectos" class="fa fa-history button" title="Historial de proyectos" style="margin-right:.5rem;" onclick="projectHistory()"></i>
                     <i id="filterProjectsList" class="fa fa-sliders button" title="Filtrar resultados"></i>
                     <div class="dropDownFilter1 hide ">
                         <label for="filtersForRol">Departamento asignado:</label>
@@ -630,17 +734,14 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <th class="rowName">Departamento asignado</th>
                                 <th class="rowFechaIni">Fecha de inicio</th>
                                 <th class="rowFechaFin">Fecha de cierre</th>
-                                <th class="rowEstado">Estado</th>
-                                <?php
-                                if (isset($_GET['search'])) { echo "<th class='rowActions'>Acciones</th>"; }
-                                ?>
+                                <th class='rowActions'>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id='projects-list-body'>
                             <?php
                             if (isset($_GET['search']) || isset($_GET['filterDto'])) {
                                 if (isset($_GET['search'])) {
-                                    $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre,estado", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);
+                                    $p = Crud::selectProjectSearchData("id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre", "tbl_proyectos", "id_proyecto", "DESC", $_GET['search']);
                                 } else {
                                     $query = "SELECT id_proyecto,nombre,departamentoAsignado,fecha_inicio,fecha_cierre FROM tbl_proyectos WHERE departamentoAsignado = ? AND estado = ?";
                                     $params = [$_GET['filterDto'],1];
