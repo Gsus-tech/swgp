@@ -135,3 +135,79 @@ function deleteProject(projectId){
 function returnToProjectsList(){
     window.location.href = `projectsManagement.php`;
 }
+
+function FilterHistoryResults() {
+    const deptoFilterValue = document.getElementById('dropDownDeptoFilter').value;
+    const stateFilterValue = document.getElementById('dropDownStateFilter').value;
+    const allRows = document.querySelectorAll('#projects-list-body tr');
+    let visibleRowCount = 0;
+
+    // Eliminar el mensaje de "No se encontraron resultados" si existe
+    const noResultsRow = document.getElementById('no-results-row');
+    if (noResultsRow) {
+        noResultsRow.remove();
+    }
+
+    // Oculta o muestra filas basadas en los filtros seleccionados
+    allRows.forEach(row => {
+        // Verificar si la fila tiene al menos 4 celdas (para evitar errores con filas de mensajes)
+        if (row.cells.length >= 4) {
+            const deptoCellValue = row.cells[2].textContent.trim(); // Valor de la celda de departamento
+            const stateCellValue = row.cells[3].textContent.trim(); // Valor de la celda de estado
+
+            const deptoMatch = (deptoFilterValue === 'noFilter' || deptoCellValue === deptoFilterValue);
+            const stateMatch = (stateFilterValue === 'noFilter' || 
+                                (stateFilterValue === 'concluded' && stateCellValue === 'Concluido') ||
+                                (stateFilterValue === 'canceled' && stateCellValue === 'Cancelado'));
+
+            if (deptoMatch && stateMatch) {
+                row.style.display = ''; // Muestra la fila si coincide con ambos filtros
+                visibleRowCount++;
+            } else {
+                row.style.display = 'none'; // Oculta la fila si no coincide con los filtros
+            }
+        } else {
+            // Oculta filas que no cumplen con el formato esperado
+            row.style.display = 'none';
+        }
+    });
+
+    // Agregar un mensaje de "No se encontraron resultados" si no hay filas visibles
+    if (visibleRowCount === 0) {
+        const tbody = document.getElementById('projects-list-body');
+        const newRow = document.createElement('tr');
+        newRow.id = 'no-results-row';
+        newRow.innerHTML = "<td colspan='6'>No se encontraron resultados.</td>";
+        tbody.appendChild(newRow);
+    }
+
+    // Actualiza el texto del filtro aplicado
+    const currentFilterDisplay = document.getElementById('currentFilter');
+    if (currentFilterDisplay) {
+        let filterText = 'No hay filtro aplicado';
+        if (deptoFilterValue !== 'noFilter' || stateFilterValue !== 'noFilter') {
+            filterText = `Filtros aplicados: `;
+            if (deptoFilterValue !== 'noFilter') {
+                const deptoOptionText = document.querySelector(`#dropDownDeptoFilter option[value="${deptoFilterValue}"]`).textContent;
+                filterText += `Departamento: ${deptoOptionText} `;
+            }
+            if (stateFilterValue !== 'noFilter') {
+                const stateOptionText = document.querySelector(`#dropDownStateFilter option[value="${stateFilterValue}"]`).textContent;
+                filterText += `Estado: ${stateOptionText} `;
+            }
+        }
+        currentFilterDisplay.textContent = filterText;
+    }
+
+    // Mostrar u ocultar paginación
+    const pagination = document.getElementById('pagination');
+    if (deptoFilterValue === 'noFilter' && stateFilterValue === 'noFilter') {
+        pagination.style.display = '';
+        const activeButton = document.querySelector('#pagination .active');
+        if (activeButton) {
+            activeButton.click();
+        }
+    } else {
+        pagination.style.display = 'none';
+    }
+}

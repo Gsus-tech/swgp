@@ -583,17 +583,17 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <div class="dropDownFilters hide ">
                             <h3>Filtrar por:</h3>
                             <div>
-                            <select class="dropDownDeptoFilter comboBox mL-2r" id="dropDownDeptoFilter" name="dropDownDeptoFilter" onchange="FilterHistoryResults(this)">
+                            <select class="dropDownDeptoFilter comboBox mL-2r" id="dropDownDeptoFilter" name="dropDownDeptoFilter" onchange="FilterHistoryResults()">
                                 <option value="noFilter">- Departamento asignado -</option>
                                 <?php
-                                    $Deptos = Crud::getFiltersOptions('tbl_proyectos', 'departamentoAsignado');
-                                if (count($Deptos) > 0) {
-                                    for ($i = 0; $i < count($Deptos); $i++) {
-                                        foreach ($Deptos[$i] as $key => $value) {
-                                            echo '<option value=' . $i . '>' . $value . '</option>';
+                                    $Deptos = Crud::executeResultQuery("SELECT DISTINCT departamentoAsignado FROM tbl_proyectos WHERE estado = ? OR estado = ?", [0, 2], 'ii');
+                                    if (count($Deptos) > 0) {
+                                        for ($i = 0; $i < count($Deptos); $i++) {
+                                            foreach ($Deptos[$i] as $key => $value) {
+                                                echo '<option value="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '">' . $value . '</option>';
+                                            }
                                         }
                                     }
-                                }
                                 ?>
                             </select>
                             </div>
