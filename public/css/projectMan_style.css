@@ -63,14 +63,7 @@
     background-color: #b0b0b0;   
     transition: background-color 0.3s, color 0.3s;
 }  
-.container .projectManagement .table .project-list .rowActions {
-    width: 6.5rem; 
-} 
-.container .projectManagement .table .project-list .fa {
-    margin-left: 10%;  
-    text-decoration: none;
-    color: #333;
-}  
+ 
 .container .projectManagement .table .project-list .fa-check-square {
     color: #00720b;
 }  
@@ -80,12 +73,7 @@
     background-color: #00720b;
     color: #8bf600;
 }  
-.container .projectManagement .table .project-list th {
-    background-color: #f2f2f2;
-}  
-.container .projectManagement .table .project-list form {  
-    display: inline; 
-} 
+
 .container .main .projectManagement .addProject-form {   
     width: 100%;    
     height: 100%;    
@@ -522,7 +510,7 @@
     font-size: 1.5rem;
     font-weight: bold; 
 }
-.detailsContainer .redBtn {
+.detailsContainer .redBtn, .projectHistory .redBtn {
     padding: 10px; 
     position: fixed;  
     bottom: 20px;    
@@ -817,10 +805,6 @@
     border: 1px solid rgb(255, 0, 0);
 }
 
-.hoverTable:hover {
-    transition: background-color 0.3s, color 0.3s;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
 
 .enabled {
     background-color: #124734;

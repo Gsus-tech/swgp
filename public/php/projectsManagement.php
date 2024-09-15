@@ -576,7 +576,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <h4>Historial de Proyectos</h4>
                 </div>
                 
-                <div class="projectManagement">
+                <div class="projectManagement projectHistory">
                     <!-- Filtros de busqueda -->
                     <div class="filterDiv closedFilterDiv">
                         <i id="filterProjectsList" class="fa fa-sliders button" title="Filtrar resultados"></i>
@@ -661,9 +661,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                                 if($p[$i]['estado'] == 0){
                                                         echo "<a id='reactivate' class='fa fa-retweet button' title='Reactivar proyecto' onclick='reactivateProject(this)'></a>";
                                                     }
-                                                    echo "<a class='fa fa-file-pdf-o button' title='Ver reporte de proyecto' onclick='seePojectReport(this)'></a></td>";
-                                                    echo "<a class='fa fa-trash button' title='Eliminar proyecto permanentemente' onclick='deleteProject(this)'></a></td>";
-                                                    echo '</tr>';
+                                                    echo "<a class='fa fa-file-pdf-o button' title='Ver reporte de proyecto' onclick='seePojectReport(this)'></a>";
+                                                    echo '</td></tr>';
                                             }
                                         }
                                     } else {
@@ -674,18 +673,22 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </table>
                         <div class="pagination" id="pagination"></div>
 
+                        <div id="projectSelected" class="selectedRowsOptions hide">
+                            <select class="comboBox" name="actionSelected" id="actionSelected">
+                                <option value="0"> - Seleccionar acción - </option>
+                                <option value="delete">Eliminar proyecto(s) permanentemente</option>
+                            </select>
+                            <a id="applyAction" title="Aplicar acción a los proyectos seleccionados" class="button apply normalBtn">Aplicar</a>
+                            <a id="applyAction2" title="Aplicar acción a los proyectos seleccionados" class="button apply shortBtn fa fa-chevron-right"></a>
+                        </div>
+
                     </div> <!-- Fin de table -->   
+                    <a id="returnToProjects" class="button redBtn" onclick="returnToProjectsList()" title="Regresar"><i class="fa fa-arrow-circle-left"></i></a>
+                </div>
                
                 <script src="../js/projectHistory.js"></script>
+                <script src="../js/tablePagination.js"></script>
                 <?php
-                if(isset($_SESSION['project-reactivated']) && $_SESSION['project-reactivated']===true){
-                    $_SESSION['project-reactivated']=false;
-                    echo "<script>
-                        window.addEventListener('load', function(){
-                            alert('Proyecto reactivado con éxito.');    
-                        });
-                    </script>";              
-                }
             } else { 
                 ?>
                 <div class="header">
@@ -845,7 +848,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div id="projectSelected" class="selectedRowsOptions hide">
                     <select class="comboBox" name="actionSelected" id="actionSelected">
                         <option value="0"> - Seleccionar acción - </option>
-                        <option value="delete">Cerrar proyecto(s)</option>
+                        <option value="endProject">Cerrar proyecto(s)</option>
                     </select>
                     <a id="applyAction" title="Aplicar acción a los proyectos seleccionadas" class="button apply normalBtn">Aplicar</a>
                     <a id="applyAction2" title="Aplicar acción a los proyectos seleccionadas" class="button apply shortBtn fa fa-chevron-right"></a>

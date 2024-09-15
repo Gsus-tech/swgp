@@ -348,9 +348,39 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
     const applyAction1 = document.getElementById('applyAction');
     const applyAction2 = document.getElementById('applyAction2');
-    applyAction1.addEventListener('click', applyAction);
+    applyAction1.addEventListener('click', applyAction)
     applyAction2.addEventListener('click', applyAction);
 });
+
+function applyAction() {
+    showLoadingCursor();
+    var actionSelected = document.getElementById('actionSelected').value;
+    if (actionSelected === 'endProject') {
+        const checkboxes = document.querySelectorAll('.project-checkbox');
+        const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
+        
+        if(checkedCheckboxes.length>0){
+            const confirmationMessage = `¿Estás seguro de querer cerrar ${checkedCheckboxes.length} proyectos?`;
+            const userConfirmed = confirm(confirmationMessage);
+
+            if (userConfirmed) {
+                let promises = [];
+                checkedCheckboxes.forEach(box => {
+                    promises.push(cerrarProyectoBulkAction(box.value));
+                });
+                Promise.all(promises).then(() => {
+                    setTimeout(() => {
+                        hideLoadingCursor();
+                        localStorage.setItem('showEndedProjectsAlert', 'true');
+                        window.location.reload();
+                    }, 1000);
+                });
+            }else{
+                hideLoadingCursor();
+            }
+        }
+    }
+}
 
 function FilterResults(selectElement) {
     const selectedValue = selectElement.value; 
@@ -427,9 +457,8 @@ function concluirProyecto(element){
     while (closestElement && !closestElement.hasAttribute('p-i')) {
         closestElement = closestElement.parentElement;
     }
-        const projectId = closestElement.getAttribute('p-i');
+    const projectId = closestElement.getAttribute('p-i');
     const urlString = `../controller/projectManager.php?cierreProyecto=${encodeURIComponent(projectId)}`;
-    console.log(urlString); // Verificar la URL construida
 
     if (confirm("¡Enhorabuena!\nHaz finalizado este proyecto.\n\nConfirma la acción para continuar...")) {
         fetch(urlString + "&success=true", {
@@ -446,6 +475,30 @@ function concluirProyecto(element){
             console.error('Error en la solicitud AJAX:', error);
         });
     }
+}
+
+// Bulk actions
+function cerrarProyectoBulkAction(projectId){
+    const element = document.querySelector(`[p-i="${projectId}"]`);
+    const percentage = element.getAttribute('p-p');
+    let ready = percentage === 100 ? true : false;
+    let urlString = `../controller/projectManager.php?cierreProyecto=${encodeURIComponent(projectId)}`;
+    if (ready) {
+        urlString += '&success=true';
+    }
+    fetch(urlString, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(`Proyecto id=${projectId} cerrado...`);
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
 }
 
 function finalReport(id){
@@ -466,3 +519,11 @@ function projectHistory(){
     console.log('opening');
     window.location.href = `projectsManagement.php?project-history`;
 }
+
+// Mostrar alertas almacenadas en el localStorage
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('showEndedProjectsAlert') === 'true') {
+        alert('Proyectos finalizados éxitosamente.');
+        localStorage.removeItem('showEndedProjectsAlert');
+    }
+});

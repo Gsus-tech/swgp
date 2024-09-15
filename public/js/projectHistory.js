@@ -46,6 +46,92 @@ function reactivateProject(element){
     }
 }
 
-function deleteProject(element){
+//Habilitar acciones para proyectos seleccionados
+document.addEventListener('DOMContentLoaded', (event) => {
+    const checkboxes = document.querySelectorAll('.project-checkbox');
+    const projectSelectedDiv = document.getElementById('projectSelected');
+    const selectAllBox = document.getElementById('selectAllBoxes');
     
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateprojectSelectedDiv);
+    });
+
+    selectAllBox.addEventListener('change', () => {
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = selectAllBox.checked;
+        });
+        updateprojectSelectedDiv();
+    });
+
+    function updateprojectSelectedDiv() {
+        const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
+        if (checkedCheckboxes.length > 0) {
+            projectSelectedDiv.classList.remove('hide');
+        } else {
+            projectSelectedDiv.classList.add('hide');
+        }
+    }
+
+    const applyAction1 = document.getElementById('applyAction');
+    const applyAction2 = document.getElementById('applyAction2');
+    applyAction1.addEventListener('click', applyAction);
+    applyAction2.addEventListener('click', applyAction);
+});
+
+function applyAction() {
+    showLoadingCursor();
+    var actionSelected = document.getElementById('actionSelected').value;
+    if (actionSelected === 'delete') {
+        const checkboxes = document.querySelectorAll('.project-checkbox');
+        const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
+        
+        if(checkedCheckboxes.length>0){
+            const confirmationMessage = 
+            `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} proyecto(s)?\n`+
+            `\nEsta acción es irreversible y no podrás acceder a la información de este proyecto en el futuro.\n`+
+            `Esto incluye objetivos, actividades y eventos del proyecto.\n\n¿Continuar?`;
+            const userConfirmed = confirm(confirmationMessage);
+
+            if (userConfirmed) {
+                if(confirm('Confirmar la acción')){
+                    let promises = [];
+                    checkedCheckboxes.forEach(box => {
+                        promises.push(deleteProject(box.value));
+                    });
+                    Promise.all(promises).then(() => {
+                        setTimeout(() => {
+                            hideLoadingCursor();
+                            localStorage.setItem('showProjectsPermanentlyDeleted', 'true');
+                            window.location.reload();
+                        }, 1000);
+                    });
+                }else{
+                    hideLoadingCursor();
+                }
+            }else{
+                hideLoadingCursor();
+            }
+        }
+    }
+}
+
+function deleteProject(projectId){
+    let urlString = `../controller/projectManager.php?deleteProjectPermanently=${encodeURIComponent(projectId)}`;
+    fetch(urlString, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(`Proyecto eliminado correctamente de la base de datos.`);
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+}
+
+function returnToProjectsList(){
+    window.location.href = `projectsManagement.php`;
 }
