@@ -70,3 +70,11 @@ function makeAjaxRequest(url, method, data = null, successCallback, errorCallbac
         errorCallback(error.message);
     });
 }
+
+function showLoadingCursor() {
+    document.body.classList.add('loading');
+}
+
+function hideLoadingCursor() {
+    document.body.classList.remove('loading');
+}

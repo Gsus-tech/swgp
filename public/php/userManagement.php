@@ -460,7 +460,7 @@ exit();
 }
 }
 else{
-    header("Location: ../index.php");
+    header("Location: dashboard.php");
     exit();
 }
 ?> 

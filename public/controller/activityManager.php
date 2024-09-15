@@ -51,16 +51,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             $destination = "../php/activityManagement.php";
         }					
 
-        // if (!$fechaValida || $fechaValida->format($format) !== $fechaTermino) {
-        //     $destination .= "?error=" . urlencode('Error en el registro de la fecha. Formato de datos incorrecto.');
-        //     $fechaTermino = (new DateTime())->format('Y-m-d'); // Usar la fecha actual si la validación falla
-        // }
+        if (!$fechaValida || $fechaValida->format($format) !== $fechaTermino) {
+            $destination .= "?error=" . urlencode('Error en el registro de la fecha. Formato de datos incorrecto.');
+            $fechaTermino = (new DateTime())->format('Y-m-d'); // Usar la fecha actual si la validación falla
+        }
 
         $sql = "UPDATE `tbl_actividades` 
             SET `nombre_actividad` = ?, `descripción` = ?, `id_usuario` = ?, `fecha_estimada` = ?, `id_objetivo` = ? 
             WHERE `id_actividad` = ? AND `id_proyecto` = ?";
         $params = [$name, $description, $responsable, $fechaTermino, $idObjetivo, $activityId, $projectID];
         Crud::executeNonResultQuery($sql, $params, 'ssisiii', $destination);
+        
+        // if(isset($_GET['changeResponsible']) && $_GET['changeResponsible'] === 'true'){
+        //     $responsable = filter_var($_POST['userRespList'], FILTER_VALIDATE_INT);
+        //     $sql = "UPDATE `tbl_actividades` 
+        //     SET `id_usuario` = ?
+        //     WHERE `id_actividad` = ? AND `id_proyecto` = ?";
+        //     $params = [$responsable, $activityId, $projectID];
+        //     Crud::executeNonResultQuery($sql, $params, 'ssisiii', $destination);
+        // }
     }
    
     if (isset($_POST['delete']) && $_POST['delete'] == 'true' && isset($_POST['id']) && isset($_POST['rep'])) {

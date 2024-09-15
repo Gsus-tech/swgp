@@ -15,6 +15,8 @@
     --rowSelected: #e0e0fc;
     --sysBgColor: #eeeeee;
     --divBgColor: #aaa9a9;
+    --systemSideBarColor1:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
 }
 
 
@@ -35,6 +37,10 @@ body {
     font-size: 14px;
 }
 
+body.loading {
+    cursor: wait;
+}
+
 .container {
     display: flex;
     flex-flow: row wrap;
@@ -46,14 +52,13 @@ body {
     top: 0;
     height: 3rem;
     align-content: center;
-    background-image: linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    background-image: var(--systemSideBarColor2);
     position: fixed;
 
     .headerTitle {
         margin-top: 1rem;
     }
 }
-
 
 .topToolBar {
     margin: .5rem 0;
@@ -79,7 +84,7 @@ body {
 }
 
 .container .sidebar {
-    background-image: linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    background-image: var(--systemSideBarColor1);
     position: fixed;
     color: var(--white);
     width: 7rem;

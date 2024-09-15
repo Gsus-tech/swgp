@@ -23,7 +23,8 @@ table,
     border: 1px solid #aaa9a9;
     text-align: left;
     padding: 8px;
-    background-color: #f2f2f2;
+    background-color: var(--barColor2);
+    color:white;
     word-wrap: break-word;
 }
 
