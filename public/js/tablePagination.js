@@ -51,3 +51,20 @@ function paginateTable(tbodyId, rowsPerPage, paginationId) {
     displayTable(rows, rowsPerPage, currentPage);
     setupPagination(rows, rowsPerPage, paginationId);
 }
+
+
+function unpaginate(tbodyId, paginationId) {
+    const tableBody = document.getElementById(tbodyId);
+    const rows = tableBody.getElementsByTagName('tr');
+    const pagination = document.getElementById(paginationId);
+
+    // Mostrar todas las filas
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].style.display = ''; // Muestra todas las filas
+    }
+
+    // Ocultar la paginación
+    if (pagination) {
+        pagination.style.display = 'none';
+    }
+}
