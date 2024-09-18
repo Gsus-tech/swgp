@@ -341,7 +341,7 @@ body.loading {
         background: var(--systemSideBarColor2);
         z-index: 1; 
         transform: translateZ(0);
-        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
         overflow: hidden;
     }
 
@@ -720,5 +720,5 @@ body.loading {
 
 .header {
     transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
