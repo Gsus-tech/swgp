@@ -6,17 +6,18 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    background-color: #dae9ff;
+    background-color: #0a4db1;
     padding-bottom:2rem;
     margin: 20px;
     border-radius: 20px;
 }
 .kanban-title{
     padding: 20px;
-    background-color: #dae9ff;
+    background-color: #0a4db1;
     margin: 20px;
     margin-top: 10px;
     border-radius: 20px;
+    color:white;
 }
 .kanban-title h2{ 
     margin: 0 auto;
