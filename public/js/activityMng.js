@@ -11,21 +11,47 @@ function FiltersToggle(){
 }
 
 function FilterResults(selectElement) {
+    unpaginate('activity-list-body', 'pagination');
+
     const filterValue = selectElement.value;
     const tbody = document.getElementById('activity-list-body');
     const rows = tbody.getElementsByTagName('tr');
+    let visibleRows = 0;
 
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const estado = row.cells[2].textContent;
-        
+
         if (filterValue === 'noFilter' || estado === filterValue) {
             row.classList.remove('hide');
+            visibleRows++;
         } else {
             row.classList.add('hide');
         }
     }
+
+    const noResultsRow = document.getElementById('no-results-row');
+    if (noResultsRow) {
+        noResultsRow.remove();
+    }
+
+    if (visibleRows === 0) {
+        const newRow = tbody.insertRow();
+        newRow.id = 'no-results-row';
+        const newCell = newRow.insertCell(0);
+        newCell.colSpan = 6;
+        newCell.textContent = "No se encontraron resultados.";
+    }
+
+    const pagination = document.getElementById('pagination');
+    if (filterValue === 'noFilter') {
+        paginateTable('activity-list-body', 7, 'pagination'); 
+        pagination.style.display = 'block';
+    } else {
+        pagination.style.display = 'none';
+    }
 }
+
 
 function openAddForm(){
     const filtros = document.getElementById('filterDiv');
