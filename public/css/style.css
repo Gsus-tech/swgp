@@ -285,7 +285,7 @@ body.loading {
 
 .selectedRowsOptions{    
     position: absolute;
-    top: .5rem;
+    top: 4rem;
     right: 8%;
 } 
 

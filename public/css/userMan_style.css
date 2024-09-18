@@ -149,7 +149,7 @@
     position: absolute;
     border-radius: 25px;
     background-color: var(--navBtnBg);
-    top: .5rem;
+    top: 4rem;
     left: 5rem;
     margin: 0 16px;
     height: fit-content;
