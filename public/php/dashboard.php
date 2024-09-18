@@ -78,6 +78,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 }
             }
             
+            
 
             // Inicializar arrays para cada estado
             $pendientes = [];
@@ -129,7 +130,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
                         <?php 
-                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1)){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
                         }else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
@@ -158,7 +159,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
                         <?php 
-                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1)){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
                         }else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
@@ -187,7 +188,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
                         <?php 
-                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1)){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
                         } else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
@@ -215,7 +216,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         echo htmlspecialchars($tarjeta['descripción']); ?>
                         </p>
                         <?php 
-                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (int)$amIrep[0]['responsable'] === 1){
+                        if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1)){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
                         } else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
@@ -236,7 +237,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     <script src="../js/init.js"></script>
     <?php
-    if((int)$amIrep[0]['responsable'] === 1 || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
+    if((!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1) || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
         echo '<script src="../js/dashboard.js"></script>';
         echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>';
         echo '<script src="../js/ui/component.dragula.js"></script>';

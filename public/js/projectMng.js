@@ -407,7 +407,7 @@ function FilterResults(selectElement) {
     }
 
     const pagination = document.getElementById('pagination');
-    console.log(selectedValue);
+
     if (selectedValue === 'noFilter') {
         pagination.style.display = '';
         const activeButton = document.querySelector('#pagination .active');

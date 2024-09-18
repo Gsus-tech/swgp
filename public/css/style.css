@@ -50,9 +50,9 @@ body.loading {
     width: calc(100% - 3rem);
     display: block;
     top: 0;
-    height: 3rem;
+    height: 3.5rem;
     align-content: center;
-    background-image: var(--systemSideBarColor2);
+    background: var(--systemSideBarColor2);
     position: fixed;
 
     .headerTitle {
@@ -239,7 +239,8 @@ body.loading {
     background-color: var(--sysBgColor);
     z-index: 1;
     position: fixed;
-    top: 3.5rem;
+    padding-top: 3.5rem;
+    top: 0;
 }
 
 .accountMenu {
@@ -333,6 +334,22 @@ body.loading {
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
+@media (max-width: 550px) {
+    .header {
+        width: 100%;
+        background: var(--systemSideBarColor2);
+        z-index: 1; 
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        overflow: hidden;
+    }
+
+    body, html {
+        overflow-x: hidden;
+    }
+}
+
 
 
 @media screen and (min-width: 650px) {
@@ -699,4 +716,9 @@ body.loading {
 
 .dateCalendar{
     margin-top: 10px;
+}
+
+.header {
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
 }

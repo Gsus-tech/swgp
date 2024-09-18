@@ -134,12 +134,15 @@ function toggleFilterItems(){
 
 
 function FilterResults(selectElement, name, cell, cell2) {
+    unpaginate('users-list-body', 'pagination');
+
     const otherSelect = document.getElementById(`${name}`);
     const value = selectElement.value;
     const options = selectElement.options;
     let filterValue = '';
     let value2 = '';
-    if(name == 'filtersForRol'){
+
+    if (name === 'filtersForRol') {
         for (let i = 0; i < options.length; i++) {
             if (options[i].value == value) {
                 filterValue = i === 0 ? 'noFilter' : options[i].textContent.trim();
@@ -147,48 +150,39 @@ function FilterResults(selectElement, name, cell, cell2) {
             }
         }
         value2 = otherSelect.value;
-        console.log(`Other filter: ${value2}`);
-    }else{
+    } else {
         filterValue = value;
         value2 = otherSelect.selectedIndex === 0 ? 'noFilter' : otherSelect.options[otherSelect.selectedIndex].textContent.trim();
-        console.log(`Other filter: ${value2}`);
     }
 
-    //limpiar tabla del 0rows encontrados
+    // Limpiar mensaje de "0 rows encontrados"
     const noResultsRow = document.getElementById('no-results-row');
     if (noResultsRow) {
         noResultsRow.remove();
     }
 
-    const TwoFilters = otherSelect.value === 'noFilter' ? false : true;
-    console.log(`Two filters: ${TwoFilters}`);
     const tbody = document.getElementById('users-list-body');
     const rows = tbody.getElementsByTagName('tr');
     let visibleRows = 0;
-    //Buscar los rows compatibles con el filtrado
+
+    // Buscar los rows compatibles con el filtrado
     for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const filter = row.cells[cell].textContent;
         const filter2 = row.cells[cell2].textContent;
-        // console.log(`i es igual a: ${i}`);
 
-        // console.log(`Filters selected: 1: ${filterValue}      2: ${value2}\n`);
-        // console.log(`Row: 1: ${filter}     2: ${filter2}\n\n`);
-        if (TwoFilters == true && (filter === filterValue && filter2 === value2)) {
+        const matchesFirstFilter = (filterValue === 'noFilter' || filter === filterValue);
+        const matchesSecondFilter = (value2 === 'noFilter' || filter2 === value2);
+
+        if (matchesFirstFilter && matchesSecondFilter) {
             row.classList.remove('hide');
             visibleRows++;
-            console.log('visible: true')
-        }
-        else if(TwoFilters == false && (filterValue === 'noFilter' || filter === filterValue)){
-            row.classList.remove('hide');
-            visibleRows++;
-        }
-        else {
+        } else {
             row.classList.add('hide');
         }
     }
 
-    //Agregar el mensaje de 0 rows encontrados
+    // Agregar el mensaje de "0 rows encontrados"
     if (visibleRows === 0) {
         const newRow = tbody.insertRow();
         newRow.id = 'no-results-row';
@@ -196,7 +190,17 @@ function FilterResults(selectElement, name, cell, cell2) {
         newCell.colSpan = 6;
         newCell.textContent = "No se encontraron resultados.";
     }
+
+    // Mostrar u ocultar la paginación según el filtro
+    const pagination = document.getElementById('pagination');
+    if (filterValue === 'noFilter' && value2 === 'noFilter') {
+        paginateTable('users-list-body', 7, 'pagination');
+        pagination.style.display = 'block';
+    } else {
+        pagination.style.display = 'none';
+    }
 }
+
 
 //Cerrar filtros al hacer clic fuera del div
 document.addEventListener('DOMContentLoaded', (event) => {

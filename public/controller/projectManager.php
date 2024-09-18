@@ -232,6 +232,7 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
                 if ($stmt->execute()) {
                     if ($stmt->affected_rows > 0) {
                         echo json_encode(['success' => true, 'message' => 'Proyecto finalizado.']);
+                        $_SESSION['projectSelected']=0;
                     } else {
                         echo json_encode(['success' => false, 'message' => 'No se encontró el proyecto o no se realizaron cambios.']);
                     }
