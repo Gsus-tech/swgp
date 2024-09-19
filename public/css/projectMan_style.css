@@ -1,6 +1,5 @@
 
 .container .main .projectManagement {    
-    /* background-color: #fff;     */
     width: 100%;   
     margin-bottom: 2rem; 
 } 
@@ -10,7 +9,7 @@
     background-color: #0d8c7751;  
     margin: 15px; 
     border-radius: 50%;
-    bottom: 5rem;  
+    bottom: 2rem;  
     cursor: pointer;
 } 
 .container .main .projectManagement .addBtn .add-project-btn {  
@@ -27,7 +26,7 @@
     position: absolute;     
     border-radius: 25px;
     background-color: #b0b0b051; 
-    top: 0.5rem;   
+    top: 4rem;
     left: 5.5rem;    
     margin: 0 16px; 
 } 

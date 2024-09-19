@@ -31,28 +31,40 @@
                 class="text">Gestión de soporte</span></i></a></li>
                         
         <?php } ?>
-    <?php   if($_SESSION['rol']=='EST'){  
+    <?php   if($_SESSION['rol']=='EST'){
                 $isMember = array();
                 $user=$condition=$_SESSION['id'];
-                $data = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = '$user'");
+                $data = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$user], 'i');
                 $isMember[0] = Controller\GeneralCrud\Crud::isInArray($data, $_SESSION['id']);
-                $data2 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT responsable FROM tbl_integrantes WHERE id_usuario = '$user'");
+                $data2 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT responsable FROM tbl_integrantes WHERE id_usuario = ?", [$user], 'i');
                 $isMember[1] = Controller\GeneralCrud\Crud::isInArray($data2, 1);
                 
                 if($isMember[0]==true){ ?>
                     <li><a href="dashboard.php" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
                     class="text">Tablero Kanban</span></i></a></li>
-                    <?php if($isMember[1]==true){ ?>
-                        <li><a href="activityManagement.php" title="Gestión de actividades"><i class="fa fa-gears"><span 
-                        class="text">Gestión de actividades</span></i></a></li>
-                    <?php } ?>
-                    <li><a href="#" title="Seguimiento de actividades"><i class="fa fa-tasks"><span 
+                    <?php 
+                    if($isMember[1]==true){ ?>
+                    <li><a href="activityManagement.php" title="Actividades del proyecto"><i class="fa fa-gears"><span 
                     class="text">Actividades del proyecto</span></i></a></li>
-                    <li><a href="#" title="Módulo de soporte"><i class="fa fa-question"><span 
-                    class="text">Soporte técnico</span></i></a></li>
+                    <?php }
+                    $allow2 = false;
+
+                    $reportAccess=array();
+                    $query = "SELECT id_proyecto FROM tbl_actividades WHERE id_usuario = ?";
+                    $reportAccess = Controller\GeneralCrud\Crud::executeResultQuery($query, [$_SESSION['id']], 'i');
+                    $allow2 = count($reportAccess) >= 1;
+                
+                    if ($allow2) { 
+                        echo "<li><a href='actionsManagement.php' title='Reporte de actividades'><i class='fa fa-tasks'><span 
+                        class='text'>Reporte de actividades</span></i></a></li>";
+                    }
+                    ?>
+                    
                 <?php
                 }
             } ?>
+            <li><a href="#" title="Módulo de soporte"><i class="fa fa-question"><span 
+            class="text">Soporte técnico</span></i></a></li>
         </ul>
     </nav> 
 

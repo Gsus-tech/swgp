@@ -4,7 +4,7 @@ function validateDate(dateIni, dateFin) {
     // console.log(`${dateIni} > ${dateFin}`);
     dateIni.setHours(0, 0, 0, 0);
     dateFin.setHours(0, 0, 0, 0);
-    return dateIni > dateFin;
+    return dateIni >= dateFin;
 }
 
 function testRegex(elementId){

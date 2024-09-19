@@ -118,8 +118,8 @@ table:hover {
     .table td {
         font-size: 14px;
         .fa{
-        font-size:22px;
-    }
+            font-size:22px;
+        }
     }
 }
 
@@ -153,6 +153,12 @@ table:hover {
         background: #c2c2c2;
     }
 
+    .table{
+        background: var(--barColor2);
+        padding: 1px;
+        border-radius: 10px;
+    }
+    
     table {
         display: block;
         background: white;
@@ -182,9 +188,9 @@ table:hover {
     }
 
     tr {
-        border: 1px solid #ccc;
+        border: 1px solid var(--barColor2);
         margin-bottom: 15px;
-
+        
     }
 
     td {

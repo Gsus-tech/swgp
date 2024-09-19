@@ -19,6 +19,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 </head>
 <body class="short">
+    <?php 
+    $data1 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$_SESSION['id']], 'i');
+    $screenAccess = Controller\GeneralCrud\Crud::isInArray($data1, $_SESSION['id']);
+    if($screenAccess){
+        ?>
     <div class="container"> 
         <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
@@ -237,13 +242,37 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     <script src="../js/init.js"></script>
     <?php
-    if((!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1) || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
-        echo '<script src="../js/dashboard.js"></script>';
-        echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>';
-        echo '<script src="../js/ui/component.dragula.js"></script>';
+        if((!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1) || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
+            echo '<script src="../js/dashboard.js"></script>';
+            echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>';
+            echo '<script src="../js/ui/component.dragula.js"></script>';
+        }else{
+            echo '<script src="../js/dashboard-actions.js"></script>';
+        } 
     }else{
-        echo '<script src="../js/dashboard-actions.js"></script>';
-    } 
+        ?>
+    <div class="container"> 
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
+
+        <div class="main">
+            <div class="header flexAndSpaceDiv">
+                <h4 class="headerTitle">Bienvenido a SWGP-COBACH</h4>
+                <?php $pagina="dashboard"; include 'topToolBar.php'; ?>
+            </div>
+    
+            <div class="no-project-container">
+                <p>Parece que no estás participando en ningún proyecto.</p>
+                <p>Si consideras que esto es un error, por favor levanta un ticket en el módulo de soporte.</p>
+                <a href="#" class="support-btn">Levantar Ticket</a>
+            </div>
+
+        </div>
+    </div>
+    <script src="../js/init.js"></script>
+
+    <?php
+    }
     ?>
 </body>
 </html>

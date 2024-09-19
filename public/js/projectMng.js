@@ -39,12 +39,12 @@ function submitNewProject(){
         return false;
     }
 
-    if(validateDate(new Date(), new Date(anioI.value, mesI.value -1, diaI.value))){
+    if(new Date().setHours(0, 0, 0, 0) > new Date(anioI.value, mesI.value -1, diaI.value).setHours(0, 0, 0, 0)){
         mesI.setCustomValidity('Fecha de inicio inválida.\nEl proyecto no puede iniciar antes de la fecha actual.');
         mesI.reportValidity();        
         return false;
     }
-    if(validateDate(new Date(anioI.value, mesI.value -1, diaI.value), new Date(anioC.value, mesC.value -1, diaC.value))){
+    if(new Date(anioI.value, mesI.value -1, diaI.value) > new Date(anioC.value, mesC.value -1, diaC.value)){
         mesC.setCustomValidity('Fecha de cierre inválida.\nLa fecha de cierre debe ser posterior a la fecha de inicio.');
         mesC.reportValidity(); 
         return false;

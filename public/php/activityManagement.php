@@ -35,7 +35,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
         <div class="main">
             <div class="header flexAndSpaceDiv">
-                <h4 class="headerTitle">Gestión de actividades</h4>
+                <h4 class="headerTitle">Actividades del proyecto</h4>
                 <?php 
                 $needsSelect=array();
                 $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = ? AND responsable = ?";
