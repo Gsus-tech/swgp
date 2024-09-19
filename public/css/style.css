@@ -65,15 +65,17 @@ body.loading {
     margin-right: 1rem;
     display: grid;
     font-size: 11px;
+    justify-content:end;
+    align-items: center;
+}
 
-    .topBarText {
-        color: white;
-        margin-left: 2rem;
-    }
+.topBarText {
+    color: white;
+}
 
-    .listProyectos {
-        font-size: 11px;
-    }
+.listProyectos {
+    font-size: 11px;
+    max-width: 5rem;
 }
 
 .container .main .header h4 {
@@ -335,6 +337,46 @@ body.loading {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
+.no-project-container {
+    background-color: #f0f4f8;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 2rem;
+    width: calc(100% - 2rem);
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.no-project-container h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 1rem;
+}
+
+.no-project-container p {
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 1rem;
+}
+
+.support-btn {
+    display: inline-block;
+    background-color: var(--barColor1);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.support-btn:hover {
+    background-color: #0056b3;
+}
+
+
 @media (max-width: 550px) {
     .header {
         width: 100%;
@@ -350,7 +392,11 @@ body.loading {
     }
 }
 
-
+@media screen and (min-width: 600px) {
+    .listProyectos {
+        max-width: 10rem;
+    }
+}
 
 @media screen and (min-width: 650px) {
     .container .main {
