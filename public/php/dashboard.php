@@ -22,7 +22,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <?php 
     $data1 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$_SESSION['id']], 'i');
     $screenAccess = Controller\GeneralCrud\Crud::isInArray($data1, $_SESSION['id']);
-    if($screenAccess){
+    if($screenAccess || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
         ?>
     <div class="container"> 
         <!-- Sidebar -->
