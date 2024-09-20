@@ -80,8 +80,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <tr>
                                 <th class="selectActivities"><input type="checkbox" id="selectAllActivities"></th>
                                 <th class="rowNombre">Actividad</th>
-                                <th class="rowCargo">Estado</th>
-                                <th class="rowCargo">Fecha de finalización</th>
+                                <th class="rowEstado">Estado</th>
+                                <th class="rowFechaFin">Fecha de finalización</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -151,7 +151,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <thead>
                                     <tr>
                                         <th class="rowNombre">Reporte de actividad</th>
-                                        <th class="rowCargo">Fecha de creación</th>
+                                        <th class="rowFecha">Fecha de creación</th>
                                     </tr>
                                 </thead>
                                 <tbody id="reportsMade_tbody">
