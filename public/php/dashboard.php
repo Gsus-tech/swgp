@@ -262,7 +262,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div>
     
             <div class="no-project-container">
-                <p>Parece que no estás participando en ningún proyecto.</p>
+                <h2>-- Sin proyectos para mostrar --</h2>
+                <br>
+                <p>No se encontraron proyectos en los que estés participando.</p>
                 <p>Si consideras que esto es un error, por favor levanta un ticket en el módulo de soporte.</p>
                 <a href="#" class="support-btn">Levantar Ticket</a>
             </div>
