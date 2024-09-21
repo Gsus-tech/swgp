@@ -3,7 +3,7 @@
     --barColor2: #28029b;
     --hover-items: #333;
     --hover-AddBtn: #09be00;
-    --black: #333;
+    --black: #101010;
     --white: #fff;
     --gray: #9a9a9a;
     --menuColor: #e0e2e1;
@@ -15,6 +15,7 @@
     --rowSelected: #e0e0fc;
     --sysBgColor: #eeeeee;
     --divBgColor: #aaa9a9;
+    --divBgColorSys: #f0f4f7;
     --systemSideBarColor1:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
     --systemSideBarColor2:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
 }
@@ -54,7 +55,7 @@ body.loading {
     align-content: center;
     background: var(--systemSideBarColor2);
     position: fixed;
-
+    z-index: 100;
     .headerTitle {
         margin-top: 1rem;
     }
@@ -303,8 +304,8 @@ body.loading {
     font-style: italic;
 }
 
-.pB-120 {  
-    padding-bottom: 120px; 
+.pB-70 {  
+    padding-bottom: 70px; 
 } 
 
 .invalidField{
