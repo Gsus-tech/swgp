@@ -593,7 +593,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function addPadding(){
         const mn = document.querySelector('.main');
-        mn.classList.add('pB-120');
+        mn.classList.add('pB-70');
     }
     
     init();    

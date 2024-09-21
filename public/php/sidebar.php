@@ -62,9 +62,9 @@
                     
                 <?php
                 }
+                echo "<li><a href='#' title='Módulo de soporte'><i class='fa fa-question'><span 
+            class='text'>Soporte técnico</span></i></a></li>";
             } ?>
-            <li><a href="#" title="Módulo de soporte"><i class="fa fa-question"><span 
-            class="text">Soporte técnico</span></i></a></li>
         </ul>
     </nav> 
 

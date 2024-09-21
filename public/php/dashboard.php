@@ -22,7 +22,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <?php 
     $data1 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$_SESSION['id']], 'i');
     $screenAccess = Controller\GeneralCrud\Crud::isInArray($data1, $_SESSION['id']);
-    if($screenAccess){
+    if($screenAccess || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
         ?>
     <div class="container"> 
         <!-- Sidebar -->
@@ -262,7 +262,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div>
     
             <div class="no-project-container">
-                <p>Parece que no estás participando en ningún proyecto.</p>
+                <h2>-- Sin proyectos para mostrar --</h2>
+                <br>
+                <p>No se encontraron proyectos en los que estés participando.</p>
                 <p>Si consideras que esto es un error, por favor levanta un ticket en el módulo de soporte.</p>
                 <a href="#" class="support-btn">Levantar Ticket</a>
             </div>

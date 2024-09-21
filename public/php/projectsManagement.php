@@ -614,10 +614,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <tr>
                                     <th class="selectProjects"><input type="checkbox" id="selectAllBoxes"></th>
                                     <th class="rowName">Nombre del proyecto</th>
-                                    <th class="rowName">Departamento asignado</th>
+                                    <th class="rowDepto">Departamento asignado</th>
                                     <th class="rowFechaIni">Estado final</th>
                                     <th class="rowFechaFin">Progreso alcanzado</th>
-                                    <th class="rowEstado">Acciones</th>
+                                    <th class="rowActions">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id='projects-list-body'>

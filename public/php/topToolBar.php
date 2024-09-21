@@ -107,16 +107,35 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
         });
 
     document.addEventListener('DOMContentLoaded', function() {
-        const selectElement = document.getElementById('listProyectosRes');
-        const hiddenInput = document.getElementById('selectedProject');
-        const form = document.getElementById('switchForm');
+    const selectElement = document.getElementById('listProyectosRes');
+    const hiddenInput = document.getElementById('selectedProject');
 
-        selectElement.addEventListener('change', function() {
-            const selectedValue = selectElement.value;
-            hiddenInput.value = selectedValue;
-            form.submit();
+    selectElement.addEventListener('change', function() {
+        const selectedValue = selectElement.value;
+        hiddenInput.value = selectedValue;
+
+        const formData = new FormData();
+        formData.append('selectedProject', selectedValue);
+
+        fetch('../controller/PHP-Request.php?change-selectedProject=true', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Proyecto cambiado exitosamente');
+                window.location.reload();
+            } else {
+                console.error('Error al cambiar proyecto');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
         });
     });
+});
+
 </script>
 
 

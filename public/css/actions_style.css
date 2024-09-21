@@ -1,0 +1,150 @@
+.activity-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.selectActivityDiv, .activityStatusDiv {
+    margin: 10px 2rem;
+    padding: 1rem;
+    background-color: var(--divBgColor);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+}
+
+.select-label, .activityStatusDiv label {
+    font-size: 14px;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.activityStatusDiv p {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.comboBox{
+    max-width: 14rem;
+}
+
+
+
+/* Comienza testitng de interface */
+.report-creator {
+    border: 2px solid #ccc;
+    padding: 1rem;
+    position: relative;
+    min-height: 300px;
+    margin: 2rem;
+    background-color: #f9f9f9;
+}
+
+.report-input-area {
+    min-height: 200px;
+    margin-bottom: 4rem;
+}
+
+.toolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--barColor2);
+    padding: 0.5rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.toolbar i {
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.toolbar i:hover {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.toolbar button{
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #f4f4f4;
+
+}
+
+.toolbar button:hover{
+    background-color: #d6d6d6;
+}
+
+
+.hidden {
+    display: none;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.input-title, .input-subtitle, .input-text {
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    resize: none;
+    overflow: hidden;
+}
+
+.input-title {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.input-subtitle {
+    font-size: 1.25rem;
+}
+
+.input-text {
+    min-height: 100px;
+}
+
+.remove-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transform: translateY(-50%);
+    color: red;
+    cursor: pointer;
+}
+
+.report-image {
+    display: block;
+    max-width: 60%;
+    margin: 1rem auto;
+    border: 2px solid #ccc;
+}
+
+.report-input-area img {
+    width: 60%;
+    max-width: 300px;
+    min-width: 100px;
+    display: block;
+    margin: 1rem auto;
+    border: 2px solid #ccc;
+    resize: both;
+}
+/* Fin de testing  */
+
+
+@media (max-width: 700px) {
+    .activity-wrapper {
+        flex-direction: column;
+    }
+}
