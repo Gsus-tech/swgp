@@ -383,23 +383,22 @@ body.loading {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 999;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 .confirmation-dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    padding: 1.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    z-index: 1000;
-    width: 300px;
-    max-width: 80%;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: fit-content;
+    max-width: 90%;
     text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .confirmation-content h3 {
@@ -408,7 +407,8 @@ body.loading {
     color: #333;
 }
 
-.confirmation-content p {
+.confirmation-content pre {
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 1.1rem;
     color: #555;
     margin: 1rem 0;
@@ -834,4 +834,25 @@ body.loading {
 .header {
     transform: translateZ(0);
     backface-visibility: hidden;
+}
+
+/* Animación de entrada del modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }

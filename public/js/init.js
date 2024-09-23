@@ -93,7 +93,7 @@ function createConfirmationDialog(title, message, onConfirm) {
     confirmationContent.appendChild(titleC);
 
     // Mensaje del confirm
-    const messageParagraph = document.createElement('p');
+    const messageParagraph = document.createElement('pre');
     messageParagraph.textContent = message;
     confirmationContent.appendChild(messageParagraph);
 
