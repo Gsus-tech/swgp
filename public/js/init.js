@@ -78,3 +78,51 @@ function showLoadingCursor() {
 function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
+
+function createConfirmationDialog(title, message, onConfirm) {
+    //Div del confirm
+    const confirmationDiv = document.createElement('div');
+    confirmationDiv.classList.add('confirmation-overlay');
+    const confirmationDialog = document.createElement('div');
+    confirmationDialog.classList.add('confirmation-dialog');
+    const confirmationContent = document.createElement('div');
+    confirmationContent.classList.add('confirmation-content');
+    //Titulo
+    const titleC = document.createElement('h3');
+    titleC.textContent = title;
+    confirmationContent.appendChild(titleC);
+
+    // Mensaje del confirm
+    const messageParagraph = document.createElement('p');
+    messageParagraph.textContent = message;
+    confirmationContent.appendChild(messageParagraph);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('confirmation-buttons');
+
+    // Botón de confirmar
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Confirmar';
+    buttonContainer.appendChild(confirmButton);
+
+    // Botón de cancelar
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancelar';
+    buttonContainer.appendChild(cancelButton);
+
+    confirmationContent.appendChild(buttonContainer);
+    confirmationDialog.appendChild(confirmationContent);
+    confirmationDiv.appendChild(confirmationDialog);
+
+    document.body.appendChild(confirmationDiv);
+
+    // Evento confirmar
+    confirmButton.addEventListener('click', function() {
+        onConfirm();
+        confirmationDiv.remove();
+    });
+    // Evento cancelar
+    cancelButton.addEventListener('click', function() {
+        confirmationDiv.remove();
+    });
+}
