@@ -30,9 +30,10 @@
     max-width: 14rem;
 }
 
+.rowAcciones {
+    width: 8rem;
+}
 
-
-/* Comienza testitng de interface */
 .report-creator {
     border: 2px solid #ccc;
     padding: 1rem;
@@ -42,9 +43,21 @@
     background-color: #f9f9f9;
 }
 
+.report-creator:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 .report-input-area {
     min-height: 200px;
     margin-bottom: 4rem;
+}
+
+.report-input-area {
+    transition: background-color 1s ease;
+}
+
+.highlight-error {
+    background-color: rgba(255, 0, 0, 0.5); /* Rojo con transparencia */
 }
 
 .toolbar {
@@ -140,8 +153,108 @@
     border: 2px solid #ccc;
     resize: both;
 }
-/* Fin de testing  */
 
+/* Div para nombrar el reporte */
+.nombrarReporte {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.nombrarReporte-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.nombrarReporte-content h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.nombrarReporte-content label {
+    display: block;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.nombrarReporte-content .input-text {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    outline: none;
+    height:3rem;
+    min-height: 3rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nombrarReporte-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nombrarReporte-buttons button {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#saveReportBtn {
+    background-color: #266b36;
+    color: white;
+}
+
+#saveReportBtn:hover {
+    background-color: #218838;
+}
+
+#cancelBtn {
+    background-color: #92232e;
+    color: white;
+}
+
+#cancelBtn:hover {
+    background-color: #c82333;
+}
+
+/* Animación de entrada del modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+/* Fin de testing  */
 
 @media (max-width: 700px) {
     .activity-wrapper {

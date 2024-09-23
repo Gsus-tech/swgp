@@ -1,112 +1,162 @@
 // Manejar el cambio de actividad
-document.addEventListener('DOMContentLoaded', function() {
-    const selectActividad = document.getElementById('select-actividad'); // Asegúrate de que este ID coincida con el HTML.
+function updatePageData() {
+    const selectActividad = document.getElementById('select-actividad');
+    if (selectActividad) {
+        const actividadId = selectActividad.value;
+        const reportMakingDiv = document.getElementById('reportCreator');
 
-    if (selectActividad) { // Verifica que selectActividad no sea null
-        selectActividad.addEventListener('change', function() {
-            const actividadId = selectActividad.value;
-    
-            // Verifica que una actividad válida haya sido seleccionada y que actividadId sea un entero válido
-            if (actividadId !== 'none' && Number.isInteger(parseInt(actividadId))) {
+        if (actividadId !== 'none' && Number.isInteger(parseInt(actividadId))) {
+            reportMakingDiv.classList.remove('hide');
+            const url = '../controller/actionsManager.php?ajaxUpdate=true&activityId=' + actividadId;
 
-                const url = '../controller/actionsManager.php?ajaxUpdate=true&activityId=' + actividadId;
-                makeAjaxRequest(url, 'POST', null, function(response) {
-                    // Verificar respuesta
-                    if (response && response.success) {
-                        const data = response.data;
+            makeAjaxRequest(url, 'POST', null, function(response) {
+                // Validar respuesta
+                if (response && response.success) {
+                    const data = response.data;
 
-                        const estados = {
-                            1: 'Pendiente',
-                            2: 'En proceso',
-                            3: 'Retrasado',
-                            4: 'Finalizado'
-                        };
-            
-                        const updateFieldValue = (fieldId, value) => {
-                            const field = document.getElementById(fieldId);
-                            if (field) {
-                                field.textContent = value || '';
-                            }
-                        };
-                        updateFieldValue('estadoActividad', `${estados[data.estadoActual]}`);
-                        updateFieldValue('numeroReportes', `${data.numeroReportes}`);
-                        
-                        updateReportsTable(actividadId, data.numeroReportes);
+                    const estados = {
+                        1: 'Pendiente',
+                        2: 'En proceso',
+                        3: 'Retrasado',
+                        4: 'Finalizado'
+                    };
 
-                    } else {
-                        document.getElementById('estadoActividad').innerHTML = '<i>No disponible</i>';
-                        document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
-                    }
-                },
-                function(error) {
-                    // Manejo de errores
-                    console.error('Error en la solicitud:', error);
-                });
+                    const updateFieldValue = (fieldId, value) => {
+                        const field = document.getElementById(fieldId);
+                        if (field) {
+                            field.textContent = value || '';
+                        }
+                    };
 
+                    updateFieldValue('estadoActividad', `${estados[data.estadoActual]}`);
+                    updateFieldValue('numeroReportes', `${data.numeroReportes}`);
 
+                    // Actualizar la tabla de reportes
+                    updateReportsTable(actividadId, data.numeroReportes);
 
-            } else {
-                // Si se selecciona 'none', limpiar o restablecer la información mostrada.
-                document.getElementById('estadoActividad').innerHTML = '<i>Pendiente</i>';
-                document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
-            }
-        });    
+                } else {
+                    document.getElementById('estadoActividad').innerHTML = '<i>No disponible</i>';
+                    document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
+                }
+            },
+            function(error) {
+                // Manejo de errores
+                console.error('Error en la solicitud:', error);
+            });
+
+        } else {
+            // Si se selecciona 'none', limpiar o restablecer la información mostrada.
+            document.getElementById('estadoActividad').innerHTML = '<i>No disponible</i>';
+            document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
+            reportMakingDiv.classList.add('hide');
+            const tableBody = document.getElementById('reportsMade_tbody');
+            tableBody.innerHTML = '';
+            const noReportRow = document.createElement('tr');
+            const noReportCell = document.createElement('td');
+            noReportCell.colSpan = 3;
+            noReportCell.innerHTML = '<i>Selecciona una actividad</i>';
+            noReportRow.appendChild(noReportCell);
+            tableBody.appendChild(noReportRow);
+        }
     } else {
         console.error('No se encontró el elemento select con el id "select-actividad".');
     }
-    
-    function updateReportsTable(actividadId, reportes){
-        const table = document.getElementById('reportsMade');
-        if(table){
-            if(reportes > 0){
-                alert('Existen reportes');
-            }else{
-                alert('No hay reportes registrados.');
-            }
+}
+
+function updateReportsTable(actividadId, reportes) {
+    const table = document.getElementById('reportsMade');
+    if (table) {
+        const tableBody = document.getElementById('reportsMade_tbody');
+        if (reportes > 0) {
+            const url = `../controller/actionsManager.php?getReportInfo=true&actId=${actividadId}`;
+
+            // Ajax para obtener la información de los reportes y mostrarla en la tabla de reportes
+            makeAjaxRequest(url, 'POST', null, function(response) {
+                if (response && response.success) {
+                    const data = response.data;
+                    tableBody.innerHTML = '';
+                    data.forEach(rowData => {
+                        const reportRow = document.createElement('tr');
+                        const cellNombre = document.createElement('td');
+                        cellNombre.innerText = rowData.nombre;
+                        reportRow.appendChild(cellNombre);
+                        const cellFecha = document.createElement('td');
+                        cellFecha.innerText = rowData.fecha_creacion;
+                        reportRow.appendChild(cellFecha);
+                        const cellActions = document.createElement('td');
+                        cellActions.innerHTML = "<i class='fa fa-eye button' title='Ver reporte'></i><i class='fa fa-trash button' title='Eliminar reporte'></i>";
+                        reportRow.appendChild(cellActions);
+                        tableBody.appendChild(reportRow);
+                    });
+                } else {
+                    console.error('Respuesta inválida o no exitosa:', response);
+                    alert('No se pudieron cargar los reportes de la actividad.');
+                }
+            }, function(error) {
+                console.error('Error en la solicitud:', error);
+            });
+        } else {
+            tableBody.innerHTML = '';
+            const noReportRow = document.createElement('tr');
+            const noReportCell = document.createElement('td');
+            noReportCell.colSpan = 3;
+            noReportCell.innerHTML = '<i>Sin reportes realizados...</i>';
+            noReportRow.appendChild(noReportCell);
+            tableBody.appendChild(noReportRow);
         }
     }
-});
+}
 
+document.addEventListener('DOMContentLoaded', function() {
+    const updateData = document.getElementById('updateDataNow');
+    if (updateData) {
+        console.log('The div exists');
+        const selectActividad = document.getElementById('select-actividad');
+        selectActividad.value = updateData.value;
+        updatePageData();
+    }
+});
 
 // AREA DE CREACIÓN DE REPORTES
 
 const reportInputArea = document.getElementById('reportInputArea');
 const imageUploader = document.getElementById('imageUploader');
 
-// Función para crear el botón de eliminación dentro del contenedor del elemento
+// Crear el botón de eliminación dentro del contenedor del elemento
 function createRemoveButton(targetContainer) {
     const removeBtn = document.createElement('i');
     removeBtn.classList.add('fa', 'fa-close', 'remove-btn');
     removeBtn.title = 'Eliminar';
 
     removeBtn.addEventListener('click', function () {
-        targetContainer.remove(); // Eliminar el contenedor completo
+        targetContainer.remove(); // Eliminar el elemento
     });
     return removeBtn;
 }
 
-// Función para ajustar el tamaño de los input/textarea según el contenido
 function autoResize(element) {
-    element.style.height = 'auto'; // Reiniciar el height
-    element.style.height = element.scrollHeight + 'px'; // Ajustar al nuevo height
+    element.style.height = 'auto';
+    element.style.height = element.scrollHeight + 'px';
 }
 
 // Agregar título (h2)
 document.getElementById('addTitle').addEventListener('click', function () {
-    const container = document.createElement('div');
-    container.classList.add('input-container');
+    if (!document.querySelector('.input-title')) {  // Verificar si ya existe un título
+        const container = document.createElement('div');
+        container.classList.add('input-container');
 
-    const titleInput = document.createElement('textarea'); // Cambié de input a textarea para mejor adaptación
-    titleInput.placeholder = 'Escribe el título aquí...';
-    titleInput.classList.add('input-title');
-    titleInput.rows = 1;
-    titleInput.addEventListener('input', function () {
-        autoResize(titleInput);
-    });
+        const titleInput = document.createElement('textarea');
+        titleInput.placeholder = 'Escribe el título aquí...';
+        titleInput.classList.add('input-title');
+        titleInput.rows = 1;
+        titleInput.addEventListener('input', function () {
+            autoResize(titleInput);
+        });
 
-    container.appendChild(titleInput);
-    container.appendChild(createRemoveButton(container));
-    reportInputArea.appendChild(container);
+        container.appendChild(titleInput);
+        container.appendChild(createRemoveButton(container));
+        reportInputArea.appendChild(container);
+    }
 });
 
 // Agregar subtítulo (h3)
@@ -114,7 +164,7 @@ document.getElementById('addSubtitle').addEventListener('click', function () {
     const container = document.createElement('div');
     container.classList.add('input-container');
 
-    const subtitleInput = document.createElement('textarea'); // Cambié de input a textarea para mejor adaptación
+    const subtitleInput = document.createElement('textarea');
     subtitleInput.placeholder = 'Escribe el subtítulo aquí...';
     subtitleInput.classList.add('input-subtitle');
     subtitleInput.rows = 1;
@@ -154,8 +204,7 @@ document.getElementById('addImage').addEventListener('click', function () {
 imageUploader.addEventListener('change', function (event) {
     const file = event.target.files[0];
 
-    // Validar que el archivo no exceda los 5 MB
-    if (file && file.size <= 5 * 1024 * 1024) { // 5 MB en bytes
+    if (file && file.size <= 2 * 1024 * 1024) { // 1 MB
         const reader = new FileReader();
         reader.onload = function (e) {
             const container = document.createElement('div');
@@ -171,6 +220,188 @@ imageUploader.addEventListener('change', function (event) {
         };
         reader.readAsDataURL(file);
     } else {
-        alert('La imagen debe ser menor a 5 MB y en formato PNG, JPG, JPEG o WEBP.');
+        alert('La imagen debe ser menor a 2 MB y en formato PNG, JPG, JPEG o WEBP.');
     }
 });
+
+
+// Crear div para nombrar el reporte
+function createSaveReport() {
+    // Crear el div principal del nombrarReporte
+    const nombrarReporte = document.createElement('div');
+    nombrarReporte.id = 'saveReportNombrar';
+    nombrarReporte.classList.add('nombrarReporte', 'hidden');
+
+    // Crear el contenido del nombrarReporte
+    const nombrarReporteContent = document.createElement('div');
+    nombrarReporteContent.classList.add('nombrarReporte-content');
+
+    // Título del nombrarReporte
+    const title = document.createElement('h3');
+    title.textContent = 'Guardar reporte';
+    nombrarReporteContent.appendChild(title);
+
+    // Label del input
+    const label = document.createElement('label');
+    label.setAttribute('for', 'reportName');
+    label.textContent = 'Nombre del archivo:';
+    nombrarReporteContent.appendChild(label);
+
+    // Input del nombre del reporte
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'reportName';
+    input.classList.add('input-text');
+    input.maxLength = 255;
+    nombrarReporteContent.appendChild(input);
+
+    // Div para los botones
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('nombrarReporte-buttons');
+
+    // Botón de guardar
+    const saveButton = document.createElement('button');
+    saveButton.id = 'saveReportBtn';
+    saveButton.textContent = 'Guardar';
+    buttonContainer.appendChild(saveButton);
+
+    // Botón de cancelar
+    const cancelButton = document.createElement('button');
+    cancelButton.id = 'cancelBtn';
+    cancelButton.textContent = 'Cancelar';
+    buttonContainer.appendChild(cancelButton);
+
+    // Añadir los botones al contenido del nombrarReporte
+    nombrarReporteContent.appendChild(buttonContainer);
+
+    // Añadir el contenido del nombrarReporte al nombrarReporte principal
+    nombrarReporte.appendChild(nombrarReporteContent);
+
+    // Añadir el nombrarReporte al body del documento
+    document.body.appendChild(nombrarReporte);
+
+    // Agregar eventos a los botones
+    saveButton.addEventListener('click', function() {
+        const reportName = input.value.trim();
+        if (reportName === '') {
+            alert('Por favor, ingresa un nombre para el reporte.');
+        } else {
+            guardarReporte(reportName);
+            nombrarReporte.remove();
+        }
+    });
+
+    cancelButton.addEventListener('click', function() {
+        nombrarReporte.remove(); // Eliminar el nombrarReporte del DOM
+    });
+}
+
+function saveNewReport() {
+    const reportContainer = document.querySelector('.report-input-area'); // Selecciona el contenedor del reporte
+
+    if (reportContainer && reportContainer.children.length === 0) {
+        reportContainer.classList.add('highlight-error');
+
+        setTimeout(function() {
+            reportContainer.classList.remove('highlight-error');
+        }, 1000);
+    } else {
+        createSaveReport();
+    }
+}
+
+
+function guardarReporte(reportName) {
+    const reportContainer = document.querySelector('.report-input-area');
+    const reportElements = reportContainer.children;
+    if(!reportName){
+        return;
+    }
+    let contenido = [];
+    let imagenes = [];
+
+    // Recorremos todos los elementos de la sección del reporte
+    Array.from(reportElements).forEach(container => {
+        // Obtener todos los textarea e img dentro del contenedor
+        const inputElements = container.querySelectorAll('textarea, img');
+        inputElements.forEach(inputElement => {
+            if (inputElement.tagName === 'TEXTAREA') {
+                let type = '';
+
+                if (inputElement.classList.contains('input-title')) {
+                    type = 'h2';
+                } else if (inputElement.classList.contains('input-subtitle')) {
+                    type = 'h3';
+                } else if (inputElement.classList.contains('input-text')) {
+                    type = 'p';
+                }
+
+                // Añadir el contenido del textarea al array
+                if (type) {
+                    contenido.push({ type: type, value: inputElement.value.trim() });
+                }
+            } else if (inputElement.tagName === 'IMG') {
+                imagenes.push(inputElement.src); // Guardar la imagen (base64)
+            }
+        });
+    });
+
+    // Si no hay contenido, cancelar el guardado
+    if (contenido.length === 0) {
+        alert('No has agregado contenido al reporte.');
+        return;
+    }
+
+    const actividadId = document.getElementById('select-actividad').value;
+
+    // Crear el formulario dinámicamente
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '../controller/actionsManager.php?saveNewReport=true';
+    form.enctype = 'multipart/form-data';
+
+    // Agregar el contenido JSON al formulario
+    const contenidoInput = document.createElement('input');
+    contenidoInput.type = 'hidden';
+    contenidoInput.name = 'contenido';
+    contenidoInput.value = JSON.stringify(contenido);
+    form.appendChild(contenidoInput);
+
+    // Agregar el contenido JSON al formulario
+    const nombreR = document.createElement('input');
+    nombreR.type = 'hidden';
+    nombreR.name = 'nombreReporte';
+    nombreR.value = reportName;
+    form.appendChild(nombreR);
+
+    // Agregar el ID de la actividad
+    const actividadInput = document.createElement('input');
+    actividadInput.type = 'hidden';
+    actividadInput.name = 'id_actividad';
+    actividadInput.value = actividadId;
+    form.appendChild(actividadInput);
+
+    // Agregar las imágenes (si existen)
+    imagenes.forEach((imagenSrc, index) => {
+        const imagenInput = document.createElement('input');
+        imagenInput.type = 'hidden';
+        imagenInput.name = `imagen_${index}`;
+        imagenInput.value = imagenSrc;
+        form.appendChild(imagenInput);
+    });
+
+    // Añadir el formulario al DOM y enviarlo
+    document.body.appendChild(form);
+    form.submit();
+}
+
+
+// Evento para el botón de guardar
+document.getElementById('createReport').addEventListener('click', function () {
+    // Validar si hay contenido en el reporte antes de guardar
+    if (document.querySelector('.input-container') !== null) {
+        guardarReporte();
+    }
+});
+
+
