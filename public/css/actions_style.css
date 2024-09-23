@@ -154,6 +154,32 @@
     resize: both;
 }
 
+.closeEditor{
+    position: absolute;
+    top: -10px;
+    right: -7px;
+    transition: color 0.3s ease, font-size 0.3s ease, top 0.3s ease;
+}
+
+.closeEditor:hover {
+    font-size: 20px;
+    top: -14px;
+    color: #b11313;
+}
+
+.addBtn{
+    padding:6px;
+}
+.addBtn .fa{
+    font-size: 18px;
+}
+.addBtn:hover{
+    background-color:var(--hover-AddBtn);
+    .fa{
+        font-size: 19px;
+    }
+}
+
 /* Div para nombrar el reporte */
 .nombrarReporte {
     position: fixed;
@@ -259,5 +285,13 @@
 @media (max-width: 700px) {
     .activity-wrapper {
         flex-direction: column;
+    }
+
+    .addBtn{
+        position: fixed;
+        top: 5rem;
+        bottom:unset;
+        left: unset;
+        right: 25px;
     }
 }

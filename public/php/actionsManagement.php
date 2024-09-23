@@ -23,8 +23,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - gestión de reportes</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/actions_style.css">
     <link rel="stylesheet" href="../css/table-style.css">
+    <link rel="stylesheet" href="../css/actions_style.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -88,12 +88,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </table>
             </div>
 
-
-
             <!-- Comienza testing de interface -->
             <div class="report-creator hide" id="reportCreator">
+                 <div class="closeBtn" onclick="closeAddReport()"><a id="hideReportCreator" title="Cerrar editor" class="fa fa-times-rectangle closeEditor"></a></div>
                 <div class="report-input-area" id="reportInputArea">
-                    <!-- Aquí se agregará el contenido del reporte -->
                 </div>
 
                 <div class="toolbar">

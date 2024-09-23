@@ -4,9 +4,10 @@ function updatePageData() {
     if (selectActividad) {
         const actividadId = selectActividad.value;
         const reportMakingDiv = document.getElementById('reportCreator');
-
+        reportMakingDiv.classList.add('hide');
+        const btnEditor = document.getElementById('showReportCreator');
         if (actividadId !== 'none' && Number.isInteger(parseInt(actividadId))) {
-            reportMakingDiv.classList.remove('hide');
+            
             const url = '../controller/actionsManager.php?ajaxUpdate=true&activityId=' + actividadId;
 
             makeAjaxRequest(url, 'POST', null, function(response) {
@@ -34,9 +35,16 @@ function updatePageData() {
                     // Actualizar la tabla de reportes
                     updateReportsTable(actividadId, data.numeroReportes);
 
+                    if(!btnEditor){
+                        createAddButton();
+                    }
+
                 } else {
                     document.getElementById('estadoActividad').innerHTML = '<i>No disponible</i>';
                     document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
+                    if (btnEditor) {
+                        addBtnDiv.remove();
+                    }
                 }
             },
             function(error) {
@@ -48,7 +56,6 @@ function updatePageData() {
             // Si se selecciona 'none', limpiar o restablecer la información mostrada.
             document.getElementById('estadoActividad').innerHTML = '<i>No disponible</i>';
             document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
-            reportMakingDiv.classList.add('hide');
             const tableBody = document.getElementById('reportsMade_tbody');
             tableBody.innerHTML = '';
             const noReportRow = document.createElement('tr');
@@ -63,6 +70,26 @@ function updatePageData() {
     }
 }
 
+//Boton para abrir el editor de reporte
+function createAddButton() {
+    const addBtnDiv = document.createElement('div');
+    addBtnDiv.classList.add('addBtn');
+
+    addBtnDiv.onclick = function() {
+        openAddReport(this);
+    };
+    
+    const anchor = document.createElement('a');
+    anchor.id = 'showReportCreator';
+    anchor.title = 'Crear reporte';
+    anchor.classList.add('fa', 'fa-plus');
+    
+    addBtnDiv.appendChild(anchor);
+    
+    document.querySelector('.main').appendChild(addBtnDiv);
+}
+
+//Actualiza los datos de la tabla de reportes
 function updateReportsTable(actividadId, reportes) {
     const table = document.getElementById('reportsMade');
     if (table) {
@@ -107,6 +134,7 @@ function updateReportsTable(actividadId, reportes) {
     }
 }
 
+//Cargar la informacion de una actividad tras insertar un reporte
 document.addEventListener('DOMContentLoaded', function() {
     const updateData = document.getElementById('updateDataNow');
     if (updateData) {
@@ -114,11 +142,219 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectActividad = document.getElementById('select-actividad');
         selectActividad.value = updateData.value;
         updatePageData();
+        updateData.remove();
     }
 });
 
-// AREA DE CREACIÓN DE REPORTES
 
+
+function openAddReport(element){
+    const reportMakingDiv = document.getElementById('reportCreator');
+    reportMakingDiv.classList.remove('hide');
+    const btnTarget = document.getElementById('createReport');
+    btnTarget.scrollIntoView({ behavior: 'smooth' });
+
+    element.remove();
+}
+
+function closeAddReport(){
+    const reportMakingArea = document.getElementById('reportInputArea');
+    if (!reportInputArea || reportInputArea.children.length === 0) {
+        reportMakingArea.parentElement.classList.add('hide');
+        createAddButton();
+    }else{
+        createConfirmationDialog('Advertencia','Se eliminará el avance del reporte en curso.\n\n¿Continuar?', function() {
+            reportMakingArea.innerHTML = "";
+            reportMakingArea.parentElement.classList.add('hide');
+            createAddButton();
+        });
+    }
+}
+
+// Crear div para nombrar el reporte
+function createSaveReport() {
+    // Crear el div principal del nombrarReporte
+    const nombrarReporte = document.createElement('div');
+    nombrarReporte.id = 'saveReportNombrar';
+    nombrarReporte.classList.add('nombrarReporte', 'hidden');
+
+    // Crear el contenido del nombrarReporte
+    const nombrarReporteContent = document.createElement('div');
+    nombrarReporteContent.classList.add('nombrarReporte-content');
+
+    // Título del nombrarReporte
+    const title = document.createElement('h3');
+    title.textContent = 'Guardar reporte';
+    nombrarReporteContent.appendChild(title);
+
+    // Label del input
+    const label = document.createElement('label');
+    label.setAttribute('for', 'reportName');
+    label.textContent = 'Nombre del archivo:';
+    nombrarReporteContent.appendChild(label);
+
+    // Input del nombre del reporte
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'reportName';
+    input.classList.add('input-text');
+    input.maxLength = 255;
+    nombrarReporteContent.appendChild(input);
+
+    // Div para los botones
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('nombrarReporte-buttons');
+
+    // Botón de guardar
+    const saveButton = document.createElement('button');
+    saveButton.id = 'saveReportBtn';
+    saveButton.textContent = 'Guardar';
+    buttonContainer.appendChild(saveButton);
+
+    // Botón de cancelar
+    const cancelButton = document.createElement('button');
+    cancelButton.id = 'cancelBtn';
+    cancelButton.textContent = 'Cancelar';
+    buttonContainer.appendChild(cancelButton);
+
+    // Añadir los botones al contenido del nombrarReporte
+    nombrarReporteContent.appendChild(buttonContainer);
+
+    // Añadir el contenido del nombrarReporte al nombrarReporte principal
+    nombrarReporte.appendChild(nombrarReporteContent);
+
+    // Añadir el nombrarReporte al body del documento
+    document.body.appendChild(nombrarReporte);
+
+    // Agregar eventos a los botones
+    saveButton.addEventListener('click', function() {
+        const reportName = input.value.trim();
+        if (reportName === '') {
+            alert('Por favor, ingresa un nombre para el reporte.');
+        } else {
+            guardarReporte(reportName);
+            nombrarReporte.remove();
+        }
+    });
+
+    cancelButton.addEventListener('click', function() {
+        nombrarReporte.remove(); // Eliminar el nombrarReporte del DOM
+    });
+}
+
+//Validar el contenido del reporte a guardar
+function saveNewReport() {
+    const reportContainer = document.querySelector('.report-input-area'); // Selecciona el contenedor del reporte
+
+    if (reportContainer && reportContainer.children.length === 0) {
+        reportContainer.classList.add('highlight-error');
+
+        setTimeout(function() {
+            reportContainer.classList.remove('highlight-error');
+        }, 1000);
+    } else {
+        createSaveReport();
+    }
+}
+
+//AJAX para guardar el reporte
+function guardarReporte(reportName) {
+    const reportContainer = document.querySelector('.report-input-area');
+    const reportElements = reportContainer.children;
+    if(!reportName){
+        return;
+    }
+    let contenido = [];
+    let imagenes = [];
+
+    // Recorremos todos los elementos de la sección del reporte
+    Array.from(reportElements).forEach(container => {
+        // Obtener todos los textarea e img dentro del contenedor
+        const inputElements = container.querySelectorAll('textarea, img');
+        inputElements.forEach(inputElement => {
+            if (inputElement.tagName === 'TEXTAREA') {
+                let type = '';
+
+                if (inputElement.classList.contains('input-title')) {
+                    type = 'h2';
+                } else if (inputElement.classList.contains('input-subtitle')) {
+                    type = 'h3';
+                } else if (inputElement.classList.contains('input-text')) {
+                    type = 'p';
+                }
+
+                // Añadir el contenido del textarea al array
+                if (type) {
+                    contenido.push({ type: type, value: inputElement.value.trim() });
+                }
+            } else if (inputElement.tagName === 'IMG') {
+                imagenes.push(inputElement.src); // Guardar la imagen (base64)
+            }
+        });
+    });
+
+    // Si no hay contenido, cancelar el guardado
+    if (contenido.length === 0) {
+        alert('No has agregado contenido al reporte.');
+        return;
+    }
+
+    const actividadId = document.getElementById('select-actividad').value;
+
+    // Crear el formulario dinámicamente
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '../controller/actionsManager.php?saveNewReport=true';
+    form.enctype = 'multipart/form-data';
+
+    // Agregar el contenido JSON al formulario
+    const contenidoInput = document.createElement('input');
+    contenidoInput.type = 'hidden';
+    contenidoInput.name = 'contenido';
+    contenidoInput.value = JSON.stringify(contenido);
+    form.appendChild(contenidoInput);
+
+    // Agregar el contenido JSON al formulario
+    const nombreR = document.createElement('input');
+    nombreR.type = 'hidden';
+    nombreR.name = 'nombreReporte';
+    nombreR.value = reportName;
+    form.appendChild(nombreR);
+
+    // Agregar el ID de la actividad
+    const actividadInput = document.createElement('input');
+    actividadInput.type = 'hidden';
+    actividadInput.name = 'id_actividad';
+    actividadInput.value = actividadId;
+    form.appendChild(actividadInput);
+
+    // Agregar las imágenes (si existen)
+    imagenes.forEach((imagenSrc, index) => {
+        const imagenInput = document.createElement('input');
+        imagenInput.type = 'hidden';
+        imagenInput.name = `imagen_${index}`;
+        imagenInput.value = imagenSrc;
+        form.appendChild(imagenInput);
+    });
+
+    // Añadir el formulario al DOM y enviarlo
+    document.body.appendChild(form);
+    form.submit();
+}
+
+
+// Evento para el botón de guardar
+document.getElementById('createReport').addEventListener('click', function () {
+    // Validar si hay contenido en el reporte antes de guardar
+    if (document.querySelector('.input-container') !== null) {
+        guardarReporte();
+    }
+});
+
+
+
+
+// AREA DE CREACIÓN DE REPORTES
 const reportInputArea = document.getElementById('reportInputArea');
 const imageUploader = document.getElementById('imageUploader');
 
@@ -223,185 +459,4 @@ imageUploader.addEventListener('change', function (event) {
         alert('La imagen debe ser menor a 2 MB y en formato PNG, JPG, JPEG o WEBP.');
     }
 });
-
-
-// Crear div para nombrar el reporte
-function createSaveReport() {
-    // Crear el div principal del nombrarReporte
-    const nombrarReporte = document.createElement('div');
-    nombrarReporte.id = 'saveReportNombrar';
-    nombrarReporte.classList.add('nombrarReporte', 'hidden');
-
-    // Crear el contenido del nombrarReporte
-    const nombrarReporteContent = document.createElement('div');
-    nombrarReporteContent.classList.add('nombrarReporte-content');
-
-    // Título del nombrarReporte
-    const title = document.createElement('h3');
-    title.textContent = 'Guardar reporte';
-    nombrarReporteContent.appendChild(title);
-
-    // Label del input
-    const label = document.createElement('label');
-    label.setAttribute('for', 'reportName');
-    label.textContent = 'Nombre del archivo:';
-    nombrarReporteContent.appendChild(label);
-
-    // Input del nombre del reporte
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'reportName';
-    input.classList.add('input-text');
-    input.maxLength = 255;
-    nombrarReporteContent.appendChild(input);
-
-    // Div para los botones
-    const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('nombrarReporte-buttons');
-
-    // Botón de guardar
-    const saveButton = document.createElement('button');
-    saveButton.id = 'saveReportBtn';
-    saveButton.textContent = 'Guardar';
-    buttonContainer.appendChild(saveButton);
-
-    // Botón de cancelar
-    const cancelButton = document.createElement('button');
-    cancelButton.id = 'cancelBtn';
-    cancelButton.textContent = 'Cancelar';
-    buttonContainer.appendChild(cancelButton);
-
-    // Añadir los botones al contenido del nombrarReporte
-    nombrarReporteContent.appendChild(buttonContainer);
-
-    // Añadir el contenido del nombrarReporte al nombrarReporte principal
-    nombrarReporte.appendChild(nombrarReporteContent);
-
-    // Añadir el nombrarReporte al body del documento
-    document.body.appendChild(nombrarReporte);
-
-    // Agregar eventos a los botones
-    saveButton.addEventListener('click', function() {
-        const reportName = input.value.trim();
-        if (reportName === '') {
-            alert('Por favor, ingresa un nombre para el reporte.');
-        } else {
-            guardarReporte(reportName);
-            nombrarReporte.remove();
-        }
-    });
-
-    cancelButton.addEventListener('click', function() {
-        nombrarReporte.remove(); // Eliminar el nombrarReporte del DOM
-    });
-}
-
-function saveNewReport() {
-    const reportContainer = document.querySelector('.report-input-area'); // Selecciona el contenedor del reporte
-
-    if (reportContainer && reportContainer.children.length === 0) {
-        reportContainer.classList.add('highlight-error');
-
-        setTimeout(function() {
-            reportContainer.classList.remove('highlight-error');
-        }, 1000);
-    } else {
-        createSaveReport();
-    }
-}
-
-
-function guardarReporte(reportName) {
-    const reportContainer = document.querySelector('.report-input-area');
-    const reportElements = reportContainer.children;
-    if(!reportName){
-        return;
-    }
-    let contenido = [];
-    let imagenes = [];
-
-    // Recorremos todos los elementos de la sección del reporte
-    Array.from(reportElements).forEach(container => {
-        // Obtener todos los textarea e img dentro del contenedor
-        const inputElements = container.querySelectorAll('textarea, img');
-        inputElements.forEach(inputElement => {
-            if (inputElement.tagName === 'TEXTAREA') {
-                let type = '';
-
-                if (inputElement.classList.contains('input-title')) {
-                    type = 'h2';
-                } else if (inputElement.classList.contains('input-subtitle')) {
-                    type = 'h3';
-                } else if (inputElement.classList.contains('input-text')) {
-                    type = 'p';
-                }
-
-                // Añadir el contenido del textarea al array
-                if (type) {
-                    contenido.push({ type: type, value: inputElement.value.trim() });
-                }
-            } else if (inputElement.tagName === 'IMG') {
-                imagenes.push(inputElement.src); // Guardar la imagen (base64)
-            }
-        });
-    });
-
-    // Si no hay contenido, cancelar el guardado
-    if (contenido.length === 0) {
-        alert('No has agregado contenido al reporte.');
-        return;
-    }
-
-    const actividadId = document.getElementById('select-actividad').value;
-
-    // Crear el formulario dinámicamente
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '../controller/actionsManager.php?saveNewReport=true';
-    form.enctype = 'multipart/form-data';
-
-    // Agregar el contenido JSON al formulario
-    const contenidoInput = document.createElement('input');
-    contenidoInput.type = 'hidden';
-    contenidoInput.name = 'contenido';
-    contenidoInput.value = JSON.stringify(contenido);
-    form.appendChild(contenidoInput);
-
-    // Agregar el contenido JSON al formulario
-    const nombreR = document.createElement('input');
-    nombreR.type = 'hidden';
-    nombreR.name = 'nombreReporte';
-    nombreR.value = reportName;
-    form.appendChild(nombreR);
-
-    // Agregar el ID de la actividad
-    const actividadInput = document.createElement('input');
-    actividadInput.type = 'hidden';
-    actividadInput.name = 'id_actividad';
-    actividadInput.value = actividadId;
-    form.appendChild(actividadInput);
-
-    // Agregar las imágenes (si existen)
-    imagenes.forEach((imagenSrc, index) => {
-        const imagenInput = document.createElement('input');
-        imagenInput.type = 'hidden';
-        imagenInput.name = `imagen_${index}`;
-        imagenInput.value = imagenSrc;
-        form.appendChild(imagenInput);
-    });
-
-    // Añadir el formulario al DOM y enviarlo
-    document.body.appendChild(form);
-    form.submit();
-}
-
-
-// Evento para el botón de guardar
-document.getElementById('createReport').addEventListener('click', function () {
-    // Validar si hay contenido en el reporte antes de guardar
-    if (document.querySelector('.input-container') !== null) {
-        guardarReporte();
-    }
-});
-
 
