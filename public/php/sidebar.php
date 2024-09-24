@@ -71,7 +71,7 @@
     <!-- Pie de barra -->
     <div class="account">
         <div class="details">
-            <div class="avatar" id="avatarBtn" onclick="openAccountMenu()">
+            <div class="avatar button" id="avatarBtn" onclick="openAccountMenu()">
                 <img src="../assets/profilePictures/pp_1.png">
             </div>
             <div class="name">
