@@ -104,6 +104,7 @@ function updateReportsTable(actividadId, reportes) {
                     tableBody.innerHTML = '';
                     data.forEach(rowData => {
                         const reportRow = document.createElement('tr');
+                        reportRow.setAttribute('av-id', `${rowData.id_avance}`); 
                         const cellNombre = document.createElement('td');
                         cellNombre.innerText = rowData.nombre;
                         reportRow.appendChild(cellNombre);
@@ -111,7 +112,7 @@ function updateReportsTable(actividadId, reportes) {
                         cellFecha.innerText = rowData.fecha_creacion;
                         reportRow.appendChild(cellFecha);
                         const cellActions = document.createElement('td');
-                        cellActions.innerHTML = "<i class='fa fa-eye button' title='Ver reporte'></i><i class='fa fa-trash button' title='Eliminar reporte'></i>";
+                        cellActions.innerHTML = "<i class='fa fa-eye button' title='Ver reporte' onclick='createReportView(this)'></i><i class='fa fa-trash button' title='Eliminar reporte'></i>";
                         reportRow.appendChild(cellActions);
                         tableBody.appendChild(reportRow);
                     });
@@ -377,22 +378,20 @@ function autoResize(element) {
 
 // Agregar título (h2)
 document.getElementById('addTitle').addEventListener('click', function () {
-    if (!document.querySelector('.input-title')) {  // Verificar si ya existe un título
-        const container = document.createElement('div');
-        container.classList.add('input-container');
+    const container = document.createElement('div');
+    container.classList.add('input-container');
 
-        const titleInput = document.createElement('textarea');
-        titleInput.placeholder = 'Escribe el título aquí...';
-        titleInput.classList.add('input-title');
-        titleInput.rows = 1;
-        titleInput.addEventListener('input', function () {
-            autoResize(titleInput);
-        });
+    const titleInput = document.createElement('textarea');
+    titleInput.placeholder = 'Escribe el título aquí...';
+    titleInput.classList.add('input-title');
+    titleInput.rows = 1;
+    titleInput.addEventListener('input', function () {
+        autoResize(titleInput);
+    });
 
-        container.appendChild(titleInput);
-        container.appendChild(createRemoveButton(container));
-        reportInputArea.appendChild(container);
-    }
+    container.appendChild(titleInput);
+    container.appendChild(createRemoveButton(container));
+    reportInputArea.appendChild(container);
 });
 
 // Agregar subtítulo (h3)
@@ -460,3 +459,70 @@ imageUploader.addEventListener('change', function (event) {
     }
 });
 
+function createReportView(element) {
+    const trElement =  element.closest('[av-id]');
+    const avId = trElement.getAttribute('av-id');
+    console.log(`id capturado: ${avId}`);
+    // Realizar la solicitud AJAX para obtener la información del reporte
+    const url = `../controller/actionsManager.php?getReportData=true&id_avance=${avId}`;
+    const formData = new FormData();
+    makeAjaxRequest(url, 'POST', formData, function(response) {
+        try {
+            const data = response;
+            if (data && data.success) {
+                const data = response.data;
+            
+                // Crear el contenedor del reporte
+                const reportContainer = document.createElement('div');
+                reportContainer.classList.add('pdf-view-container');
+                const reportContent = document.createElement('div');
+                reportContent.classList.add('report-content');
+                
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('file-options');
+                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print' onclick='prinReport(this)' title='Imprimir reporte'></i>`;
+                reportContent.appendChild(optionsDiv);
+                // Recorrer el contenido y crear los elementos correspondientes
+                let mgFlag = true;
+                data.contenido.forEach(item => {
+                    const element = document.createElement(item.type);
+                    
+                    if (item.type === 'p' || item.type === 'h3' || item.type === 'h2') {
+                        element.innerHTML = item.value.replace(/\n/g, '<br>');
+                    } else {
+                        element.textContent = item.value; 
+                    }
+                    if(item.type === 'h2' && mgFlag == true){
+                        element.style = "margin-top:0;";
+                    }
+                    
+                    reportContent.appendChild(element);
+                    mgFlag = false;
+                });
+                
+                // Insertar el contenedor en la página
+                reportContainer.appendChild(reportContent);
+                document.body.appendChild(reportContainer);
+            } else {
+                console.error('Error al obtener el reporte:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al analizar la respuesta JSON:', error);
+            console.log('Respuesta recibida:', response); // Ver la respuesta exacta que se recibe
+        }
+    }, function(error) {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+
+}
+
+function closeReportView(){
+    const reportView = document.querySelector('.pdf-view-container');
+    if(reportView){
+        reportView.remove();
+    }
+}
+
+function prinReport(element){
+    alert('Imprimiendo reporte.');
+}

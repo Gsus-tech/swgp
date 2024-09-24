@@ -50,38 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         
             if($id_actividad === false){
                 $_SESSION['error_message'] = "ID de actividad inválido.";
-                header("Location: ../php/activityManagement.php");
+                header("Location: ../php/actionsManagement.php");
                 exit();
             }
 
             if (strlen($nombre) > 255) {
                 $nombre = substr($nombre, 0, 255);
             }
-            
-            $contenido = json_decode($contenidoJSON, true);
-            if (!$contenido || !is_array($contenido)) {
-                header("Location: ../php/activityManagement.php?error=Contenido inválido.");
-                exit();
-            }
-        
-            // Concatenar el contenido
-            $contenidoTexto = ''; 
-        
-            foreach ($contenido as $item) {
-                if (isset($item['type']) && isset($item['value'])) {
-                    $contenidoTexto .= '<' . htmlspecialchars($item['type'], ENT_QUOTES, 'UTF-8') . '>' . 
-                    htmlspecialchars($item['value'], ENT_QUOTES, 'UTF-8') . 
-                    '</' . htmlspecialchars($item['type'], ENT_QUOTES, 'UTF-8') . '>';
-                }
-            }
         
             $query = "INSERT INTO tbl_avances (contenido, nombre, id_usuario, id_proyecto, id_actividad) VALUES (?, ?, ?, ?, ?)";
-            $params = [$contenidoTexto, $nombre, $id_usuario, $id_proyecto, $id_actividad];
+            $params = [$contenidoJSON, $nombre, $id_usuario, $id_proyecto, $id_actividad];
             $types = "ssiii";
         
             Crud::executeNonResultQuery2($query, $params, $types, '../php/actionsManagement.php');
             $_SESSION['currentActivityEdition'] = $id_actividad;
-            echo "<script>window.location.href = `../php/actionsManagement.php?Data-success=$contenidoTexto`;</script>";            
+            echo "<script>window.location.href = `../php/actionsManagement.php?Data-success=true`;</script>";            
         }        
     }
 
@@ -126,6 +109,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             echo json_encode(['success' => false, 'message' => 'ID de actividad no válido']);
         }
     }
+
+    if (isset($_GET['getReportData']) && $_GET['getReportData'] == 'true') {
+        $id_avance = filter_var($_GET['id_avance'], FILTER_VALIDATE_INT);
+
+    if ($id_avance) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+
+        // Query para obtener los datos del reporte por id_avance
+        $query = "SELECT nombre, contenido FROM tbl_avances WHERE id_avance = ?";
+        $stmt = $mysqli->prepare($query);
+
+        if ($stmt) {
+            $stmt->bind_param('i', $id_avance);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                $reportData = $result->fetch_assoc();
+
+                // Decodificar el contenido JSON almacenado en la base de datos
+                $contenido = json_decode($reportData['contenido'], true);
+
+                echo json_encode(['success' => true, 'data' => [
+                    'nombre' => $reportData['nombre'],
+                    'contenido' => $contenido
+                ]]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se encontró el reporte']);
+            }
+
+            $stmt->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+
+        $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ID de avance inválido']);
+        }
+    }    
     
 } else {
      echo"<script>window.location.href = `../php/actionsManagement.php`;</script>";
