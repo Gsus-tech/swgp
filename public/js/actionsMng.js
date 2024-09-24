@@ -284,16 +284,11 @@ function guardarReporte(reportName) {
                     contenido.push({ type: type, value: inputElement.value.trim() });
                 }
             } else if (inputElement.tagName === 'IMG') {
+                contenido.push({ type: 'img', value: '' });
                 imagenes.push(inputElement.src); // Guardar la imagen (base64)
             }
         });
     });
-
-    // Si no hay contenido, cancelar el guardado
-    if (contenido.length === 0) {
-        alert('No has agregado contenido al reporte.');
-        return;
-    }
 
     const actividadId = document.getElementById('select-actividad').value;
 
@@ -337,7 +332,6 @@ function guardarReporte(reportName) {
     document.body.appendChild(form);
     form.submit();
 }
-
 
 // Evento para el botón de guardar
 document.getElementById('createReport').addEventListener('click', function () {
@@ -431,7 +425,22 @@ document.getElementById('addImage').addEventListener('click', function () {
 imageUploader.addEventListener('change', function (event) {
     const file = event.target.files[0];
 
-    if (file && file.size <= 2 * 1024 * 1024) { // 1 MB
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+
+    if (file) {
+        // Verificar el tipo del archivo
+        if (!allowedTypes.includes(file.type)) {
+            alert('Solo se permiten archivos PNG, JPG, JPEG o WEBP.');
+            return;
+        }
+
+        // Verificar el tamaño del archivo
+        if (file.size > 2 * 1024 * 1024) {
+            alert('La imagen debe ser menor a 2 MB.');
+            return;
+        }
+
+        // Leer y cargar la imagen si pasa las validaciones
         const reader = new FileReader();
         reader.onload = function (e) {
             const container = document.createElement('div');
@@ -446,10 +455,9 @@ imageUploader.addEventListener('change', function (event) {
             reportInputArea.appendChild(container);
         };
         reader.readAsDataURL(file);
-    } else {
-        alert('La imagen debe ser menor a 2 MB y en formato PNG, JPG, JPEG o WEBP.');
     }
 });
+
 
 function createReportView(element) {
     const trElement =  element.closest('[av-id]');
@@ -481,7 +489,9 @@ function createReportView(element) {
                     
                     if (item.type === 'p' || item.type === 'h3' || item.type === 'h2') {
                         element.innerHTML = item.value.replace(/\n/g, '<br>');
-                    } else {
+                    } else if(item.type === 'img'){
+                        element.setAttribute('src', item.value);
+                    }else {
                         element.textContent = item.value; 
                     }
                     if(item.type === 'h2' && mgFlag == true){
