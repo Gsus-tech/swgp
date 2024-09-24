@@ -156,6 +156,7 @@
 
 .closeEditor{
     position: absolute;
+    cursor:pointer;
     top: -10px;
     right: -7px;
     transition: color 0.3s ease, font-size 0.3s ease, top 0.3s ease;
@@ -324,7 +325,7 @@
 }
 
 .file-options:hover {
-    height: 35px;
+    height: 40px;
     background-color: var(--navBtnHover);
 }
 

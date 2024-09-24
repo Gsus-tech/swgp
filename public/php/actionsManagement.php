@@ -95,10 +95,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </div>
 
                 <div class="toolbar">
-                    <i class="fa fa-header" id="addTitle" title="Título"></i>
-                    <i class="fa fa-font" id="addSubtitle" title="Subtítulo"></i>
-                    <i class="fa fa-align-justify" id="addText" title="Texto"></i>
-                    <i class="fa fa-image" id="addImage" title="Subir imagen"></i>
+                    <i class="fa fa-header button" id="addTitle" title="Título"></i>
+                    <i class="fa fa-font button" id="addSubtitle" title="Subtítulo"></i>
+                    <i class="fa fa-align-justify button" id="addText" title="Texto"></i>
+                    <i class="fa fa-image button" id="addImage" title="Subir imagen"></i>
                     <button class="button" title="Guardar reporte" id="createReport" onclick="saveNewReport()">Guardar</button>
                     <input type="file" id="imageUploader" class="hidden" accept=".png, .jpg, .jpeg, .webp">
                 </div>

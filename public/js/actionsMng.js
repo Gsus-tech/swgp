@@ -80,13 +80,20 @@ function createAddButton() {
     };
     
     const anchor = document.createElement('a');
-    anchor.id = 'showReportCreator';
     anchor.title = 'Crear reporte';
+    addBtnDiv.setAttribute('tabindex', '0');
     anchor.classList.add('fa', 'fa-plus');
     
+    addBtnDiv.id = 'showReportCreator';
     addBtnDiv.appendChild(anchor);
     
     document.querySelector('.main').appendChild(addBtnDiv);
+
+    addBtnDiv.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            addBtnDiv.click();
+        }
+    });
 }
 
 //Actualiza los datos de la tabla de reportes
@@ -116,6 +123,7 @@ function updateReportsTable(actividadId, reportes) {
                         reportRow.appendChild(cellActions);
                         tableBody.appendChild(reportRow);
                     });
+                    addButtonEvents();
                 } else {
                     console.error('Respuesta inválida o no exitosa:', response);
                     alert('No se pudieron cargar los reportes de la actividad.');
@@ -147,15 +155,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-
-
+//Mostrar el editor de reportes.
 function openAddReport(element){
     const reportMakingDiv = document.getElementById('reportCreator');
     reportMakingDiv.classList.remove('hide');
     const btnTarget = document.getElementById('createReport');
     btnTarget.scrollIntoView({ behavior: 'smooth' });
-
     element.remove();
+
+    addButtonEvents();
 }
 
 function closeAddReport(){
@@ -174,27 +182,22 @@ function closeAddReport(){
 
 // Crear div para nombrar el reporte
 function createSaveReport() {
-    // Crear el div principal del nombrarReporte
     const nombrarReporte = document.createElement('div');
     nombrarReporte.id = 'saveReportNombrar';
     nombrarReporte.classList.add('nombrarReporte', 'hidden');
 
-    // Crear el contenido del nombrarReporte
     const nombrarReporteContent = document.createElement('div');
     nombrarReporteContent.classList.add('nombrarReporte-content');
 
-    // Título del nombrarReporte
     const title = document.createElement('h3');
     title.textContent = 'Guardar reporte';
     nombrarReporteContent.appendChild(title);
 
-    // Label del input
     const label = document.createElement('label');
     label.setAttribute('for', 'reportName');
     label.textContent = 'Nombre del archivo:';
     nombrarReporteContent.appendChild(label);
 
-    // Input del nombre del reporte
     const input = document.createElement('input');
     input.type = 'text';
     input.id = 'reportName';
@@ -202,32 +205,24 @@ function createSaveReport() {
     input.maxLength = 255;
     nombrarReporteContent.appendChild(input);
 
-    // Div para los botones
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add('nombrarReporte-buttons');
 
-    // Botón de guardar
     const saveButton = document.createElement('button');
     saveButton.id = 'saveReportBtn';
     saveButton.textContent = 'Guardar';
     buttonContainer.appendChild(saveButton);
 
-    // Botón de cancelar
     const cancelButton = document.createElement('button');
     cancelButton.id = 'cancelBtn';
     cancelButton.textContent = 'Cancelar';
     buttonContainer.appendChild(cancelButton);
 
-    // Añadir los botones al contenido del nombrarReporte
     nombrarReporteContent.appendChild(buttonContainer);
-
-    // Añadir el contenido del nombrarReporte al nombrarReporte principal
     nombrarReporte.appendChild(nombrarReporteContent);
 
-    // Añadir el nombrarReporte al body del documento
     document.body.appendChild(nombrarReporte);
 
-    // Agregar eventos a los botones
     saveButton.addEventListener('click', function() {
         const reportName = input.value.trim();
         if (reportName === '') {
@@ -239,7 +234,7 @@ function createSaveReport() {
     });
 
     cancelButton.addEventListener('click', function() {
-        nombrarReporte.remove(); // Eliminar el nombrarReporte del DOM
+        nombrarReporte.remove();
     });
 }
 
@@ -352,10 +347,7 @@ document.getElementById('createReport').addEventListener('click', function () {
     }
 });
 
-
-
-
-// AREA DE CREACIÓN DE REPORTES
+ 
 const reportInputArea = document.getElementById('reportInputArea');
 const imageUploader = document.getElementById('imageUploader');
 
@@ -480,7 +472,7 @@ function createReportView(element) {
                 
                 const optionsDiv = document.createElement('div');
                 optionsDiv.classList.add('file-options');
-                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print' onclick='prinReport(this)' title='Imprimir reporte'></i>`;
+                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print button' onclick='prinReport(this)' title='Imprimir reporte'></i>`;
                 reportContent.appendChild(optionsDiv);
                 // Recorrer el contenido y crear los elementos correspondientes
                 let mgFlag = true;
@@ -503,6 +495,7 @@ function createReportView(element) {
                 // Insertar el contenedor en la página
                 reportContainer.appendChild(reportContent);
                 document.body.appendChild(reportContainer);
+                addButtonEvents();
             } else {
                 console.error('Error al obtener el reporte:', data.message);
             }
