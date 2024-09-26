@@ -5,23 +5,22 @@ use Controller\GeneralCrud\Crud;
 
 $destination = "../php/projectsManagement.php";
 if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
-
     
     if (isset($_GET['editProject']) && $_GET['editProject'] == 'true' && isset($_GET['id'])) {
         $id =  (int)$_GET['id'];
         $destination = $destination ."?editProject=". $id;
         //Actualizar tbl_integrantes
-        if($_POST['membersTableFlagAdd'] === 'true'){
-            $addedMembers = json_decode($_POST['addedMembers'], true);
-            foreach ($addedMembers as $member) {
-                $newMember = (int)$member['usuarioId'];
-                $rolGiven = (int)$member['rol'];
-                $query = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, ?)";
-                $params = [$newMember, $id, $rolGiven];
-                $types = "ssi";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }
+        // if($_POST['membersTableFlagAdd'] === 'true'){
+        //     $addedMembers = json_decode($_POST['addedMembers'], true);
+        //     foreach ($addedMembers as $member) {
+        //         $newMember = (int)$member['usuarioId'];
+        //         $rolGiven = (int)$member['rol'];
+        //         $query = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, ?)";
+        //         $params = [$newMember, $id, $rolGiven];
+        //         $types = "ssi";
+        //         Crud::executeNonResultQuery2($query, $params, $types, $destination);
+        //     }
+        // }
         if ($_POST['membersTableFlagDel'] === 'true') {
             echo "<script>console.log('QUERY: RemoveMember');</script>";
             $removedMembers = json_decode($_POST['removedMembers'], true);
@@ -58,88 +57,7 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
                 Crud::executeNonResultQuery2($query, $params, $types, $destination);
             }
         }
-        
-        //Actualizar tbl_objetivos
-        if($_POST['objGTableFlagAdd'] === 'true'){      // agregar - general
-            echo "<script>console.log('QUERY: AddObjectiveG');</script>";
-            $addedObjectives = json_decode($_POST['addedObjG'], true);
-            foreach ($addedObjectives as $objective) {
-                $newObjective = $objective['newId'];
-                $newContent = $objective['content'];
-                $tipo = 'general';
-                $query = "INSERT INTO tbl_objetivos (id_objetivo, id_proyecto, tipo, contenido) VALUES (?, ?, ?, ?)";
-                $params = [$newObjective, $id, $tipo, $newContent];
-                $types = "iiss";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }
-        if($_POST['objETableFlagAdd'] === 'true'){      // agregar - especifico
-            echo "<script>console.log('QUERY: AddObjectiveE');</script>";
-            $addedObjectives = json_decode($_POST['addedObjE'], true);
-            foreach ($addedObjectives as $objective) {
-                $newObjective = $objective['newId'];
-                $newContent = $objective['content'];
-                $tipo = 'especifico';
-                $query = "INSERT INTO tbl_objetivos (id_objetivo, id_proyecto, tipo, contenido) VALUES (?, ?, ?, ?)";
-                $params = [$newObjective, $id, $tipo, $newContent];
-                $types = "iiss";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }
-        if($_POST['objGTableFlagUpd'] === 'true') {     // actualizar - general
-            $updatedObjectives = json_decode($_POST['updatedObjG'], true);
-            echo "<script>console.log('QUERY: UpdateObjectiveG');</script>";
-            foreach ($updatedObjectives as $objective) {
-                $objId = $objective['idObjetivo'];
-                $newContent = Crud::antiNaughty($objective['nuevaDescripcion']);
-                $tipo = 'general';
-
-                $query = "UPDATE tbl_objetivos SET contenido = ? WHERE id_objetivo = ? AND id_proyecto = ? AND tipo = ?";
-                $params = [$newContent, $objId, $id, $tipo];
-                $types = "siis";
-                
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }        
-        if($_POST['objETableFlagUpd'] === 'true') {     // actualizar - especifico
-            echo "<script>console.log('QUERY: UpdateObjectiveE');</script>";
-            $updatedObjectives = json_decode($_POST['updatedObjE'], true);
-            foreach ($updatedObjectives as $objective) {
-                $objId = $objective['idObjetivo'];
-                $newContent = Crud::antiNaughty($objective['nuevaDescripcion']);
-                $tipo = 'especifico';
-                $query = "UPDATE tbl_objetivos SET contenido = ? WHERE id_objetivo = ? AND id_proyecto = ? AND tipo = ?";
-                $params = [$newContent, $objId, $id, $tipo];
-                $types = "siis";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }  
-        if($_POST['objGTableFlagDel'] === 'true'){      // eliminar - general
-            echo "<script>console.log('QUERY: RemoveObjectiveG');</script>";
-            $removedObj = json_decode($_POST['removedObjG'], true);
-            foreach ($removedObj as $objective) {
-                $tipo = 'general';
-                $objId = $objective['objId'];
-                $query="DELETE FROM tbl_objetivos WHERE id_objetivo = ? AND id_proyecto = ? AND tipo = ?";
-                $params = [$objId, $id, $tipo];
-                $types = "iis";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }
-        if($_POST['objETableFlagDel'] === 'true'){      // eliminar - especifico
-            echo "<script>console.log('QUERY: RemoveObjectiveE');</script>";
-            $removedObj = json_decode($_POST['removedObjE'], true);
-            foreach ($removedObj as $objective) {
-                $tipo = 'especifico';
-                $objId = $objective['objId'];
-                $query="DELETE FROM tbl_objetivos WHERE id_objetivo = ? AND id_proyecto = ? AND tipo = ?";
-                $params = [$objId, $id, $tipo];
-                $types = "iis";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }
-
-
+    
         //Actualizar tbl_proyectos
         echo "<script>console.log('QUERY: GeneralChanges');</script>";
         $nombre = Crud::antiNaughty((string)$_POST['Fname']);
@@ -209,6 +127,278 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         } catch (Exception $e) {
             echo "Error: " . $e->getMessage();
         }
+    }
+
+
+    if (isset($_GET['addMember'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        
+        $projectId = filter_var($_POST['projectId'], FILTER_VALIDATE_INT);
+        $usuarioId = filter_var($_POST['usuarioId'], FILTER_VALIDATE_INT);
+        $rol = filter_var($_POST['tipoMiembro'], FILTER_VALIDATE_INT);
+
+        if ($projectId !== false && $usuarioId !== false && $rol !== false) {
+            // Preparar la consulta SQL
+            $sql = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, ?)";
+            $stmt = $mysqli->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param('iii', $usuarioId, $projectId, $rol);
+
+                // Ejecutar la consulta
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Miembro agregado correctamente.'
+                        ]);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se pudo agregar el miembro.']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al agregar el miembro: ' . $stmt->error]);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+
+        // Cerrar la conexión
+        $mysqli->close();
+        exit();
+    }
+
+    if (isset($_GET['deleteMember'])) {
+        ob_clean();
+
+        $idUsuario = isset($_POST['idUsuario']) ? (int)$_POST['idUsuario'] : null;
+        $projectId = isset($_POST['projectId']) ? (int)$_POST['projectId'] : null;
+
+        if ($idUsuario !== null && $projectId !== null) {
+            $crud = new Crud();
+            $mysqli = $crud->getMysqliConnection();
+            
+            // Primero obtenemos las actividades que tienen este usuario asignado
+            $sql = "SELECT id_actividad FROM tbl_actividades WHERE id_proyecto = ? AND id_usuario = ?";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param('ii', $projectId, $idUsuario);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $actividades = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            // Obtener el responsable del proyecto
+            $sql = "SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ? AND responsable = 1";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param('i', $projectId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $responsableProyecto = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            if (!$responsableProyecto) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => "No se encontró un responsable del proyecto para transferir actividades."
+                ]);
+                $mysqli->close();
+                exit();
+            }
+
+            $nuevoResponsableId = ($responsableProyecto[0]['id_usuario'] == $idUsuario) 
+                ? $responsableProyecto[1]['id_usuario'] 
+                : $responsableProyecto[0]['id_usuario'];
+
+            // Transferir las actividades a un nuevo responsable si las hay
+            if (count($actividades) > 0) {
+                $sql = "UPDATE tbl_actividades SET id_usuario = ? WHERE id_proyecto = ? AND id_usuario = ? AND id_actividad = ?";
+                $stmt = $mysqli->prepare($sql);
+                foreach ($actividades as $actividad) {
+                    $actividadId = $actividad['id_actividad'];
+                    $stmt->bind_param('iiii', $nuevoResponsableId, $projectId, $idUsuario, $actividadId);
+                    $stmt->execute();
+                }
+                $stmt->close();
+            }
+
+            // Finalmente, eliminar el integrante del proyecto
+            $sql = "DELETE FROM tbl_integrantes WHERE id_usuario = ? AND id_proyecto = ?";
+            $stmt = $mysqli->prepare($sql);
+            $stmt->bind_param('ii', $idUsuario, $projectId);
+
+            if ($stmt->execute()) {
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => "Miembro con ID $idUsuario eliminado del proyecto con ID $projectId.",
+                        'data' => [
+                            'usuarioId' => $idUsuario,
+                            'projectId' => $projectId
+                        ]
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => "No se encontró el miembro en el proyecto o no se realizaron cambios."
+                    ]);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al ejecutar la eliminación: ' . $stmt->error]);
+            }
+
+            $stmt->close();
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Faltan datos necesarios para eliminar el miembro.']);
+        }
+
+        exit();
+    }
+
+
+
+    if (isset($_GET['addObjectiveGeneral']) || isset($_GET['addObjectiveEspecifico'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $idProyecto = filter_var($_POST['idProyecto'], FILTER_VALIDATE_INT); 
+        $type = $_POST['tipo']; 
+        $contenido = $_POST['contenido'];
+        $tipo = '';
+        if(isset($_GET['addObjectiveGeneral']) && $type === 'general'){ $tipo = 'general'; }
+        if(isset($_GET['addObjectiveEspecifico']) && $type === 'especifico'){ $tipo = 'especifico'; }
+        
+        if ($idProyecto !== false && !empty($contenido) && !empty($tipo)) {
+            // Preparar la consulta SQL para insertar un nuevo objetivo
+            $sql = "INSERT INTO tbl_objetivos (id_proyecto, tipo, contenido) VALUES (?, ?, ?)";
+            $stmt = $mysqli->prepare($sql);
+        
+            if ($stmt) {
+                // Enlazar los parámetros de la consulta (i - entero, s - string)
+                $stmt->bind_param('iss', $idProyecto, $tipo, $contenido);
+        
+                // Ejecutar la consulta
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        // Obtener el ID del nuevo objetivo insertado
+                        $newId = $mysqli->insert_id;
+        
+                        // Respuesta JSON de éxito
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Objetivo ingresado correctamente.',
+                            'data' => [
+                                'newId' => $newId,  // Enviar el ID del nuevo objetivo
+                                'nombre' => 'Objetivo guardado',
+                                'descripcion' => $contenido  // La descripción que se guardó
+                            ]
+                        ]);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se pudo guardar el objetivo.']);
+                    }
+                } else {
+                    // Error al ejecutar la consulta
+                    echo json_encode(['success' => false, 'message' => 'Error al guardar el objetivo: ' . $stmt->error]);
+                }
+        
+                // Cerrar la consulta
+                $stmt->close();
+            } else {
+                // Error al preparar la consulta
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        } else {
+            // Datos inválidos o faltantes
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+        
+        // Cerrar la conexión
+        $mysqli->close();
+        exit();  
+    } 
+
+    if (isset($_GET['deleteObjective'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $projectId = filter_var($_POST['projectId'], FILTER_VALIDATE_INT);
+        $objId = filter_var($_POST['objId'], FILTER_VALIDATE_INT);
+        $type = $_POST['type'];
+    
+        if ($projectId !== false && $objId !== false && !empty($type)) {
+            $sql = "DELETE FROM tbl_objetivos WHERE id_proyecto = ? AND id_objetivo = ? AND tipo = ?";
+            $stmt = $mysqli->prepare($sql);
+    
+            if ($stmt) {
+                $stmt->bind_param('iis', $projectId, $objId, $type);
+    
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Objetivo eliminado correctamente.',
+                            'data' => ['objId' => $objId]
+                        ]);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se encontró el objetivo o no se eliminaron registros.']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al eliminar el objetivo: ' . $stmt->error]);
+                }
+
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+    
+        // Cerrar la conexión
+        $mysqli->close();
+        exit();
+    }
+
+    if (isset($_GET['editObjetctive'])) {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        
+        $projectId = filter_var($_POST['idProyecto'], FILTER_VALIDATE_INT);
+        $objectiveId = filter_var($_POST['idObjetivo'], FILTER_VALIDATE_INT);
+        $newDescription = $_POST['nuevaDescripcion'];
+        $type = $_POST['tipo'];
+
+        if ($projectId !== false && $objectiveId !== false && !empty($newDescription) && !empty($type)) {
+            $sql = "UPDATE tbl_objetivos SET contenido = ? WHERE id_proyecto = ? AND id_objetivo = ? AND tipo = ?";
+            $stmt = $mysqli->prepare($sql);
+
+            if ($stmt) {
+                $stmt->bind_param('siis', $newDescription, $projectId, $objectiveId, $type);
+
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Objetivo actualizado correctamente.'
+                        ]);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se encontró el objetivo o no se realizaron cambios.']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al actualizar el objetivo: ' . $stmt->error]);
+                }
+
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+        $mysqli->close();
+        exit();
     }
     
     if (isset($_GET['cierreProyecto'])) {
@@ -310,6 +500,10 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
         }
+    }
+
+    else {
+        echo json_encode(['success' => false, 'message' => 'Método de solicitud no permitido.']);
     }
     
 }else{

@@ -239,8 +239,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         $flag = true;
                                     echo "<option value='none'>- Selecciona un objetivo -</option>";
                                         for($i=0;$i<count($objetivos);$i++){
+                                            $r = $i+1;
                                             $selected = '';
-                                            echo '<option value='.$objetivos[$i]['id_objetivo'].' '.$selected.'>Objetivo: '.$objetivos[$i]['id_objetivo'].'</option>';
+                                            echo '<option value='.$objetivos[$i]['id_objetivo'].' '.$selected.'>Objetivo: '.$r.'</option>';
                                         }
                                     }else{
                                         echo "<option value='noObjectivesRegister'>Sin objetivos registrados</option>";

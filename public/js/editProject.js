@@ -242,72 +242,140 @@ function agregarMiembro(projectId) {
     const tablaBody = document.getElementById('members-list-body');
     const usuariosSelect = document.getElementById('listaUsuariosDisponibles');
 
-    if(usuarioId  === 'non'){
+    if (usuarioId === 'non') {
         usersSelect.setCustomValidity('No has seleccionado un usuario.');
         usersSelect.reportValidity();
+        return;
     }
-    else if(tipoMiembro === 'non'){
+    if (tipoMiembro === 'non') {
         rolSelect.setCustomValidity('Define el rol del usuario dentro del proyecto.');
         rolSelect.reportValidity();
-    }else{
-        // Verificar y eliminar la fila "No se encontraron integrantes registrados" si existe
-        const noIntegrantesRow = document.getElementById('no-integrantes-row');
-        if (noIntegrantesRow) {
-            noIntegrantesRow.remove();
-        }
-    
-        // Crear nueva fila y añadirla a la tabla
-        const nuevaFila = document.createElement('tr');
-        const nombreCelda = document.createElement('td');
-        const rolCelda = document.createElement('td');
-        const removeBtn = document.createElement('td');
-    
-        nuevaFila.setAttribute('onclick', 'SelectThisRow(element, "members-list-body")')
-        nombreCelda.textContent = usuarioNombre;
-        rolCelda.textContent = tipoMiembroTexto;
-        removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
-        nuevaFila.appendChild(nombreCelda);
-        nuevaFila.appendChild(rolCelda);
-        nuevaFila.appendChild(removeBtn);
-        tablaBody.appendChild(nuevaFila);
-    
-        // Eliminar la opción del usuario del select de usuarios disponibles
-        const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
-        if (opcionAEliminar) {
-            opcionAEliminar.remove();
-        }
-        const addedMembersInput = document.getElementById('addedMembers');
-        let addedMembers = JSON.parse(addedMembersInput.value || '[]');
-        rol = tipoMiembroTexto == 'Colaborador' ? false : true;
-        addedMembers.push({ usuarioId, rol });
-        activateBtn();
-        membersTableChanged('add');
-        actualizarCamposOcultos('addedMembers', addedMembers);
+        return;
     }
+
+    createConfirmationDialog(
+        "Confirmar agregar miembro",
+        `¿Estás seguro de que deseas agregar a ${usuarioNombre} como ${tipoMiembroTexto}?`,
+        function() {
+            // Verificar si existe y eliminar la fila "No se encontraron integrantes registrados"
+            const noIntegrantesRow = document.getElementById('no-integrantes-row');
+            if (noIntegrantesRow) {
+                noIntegrantesRow.remove();
+            }
+
+            const data = new URLSearchParams({
+                usuarioId: usuarioId,
+                projectId: projectId,
+                tipoMiembro: tipoMiembro
+            });
+
+            // Enviar la solicitud AJAX para agregar el miembro a la base de datos
+            fetch('../controller/projectManager.php?addMember=true', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: data
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    // Crear la nueva fila que se añadira a la tabla
+                    const nuevaFila = document.createElement('tr');
+                    const nombreCelda = document.createElement('td');
+                    const rolCelda = document.createElement('td');
+                    const removeBtn = document.createElement('td');
+
+                    nuevaFila.setAttribute('onclick', 'SelectThisRow(this, "members-list-body")');
+                    nombreCelda.textContent = usuarioNombre;
+                    rolCelda.textContent = tipoMiembroTexto;
+                    removeBtn.innerHTML = `<a class='fa fa-user-times removeMemberBtn' title='Remover integrante' onclick='ConfirmDeleteMember(${usuarioId}, this)'></a>`;
+                    nuevaFila.appendChild(nombreCelda);
+                    nuevaFila.appendChild(rolCelda);
+                    nuevaFila.appendChild(removeBtn);
+                    tablaBody.appendChild(nuevaFila);
+
+                    const opcionAEliminar = usuariosSelect.querySelector(`option[value="${usuarioId}"]`);
+                    if (opcionAEliminar) {
+                        opcionAEliminar.remove();
+                    }
+
+                    console.log(response.message);
+                } else {
+                    alert('Error al agregar el miembro: ' + response.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud AJAX:', error);
+                alert('Error al agregar el miembro: ' + error.message);
+            });
+        },
+        function() {
+            console.log("Agregación de miembro cancelada");
+        }
+    );
 }
+
 
 //Eliminar miembro
 function ConfirmDeleteMember(idUsuario, buttonElement) {
-    if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-        let rowNumber = buttonElement.getAttribute('row');
-        const resultado = checkDependencies(idUsuario, rowNumber);
-        if(resultado==true){
-            if(confirm("Todas las actividades de este usuario quedaran a cargo del Responsable del proyecto.\n\nPuedes cambiar esto mas adelante en Gestión de actividades.\n\n¿Deseas continuar?")){
-                const fila = buttonElement.closest('tr');
-                fila.remove();
-                const removedMembersInput = document.getElementById('removedMembers');
-                let removedMembers = JSON.parse(removedMembersInput.value || '[]');
-                removedMembers.push({ idUsuario });
-                console.log(JSON.stringify(removedMembers));
-                membersTableChanged('del');
-                actualizarCamposOcultos('removedMembers', removedMembers);
-                activateBtn();
+    const projectId = document.querySelector('.form-options').getAttribute('pg-d');
+    createConfirmationDialog(
+        "Confirmar eliminación",
+        "¿Estás seguro de que deseas eliminar este miembro?",
+        function() {
+            let rowNumber = buttonElement.getAttribute('row');
+            const resultado = checkDependencies(idUsuario, rowNumber);
+            
+            if (resultado === true) {
+                createConfirmationDialog(
+                    "Cambio de responsable",
+                    "Todas las actividades de este usuario quedarán a cargo del Responsable del proyecto.\n\nPuedes cambiar esto más adelante en Gestión de actividades.\n\n¿Deseas continuar?",
+                    function() {
+                        // Enviar solicitud AJAX para eliminar al miembro en la base de datos
+                        const data = new URLSearchParams({
+                            idUsuario: idUsuario,
+                            projectId: projectId
+                        });
+
+                        fetch('../controller/projectManager.php?deleteMember=true', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: data
+                        })
+                        .then(response => response.json())
+                        .then(response => {
+                            if (response.success) {
+                                // Eliminar la fila visualmente
+                                const fila = buttonElement.closest('tr');
+                                fila.remove();
+                                console.log('Miembro eliminado correctamente');
+                            } else {
+                                alert('Error al eliminar el miembro: ' + response.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud AJAX:', error);
+                            alert('Error al eliminar el miembro: ' + error.message);
+                        });
+                    },
+                    function() {
+                        console.log("Cambio de responsable cancelado");
+                    }
+                );
+            } else {
+                alert('Error al eliminar al usuario.\nAgrega un Responsable de proyecto antes de eliminar al Responsable actual.');
             }
-        }else{
-            alert('Error al eliminar al usuario.\nAgrega un Responsable de proyecto antes de eliminar al Responsable actual.')
+        },
+        function() {
+            console.log("Eliminación de miembro cancelada");
         }
-    }
+    );
 }
+
+
 
 function checkDependencies(id, rowNumber) {
     const tbody = document.getElementById('members-list-body');
@@ -346,125 +414,160 @@ function actualizarCamposOcultos(name, element) {
 }
 
 //Agregar Objetivos
-function agregarObjetivo(projectId, tipo){
-    const tablaBody = document.getElementById(tipo=='general'?'objectiveG-list-body':'objectiveE-list-body');
-    const contenido = document.getElementById(tipo=='general'?'objetivoG':'objetivoE');
+function agregarObjetivo(projectId, tipo) {
+    const tablaBody = document.getElementById(tipo === 'general' ? 'objectiveG-list-body' : 'objectiveE-list-body');
+    const contenido = document.getElementById(tipo === 'general' ? 'objetivoG' : 'objetivoE');
 
-    if(contenido.value.length < 10){
+    if (contenido.value.length < 10) {
         alert('Longitud mínima de 10 caracteres para la descripción del objetivo.');
-    }else{
+    } else {
         const cadenasSinSentido = [
-            'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
-            'random','loremipsum','qwerty','asdf','zxcv',
-            'nombre1','ghfjd','iiii','dummytext','blahblah',
-            'Usuario123','abcd1234','123','eeee','aaaa', 'uuuu',
+            'poiuy', 'lkjhg', 'mnbv', 'uhas83e73u', 'xyz123',
+            'random', 'loremipsum', 'qwerty', 'asdf', 'zxcv',
+            'nombre1', 'ghfjd', 'iiii', 'dummytext', 'blahblah',
+            'Usuario123', 'abcd1234', '123', 'eeee', 'aaaa', 'uuuu',
             'Proyecto123', '123Usuario', '123Proyecto', 'oooo'
         ];
 
-        if(cadenasSinSentido.some(nonsensical => contenido.value.includes(nonsensical))){
-            if(!confirm("Se detecto cadenas sin sentido dentro de la descripción del objetivo\nDeseas continuar?")){
-                return false;
-            }
+        if (cadenasSinSentido.some(nonsensical => contenido.value.includes(nonsensical))) {
+            createConfirmationDialog(
+                "Confirmar descripción",
+                "Se detectó cadenas sin sentido dentro de la descripción del objetivo. ¿Deseas continuar?",
+                function() { agregarObjetivoReal(projectId, tipo, contenido, tablaBody); },
+                function() { return false; }
+            );
+        } else {
+            agregarObjetivoReal(projectId, tipo, contenido, tablaBody);
         }
-
-        const onlySpaces = /^\s*$/;
-        if(onlySpaces.test(contenido.value)){
-            if(!confirm("El texto introducido solo contiene espacios.\nDeseas continuar?")){
-                return false;
-            }
-        }
-
-        // Verificar y eliminar la fila "No se encontraron objetivos registrados" si existe
-        const noObjGRow = document.getElementById(tipo=='general'?'no-objectiveG-row':'no-objectiveE-row');
-        if (noObjGRow) {
-            noObjGRow.remove();
-        }
-
-        //Calcular el nuevo ID del nuevo objetivo
-        const rows = tablaBody.getElementsByTagName('tr');
-        let maxId = 0;
-
-        for (let i = 0; i < rows.length; i++) {
-            const idObjetivo = parseInt(rows[i].getAttribute('value'));
-            if (idObjetivo > maxId) {
-                maxId = idObjetivo;
-            }
-        }
-
-        // Crear un nuevo ID
-        const newId = maxId + 1;
-
-
-        // Crear nueva fila y añadirla a la tabla
-        const nuevaFila = document.createElement('tr');
-        nuevaFila.setAttribute('value', newId);
-        nuevaFila.setAttribute('onclick', `SelectThisRow(this, '${tablaBody.id}')`);
-        const descriptionCelda = document.createElement('td');
-        descriptionCelda.setAttribute('class','descripcion');
-        const removeBtn = document.createElement('td');
-
-
-        descriptionCelda.textContent = contenido.value;
-        removeBtn.innerHTML = 
-        `<a class='fa fa-trash removeMemberBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'${tipo}',${projectId}, ${newId})\"></a>
-        <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
-        <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'${tipo}',${projectId},${newId})\"></a>`;
-        nuevaFila.appendChild(descriptionCelda);
-        nuevaFila.appendChild(removeBtn);   
-        tablaBody.appendChild(nuevaFila);
-
-        //Guardar los datos en input hidden para actualizar la BD al confirmar los cambios
-        const addedObjectivesInput = document.getElementById(tipo=='general'?'addedObjG':'addedObjE');
-        let addedObjectives = JSON.parse(addedObjectivesInput.value || '[]');
-        const content = contenido.value;
-        addedObjectives.push({ newId,  content});
-        actualizarCamposOcultos(tipo=='general'?'addedObjG':'addedObjE', addedObjectives);
-        objectivesTableChanged(tipo, 'add');
-        activateBtn();
-
-        contenido.value = "";
     }
 }
+
+function agregarObjetivoReal(projectId, tipo, contenido, tablaBody) {
+    const onlySpaces = /^\s*$/;
+    if (onlySpaces.test(contenido.value)) {
+        createConfirmationDialog(
+            "Confirmar descripción",
+            "El texto introducido solo contiene espacios. ¿Deseas continuar?",
+            function() { agregarObjetivoAjax(projectId, tipo, contenido, tablaBody); },
+            function() { return false; }
+        );
+    } else {
+        agregarObjetivoAjax(projectId, tipo, contenido, tablaBody);
+    }
+}
+
+function agregarObjetivoAjax(projectId, tipo, contenido, tablaBody) {
+    const noObjGRow = document.getElementById(tipo === 'general' ? 'no-objectiveG-row' : 'no-objectiveE-row');
+    const url = tipo === 'general' ? '../controller/projectManager.php?addObjectiveGeneral=true' : '../controller/projectManager.php?addObjectiveEspecifico=true';
+    console.log(`url = ${url}`);
+    if (noObjGRow) {
+        noObjGRow.remove();
+    }
+
+    // Preparar los datos para la solicitud AJAX
+    const data = new URLSearchParams({
+        idProyecto: projectId,
+        tipo: tipo,
+        contenido: contenido.value
+    });
+
+    // Realizar la solicitud AJAX para guardar el nuevo objetivo
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            const newId = response.data.newId;  // Obtén el ID del nuevo objetivo de la respuesta AJAX
+            const content = response.data.descripcion;
+            // Crear nueva fila y añadirla a la tabla
+            const nuevaFila = document.createElement('tr');
+            nuevaFila.setAttribute('value', newId);
+            nuevaFila.setAttribute('onclick', `SelectThisRow(this, '${tablaBody.id}')`);
+            const descriptionCelda = document.createElement('td');
+            descriptionCelda.setAttribute('class', 'descripcion');
+            const removeBtn = document.createElement('td');
+
+            descriptionCelda.textContent = content;
+            removeBtn.innerHTML = 
+            `<a class='fa fa-trash removeMemberBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'${tipo}',${projectId}, ${newId})\"></a>
+            <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
+            <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'${tipo}',${projectId},${newId})\"></a>`;
+
+            nuevaFila.appendChild(descriptionCelda);
+            nuevaFila.appendChild(removeBtn);   
+            tablaBody.appendChild(nuevaFila);
+
+            // Limpiar el campo de entrada
+            contenido.value = "";
+
+        } else {
+            alert('Error al agregar el objetivo: ' + response.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+        alert('Error al agregar el objetivo: ' + error.message);
+    });
+}
+
 
 //Eliminar objetivos
-function DeleteObjective(element, type, projectId, objId){
-    console.log('tipo: ' + type + "\nProyecto: "+projectId);
-    if(confirm(`¿Estás seguro de que deseas eliminar este objetivo '${type}'?`)){
-        let adv = type === 'general' ? true : confirm(`¡Advertencia!\nSe eliminarán las actividades vinculadas al cumplimiento de este objetivo.`);
-        if(adv){
-            const fila = element.closest('tr');
-            fila.remove();
-            const removedObjInput = document.getElementById(type=='general'?'removedObjG':'removedObjE');
-            let removedObj = JSON.parse(removedObjInput.value || '[]');
-            removedObj.push({ objId });
-            objectivesTableChanged(type, 'del');
-            actualizarCamposOcultos(type=='general'?'removedObjG':'removedObjE', removedObj);
-            console.log(JSON.stringify(removedObj));
-            activateBtn();
+function DeleteObjective(element, type, projectId, objId) {
+    createConfirmationDialog(
+        "Confirmar eliminación",
+        `¿Estás seguro de que deseas eliminar este objetivo '${type}'?`,
+        function() {
+            const warningMessage = type === 'general' 
+                ? "Este objetivo será eliminado. ¿Deseas continuar?" 
+                : "¡Advertencia!\nSe eliminarán las actividades vinculadas al cumplimiento de este objetivo.\n\n¿Deseas continuar?";
+            createConfirmationDialog(
+                "Advertencia",
+                warningMessage,
+                function() {
+                    // Realizar la solicitud AJAX para eliminar el objetivo de la base de datos
+                    const data = new URLSearchParams({
+                        projectId: projectId,
+                        objId: objId,
+                        type: type
+                    });
+
+                    fetch('../controller/projectManager.php?deleteObjective=true', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: data
+                    })
+                    .then(response => response.json())
+                    .then(response => {
+                        if (response.success) {
+                             // Quitar la fila de la tabla visualmente
+                                const fila = element.closest('tr');
+                                fila.remove()
+                            console.log(`Objetivo eliminado correctamente: ${JSON.stringify(response.data)}`);
+                        } else {
+                            alert('Error al eliminar el objetivo: ' + response.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud AJAX:', error);
+                        alert('Error al eliminar el objetivo: ' + error.message);
+                    });
+                },
+                function() {
+                    console.log("Eliminación cancelada");
+                }
+            );
+        },
+        function() {
+            console.log("Eliminación de objetivo cancelada");
         }
-    }
-}
-
-function objectivesTableChanged(type, action){
-    if(type=='general'){
-        const tableChangedInput = document.getElementById(action=='add'?'objGTableFlagAdd':'objGTableFlagDel');
-        tableChangedInput.value = "true";
-    }
-    if(type=='especifico'){
-        const tableChangedInput = document.getElementById(action=='add'?'objETableFlagAdd':'objETableFlagDel');
-        tableChangedInput.value = "true";
-    }
-}
-
-function objectivesTableUpdated(type){
-    if(type=='general'){
-        const tableChangedInput = document.getElementById('objGTableFlagUpd');
-        tableChangedInput.value = "true";
-    }
-    if(type=='especifico'){
-        const tableChangedInput = document.getElementById('objETableFlagUpd');
-        tableChangedInput.value = "true";
-    }
+    );
 }
 
 //editar objetivo
@@ -480,7 +583,8 @@ function EditObjective(button) {
     button.classList.add('hide');
     fila.querySelector('.fa-save').classList.remove('hide');
 }
-//Guardar cambios
+
+//Validar los cambios realizados
 function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     const fila = button.closest('tr');
     const descripcionCelda = fila.querySelector('.descripcion');
@@ -490,48 +594,91 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     const nuevaDescripcion = textarea.value;
     
     const cadenasSinSentido = [
-        'poiuy','lkjhg','mnbv','uhas83e73u','xyz123',
-        'random','loremipsum','qwerty','asdf','zxcv',
-        'nombre1','ghfjd','iiii','dummytext','blahblah',
-        'Usuario123','abcd1234','123','eeee','aaaa', 'uuuu',
+        'poiuy', 'lkjhg', 'mnbv', 'uhas83e73u', 'xyz123',
+        'random', 'loremipsum', 'qwerty', 'asdf', 'zxcv',
+        'nombre1', 'ghfjd', 'iiii', 'dummytext', 'blahblah',
+        'Usuario123', 'abcd1234', '123', 'eeee', 'aaaa', 'uuuu',
         'Proyecto123', '123Usuario', '123Proyecto', 'oooo'
     ];
 
-    if(cadenasSinSentido.some(nonsensical => nuevaDescripcion.includes(nonsensical))){
-        if(!confirm("Se detecto cadenas sin sentido dentro de la descripción del objetivo\nDeseas continuar?")){
-            return false;
-        }
+    if (cadenasSinSentido.some(nonsensical => nuevaDescripcion.includes(nonsensical))) {
+        createConfirmationDialog(
+            "Advertencia",
+            "Se detectó cadenas sin sentido dentro de la descripción del objetivo.\n¿Deseas continuar?",
+            function() {
+                proceedWithSave(button, fila, tipo, idProyecto, idObjetivo, nuevaDescripcion, descripcionCelda);
+            },
+            function() {
+                console.log("Confirmación rechazada por cadenas sin sentido.");
+            }
+        );
+        return false;
     }
 
     const onlySpaces = /^\s*$/;
-    if(onlySpaces.test(nuevaDescripcion)){
-        if(!confirm("El texto introducido solo contiene espacios.\nDeseas continuar?")){
-            return false;
-        }
-    }
-
-    if(nuevaDescripcion.length < 10){
-        alert("Minimo 10 caracteres para este campo");
+    if (onlySpaces.test(nuevaDescripcion)) {
+        createConfirmationDialog(
+            "Advertencia",
+            "El texto introducido solo contiene espacios.\n¿Deseas continuar?",
+            function() {
+                proceedWithSave(button, fila, tipo, idProyecto, idObjetivo, nuevaDescripcion, descripcionCelda);
+            },
+            function() {
+                console.log("Confirmación rechazada por solo espacios.");
+            }
+        );
         return false;
     }
 
-    if(nuevaDescripcion.length > 1000){
-        alert("Máximo  caracteres para este campo");
+    if (nuevaDescripcion.length < 10) {
+        alert("Mínimo 10 caracteres para este campo");
         return false;
     }
 
-    // Ocultar el textarea y sobrescribir los datos
-    descripcionCelda.innerHTML = nl2br(nuevaDescripcion);
-    button.classList.add('hide');
-    fila.querySelector('.fa-edit').classList.remove('hide');
+    if (nuevaDescripcion.length > 1000) {
+        alert("Máximo 1000 caracteres para este campo");
+        return false;
+    }
 
-    const updatedObjInput = document.getElementById(tipo=='general'?'updatedObjG':'updatedObjE');
-    let updatedObj = JSON.parse(updatedObjInput.value || '[]');
-    updatedObj.push({ idObjetivo, tipo, nuevaDescripcion});
-    objectivesTableUpdated(tipo);
-    actualizarCamposOcultos(tipo=='general'?'updatedObjG':'updatedObjE', updatedObj);
-    activateBtn();
+    // Si pasa todas las validaciones, continuar con el guardado
+    proceedWithSave(button, fila, tipo, idProyecto, idObjetivo, nuevaDescripcion, descripcionCelda);
 }
+
+// Guardar los cambios con AJAX
+function proceedWithSave(button, fila, tipo, idProyecto, idObjetivo, nuevaDescripcion, descripcionCelda) {
+    const data = new URLSearchParams({
+        idProyecto: idProyecto,
+        idObjetivo: idObjetivo,
+        tipo: tipo,
+        nuevaDescripcion: nuevaDescripcion
+    });
+
+    // Realizar la solicitud AJAX para guardar los cambios
+    fetch('../controller/projectManager.php?editObjetctive=true', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data
+    })
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            // Actualizar la descripción visualmente solo si se guarda correctamente
+            descripcionCelda.innerHTML = nl2br(nuevaDescripcion);
+            button.classList.add('hide');
+            fila.querySelector('.fa-edit').classList.remove('hide');
+            console.log('Objetivo actualizado correctamente:', response.message);
+        } else {
+            alert('Error al actualizar el objetivo: ' + response.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+        alert('Error al actualizar el objetivo: ' + error.message);
+    });
+}
+
 
 function nl2br(str) {
     // if (typeof str !== 'string') return str;
