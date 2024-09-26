@@ -1,11 +1,16 @@
 
-function confirmCancel() {
-    if(userName.value != "" || mail.value != "" || password.value != ""  || password2.value != ""){
-        return confirm("¿Estás seguro de que deseas cancelar? Se perderá la información ingresada.");
+function confirmCancel(onConfirm, onCancel) {
+    if (userName.value !== "" || mail.value !== "" || password.value !== "" || password2.value !== "") {
+        createConfirmationDialog(
+            "Confirmar cancelación",
+            "¿Estás seguro de que deseas cancelar? \nSe perderá la información ingresada.\n",
+            onConfirm,
+            onCancel
+        );
+    } else {
+        onConfirm(); // Si no hay datos, directamente confirma
     }
-    return true;
 }
-
 //Buscar usuario
 {
 const searchBtn = document.getElementById('searchUser');

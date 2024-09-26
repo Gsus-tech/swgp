@@ -116,12 +116,19 @@ function showTags(button){
 }
 
 
-function confirmDeleteAct(element){
-    if(confirm('¿Estas seguro de querer eliminar esta actividad?')){
-            //Codigo para eliminar una tarea.
-    }
+function confirmDeleteAct(element) {
+    createConfirmationDialog(
+        "Confirmar eliminación",
+        "¿Estás seguro de querer eliminar esta actividad?",
+        function() {
+            // Código para eliminar una tarea
+            
+        },
+        function() {
+            console.log("Eliminación cancelada");
+        }
+    );
 }
-
 0
 function moveCard(targetColumnId, cardId) {    
     const nm = {

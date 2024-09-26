@@ -454,7 +454,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $textoF = nl2br($textoS);
                                     echo '<td class="descripcion">' . $textoF . '</td>';
                                         
-                                    $objId = $i + 1;
+                                    $objId = $p[$i]['id_objetivo'];
                                     echo "<td class='ObjTableOptions'>
                                     <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'general',$id,$objId)\"></a>
                                     <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
@@ -475,12 +475,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <h4>Describe el objetivo general y haz clic en 'añadir':</h4>
                             <textarea type="text" name="objetivoG" id="objetivoG" placeholder="Descripción del objetivo general" title="Descripción del objetivo general"></textarea>
                             
-                            <input type="hidden" id="objGTableFlagAdd" name="objGTableFlagAdd" value="false">
-                            <input type="hidden" id="addedObjG" name="addedObjG" value="">
-                            <input type="hidden" id="objGTableFlagDel" name="objGTableFlagDel" value="false">
-                            <input type="hidden" id="removedObjG" name="removedObjG" value="">
-                            <input type="hidden" id="objGTableFlagUpd" name="objGTableFlagUpd" value="false">
-                            <input type="hidden" id="updatedObjG" name="updatedObjG" value="">
                             <a id="addObjectiveGBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'general')" tabindex="0">Añadir</a>
                         </div>
                     </div>
@@ -517,7 +511,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             echo '<td class="descripcion">' . $textoF . '</td>';
                                         }
                                     }
-                                    $objId = $i + 1;
+                                    $objId =  $p[$i]['id_objetivo'] ;
                                     echo "<td class='ObjTableOptions'>
                                     <a class='fa fa-trash tableIconBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'especifico',$id,$objId)\"></a>
                                     <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
@@ -538,21 +532,15 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <h4>Describe el objetivo específico y haz clic en 'añadir':</h4>
                             <textarea type="text" name="objetivoE" id="objetivoE" placeholder="Descripción del objetivo específico" title="Descripción del objetivo específico"></textarea>
                             
-                            <input type="hidden" id="objETableFlagAdd" name="objETableFlagAdd" value="false">
-                            <input type="hidden" id="addedObjE" name="addedObjE" value="">
-                            <input type="hidden" id="objETableFlagDel" name="objETableFlagDel" value="false">
-                            <input type="hidden" id="removedObjE" name="removedObjE" value="">
-                            <input type="hidden" id="objETableFlagUpd" name="objETableFlagUpd" value="false">
-                            <input type="hidden" id="updatedObjE" name="updatedObjE" value="">
                             <a id="addObjectiveEBtn" class="button addRowBtn" onclick="agregarObjetivo(<?php echo $_GET['editProject'];?>, 'especifico')" tabindex="0">Añadir</a>
                         </div>
                         
-                        <div class="form-options">
+                        <div class="form-options" pg-d="<?php echo $_GET['editProject'];?>">
                             <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit" tabindex="0">Guardar cambios</button>
                             <a id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()" tabindex="0">Cancelar</a>
                         </div>
                     </div>
-                    </form> <!-- Fin de edit-user-form -->
+                    </form> <!-- Fin de edit-project-form -->
 
 
                 </div> <!-- Fin de form-container -->   

@@ -12,10 +12,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     $allow = count($access) >= 1;
 
     if ($allow) {
-        // if(isset($_SESSION['currentActivityEdition'])){
-        //     echo "<script>console.log(". $_SESSION['currentActivityEdition'] .");</script>";
-        //     unset($_SESSION['currentActivityEdition']);
-        // }
+        
     ?>
 
 <!DOCTYPE html>
@@ -26,8 +23,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - gestión de reportes</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/actions_style.css">
     <link rel="stylesheet" href="../css/table-style.css">
+    <link rel="stylesheet" href="../css/actions_style.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -41,11 +38,16 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 $reportAccessOnly=true; $pagina="activityManagement"; include 'topToolBar.php'; 
                 ?>
             </div>
-            
+            <?php
+            if(isset($_SESSION['currentActivityEdition'])){
+                echo "<input type='hidden' id='updateDataNow' value='". $_SESSION['currentActivityEdition'] ."'>";
+                unset($_SESSION['currentActivityEdition']);
+            }
+            ?>
             <div class="activity-wrapper">
                 <div class="selectActivityDiv">
                     <label for="actividad" class="select-label">Actividad seleccionada:</label>
-                    <select name="actividad" class="comboBox" id="select-actividad">
+                    <select name="actividad" class="comboBox" id="select-actividad" onchange="updatePageData()">
                         <option value="none">-- Selecciona una actividad --</option>
                         <?php
                         $query = "SELECT id_actividad, nombre_actividad, estadoActual FROM tbl_actividades WHERE id_usuario = ? AND id_proyecto = ?";
@@ -75,7 +77,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <tr>
                             <th class="rowNombre">Reporte de actividad</th>
                             <th class="rowFecha">Fecha de creación</th>
-                            <th class="rowActions">Acciones</th>
+                            <th class="rowAcciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="reportsMade_tbody">
@@ -86,20 +88,18 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </table>
             </div>
 
-
-
             <!-- Comienza testing de interface -->
-            <div class="report-creator" id="reportCreator">
+            <div class="report-creator hide" id="reportCreator">
+                 <div class="closeBtn" onclick="closeAddReport()"><a id="hideReportCreator" title="Cerrar editor" class="fa fa-times-rectangle closeEditor"></a></div>
                 <div class="report-input-area" id="reportInputArea">
-                    <!-- Aquí se agregará el contenido del reporte -->
                 </div>
 
                 <div class="toolbar">
-                    <i class="fa fa-header" id="addTitle" title="Título"></i>
-                    <i class="fa fa-font" id="addSubtitle" title="Subtítulo"></i>
-                    <i class="fa fa-align-justify" id="addText" title="Texto"></i>
-                    <i class="fa fa-image" id="addImage" title="Subir imagen"></i>
-                    <button class="button" title="Guardar reporte" id="createReport">Guardar</button>
+                    <i class="fa fa-header button" id="addTitle" title="Título"></i>
+                    <i class="fa fa-font button" id="addSubtitle" title="Subtítulo"></i>
+                    <i class="fa fa-align-justify button" id="addText" title="Texto"></i>
+                    <i class="fa fa-image button" id="addImage" title="Subir imagen"></i>
+                    <button class="button" title="Guardar reporte" id="createReport" onclick="saveNewReport()">Guardar</button>
                     <input type="file" id="imageUploader" class="hidden" accept=".png, .jpg, .jpeg, .webp">
                 </div>
             </div>
@@ -116,6 +116,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 </body>
 </html>
 <?php
+        if (isset($_SESSION['error_message'])) {
+            $error_message = $_SESSION['error_message'];
+            unset($_SESSION['error_message']);
+            echo "<script>alert('Error: $error_message');</script>";
+        }
     }else{
         echo "<script>
         alert('No se encontró ninguna actividad en la que puedas agregar reportes.')

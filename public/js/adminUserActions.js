@@ -93,11 +93,11 @@ openForm.addEventListener('click', function(){
 });
 
 //Cerrar formulario crear usuario
-function cerrarFormulario(){
-    if(confirmCancel()==true){
+function cerrarFormulario() {
+    confirmCancel(function() {
         document.getElementById("addUser-form").reset();
         document.getElementById('addUser-form').classList.toggle('hide');
-    }
+    });
 }
 
 //Cerrar barra al hacer clic fuera del div
@@ -257,15 +257,21 @@ function politicaContrasena(){
 
 //Confirmar eliminar usuario
 function confirmDelete(idToEdit) {
-    if(confirm("¿Estás seguro de que deseas eliminar esta cuenta?")){
-        var form = document.createElement("form");
-        form.method = "POST";
-        form.action = `../controller/userManager.php?delete=true&deleteUser=${idToEdit}`;
-        document.body.appendChild(form);
-        form.submit();  
-    }else{
-        return false;
-    }
+    createConfirmationDialog(
+        "Confirmar eliminación",
+        "¿Estás seguro de que deseas eliminar esta cuenta?",
+        function() {
+            // Al confirma se crea y envía el formulario
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = `../controller/userManager.php?delete=true&deleteUser=${idToEdit}`;
+            document.body.appendChild(form);
+            form.submit();
+        },
+        function() {
+            console.log("Eliminación cancelada");
+        }
+    );
 }
 
 // Habilitar boton de Eliminar multiples cuentas
@@ -308,23 +314,30 @@ function applyAction() {
     } else {}
 }
 
-function deleteSelectedAccounts(){
+function deleteSelectedAccounts() {
     const checkboxes = document.querySelectorAll('.account-checkbox');
     const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
     
-    if(checkedCheckboxes.length>0){
+    if (checkedCheckboxes.length > 0) {
         const confirmationMessage = `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} cuentas?\nEsta acción es irreversible.`;
-        const userConfirmed = confirm(confirmationMessage);
 
-        if (userConfirmed) {
-            var parametros = "?deleteAccounts="+checkedCheckboxes[0].value;
-            for(i=1; i<checkedCheckboxes.length; i++){
-                parametros += ","+checkedCheckboxes[i].value;
+        createConfirmationDialog(
+            "Confirmar eliminación",
+            confirmationMessage,
+            function() {
+                let parametros = checkedCheckboxes.map(chk => chk.value).join(',');
+
+                window.location.href = `../controller/userManager.php?deleteAccounts=${parametros}`;
+            },
+            function() {
+                console.log("Eliminación cancelada.");
             }
-            window.location.href = `../controller/userManager.php${parametros}`;
-        }   
+        );
+    } else {
+        alert("No hay cuentas seleccionadas para eliminar.");
     }
 }
+
 
 function validarCuenta(search){
     x = Count(search) != 0;

@@ -78,3 +78,70 @@ function showLoadingCursor() {
 function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
+
+function createConfirmationDialog(title, message, onConfirm, onCancel) {
+    //Div del confirm
+    const confirmationDiv = document.createElement('div');
+    confirmationDiv.classList.add('confirmation-overlay');
+    const confirmationDialog = document.createElement('div');
+    confirmationDialog.classList.add('confirmation-dialog');
+    const confirmationContent = document.createElement('div');
+    confirmationContent.classList.add('confirmation-content');
+    //Titulo
+    const titleC = document.createElement('h3');
+    titleC.textContent = title;
+    confirmationContent.appendChild(titleC);
+
+    // Mensaje del confirm
+    const messageParagraph = document.createElement('pre');
+    messageParagraph.textContent = message;
+    confirmationContent.appendChild(messageParagraph);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('confirmation-buttons');
+
+    // Botón de confirmar
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = 'Confirmar';
+    buttonContainer.appendChild(confirmButton);
+
+    // Botón de cancelar
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = 'Cancelar';
+    buttonContainer.appendChild(cancelButton);
+
+    confirmationContent.appendChild(buttonContainer);
+    confirmationDialog.appendChild(confirmationContent);
+    confirmationDiv.appendChild(confirmationDialog);
+
+    document.body.appendChild(confirmationDiv);
+
+    // Evento confirmar
+    confirmButton.addEventListener('click', function() {
+        onConfirm();
+        confirmationDiv.remove();
+    });
+    // Evento cancelar
+    cancelButton.addEventListener('click', function() {
+        confirmationDiv.remove();
+        return false;
+    });
+}
+
+function addButtonEvents(){
+    const buttons = document.querySelectorAll('.button');
+    buttons.forEach(button => {
+        console.log('adding events.');
+        button.setAttribute('tabindex', '0');
+        button.addEventListener('keydown', function(event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                event.target.click();
+            }
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    addButtonEvents();
+});

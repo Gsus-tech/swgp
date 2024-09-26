@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         $query = "DELETE FROM tbl_actividades WHERE id_proyecto = ? AND id_actividad = ? AND id_usuario = ?";
         $params = [$project, $id, $rep];
         $types = "iii";
-        Crud::executeNonResultQuery2($query, $params, $types, $destination);
+        Crud::executeNonResultQuery($query, $params, $types, $destination);
     }
 
 

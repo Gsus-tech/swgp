@@ -67,12 +67,12 @@ function openAddForm(){
 }
 
 function confirmCancelEdit(){
-    if(confirm('Cerrar formulario sin guardar los cambios?')){
+    createConfirmationDialog('Advertencia','Estás a punto de cerrar el formulario sin guardar los cambios.\n\n¿Continuar?', function() {
         const form = document.getElementById('activity-form');
         const formDiv = document.getElementById('addActivity-form');
         form.reset();
         formDiv.classList.add('hide');
-    }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -343,8 +343,8 @@ function validateActivityForm(nameId, descriptionId, dateId, userRespId, objecti
 
 
 function DeleteActivity(id, rep) {
-    if (confirm("¿Estás seguro de que deseas eliminar esta actividad?")) {
-        // Crear un formulario
+    createConfirmationDialog('Eliminando actividad','¿Estás seguro que deseas eliminar esta actividad?', function() {
+        //Actualizar a AJAX cuando tenga tiempo.
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '../controller/activityManager.php';
@@ -370,7 +370,7 @@ function DeleteActivity(id, rep) {
         // Agregar el formulario al documento y enviarlo
         document.body.appendChild(form);
         form.submit();
-    }
+    });
 }
 
 const editButtons = document.querySelectorAll('.editActivityJs');
