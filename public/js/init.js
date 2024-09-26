@@ -79,7 +79,7 @@ function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
 
-function createConfirmationDialog(title, message, onConfirm) {
+function createConfirmationDialog(title, message, onConfirm, onCancel) {
     //Div del confirm
     const confirmationDiv = document.createElement('div');
     confirmationDiv.classList.add('confirmation-overlay');
@@ -124,6 +124,7 @@ function createConfirmationDialog(title, message, onConfirm) {
     // Evento cancelar
     cancelButton.addEventListener('click', function() {
         confirmationDiv.remove();
+        return false;
     });
 }
 

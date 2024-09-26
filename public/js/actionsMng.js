@@ -119,7 +119,7 @@ function updateReportsTable(actividadId, reportes) {
                         cellFecha.innerText = rowData.fecha_creacion;
                         reportRow.appendChild(cellFecha);
                         const cellActions = document.createElement('td');
-                        cellActions.innerHTML = "<i class='fa fa-eye button' title='Ver reporte' onclick='createReportView(this)'></i><i class='fa fa-trash button' title='Eliminar reporte'></i>";
+                        cellActions.innerHTML = "<i class='fa fa-eye button' title='Ver reporte' onclick='createReportView(this)'></i><i class='fa fa-trash button' title='Eliminar reporte' onclick='deleteReport(this)'></i>";
                         reportRow.appendChild(cellActions);
                         tableBody.appendChild(reportRow);
                     });
@@ -462,7 +462,6 @@ imageUploader.addEventListener('change', function (event) {
 function createReportView(element) {
     const trElement =  element.closest('[av-id]');
     const avId = trElement.getAttribute('av-id');
-    console.log(`id capturado: ${avId}`);
     // Realizar la solicitud AJAX para obtener la información del reporte
     const url = `../controller/actionsManager.php?getReportData=true&id_avance=${avId}`;
     const formData = new FormData();
@@ -517,6 +516,31 @@ function createReportView(element) {
         console.error('Error en la solicitud AJAX:', error);
     });
 
+}
+
+function deleteReport(element){
+    const trElement =  element.closest('[av-id]');
+    const avId = trElement.getAttribute('av-id');
+
+    createConfirmationDialog('Mensaje de confirmación','Estás a punto de eliminar un reporte.\nEsta acción es irreversible.\n\n¿Deseas continuar?', 
+        function() {
+
+            createConfirmationDialog('Mensaje de confirmación','Se eliminarán las imágenes anexadas en este reporte de la base de datos.\n\n¿Deseas continuar?', 
+                function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '../controller/actionsManager.php?deleteReport=true';
+        
+            const input_avance = document.createElement('input');
+            contenidoInput.type = 'hidden';
+            contenidoInput.name = 'avId';
+            contenidoInput.value = avId;
+            form.appendChild(contenidoInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+    });
 }
 
 function closeReportView(){
