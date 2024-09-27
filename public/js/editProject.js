@@ -1,9 +1,16 @@
 function confirmCancel(){
     const btn = document.getElementById('sumbit-editProject');
     if(btn.classList.contains('enabled')){
-        if(confirm('¡Advertencia!\nNo se guardarán los cambios realizados.\n¿Deseas continuar?')){
-            window.location.href = `projectsManagement.php`;
-        }
+        createConfirmationDialog(
+            "Advertencia",
+            "¡Advertencia!\nNo se guardarán los cambios realizados.\n¿Deseas continuar?",
+            function() { 
+                window.location.href = `projectsManagement.php`;
+            },
+            function() { 
+                console.log("Acción cancelada, cambios no descartados.");
+            }
+        );
     }else{
         window.location.href = `projectsManagement.php`;
     }
