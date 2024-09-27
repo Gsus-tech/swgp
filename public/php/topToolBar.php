@@ -13,6 +13,7 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             $user_id=$_SESSION['id'];
             $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT tbl_proyectos.id_proyecto, tbl_proyectos.nombre FROM tbl_proyectos WHERE tbl_proyectos.estado = 1;");
             $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
+            $selectedP = $_SESSION['projectSelected'];
         }
     }
     
@@ -28,6 +29,7 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
             $user_id=$_SESSION['id'];
             $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1 AND proyectos.estado = 1;");
             $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
+            $selectedP = $_SESSION['projectSelected'];
         }
     }
 ?>
