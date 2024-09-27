@@ -61,15 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             WHERE `id_actividad` = ? AND `id_proyecto` = ?";
         $params = [$name, $description, $responsable, $fechaTermino, $idObjetivo, $activityId, $projectID];
         Crud::executeNonResultQuery($sql, $params, 'ssisiii', $destination);
-        
-        // if(isset($_GET['changeResponsible']) && $_GET['changeResponsible'] === 'true'){
-        //     $responsable = filter_var($_POST['userRespList'], FILTER_VALIDATE_INT);
-        //     $sql = "UPDATE `tbl_actividades` 
-        //     SET `id_usuario` = ?
-        //     WHERE `id_actividad` = ? AND `id_proyecto` = ?";
-        //     $params = [$responsable, $activityId, $projectID];
-        //     Crud::executeNonResultQuery($sql, $params, 'ssisiii', $destination);
-        // }
     }
    
     if (isset($_POST['delete']) && $_POST['delete'] == 'true' && isset($_POST['id']) && isset($_POST['rep'])) {
