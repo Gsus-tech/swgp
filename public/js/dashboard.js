@@ -16,19 +16,18 @@ document.addEventListener("DOMContentLoaded", function() {
             }
 
             function createDiv(){
-                const actId = button.closest('.card-body').id;
-                const newMenu = document.createElement('div');
-                newMenu.className = 'opciones-tarjetas';
-                newMenu.id = actId;
-
                 const closestTaskDiv = button.closest('.tasks');
                 const columnId = closestTaskDiv ? closestTaskDiv.id : null;
                 const closestActDiv = button.closest('.card');
                 const cardId = closestActDiv ? closestActDiv.getAttribute('data-card-id') : null;
-
+                const newMenu = document.createElement('div');
+                newMenu.className = 'opciones-tarjetas';
+                newMenu.id = cardId;
+                
+                
                 newMenu.innerHTML =  `
+                <a href="#" onclick="showMoveOptions(this, '${columnId}', ${cardId})" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Mover</a>
                 <a href="#" onclick="showTags(this, '${columnId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Etiquetas</a>
-                    <a href="#" onclick="showMoveOptions(this, '${columnId}', ${cardId})" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Mover</a>
                     <a href="#" onclick="confirmDeleteAct(this)" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Eliminar</a>
                     `;
 
@@ -54,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
+// Mostrar las opciones para mover las tarjetas
 function showMoveOptions(button, columnId, cardId) {
     event.stopPropagation(); // Esto evita que se ejecute el evento de cierre del div
     const menu = button.closest('.opciones-tarjetas');
@@ -94,7 +94,7 @@ function showMoveOptions(button, columnId, cardId) {
     }
 }
 
-
+// Mostrar las etiquetas
 function showTags(button){
     event.stopPropagation(); // Esto evita que se ejecute el evento de cierre del div
     const menu = button.closest('.opciones-tarjetas');
@@ -115,21 +115,84 @@ function showTags(button){
     }
 }
 
-
+// Eliminar actividad
 function confirmDeleteAct(element) {
     createConfirmationDialog(
         "Confirmar eliminación",
         "¿Estás seguro de querer eliminar esta actividad?",
-        function() {
-            // Código para eliminar una tarea
-            
+        async function() {
+            const id = element.parentElement.getAttribute('id');
+            const rep = await getRepId(id);
+            console.log(`Actividad id: ${id}`);
+            createConfirmationDialog('Eliminando actividad','¿Estás seguro que deseas eliminar esta actividad?', function() {
+                //Actualizar a AJAX cuando tenga tiempo.
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '../controller/activityManager.php';
+        
+                const deleteInput = document.createElement('input');
+                deleteInput.type = 'hidden';
+                deleteInput.name = 'delete';
+                deleteInput.value = 'true';
+                form.appendChild(deleteInput);
+        
+                const idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.name = 'id';
+                idInput.value = id;
+                form.appendChild(idInput);
+        
+                const repInput = document.createElement('input');
+                repInput.type = 'hidden';
+                repInput.name = 'rep';
+                repInput.value = rep;
+                form.appendChild(repInput);
+                
+                const dsh = document.createElement('input');
+                dsh.type = 'hidden';
+                dsh.name = 'dsh';
+                dsh.value = 'true';
+                form.appendChild(dsh);
+
+                // Agregar el formulario al documento y enviarlo
+                document.body.appendChild(form);
+                form.submit();
+            });
         },
         function() {
             console.log("Eliminación cancelada");
         }
     );
 }
-0
+
+async function getRepId(id) {
+    const data = new URLSearchParams({
+        id_actividad: id,
+    });
+
+    try {
+        const response = await fetch('../controller/activityManager.php?getRepId=true', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: data
+        });
+        const result = await response.json();
+        if (result.success) {
+            return result.id_usuario;
+        } else {
+            console.error("Error al obtener el id_usuario:", result.message);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error en la solicitud AJAX:', error);
+        return null;
+    }
+}
+
+
+
 function moveCard(targetColumnId, cardId) {    
     const nm = {
         1: "one",
@@ -143,13 +206,10 @@ function moveCard(targetColumnId, cardId) {
     const card = document.querySelector(cardIdString);
     const targetColumn = document.getElementById(idString);
     if (card && targetColumn) {
-        //Info de columna origen
         const sourceColumn = card.closest('.task-list-items');
         const sourceColumnId = sourceColumn.id;
 
         targetColumn.appendChild(card);
-        
-        //Actualizar datos columna destino
         actualizarContador(idString);
         
         //Actualizar datos columna origen

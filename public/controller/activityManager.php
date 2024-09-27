@@ -74,7 +74,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
    
     if (isset($_POST['delete']) && $_POST['delete'] == 'true' && isset($_POST['id']) && isset($_POST['rep'])) {
         $project = $_SESSION['projectSelected'];
-        $destination = "../php/activityManagement.php?id=$project";
+        $destiny = isset($_POST['dsh']) ? 'dashboard.php' : 'activityManagement.php';
+        $urlParams = $_SESSION['rol'] == 'EST' ? "" : "?id=" . $project;
+        $destination = "../php/" . $destiny . $urlParams;
 
         $id = filter_var($_POST['id'], FILTER_VALIDATE_INT);
         $rep = filter_var($_POST['rep'], FILTER_VALIDATE_INT);
@@ -253,9 +255,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
     
         $mysqli->close();
     }
+
+
+    if (isset($_GET['getRepId']) && $_GET['getRepId'] === 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();  // Usar la conexión de $crud
+        $id_actividad = filter_var($_POST['id_actividad'], FILTER_VALIDATE_INT); 
+        $id_proyecto = $_SESSION['projectSelected'];  // Obtener el proyecto de la sesión
     
+        if ($id_actividad !== false) {
+            $query = "SELECT id_usuario FROM tbl_actividades WHERE id_proyecto = ? AND id_actividad = ?";
+            if ($stmt = $mysqli->prepare($query)) {
+                $stmt->bind_param('ii', $id_proyecto, $id_actividad);
+                $stmt->execute();
+                $stmt->bind_result($id_usuario);
+                if ($stmt->fetch()) {
+                    echo json_encode(['success' => true, 'id_usuario' => $id_usuario]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se encontró el usuario para esta actividad.']);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error en la consulta SQL.']);
+            }
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Faltan parámetros en la solicitud.']);
+        }
+    }
     
-    // echo"<script>window.location.href = `$destination`;</script>";
 }else{
     echo"<script>window.location.href = `$destination`;</script>";
 }
