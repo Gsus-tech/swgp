@@ -23,28 +23,39 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
-function reactivateProject(element){
-    if(confirm('¿Reactivar este proyecto?')){
-        let closestElement = element;
-        while (closestElement && !closestElement.hasAttribute('p-i')) {
-            closestElement = closestElement.parentElement;
-        }
-            const projectId = closestElement.getAttribute('p-i');
-        fetch(`../controller/projectManager.php?reactivate=${encodeURIComponent(projectId)}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+function reactivateProject(element) {
+    createConfirmationDialog(
+        "Reactivar proyecto",
+        "¿Estás seguro de que deseas reactivar este proyecto?",
+        function() {  // Acción en caso de confirmación
+            let closestElement = element;
+            while (closestElement && !closestElement.hasAttribute('p-i')) {
+                closestElement = closestElement.parentElement;
             }
-        })
-        .then(response => response.text())
-        .then(data => {
-            window.location.href = `projectsManagement.php?project-history`;
-        })
-        .catch(error => {
-            console.error('Error en la solicitud AJAX:', error);
-        });
-    }
+            const projectId = closestElement.getAttribute('p-i');
+
+            // Enviar solicitud AJAX para reactivar el proyecto
+            fetch(`../controller/projectManager.php?reactivate=${encodeURIComponent(projectId)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                // Redirigir a la página de gestión de proyectos después de la reactivación
+                window.location.href = `projectsManagement.php?project-history`;
+            })
+            .catch(error => {
+                console.error('Error en la solicitud AJAX:', error);
+            });
+        },
+        function() {  // Acción en caso de cancelación
+            console.log("Reactivación del proyecto cancelada.");
+        }
+    );
 }
+
 
 //Habilitar acciones para proyectos seleccionados
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -79,41 +90,56 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function applyAction() {
-    showLoadingCursor();
     var actionSelected = document.getElementById('actionSelected').value;
+    
     if (actionSelected === 'delete') {
         const checkboxes = document.querySelectorAll('.project-checkbox');
         const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
         
-        if(checkedCheckboxes.length>0){
+        if (checkedCheckboxes.length > 0) {
             const confirmationMessage = 
-            `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} proyecto(s)?\n`+
-            `\nEsta acción es irreversible y no podrás acceder a la información de este proyecto en el futuro.\n`+
+            `¿Estás seguro de querer eliminar ${checkedCheckboxes.length} proyecto(s)?\n` +
+            `\nEsta acción es irreversible y no podrás acceder a la información de este proyecto en el futuro.\n` +
             `Esto incluye objetivos, actividades y eventos del proyecto.\n\n¿Continuar?`;
-            const userConfirmed = confirm(confirmationMessage);
-
-            if (userConfirmed) {
-                if(confirm('Confirmar la acción')){
-                    let promises = [];
-                    checkedCheckboxes.forEach(box => {
-                        promises.push(deleteProject(box.value));
-                    });
-                    Promise.all(promises).then(() => {
-                        setTimeout(() => {
+            
+            createConfirmationDialog(
+                "Confirmar eliminación",
+                confirmationMessage,
+                function() {
+                    createConfirmationDialog(
+                        "Confirmar acción",
+                        "¿Estás seguro de que quieres confirmar la acción de eliminar estos proyectos?",
+                        function() {
+                            showLoadingCursor();
+                            let promises = [];
+                            checkedCheckboxes.forEach(box => {
+                                promises.push(deleteProject(box.value));
+                            });
+                            Promise.all(promises).then(() => {
+                                setTimeout(() => {
+                                    hideLoadingCursor();
+                                    localStorage.setItem('showProjectsPermanentlyDeleted', 'true');
+                                    window.location.reload();
+                                }, 1000);
+                            });
+                        },
+                        function() {
                             hideLoadingCursor();
-                            localStorage.setItem('showProjectsPermanentlyDeleted', 'true');
-                            window.location.reload();
-                        }, 1000);
-                    });
-                }else{
+                            console.log("Acción de eliminación cancelada.");
+                        }
+                    );
+                },
+                function() {  // Si cancela la primera confirmación
                     hideLoadingCursor();
+                    console.log("Eliminación cancelada.");
                 }
-            }else{
-                hideLoadingCursor();
-            }
+            );
+        } else {
+            hideLoadingCursor();
         }
     }
 }
+
 
 function deleteProject(projectId){
     let urlString = `../controller/projectManager.php?deleteProjectPermanently=${encodeURIComponent(projectId)}`;

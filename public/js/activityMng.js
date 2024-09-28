@@ -1,3 +1,4 @@
+// Mostrar filtros
 function FiltersToggle(){
     const filterDiv = document.getElementById('filterDiv');
     const filtros = document.querySelectorAll('.dropDownFilter');
@@ -10,6 +11,7 @@ function FiltersToggle(){
     });
 }
 
+// Aplicar filtro seleccionado a la tabla
 function FilterResults(selectElement) {
     unpaginate('activity-list-body', 'pagination');
 
@@ -56,7 +58,7 @@ function FilterResults(selectElement) {
     }
 }
 
-
+// Abrir formulario de alta de actividad
 function openAddForm(){
     const filtros = document.getElementById('filterDiv');
     filtros.scrollIntoView({
@@ -66,6 +68,7 @@ function openAddForm(){
     formDiv.classList.remove('hide');
 }
 
+// Confirmación al cerrar la edicion sin guardar
 function confirmCancelEdit(){
     createConfirmationDialog('Advertencia','Estás a punto de cerrar el formulario sin guardar los cambios.\n\n¿Continuar?', function() {
         const form = document.getElementById('activity-form');
@@ -75,6 +78,7 @@ function confirmCancelEdit(){
     });
 }
 
+// Agregar eventos al cargar la pagina
 document.addEventListener("DOMContentLoaded", function() {
     const checkboxes = document.querySelectorAll('.activity-checkbox');
     const allBoxs = document.getElementById('selectAllActivities');
@@ -114,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
+// Actualizar la descripción de la actividad seleccionada
 function SelectThisRowAndDetails(element, tbodyName){
     const tbody = document.getElementById(`${tbodyName}`);
     const rows = tbody.getElementsByTagName('tr');
@@ -138,6 +143,7 @@ function SelectThisRowAndDetails(element, tbodyName){
     }
 }
 
+// Evento de doble clic sobre una actividad
 function doubleClickRow(element){
     SelectThisRowAndDetails(element, "activity-list-body");
     if(element.classList.contains('rowSelected')){
@@ -148,38 +154,7 @@ function doubleClickRow(element){
     }
 }
 
-function switchDatesState(){
-    const dia = document.getElementById("dia_meta");
-    const mes = document.getElementById("mes_meta");
-    const anio = document.getElementById("anio_meta");
-    const state = dia.disabled===true ? true : false;
-    dia.disabled = state==true ? false : true;
-    mes.disabled = state==true ? false : true;
-    anio.disabled = state==true ? false : true;
-}
-
-function switchRepState(element){
-    const select = document.getElementById('userRespList');
-    if(select.classList.contains('noRepsEncountered')){
-        element.setCustomValidity('Debido a la falta de miembros deberás ser el responsable de la actividad.');
-        element.reportValidity();
-        element.checked = true;
-
-        setTimeout(() => {
-            element.setCustomValidity('');
-        }, 4000);
-    }
-    else if(element.checked == true){
-        select.disabled = true;
-        select.value = 'I';
-        updateRep(document.getElementById('userRespList'));
-    }
-    else if(element.checked == false){
-        select.disabled = false;
-        select.selectedIndex = 0;
-    }
-}
-
+// Actualizar el texto del nombre de encargado de la actividad - addForm
 function updateRep(element) {
     const input = document.getElementById('responsableActividad'); 
     if (element.disabled === true) {
@@ -189,6 +164,7 @@ function updateRep(element) {
     }
 }
 
+// Actualiza la descripcion del objetivo seleccionado - addForm
 function updateObjectiveDescription(element) {
     const idName = element.id == 'objetivoList' ? 'ObjectiveDescription' : 'editObjectiveDescription';
     const idName2 = element.id == 'objetivoList' ? 'objetivoEnlazado' : 'editObjetivoEnlazado';
@@ -207,16 +183,7 @@ function updateObjectiveDescription(element) {
     }
 }
 
-function getDateSelected(){
-    const d = parseInt(document.getElementById('dia_meta').value);
-    const m = parseInt(document.getElementById('mes_meta').value);
-    const y = parseInt(document.getElementById('anio_meta').value);
-
-    return new Date(y, m - 1, d);
-}
-
-
-
+// Envia el formulario de agregar actividad - addForm
 function submitNewActivity() {
     const isValid = validateActivityForm('Fname', 'Fdescription', 'Fdate', 'userRespList', 'objetivoList');
     if (!isValid) {
@@ -231,7 +198,7 @@ function submitNewActivity() {
     return true;
 }
 
-
+// Envia el formulario de editar actividad - editForm
 function submitEditActivity() {
     console.log('Validando datos de actividad');
     const isValid = validateActivityForm('editFname', 'editFdescription', 'editFdate', 'editUserRespList', 'editObjetivoList');
@@ -256,7 +223,6 @@ function submitEditActivity() {
         return false;
     }
 }
-
 
 
 // Función común de validación con customValidity
@@ -339,9 +305,7 @@ function validateActivityForm(nameId, descriptionId, dateId, userRespId, objecti
     return true;
 }
 
-
-
-
+// Eliminar actividad
 function DeleteActivity(id, rep) {
     createConfirmationDialog('Eliminando actividad','¿Estás seguro que deseas eliminar esta actividad?', function() {
         //Actualizar a AJAX cuando tenga tiempo.
@@ -373,6 +337,7 @@ function DeleteActivity(id, rep) {
     });
 }
 
+// agrega el evento para abrir el formulario de edición
 const editButtons = document.querySelectorAll('.editActivityJs');
 editButtons.forEach(button => {
     button.addEventListener('click', function() {
@@ -380,6 +345,7 @@ editButtons.forEach(button => {
     });
 });
 
+// Funcion para crear el formulario de edición
 function createEditForm(element) {
     let closestElement = element;
     while (closestElement && !closestElement.hasAttribute('u-d')) {
@@ -461,6 +427,7 @@ function closeEditForm() {
     }
 }
 
+// Crear la lista de usuarios disponibles
 function setOptionsRep(idName){
     const select = document.getElementById(idName);
     const url = `../controller/activityManager.php?getMembers=true`;
@@ -493,6 +460,7 @@ function setOptionsRep(idName){
     );
 }
 
+// Crear la lista de objetivos disponibles
 function setOptionsObjectives(idName){
     const select = document.getElementById(idName);
     const desSelect = document.getElementById('editObjectiveDescriptionList');
@@ -535,6 +503,7 @@ function setOptionsObjectives(idName){
 
 }
 
+// Recupera la información de la actividad para mstrarla en el formulario
 function updateFormData(activityId) {
     const url = `../controller/activityManager.php?getActivityInfo=true&activityId=${encodeURIComponent(activityId)}`;
     
@@ -589,6 +558,7 @@ function updateFormData(activityId) {
     });
 }
 
+// Recupera las fechas de inicio y fin del proyecto
 function setLimitDates(){
     const url = `../controller/activityManager.php?getProjectDates=true`;
     

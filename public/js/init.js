@@ -131,7 +131,6 @@ function createConfirmationDialog(title, message, onConfirm, onCancel) {
 function addButtonEvents(){
     const buttons = document.querySelectorAll('.button');
     buttons.forEach(button => {
-        console.log('adding events.');
         button.setAttribute('tabindex', '0');
         button.addEventListener('keydown', function(event) {
             if (event.key === "Enter" || event.key === " ") {

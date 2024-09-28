@@ -125,11 +125,6 @@ function changeDepto() {
     }
 }
 
-//Confirmar eliminar proyecto
-function confirmDelete() {
-    return confirm("¿Estás seguro de que deseas eliminar esta cuenta?");
-}
-
 document.getElementById("Fdescription").addEventListener("input", function(){
     this.style.height = "auto";
     this.style.height = (this.scrollHeight) + "px";
@@ -298,21 +293,31 @@ document.addEventListener('keydown', function(event) {
 
 //Cerrar formulario de alta -- no se recarga la pagina para esta accion.
 function cerrarFormulario() {
-    if (confirmCancel() == true) {
+    confirmCancel(function() {
         document.getElementById("addProject-form").reset();
         document.getElementById('addProject-form').classList.toggle('hide');
-    }
+    });
 }
 
-function confirmCancel() {
+function confirmCancel(onConfirm) {
     const projectName = document.getElementById("Fname").value;
     const description = document.getElementById("Fdescription").value;
     const metas = document.getElementById("Fmeta").value;
 
     if (projectName !== '' || description !== '' || metas !== '') {
-        return confirm("¿Estás seguro de que deseas cancelar? Se perderá la información ingresada.");
+        createConfirmationDialog(
+            "Confirmar cancelación",
+            "¿Estás seguro de que deseas cancelar? \nSe perderá la información ingresada.",
+            function() {
+                onConfirm();
+            },
+            function() {
+                console.log("Cancelación abortada");
+            }
+        );
+    } else {
+        onConfirm();
     }
-    return true;
 }
 
 //Ver detalles de proyecto
@@ -353,34 +358,43 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 function applyAction() {
-    showLoadingCursor();
     var actionSelected = document.getElementById('actionSelected').value;
+    
     if (actionSelected === 'endProject') {
         const checkboxes = document.querySelectorAll('.project-checkbox');
         const checkedCheckboxes = Array.from(checkboxes).filter(chk => chk.checked);
         
-        if(checkedCheckboxes.length>0){
+        if (checkedCheckboxes.length > 0) {
             const confirmationMessage = `¿Estás seguro de querer cerrar ${checkedCheckboxes.length} proyectos?`;
-            const userConfirmed = confirm(confirmationMessage);
-
-            if (userConfirmed) {
-                let promises = [];
-                checkedCheckboxes.forEach(box => {
-                    promises.push(cerrarProyectoBulkAction(box.value));
-                });
-                Promise.all(promises).then(() => {
-                    setTimeout(() => {
-                        hideLoadingCursor();
-                        localStorage.setItem('showEndedProjectsAlert', 'true');
-                        window.location.reload();
-                    }, 1000);
-                });
-            }else{
-                hideLoadingCursor();
-            }
+            
+            createConfirmationDialog(
+                "Confirmar cierre de proyectos",
+                confirmationMessage,
+                function() { 
+                    showLoadingCursor();
+                    let promises = [];
+                    checkedCheckboxes.forEach(box => {
+                        promises.push(cerrarProyectoBulkAction(box.value));
+                    });
+                    Promise.all(promises).then(() => {
+                        setTimeout(() => {
+                            hideLoadingCursor();
+                            localStorage.setItem('showEndedProjectsAlert', 'true');
+                            window.location.reload();
+                        }, 1000);
+                    });
+                },
+                function() { 
+                    hideLoadingCursor();
+                    console.log("Cierre de proyectos cancelado.");
+                }
+            );
+        } else {
+            hideLoadingCursor();
         }
     }
 }
+
 
 function FilterResults(selectElement) {
     const selectedValue = selectElement.value; 
@@ -421,38 +435,59 @@ function FilterResults(selectElement) {
     }
 }
 
-function cerrarProyecto(element){
+function cerrarProyecto(element) {
     let closestElement = element;
     while (closestElement && !closestElement.hasAttribute('p-p')) {
         closestElement = closestElement.parentElement;
     }
     const percentage = closestElement.getAttribute('p-p');
     const projectId = closestElement.getAttribute('p-i');
-    let ready = percentage === 100 ? true : false;
+    let ready = percentage === '100' ? true : false;
 
-    if(!ready){
-        if(confirm(`El proyecto se encuentra con el ${percentage}% de avance.\nSi lo cierras ahora no alcanzaras el 100%.\n\n¿Deseas continuar?`)){
-            ready = true;
-        }
-    }
-    if(ready && confirm('¿Estás seguro que deseas terminar este proyecto?')){
-        fetch('../controller/projectManager.php?cierreProyecto=' + encodeURIComponent(projectId), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+    if (!ready) {
+        createConfirmationDialog(
+            "Proyecto incompleto",
+            `El proyecto se encuentra con el ${percentage}% de avance.\nSi lo cierras ahora no alcanzarás el 100%.\n\n¿Deseas continuar?`,
+            function() {
+                ready = true;
+                confirmCloseProject(projectId);
+            },
+            function() {
+                console.log("Cierre de proyecto cancelado.");
             }
-        })
-        .then(response => response.text())
-        .then(data => {
-            finalReport(projectId);
-        })
-        .catch(error => {
-            console.error('Error en la solicitud AJAX:', error);
-        });
+        );
+    } else {
+        confirmCloseProject(projectId); 
     }
 }
 
-function concluirProyecto(element){
+function confirmCloseProject(projectId) {
+    // Segunda confirmación para cerrar el proyecto
+    createConfirmationDialog(
+        "Confirmar cierre de proyecto",
+        "¿Estás seguro que deseas terminar este proyecto?",
+        function() {
+            fetch('../controller/projectManager.php?cierreProyecto=' + encodeURIComponent(projectId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                finalReport(projectId);  // Realizar el reporte final
+            })
+            .catch(error => {
+                console.error('Error en la solicitud AJAX:', error);
+            });
+        },
+        function() {
+            console.log("Cierre de proyecto cancelado.");
+        }
+    );
+}
+
+function concluirProyecto(element) {
     let closestElement = element;
     while (closestElement && !closestElement.hasAttribute('p-i')) {
         closestElement = closestElement.parentElement;
@@ -460,22 +495,31 @@ function concluirProyecto(element){
     const projectId = closestElement.getAttribute('p-i');
     const urlString = `../controller/projectManager.php?cierreProyecto=${encodeURIComponent(projectId)}`;
 
-    if (confirm("¡Enhorabuena!\nHaz finalizado este proyecto.\n\nConfirma la acción para continuar...")) {
-        fetch(urlString + "&success=true", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            finalReport(projectId);
-        })
-        .catch(error => {
-            console.error('Error en la solicitud AJAX:', error);
-        });
-    }
+    // Usar createConfirmationDialog en lugar de confirm
+    createConfirmationDialog(
+        "Confirmar finalización del proyecto",
+        "¡Enhorabuena!\nHas finalizado este proyecto.\n\nConfirma la acción para continuar...",
+        function() {  // Si el usuario confirma
+            fetch(urlString + "&success=true", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                finalReport(projectId);  // Generar el informe final
+            })
+            .catch(error => {
+                console.error('Error en la solicitud AJAX:', error);
+            });
+        },
+        function() {  // Si el usuario cancela
+            console.log("Finalización del proyecto cancelada.");
+        }
+    );
 }
+
 
 // Bulk actions
 function cerrarProyectoBulkAction(projectId){

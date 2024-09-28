@@ -5,61 +5,35 @@ use Controller\GeneralCrud\Crud;
 
 $destination = "../php/projectsManagement.php";
 if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
+    function deleteDirectory($dir) {
+        if (!is_dir($dir)) {
+            return;
+        }
+    
+        // Obtener todos los archivos y subdirectorios
+        $files = array_diff(scandir($dir), ['.', '..']);
+    
+        foreach ($files as $file) {
+            $filePath = "$dir/$file";
+            
+            // Si es una carpeta, llamamos a la función recursivamente
+            if (is_dir($filePath)) {
+                deleteDirectory($filePath);
+            } else {
+                // Si es un archivo, lo eliminamos
+                unlink($filePath);
+            }
+        }
+    
+        // Finalmente, eliminar la carpeta vacía
+        rmdir($dir);
+    }
     
     if (isset($_GET['editProject']) && $_GET['editProject'] == 'true' && isset($_GET['id'])) {
         $id =  (int)$_GET['id'];
         $destination = $destination ."?editProject=". $id;
-        //Actualizar tbl_integrantes
-        // if($_POST['membersTableFlagAdd'] === 'true'){
-        //     $addedMembers = json_decode($_POST['addedMembers'], true);
-        //     foreach ($addedMembers as $member) {
-        //         $newMember = (int)$member['usuarioId'];
-        //         $rolGiven = (int)$member['rol'];
-        //         $query = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, ?)";
-        //         $params = [$newMember, $id, $rolGiven];
-        //         $types = "ssi";
-        //         Crud::executeNonResultQuery2($query, $params, $types, $destination);
-        //     }
-        // }
-        if ($_POST['membersTableFlagDel'] === 'true') {
-            echo "<script>console.log('QUERY: RemoveMember');</script>";
-            $removedMembers = json_decode($_POST['removedMembers'], true);
-        
-            foreach ($removedMembers as $member) {
-                $delMember = $member['idUsuario'];
-                
-                // Obtener actividades que tienen este usuario
-                $query = "SELECT id_actividad FROM tbl_actividades WHERE id_proyecto = ? AND id_usuario = ?";
-                $params = [$id, $delMember];
-                $types = "ii";
-                $actividades = Crud::executeResultQuery($query, $params, $types);
-                
-                // Obtener responsable del proyecto
-                $query = "SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ? AND responsable = 1";
-                $repProyecto = Crud::executeResultQuery($query, [$id], "i");
-                $nuevoResponsableId = $repProyecto[0]['id_usuario'] == $delMember ? $repProyecto[1]['id_usuario'] : $repProyecto[0]['id_usuario'];
-        
-                if (count($actividades) > 0) {
-                    foreach ($actividades as $actividad) {
-                        $actividadId = $actividad['id_actividad'];
-                        
-                        $query = "UPDATE tbl_actividades SET id_usuario = ? WHERE id_proyecto = ? AND id_usuario = ? AND id_actividad = ?";
-                        $params = [$nuevoResponsableId, $id, $delMember, $actividadId];
-                        $types = "iiii";
-                        Crud::executeNonResultQuery2($query, $params, $types, $destination);                    
-                    }
-                }
-        
-                // Eliminar integrante del proyecto
-                $query = "DELETE FROM tbl_integrantes WHERE id_usuario = ? AND id_proyecto = ?";
-                $params = [$delMember, $id];
-                $types = "ii";
-                Crud::executeNonResultQuery2($query, $params, $types, $destination);
-            }
-        }
-    
+            
         //Actualizar tbl_proyectos
-        echo "<script>console.log('QUERY: GeneralChanges');</script>";
         $nombre = Crud::antiNaughty((string)$_POST['Fname']);
         $depto = Crud::antiNaughty((string)$_POST['eFdptoText']);
         $description = Crud::antiNaughty((string)$_POST['Fdescription']);
@@ -258,8 +232,6 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
 
         exit();
     }
-
-
 
     if (isset($_GET['addObjectiveGeneral']) || isset($_GET['addObjectiveEspecifico'])) {
         $crud = new Crud();
@@ -474,19 +446,28 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         $crud = new Crud();
         $mysqli = $crud->getMysqliConnection();
         $proyectoId = filter_var($_GET['deleteProjectPermanently'], FILTER_VALIDATE_INT);
-    
+        
         if ($proyectoId !== false) {
+            // Primero eliminamos el proyecto de la base de datos
             $sql = "DELETE FROM tbl_proyectos WHERE id_proyecto = ?";
-            $estado = 1;
             $stmt = $mysqli->prepare($sql);
-    
+        
             if ($stmt) {
                 $stmt->bind_param('i', $proyectoId);
-    
-                // Ejecutar la consulta
+
+                // Ejecutar la consulta para eliminar el proyecto
                 if ($stmt->execute()) {
                     if ($stmt->affected_rows > 0) {
-                        echo json_encode(['success' => true, 'message' => 'Proyecto eliminado permanentemente de la BD.']);
+                        // Si el proyecto se eliminó correctamente, procedemos a eliminar la carpeta de archivos
+                        $projectFolder = "../assets/report-images/project-" . $proyectoId;
+                        
+                        if (is_dir($projectFolder)) {
+                            // Llamar a la función recursiva para eliminar la carpeta y su contenido
+                            deleteDirectory($projectFolder);
+                            echo json_encode(['success' => true, 'message' => 'Proyecto eliminado permanentemente de la BD y la carpeta de archivos ha sido eliminada.']);
+                        } else {
+                            echo json_encode(['success' => true, 'message' => 'Proyecto eliminado permanentemente, pero no se encontró la carpeta de archivos asociada.']);
+                        }
                     } else {
                         echo json_encode(['success' => false, 'message' => 'No se encontró el proyecto o no se realizaron cambios.']);
                     }
@@ -497,6 +478,8 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
             }
+
+            $mysqli->close();
         } else {
             echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
         }

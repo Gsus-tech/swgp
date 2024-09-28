@@ -39,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         }
     }
 
-
     if(isset($_GET['saveNewReport']) && $_GET['saveNewReport'] == 'true'){
         if (isset($_POST['contenido']) && isset($_POST['id_actividad'])) {
 
@@ -206,6 +205,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             echo json_encode(['success' => false, 'message' => 'ID de avance inválido']);
         }
     }    
+
+
+    if (isset($_GET['deleteReport']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        
+        $avId = isset($_POST['avId']) ? (int)$_POST['avId'] : null;
+    
+        if ($avId !== null) {
+            // Paso 1: Obtener el contenido del reporte
+            $query = "SELECT contenido FROM tbl_avances WHERE id_avance = ?";
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                $stmt->bind_param('i', $avId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+    
+                if ($result->num_rows > 0) {
+                    $reportData = $result->fetch_assoc();
+                    $contenido = json_decode($reportData['contenido'], true);
+    
+                    // Paso 2: Verificar si hay imágenes en el contenido y eliminarlas
+                    foreach ($contenido as $elemento) {
+                        if (isset($elemento['type']) && $elemento['type'] === 'img') {
+                            $rutaImagen = str_replace('..', '', $elemento['value']);  // Eliminar los '..' de la ruta
+                            $imagePath = $_SERVER['DOCUMENT_ROOT'] . $rutaImagen;    // Ruta completa de la imagen en el servidor
+    
+                            // Verificar si el archivo existe y eliminarlo
+                            if (file_exists($imagePath)) {
+                                unlink($imagePath); // Eliminar la imagen del servidor
+                            }
+                        }
+                    }    
+    
+                    // Paso 3: Eliminar el reporte después de eliminar las imágenes
+                    $deleteQuery = "DELETE FROM tbl_avances WHERE id_avance = ?";
+                    $stmtDelete = $mysqli->prepare($deleteQuery);
+                    if ($stmtDelete) {
+                        $stmtDelete->bind_param('i', $avId);
+    
+                        if ($stmtDelete->execute()) {
+                            if ($stmtDelete->affected_rows > 0) {
+                                // Respuesta exitosa
+                                echo json_encode([
+                                    'success' => true,
+                                    'message' => "Reporte con ID $avId y sus imágenes asociadas han sido eliminados correctamente."
+                                ]);
+                            } else {
+                                echo json_encode([
+                                    'success' => false,
+                                    'message' => "No se encontró el reporte con ID $avId o no se eliminaron registros."
+                                ]);
+                            }
+                        } else {
+                            echo json_encode(['success' => false, 'message' => 'Error al eliminar el reporte: ' . $stmtDelete->error]);
+                        }
+    
+                        $stmtDelete->close();
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se encontró el reporte']);
+                }
+    
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error en la consulta para obtener los datos del reporte']);
+            }
+    
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Faltan datos necesarios para eliminar el reporte']);
+        }
+    
+        exit();
+    }
+
     
 } else {
      echo"<script>window.location.href = `../php/actionsManagement.php`;</script>";

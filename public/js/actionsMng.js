@@ -518,30 +518,54 @@ function createReportView(element) {
 
 }
 
-function deleteReport(element){
-    const trElement =  element.closest('[av-id]');
+function deleteReport(element) {
+    const trElement = element.closest('[av-id]');
     const avId = trElement.getAttribute('av-id');
 
-    createConfirmationDialog('Mensaje de confirmación','Estás a punto de eliminar un reporte.\nEsta acción es irreversible.\n\n¿Deseas continuar?', 
+    createConfirmationDialog(
+        'Mensaje de confirmación',
+        'Estás a punto de eliminar un reporte.\nEsta acción es irreversible.\n\n¿Deseas continuar?', 
         function() {
-
-            createConfirmationDialog('Mensaje de confirmación','Se eliminarán las imágenes anexadas en este reporte de la base de datos.\n\n¿Deseas continuar?', 
+            createConfirmationDialog(
+                'Mensaje de confirmación',
+                'Se eliminarán las imágenes anexadas en este reporte de la base de datos.\n\n¿Deseas continuar?', 
                 function() {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '../controller/actionsManager.php?deleteReport=true';
-        
-            const input_avance = document.createElement('input');
-            contenidoInput.type = 'hidden';
-            contenidoInput.name = 'avId';
-            contenidoInput.value = avId;
-            form.appendChild(contenidoInput);
+                    const data = new URLSearchParams({
+                        avId: avId 
+                    });
 
-            document.body.appendChild(form);
-            form.submit();
-        });
-    });
+                    fetch('../controller/actionsManager.php?deleteReport=true', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: data
+                    })
+                    .then(response => response.json()) 
+                    .then(data => {
+                        if (data.success) {
+                            trElement.remove();
+                            console.log('Reporte eliminado correctamente:', data.message);
+                        } else {
+                            alert('Error al eliminar el reporte: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud AJAX:', error);
+                        alert('Error al eliminar el reporte.');
+                    });
+                },
+                function() {
+                    console.log('Eliminación del reporte cancelada.');
+                }
+            );
+        },
+        function() {
+            console.log("Eliminación de reporte cancelada.");
+        }
+    );
 }
+
 
 function closeReportView(){
     const reportView = document.querySelector('.pdf-view-container');
