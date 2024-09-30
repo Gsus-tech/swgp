@@ -39,6 +39,18 @@ function updatePageData() {
                         createAddButton();
                     }
 
+                    const endActBtn = document.querySelector('.finishBtn');
+                    if(endActBtn){ endActBtn.remove(); }
+
+                    if(data.numeroReportes > 0){
+                        const actDiv = document.querySelector('.activityStatusDiv');
+                        const finishBtn = document.createElement('button');
+                        finishBtn.classList.add('finishBtn');
+                        finishBtn.textContent = 'Finalizar actividad';
+                        actDiv.appendChild(finishBtn);
+                        finishBtn.addEventListener('click', endActivity)
+                    }
+
                 } else {
                     document.getElementById('estadoActividad').innerHTML = '<i>No disponible</i>';
                     document.getElementById('numeroReportes').innerHTML = '<i>0</i>';
@@ -562,6 +574,45 @@ function deleteReport(element) {
         },
         function() {
             console.log("Eliminación de reporte cancelada.");
+        }
+    );
+}
+
+// Enviar actividad a revisión para su finalización
+function endActivity() {
+    const actId = document.getElementById('select-actividad').value;
+    createConfirmationDialog(
+        'Finalizar actividad',
+        'Al confirmar esta acción la actividad seleccionada se enviará a revisión con el representante de proyecto para confirmar su finalización.\n\n¿Deseas continuar?', 
+        function() {
+            const data = new URLSearchParams({
+                actId: actId
+            });
+
+            // Realiza la solicitud POST
+            fetch('../controller/actionsManager.php?submitActivityRevision=true', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: data
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Actividad enviada a revisión:', data.message);
+                    alert('Actividad enviada correctamente a revisión.');
+                } else {
+                    alert('Error al finalizar la actividad: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud AJAX:', error);
+                alert('Parece que hubo un error en la acción.\nSi ves este mensaje, levanta un ticket de soporte.');
+            });
+        },
+        function() {
+            console.log("Finalización de actividad cancelada.");
         }
     );
 }

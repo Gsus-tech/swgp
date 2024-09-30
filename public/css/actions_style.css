@@ -39,7 +39,9 @@
     padding: 1rem;
     position: relative;
     min-height: 300px;
-    margin: 2rem;
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 950px;
     background-color: #f9f9f9;
 }
 
@@ -181,7 +183,6 @@
     }
 }
 
-/* Div para nombrar el reporte */
 .nombrarReporte {
     position: fixed;
     top: 0;
@@ -268,7 +269,6 @@
     background-color: #c82333;
 }
 
-/* TESTING PDF VIEW */
 .pdf-view-container {
     position: fixed;
     top: 0;
@@ -283,7 +283,7 @@
 }
 
 .report-content {
-    position: relative; /* Esto es clave para que los elementos dentro de este contenedor se posicionen relativos a él */
+    position: relative;
     width: 80%;
     max-width: 800px;
     background-color: white;
@@ -291,7 +291,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     z-index: 1000;
-    text-align: left; /* Contenido alineado a la izquierda */
+    text-align: left;
     overflow: auto;
     max-height: 80vh;
 }
@@ -347,7 +347,25 @@
 .file-options .fa-print:hover {
     color: #037e72;
 }
-/* Fin de testing  */
+
+.finishBtn{
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 14px; 
+    margin: 10px auto;
+    cursor: pointer; 
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.finishBtn:hover {
+    background-color: #45a049; 
+}
 
 @media (max-width: 700px) {
     .activity-wrapper {
