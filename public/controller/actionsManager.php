@@ -285,17 +285,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         $id_actividad = filter_var($_POST['actId'], FILTER_VALIDATE_INT);  // Cambiado de $_GET a $_POST
         
         if ($id_actividad) {
+            
             $crud = new Crud();
             $mysqli = $crud->getMysqliConnection();
-    
+            
             // Query para actualizar el campo de revisión
             $query = "UPDATE tbl_actividades SET revision = ? WHERE id_actividad = ? AND id_usuario = ? AND id_proyecto = ?";
             $stmt = $mysqli->prepare($query);
-    
+            
             if ($stmt) {
                 $revision = 1; // Setear el valor de revisión a 1
                 $id_usuario = $_SESSION['id'];
-                $id_proyecto = $_SESSION['selectedProject'];
+                $id_proyecto = $_SESSION['projectSelected'];
     
                 // Vinculamos los parámetros a la consulta preparada
                 $stmt->bind_param('iiii', $revision, $id_actividad, $id_usuario, $id_proyecto);
@@ -314,6 +315,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             }
     
             $mysqli->close();
+           
         } else {
             echo json_encode(['success' => false, 'message' => 'ID de actividad no válido.']);
         }
