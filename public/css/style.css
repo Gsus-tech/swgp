@@ -395,8 +395,9 @@ body.loading {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin: 0 1rem;
     width: fit-content;
-    max-width: 90%;
+    max-width: 650px;
     text-align: center;
     animation: fadeIn 0.3s ease-in-out;
 }
@@ -412,6 +413,7 @@ body.loading {
     font-size: 1.1rem;
     color: #555;
     margin: 1rem 0;
+    text-wrap: wrap;
 }
 
 .confirmation-buttons {
