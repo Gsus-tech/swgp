@@ -47,6 +47,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             <div class="activity-wrapper">
                 <div class="selectActivityDiv">
                     <label for="actividad" class="select-label">Actividad seleccionada:</label>
+                    <br><br>
                     <select name="actividad" class="comboBox" id="select-actividad" onchange="updatePageData()">
                         <option value="none">-- Selecciona una actividad --</option>
                         <?php
@@ -65,7 +66,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="activityStatusDiv">
                     <label class="status-label">Estado de la actividad:</label>
                     <p id="estadoActividad"><i>No disponible</i></p>
-
+                        <br>
                     <label class="reports-label">No. de reportes realizados:</label>
                     <p id="numeroReportes"><i>0</i></p>
                 </div>
