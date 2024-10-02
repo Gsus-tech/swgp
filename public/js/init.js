@@ -141,6 +141,14 @@ function addButtonEvents(){
     });
 }
 
+function formatSpanishDate(dateString) {
+    //Convertir la fecha a formato en español
+    const date = new Date(dateString);
+
+    const adjustedDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(adjustedDate);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     addButtonEvents();
 });

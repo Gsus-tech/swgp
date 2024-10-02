@@ -146,23 +146,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <label for="descriptionDetails">Descripción de la actividad:</label>
                             <textarea disabled name="descriptionDetails" id="descriptionDetails" class="textarea italic">-- Selecciona una actividad --</textarea>
                         </div>
-                        <div class="section2 table">
-                            <table id="reportsMade">
-                                <thead>
-                                    <tr>
-                                        <th class="rowNombre">Reporte de actividad</th>
-                                        <th class="rowFecha">Fecha de creación</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reportsMade_tbody">
-                                    <tr>
-                                        <td colspan="2"><i>Selecciona una actividad</i></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="activityButtonsDiv">
+                            
                         </div>
                     </div>
-                    
                 </div>
                 
                 <div class="fm-content">

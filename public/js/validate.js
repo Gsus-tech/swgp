@@ -102,13 +102,7 @@ function resetField(element){
 }
 
 
-function formatSpanishDate(dateString) {
-    //Convertir la fecha a formato en español
-    const date = new Date(dateString);
 
-    const adjustedDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
-    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(adjustedDate);
-}
 
 function convertDate(element) {
     const d1 = document.getElementById(element);

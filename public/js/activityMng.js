@@ -124,6 +124,8 @@ function SelectThisRowAndDetails(element, tbodyName){
     const rows = tbody.getElementsByTagName('tr');
     const state = element.classList.contains('rowSelected');
     const textArea = document.getElementById('descriptionDetails');
+    const buttonsDiv = document.querySelector('.buttonsDiv');
+    if(buttonsDiv){buttonsDiv.remove();}
 
     for (let i = 0; i < rows.length; i++) {
         if(rows[i].classList.contains('rowSelected')){
@@ -136,11 +138,76 @@ function SelectThisRowAndDetails(element, tbodyName){
         textArea.value = descripcionTexto;
         textArea.classList.remove('italic');
         element.classList.add('rowSelected');
+
+        fetchAndCreateButtons(element);
     }else{
         element.classList.remove('rowSelected');
         textArea.value = '-- Selecciona una actividad --';
         textArea.classList.add('italic');
+        
     }
+}
+
+function fetchAndCreateButtons(element) {
+    const uId = element.getAttribute('u-d');
+    const aId = element.getAttribute('a-d');
+    const data = new URLSearchParams({
+        uId: uId,
+        aId: aId
+    });
+    
+    fetch('../controller/activityManager.php?getActivityDetails=true', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const state = element.classList.contains('rowSelected');
+            if(state===true){ 
+                if(data.revision === true){
+                    createActionButtons(true);
+                }else{
+                    createActionButtons(false);
+                }
+            }
+        }
+    })
+    .catch(error => {
+         // Manejo de errores
+         console.error('Error en la solicitud:', error);
+    });
+}
+
+function createActionButtons(type){
+    //Crear botones de acción
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.classList.add('buttonsDiv');
+
+    if(type === true){
+        const validarButton = document.createElement('button');
+        validarButton.type = 'button';
+        validarButton.id = 'botonValidar';
+        validarButton.classList.add('btn', 'btn-blue');
+        validarButton.textContent = 'Validar finalización';
+        validarButton.setAttribute('onclick', 'mostrarReporteV(true)');
+        buttonsDiv.appendChild(validarButton);
+    }else{
+        const rpButton = document.createElement('button');
+        rpButton.type = 'button';
+        rpButton.id = 'botonReportes';
+        rpButton.classList.add('btn', 'btn-yellow');
+        rpButton.textContent = 'Ver reporte de actividad';
+        rpButton.setAttribute('title', 'Generar reporte general de la actividad.');
+        rpButton.setAttribute('onclick', 'mostrarReporteV(false)');
+        buttonsDiv.appendChild(rpButton);
+    }
+
+    const actDiv = document.querySelector('.activityButtonsDiv');
+    actDiv.appendChild(buttonsDiv);
 }
 
 // Evento de doble clic sobre una actividad
@@ -152,6 +219,11 @@ function doubleClickRow(element){
             behavior: 'smooth'
         });
     }
+}
+
+//Mostrar el reporte general y validar para finalizar
+function mostrarReporteV(type){
+    alert('mostrando reporte');
 }
 
 // Actualizar el texto del nombre de encargado de la actividad - addForm

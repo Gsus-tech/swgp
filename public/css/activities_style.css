@@ -184,9 +184,36 @@
     height: 4rem;
 }
 
+.activityButtonsDiv{
+    margin-top: 10px;   
+}
+
+.buttonsDiv{
+    width: 100%;   
+    text-align: center;
+    display: block;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px auto;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
 @media screen and (min-width: 600px){
     .activity-form{
         width: calc(80%);
+    }
+
+    .buttonsDiv{
+        display: flex;
     }
 }
 
@@ -214,6 +241,10 @@
 
     .activity-form{
        width: calc(70%);
+    }
+
+    .buttonsDiv{
+        display: block;
     }
 }
 

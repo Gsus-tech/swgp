@@ -274,6 +274,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             echo json_encode(['success' => false, 'message' => 'Faltan parámetros en la solicitud.']);
         }
     }
+
+    if (isset($_GET['getActivityDetails']) && $_GET['getActivityDetails'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id_usuario = filter_var($_POST['uId'], FILTER_VALIDATE_INT);
+        $activityId = filter_var($_POST['aId'], FILTER_VALIDATE_INT);
+        $id_proyecto = $_SESSION['projectSelected'];
+    
+        // Verifica si las variables son válidas
+        if ($activityId !== false && $id_usuario !== false) {
+            $query = "SELECT revision FROM tbl_actividades WHERE id_usuario = ? AND id_proyecto = ? AND id_actividad = ?";
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                $stmt->bind_param('iii', $id_usuario, $id_proyecto, $activityId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+    
+                // Si hay resultados
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $revision = $row['revision'];
+                    if($revision == 1){
+                        echo json_encode(['success' => true, 'revision' => true]);
+                    }else{
+                        echo json_encode(['success' => true, 'revision' => false]);
+                    }
+                    exit;
+                } else {
+                    // No se encontraron registros
+                    echo json_encode(['success' => false, 'message' => 'No records found']);
+                    exit;
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Database query failed']);
+                exit;
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid input']);
+            exit;
+        }
+    }
+    
     
 }else{
     echo"<script>window.location.href = `$destination`;</script>";
