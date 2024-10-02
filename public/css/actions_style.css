@@ -11,6 +11,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     max-width: 300px;
+    height: fit-content;
 }
 
 .select-label, .activityStatusDiv label {
@@ -365,6 +366,20 @@
 
 .finishBtn:hover {
     background-color: #45a049; 
+}
+
+.onRevision{
+    background-color: #f7f7f7; 
+    color: #6a727a;
+    border: 1px solid #c0c0c0;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    opacity: 0.6;
+    text-align: center;
+    margin: 10px auto;
+    transition: opacity 0.3s ease;
 }
 
 @media (max-width: 700px) {

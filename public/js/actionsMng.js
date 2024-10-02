@@ -43,12 +43,10 @@ function updatePageData() {
                     if(endActBtn){ endActBtn.remove(); }
 
                     if(data.numeroReportes > 0){
-                        const actDiv = document.querySelector('.activityStatusDiv');
-                        const finishBtn = document.createElement('button');
-                        finishBtn.classList.add('finishBtn');
-                        finishBtn.textContent = 'Finalizar actividad';
-                        actDiv.appendChild(finishBtn);
-                        finishBtn.addEventListener('click', endActivity)
+                        setActStateButtons(actividadId);
+                    }else{
+                        const existingBtn = document.getElementById('currentActivityState');
+                        if(existingBtn){ existingBtn.remove(); }
                     }
 
                 } else {
@@ -76,11 +74,48 @@ function updatePageData() {
             noReportCell.innerHTML = '<i>Selecciona una actividad</i>';
             noReportRow.appendChild(noReportCell);
             tableBody.appendChild(noReportRow);
+            const existingBtn = document.getElementById('currentActivityState');
+            if(existingBtn){ existingBtn.remove(); }
         }
     } else {
         console.error('No se encontró el elemento select con el id "select-actividad".');
     }
 }
+
+function setActStateButtons(actividadId){
+    const existingBtn = document.getElementById('currentActivityState');
+    if(existingBtn){ existingBtn.remove(); }
+    const url = '../controller/actionsManager.php?getActState=true&activityId=' + actividadId;
+    makeAjaxRequest(url, 'POST', null, function(response) {
+        // Validar respuesta
+        if (response && response.success) {
+            if(response.data.revision === 1){
+                const actDiv = document.querySelector('.activityStatusDiv');
+                const onRev = document.createElement('button');
+                onRev.classList.add('onRevision');
+                onRev.textContent = 'Actividad en revisión';
+                const spanishDate = formatSpanishDate(response.data.revision_date);
+                onRev.setAttribute('title', `En revisión desde el ${spanishDate}`);
+                onRev.setAttribute('id', 'currentActivityState');
+                actDiv.appendChild(onRev);
+            }else if(response.data.revision === 0){
+                const actDiv = document.querySelector('.activityStatusDiv');
+                const finishBtn = document.createElement('button');
+                finishBtn.classList.add('finishBtn');
+                finishBtn.textContent = 'Finalizar actividad';
+                finishBtn.setAttribute('id', 'currentActivityState');
+                actDiv.appendChild(finishBtn);
+                finishBtn.addEventListener('click', endActivity);
+            }
+        }
+    },
+    function(error) {
+        // Manejo de errores
+        console.error('Error en la solicitud:', error);
+    });
+
+}
+
 
 //Boton para abrir el editor de reporte
 function createAddButton() {
@@ -601,6 +636,7 @@ function endActivity() {
             .then(data => {
                 if (data.success) {
                     console.log('Actividad enviada a revisión:', data.message);
+                    setActStateButtons(actId);
                     alert('Actividad enviada correctamente a revisión.');
                 } else {
                     alert('Error al finalizar la actividad: ' + data.message);

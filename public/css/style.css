@@ -446,6 +446,26 @@ body.loading {
     color: #fff;
 }
 
+.btn-blue {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-red {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-green {
+    background-color: #0aaa14;
+    color: white;
+}
+
+.btn-yellow {
+    background-color: #fbf404;
+    color: black;
+}
+
 @media (max-width: 550px) {
     .header {
         width: 100%;
