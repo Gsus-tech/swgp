@@ -123,7 +123,6 @@ function confirmDeleteAct(element) {
         async function() {
             const id = element.parentElement.getAttribute('id');
             const rep = await getRepId(id);
-            console.log(`Actividad id: ${id}`);
             createConfirmationDialog('Eliminando actividad','¿Estás seguro que deseas eliminar esta actividad?', function() {
                 //Actualizar a AJAX cuando tenga tiempo.
                 const form = document.createElement('form');

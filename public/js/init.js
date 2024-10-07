@@ -79,6 +79,75 @@ function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
 
+function createInputDiv(titleText, descriptionText, actionFunction) {
+    // Crear el div principal
+    const nombrarReporte = document.createElement('div');
+    nombrarReporte.id = 'mainInputDiv';
+    nombrarReporte.classList.add('mainInputDiv', 'hidden');
+
+    // Crear el contenido del inputDiv
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('createdInputDiv-content');
+
+    const title = document.createElement('h3');
+    title.textContent = titleText;
+    inputDiv.appendChild(title);
+
+    const label = document.createElement('p');
+    label.textContent = descriptionText;
+    inputDiv.appendChild(label);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'inputContent';
+    input.classList.add('input-text');
+    input.maxLength = 255;
+    inputDiv.appendChild(input);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('createdInputDiv-buttons');
+
+    const saveButton = document.createElement('button');
+    saveButton.id = 'saveInputBtn';
+    saveButton.textContent = 'Guardar';
+    buttonContainer.appendChild(saveButton);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.id = 'cancelBtn';
+    cancelButton.textContent = 'Cancelar';
+    buttonContainer.appendChild(cancelButton);
+
+    inputDiv.appendChild(buttonContainer);
+
+    nombrarReporte.appendChild(inputDiv);
+
+    document.body.appendChild(nombrarReporte);
+
+    saveButton.addEventListener('click', function() {
+        const inputContent = input.value.trim();
+        if (inputContent === '') {
+            //Efecto de error en caso de campo vacio
+            input.classList.add('highlight-error');
+
+            setTimeout(function() {
+                input.classList.remove('highlight-error');
+            }, 1000);
+        } else {
+            actionFunction(inputContent);
+            // Eliminar todo el div
+            nombrarReporte.remove(); 
+        }
+    });
+
+    cancelButton.addEventListener('click', function() {
+        nombrarReporte.remove();
+        return false;
+    });
+
+    nombrarReporte.classList.remove('hidden');
+}
+
+
 function createConfirmationDialog(title, message, onConfirm, onCancel) {
     //Div del confirm
     const confirmationDiv = document.createElement('div');
@@ -139,6 +208,14 @@ function addButtonEvents(){
             }
         });
     });
+}
+
+function formatSpanishDate(dateString) {
+    //Convertir la fecha a formato en español
+    const date = new Date(dateString);
+
+    const adjustedDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+    return new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }).format(adjustedDate);
 }
 
 document.addEventListener('DOMContentLoaded', function() {

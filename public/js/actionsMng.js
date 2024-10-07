@@ -35,8 +35,23 @@ function updatePageData() {
                     // Actualizar la tabla de reportes
                     updateReportsTable(actividadId, data.numeroReportes);
 
-                    if(!btnEditor){
+                    if(!btnEditor && data.estadoActual != 4){
                         createAddButton();
+                    }else{
+                        const existingBtn = document.getElementById('showReportCreator');
+                        if(existingBtn){
+                            existingBtn.remove();
+                        }
+                    }
+
+                    const endActBtn = document.querySelector('.finishBtn');
+                    if(endActBtn){ endActBtn.remove(); }
+
+                    if(data.numeroReportes > 0){
+                        setActStateButtons(actividadId);
+                    }else{
+                        const existingBtn = document.getElementById('currentActivityState');
+                        if(existingBtn){ existingBtn.remove(); }
                     }
 
                 } else {
@@ -64,11 +79,50 @@ function updatePageData() {
             noReportCell.innerHTML = '<i>Selecciona una actividad</i>';
             noReportRow.appendChild(noReportCell);
             tableBody.appendChild(noReportRow);
+            const existingBtn = document.getElementById('currentActivityState');
+            if(existingBtn){ existingBtn.remove(); }
+            const adBtn = document.getElementById('showReportCreator');
+            if(adBtn){ adBtn.remove(); }
         }
     } else {
         console.error('No se encontró el elemento select con el id "select-actividad".');
     }
 }
+
+function setActStateButtons(actividadId){
+    const existingBtn = document.getElementById('currentActivityState');
+    if(existingBtn){ existingBtn.remove(); }
+    const url = '../controller/actionsManager.php?getActState=true&activityId=' + actividadId;
+    makeAjaxRequest(url, 'POST', null, function(response) {
+        // Validar respuesta
+        if (response && response.success) {
+            if(response.data.revision === 1){
+                const actDiv = document.querySelector('.activityStatusDiv');
+                const onRev = document.createElement('button');
+                onRev.classList.add('onRevision');
+                onRev.textContent = 'Actividad en revisión';
+                const spanishDate = formatSpanishDate(response.data.revision_date);
+                onRev.setAttribute('title', `En revisión desde el ${spanishDate}`);
+                onRev.setAttribute('id', 'currentActivityState');
+                actDiv.appendChild(onRev);
+            }else if(response.data.revision === 0 && response.data.estadoActual != 4){
+                const actDiv = document.querySelector('.activityStatusDiv');
+                const finishBtn = document.createElement('button');
+                finishBtn.classList.add('finishBtn');
+                finishBtn.textContent = 'Finalizar actividad';
+                finishBtn.setAttribute('id', 'currentActivityState');
+                actDiv.appendChild(finishBtn);
+                finishBtn.addEventListener('click', endActivity);
+            }
+        }
+    },
+    function(error) {
+        // Manejo de errores
+        console.error('Error en la solicitud:', error);
+    });
+
+}
+
 
 //Boton para abrir el editor de reporte
 function createAddButton() {
@@ -182,61 +236,9 @@ function closeAddReport(){
 
 // Crear div para nombrar el reporte
 function createSaveReport() {
-    const nombrarReporte = document.createElement('div');
-    nombrarReporte.id = 'saveReportNombrar';
-    nombrarReporte.classList.add('nombrarReporte', 'hidden');
-
-    const nombrarReporteContent = document.createElement('div');
-    nombrarReporteContent.classList.add('nombrarReporte-content');
-
-    const title = document.createElement('h3');
-    title.textContent = 'Guardar reporte';
-    nombrarReporteContent.appendChild(title);
-
-    const label = document.createElement('label');
-    label.setAttribute('for', 'reportName');
-    label.textContent = 'Nombre del archivo:';
-    nombrarReporteContent.appendChild(label);
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'reportName';
-    input.classList.add('input-text');
-    input.maxLength = 255;
-    nombrarReporteContent.appendChild(input);
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('nombrarReporte-buttons');
-
-    const saveButton = document.createElement('button');
-    saveButton.id = 'saveReportBtn';
-    saveButton.textContent = 'Guardar';
-    buttonContainer.appendChild(saveButton);
-
-    const cancelButton = document.createElement('button');
-    cancelButton.id = 'cancelBtn';
-    cancelButton.textContent = 'Cancelar';
-    buttonContainer.appendChild(cancelButton);
-
-    nombrarReporteContent.appendChild(buttonContainer);
-    nombrarReporte.appendChild(nombrarReporteContent);
-
-    document.body.appendChild(nombrarReporte);
-
-    saveButton.addEventListener('click', function() {
-        const reportName = input.value.trim();
-        if (reportName === '') {
-            alert('Por favor, ingresa un nombre para el reporte.');
-        } else {
-            guardarReporte(reportName);
-            nombrarReporte.remove();
-        }
-    });
-
-    cancelButton.addEventListener('click', function() {
-        nombrarReporte.remove();
-    });
+    createInputDiv('Guardar reporte', 'Nombre del archivo', guardarReporte);
 }
+
 
 //Validar el contenido del reporte a guardar
 function saveNewReport() {
@@ -479,7 +481,7 @@ function createReportView(element) {
                 
                 const optionsDiv = document.createElement('div');
                 optionsDiv.classList.add('file-options');
-                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print button' onclick='prinReport(this)' title='Imprimir reporte'></i>`;
+                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-download button' onclick='downloadReport(this)' title='Descargar reporte'></i>`;
                 reportContent.appendChild(optionsDiv);
                 // Recorrer el contenido y crear los elementos correspondientes
                 let mgFlag = true;
@@ -566,14 +568,42 @@ function deleteReport(element) {
     );
 }
 
+// Enviar actividad a revisión para su finalización
+function endActivity() {
+    const actId = document.getElementById('select-actividad').value;
+    createConfirmationDialog(
+        'Finalizar actividad',
+        'Al confirmar esta acción la actividad seleccionada se enviará a revisión con el representante de proyecto para confirmar su finalización.\n\n¿Deseas continuar?', 
+        function() {
+            const data = new URLSearchParams({
+                actId: actId
+            });
 
-function closeReportView(){
-    const reportView = document.querySelector('.pdf-view-container');
-    if(reportView){
-        reportView.remove();
-    }
-}
-
-function prinReport(element){
-    alert('Imprimiendo reporte.');
+            // Realiza la solicitud POST
+            fetch('../controller/actionsManager.php?submitActivityRevision=true', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: data
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Actividad enviada a revisión:', data.message);
+                    setActStateButtons(actId);
+                    alert('Actividad enviada correctamente a revisión.');
+                } else {
+                    alert('Error al finalizar la actividad: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud AJAX:', error);
+                alert('Parece que hubo un error en la acción.\nSi ves este mensaje, levanta un ticket de soporte.');
+            });
+        },
+        function() {
+            console.log("Finalización de actividad cancelada.");
+        }
+    );
 }

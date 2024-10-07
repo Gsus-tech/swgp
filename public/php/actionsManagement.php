@@ -25,6 +25,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/actions_style.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <script src="
+https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js
+"></script>
 </head>
 <body class="short">
     <div class="container"> 
@@ -46,7 +50,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             ?>
             <div class="activity-wrapper">
                 <div class="selectActivityDiv">
-                    <label for="actividad" class="select-label">Actividad seleccionada:</label>
+                    <p for="actividad" class="select-label">Actividad seleccionada:</p>
+                    <br>
                     <select name="actividad" class="comboBox" id="select-actividad" onchange="updatePageData()">
                         <option value="none">-- Selecciona una actividad --</option>
                         <?php
@@ -65,7 +70,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="activityStatusDiv">
                     <label class="status-label">Estado de la actividad:</label>
                     <p id="estadoActividad"><i>No disponible</i></p>
-
+                        <br>
                     <label class="reports-label">No. de reportes realizados:</label>
                     <p id="numeroReportes"><i>0</i></p>
                 </div>
@@ -112,6 +117,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/actionsMng.js"></script>
+    <script src="../js/reportes.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>

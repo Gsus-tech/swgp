@@ -39,6 +39,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         }
     }
 
+    if(isset($_GET['getActState']) && $_GET['getActState'] == 'true'){
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_GET['activityId'], FILTER_VALIDATE_INT);
+        $id_usuario = $_SESSION['id'];
+
+        if ($activityId !== false) {
+            $query = "SELECT estadoActual, revision, revision_date FROM tbl_actividades WHERE id_actividad = ? AND id_usuario = ?";
+
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                // Solo enlazamos el ID de la actividad como parámetro
+                $stmt->bind_param('ii', $activityId, $id_usuario);
+                $stmt->execute();
+                
+                $result = $stmt->get_result();
+    
+                if ($result->num_rows > 0) {
+                    $activityData = $result->fetch_assoc();
+    
+                    // Enviar los resultados de la consulta al archivo JS
+                    echo json_encode(['success' => true, 'data' => $activityData]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se encontró la actividad']);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+            }
+            $mysqli->close();
+        }
+    }
+
     if(isset($_GET['saveNewReport']) && $_GET['saveNewReport'] == 'true'){
         if (isset($_POST['contenido']) && isset($_POST['id_actividad'])) {
 
@@ -206,7 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         }
     }    
 
-
     if (isset($_GET['deleteReport']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $crud = new Crud();
         $mysqli = $crud->getMysqliConnection();
@@ -282,6 +315,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         exit();
     }
 
+    if (isset($_GET['submitActivityRevision']) && $_GET['submitActivityRevision'] === 'true') {
+        $id_actividad = filter_var($_POST['actId'], FILTER_VALIDATE_INT);  // Cambiado de $_GET a $_POST
+        
+        if ($id_actividad) {
+            
+            $crud = new Crud();
+            $mysqli = $crud->getMysqliConnection();
+            
+            // Query para actualizar el campo de revisión
+            $query = "UPDATE tbl_actividades SET revision = ?, revision_date = NOW() WHERE id_actividad = ? AND id_usuario = ? AND id_proyecto = ?";
+            $stmt = $mysqli->prepare($query);
+            
+            if ($stmt) {
+                $revision = 1; // Setear el valor de revisión a 1
+                $id_usuario = $_SESSION['id'];
+                $id_proyecto = $_SESSION['projectSelected'];
+    
+                // Vinculamos los parámetros a la consulta preparada
+                $stmt->bind_param('iiii', $revision, $id_actividad, $id_usuario, $id_proyecto);
+                $stmt->execute();
+    
+                // Verificar si se actualizó alguna fila
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(['success' => true, 'message' => 'La actividad ha sido marcada como revisada.']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se pudo actualizar la actividad o no se encontró.']);
+                }
+    
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta SQL.']);
+            }
+    
+            $mysqli->close();
+           
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ID de actividad no válido.']);
+        }
+    }
+    
+    
     
 } else {
      echo"<script>window.location.href = `../php/actionsManagement.php`;</script>";

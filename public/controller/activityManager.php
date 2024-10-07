@@ -274,7 +274,124 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             echo json_encode(['success' => false, 'message' => 'Faltan parámetros en la solicitud.']);
         }
     }
+
+    if (isset($_GET['getActivityDetails']) && $_GET['getActivityDetails'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id_usuario = filter_var($_POST['uId'], FILTER_VALIDATE_INT);
+        $activityId = filter_var($_POST['aId'], FILTER_VALIDATE_INT);
+        $id_proyecto = $_SESSION['projectSelected'];
     
+        // Verifica si las variables son válidas
+        if ($activityId !== false && $id_usuario !== false) {
+            $query = "SELECT revision FROM tbl_actividades WHERE id_usuario = ? AND id_proyecto = ? AND id_actividad = ?";
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                $stmt->bind_param('iii', $id_usuario, $id_proyecto, $activityId);
+                $stmt->execute();
+                $result = $stmt->get_result();
+    
+                // Si hay resultados
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $revision = $row['revision'];
+                    if($revision == 1){
+                        echo json_encode(['success' => true, 'revision' => true]);
+                    }else{
+                        echo json_encode(['success' => true, 'revision' => false]);
+                    }
+                    exit;
+                } else {
+                    // No se encontraron registros
+                    echo json_encode(['success' => false, 'message' => 'No records found']);
+                    exit;
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Database query failed']);
+                exit;
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid input']);
+            exit;
+        }
+    }
+    
+    if (isset($_GET['getGenReportData']) && $_GET['getGenReportData'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_GET['id_act'], FILTER_VALIDATE_INT);
+        $id_proyecto = $_SESSION['projectSelected'];
+    
+        if ($activityId !== false) {
+            $query = "SELECT id_avance, nombre, contenido, DATE(fecha_creacion) AS fecha_creacion FROM tbl_avances WHERE id_proyecto = ? AND id_actividad = ? ORDER BY id_avance ASC";
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                $stmt->bind_param('ii', $id_proyecto, $activityId);
+                $stmt->execute();
+                
+                $result = $stmt->get_result();
+                $reportData = [];
+    
+                setlocale(LC_TIME, 'es_ES.UTF-8');
+
+                while ($row = $result->fetch_assoc()) {
+                    $row['fecha_creacion'] = strftime('%e de %B de %Y', strtotime($row['fecha_creacion']));
+                    $reportData[] = $row;
+                }
+    
+                if (count($reportData) > 0) {
+                    // Enviar todos los reportes al archivo JS
+                    echo json_encode(['success' => true, 'exists' => true, 'data' => $reportData]);
+                } else {
+                    echo json_encode(['success' => true, 'exists' => false, 'message' => "No se encontraron reportes."]);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+            }
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ID de actividad no válido']);
+        }
+    }
+    
+    if (isset($_GET['finishAct']) && $_GET['finishAct'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_GET['id_act'], FILTER_VALIDATE_INT);
+        $id_proyecto = $_SESSION['projectSelected'];
+        $newState = 4;
+    
+        if ($activityId !== false && $id_proyecto !== false) {
+            $query = "UPDATE tbl_actividades SET estadoActual = ?, revision = 0 WHERE id_actividad = ? AND id_proyecto = ?";
+            $stmt = $mysqli->prepare($query);
+        
+            if ($stmt) {
+                $stmt->bind_param('iii', $newState, $activityId, $id_proyecto);
+        
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode(['success' => true, 'message' => 'El estado se actualizó correctamente']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => "No se encontraron registros o no se actualizó ningún dato."]);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+                }
+        
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Datos inválidos o incompletos']);
+        }
+    }
+
 }else{
     echo"<script>window.location.href = `$destination`;</script>";
 }

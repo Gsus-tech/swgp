@@ -27,6 +27,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/activities_style.css">
+    <link rel="stylesheet" href="../css/reportes.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -93,7 +94,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['projectSelected'] ; //Obtener primer valor del comboBox proyectos
                         }
                         $p = array();
-                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario
+                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario, revision
                         FROM tbl_actividades WHERE id_proyecto = ? ORDER BY id_actividad";
 
                         $estados = [
@@ -106,8 +107,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         $p = Crud::executeResultQuery($query, [$id], "i");
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
+                                $revBg = $p[$i]['revision'] === 1 ? 'class="revisionBg" ' : '';
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
+                                echo "<tr " . $revBg ."row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
                                 echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
                                 $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
@@ -146,27 +148,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <label for="descriptionDetails">Descripción de la actividad:</label>
                             <textarea disabled name="descriptionDetails" id="descriptionDetails" class="textarea italic">-- Selecciona una actividad --</textarea>
                         </div>
-                        <div class="section2 table">
-                            <table id="reportsMade">
-                                <thead>
-                                    <tr>
-                                        <th class="rowNombre">Reporte de actividad</th>
-                                        <th class="rowFecha">Fecha de creación</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reportsMade_tbody">
-                                    <tr>
-                                        <td colspan="2"><i>Selecciona una actividad</i></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="activityButtonsDiv">
+                            
                         </div>
                     </div>
-                    
-                </div>
-                
-                <div class="fm-content">
-                    <h4>Mostrar contenido del reporte seleccionado</h4>
                 </div>
 
                 <div class="addBtn" onclick="openAddForm()"><a id="showUserFormBtn" title="Crear actividad" class="fa fa-plus"></a></div>
@@ -270,9 +255,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div>
 
     </div> <!-- Fin de container -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.0/html-docx.min.js"></script>
     <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
+    <script src="../js/reportes.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>
