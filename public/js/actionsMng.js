@@ -232,58 +232,13 @@ function createSaveReport() {
     const nombrarReporte = document.createElement('div');
     nombrarReporte.id = 'saveReportNombrar';
     nombrarReporte.classList.add('nombrarReporte', 'hidden');
+    const inputDiv = createInputDiv('Guardar reporte', guardarReporte);
 
-    const nombrarReporteContent = document.createElement('div');
-    nombrarReporteContent.classList.add('nombrarReporte-content');
-
-    const title = document.createElement('h3');
-    title.textContent = 'Guardar reporte';
-    nombrarReporteContent.appendChild(title);
-
-    const label = document.createElement('label');
-    label.setAttribute('for', 'reportName');
-    label.textContent = 'Nombre del archivo:';
-    nombrarReporteContent.appendChild(label);
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'reportName';
-    input.classList.add('input-text');
-    input.maxLength = 255;
-    nombrarReporteContent.appendChild(input);
-
-    const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('nombrarReporte-buttons');
-
-    const saveButton = document.createElement('button');
-    saveButton.id = 'saveReportBtn';
-    saveButton.textContent = 'Guardar';
-    buttonContainer.appendChild(saveButton);
-
-    const cancelButton = document.createElement('button');
-    cancelButton.id = 'cancelBtn';
-    cancelButton.textContent = 'Cancelar';
-    buttonContainer.appendChild(cancelButton);
-
-    nombrarReporteContent.appendChild(buttonContainer);
-    nombrarReporte.appendChild(nombrarReporteContent);
+    nombrarReporte.appendChild(inputDiv);
 
     document.body.appendChild(nombrarReporte);
-
-    saveButton.addEventListener('click', function() {
-        const reportName = input.value.trim();
-        if (reportName === '') {
-            alert('Por favor, ingresa un nombre para el reporte.');
-        } else {
-            guardarReporte(reportName);
-            nombrarReporte.remove();
-        }
-    });
-
-    cancelButton.addEventListener('click', function() {
-        nombrarReporte.remove();
-    });
 }
+
 
 //Validar el contenido del reporte a guardar
 function saveNewReport() {

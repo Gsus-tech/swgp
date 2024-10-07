@@ -79,6 +79,58 @@ function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
 
+function createInputDiv(descriptionText, actionFunction) {
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('nombrarReporte-content');
+
+    const title = document.createElement('h3');
+    title.textContent = descriptionText;
+    inputDiv.appendChild(title);
+
+    const label = document.createElement('label');
+    label.setAttribute('for', 'reportName');
+    label.textContent = 'Nombre del archivo:';
+    inputDiv.appendChild(label);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'reportName';
+    input.classList.add('input-text');
+    input.maxLength = 255;
+    inputDiv.appendChild(input);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('nombrarReporte-buttons');
+
+    const saveButton = document.createElement('button');
+    saveButton.id = 'saveReportBtn';
+    saveButton.textContent = 'Guardar';
+    buttonContainer.appendChild(saveButton);
+
+    const cancelButton = document.createElement('button');
+    cancelButton.id = 'cancelBtn';
+    cancelButton.textContent = 'Cancelar';
+    buttonContainer.appendChild(cancelButton);
+
+    inputDiv.appendChild(buttonContainer);
+
+    saveButton.addEventListener('click', function() {
+        const reportName = input.value.trim();
+        if (reportName === '') {
+            alert('Por favor, ingresa un nombre para el reporte.');
+        } else {
+            actionFunction(reportName);
+            inputDiv.parentElement.remove();
+        }
+    });
+
+    cancelButton.addEventListener('click', function() {
+        inputDiv.parentElement.remove(); // Elimina el modal
+    });
+
+    return inputDiv;
+}
+
 function createConfirmationDialog(title, message, onConfirm, onCancel) {
     //Div del confirm
     const confirmationDiv = document.createElement('div');
@@ -152,3 +204,13 @@ function formatSpanishDate(dateString) {
 document.addEventListener('DOMContentLoaded', function() {
     addButtonEvents();
 });
+
+function exportToDocx(docContent, reportName) {
+    const converted = htmlDocx.asBlob(docContent, {orientation: 'portrait'});
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(converted);
+    link.download = `${reportName}.docx`;
+
+    link.click();
+}
