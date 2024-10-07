@@ -484,10 +484,6 @@
     }
 }
 
-
-.detailsContainer {
-    margin-bottom: 3rem;
-}  
 .detailsContainer .fa-share-square-o {
     position: absolute;
     background-color: #0d8c7751;
@@ -572,7 +568,7 @@
         position: relative;         
         width: -webkit-fill-available;  
         height: fit-content;    
-        min-height: -webkit-fill-available;
+        min-height: 100%;
     }   
     .detailsContainer .detailsContainerTitle {     
         margin: 0 auto;      

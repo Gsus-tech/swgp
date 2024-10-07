@@ -79,7 +79,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <table class="activity-list">
                         <thead>
                             <tr>
-                                <th class="selectActivities"><input type="checkbox" id="selectAllActivities"></th>
+                                <th class="selectActivities"><input type="checkbox" class="button" id="selectAllActivities"></th>
                                 <th class="rowNombre">Actividad</th>
                                 <th class="rowEstado">Estado</th>
                                 <th class="rowFechaFin">Fecha de finalización</th>
@@ -111,7 +111,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 $rowN = $i+1;
                                 echo "<tr " . $revBg ."row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
-                                echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
+                                echo "<td><input type='checkbox' class='activity-checkbox button' value='$value'></td>";
                                 $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
                                 foreach ($camposMostrar as $campo) {
                                     $value = $p[$i][$campo];

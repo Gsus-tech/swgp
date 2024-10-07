@@ -16,13 +16,13 @@ function returnToProjectsList(){
 
 function toggleDocumentOptions(){
     const options = document.getElementById('toggleDocumentOptions');
-    const print = document.getElementById('printDetails');
+    // const print = document.getElementById('printDetails');
     const share = document.getElementById('shareProject');
     const edit = document.getElementById('editProject');
 
     share.classList.toggle('hide');
     options.classList.toggle('hide');
-    print.classList.toggle('hide');
+    // print.classList.toggle('hide');
     edit.classList.toggle('hide');
 }
 

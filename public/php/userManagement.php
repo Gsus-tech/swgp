@@ -168,7 +168,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <tr>
                             <?php
                             if($_SESSION['rol']==='ADM'){ ?>
-                                <th class="selectAccounts"><input type="checkbox" id="selectAllBoxes"></th>
+                                <th class="selectAccounts"><input type="checkbox" class="button" id="selectAllBoxes"></th>
                            <?php }
                             ?>
                             <th class="rowName">Nombre</th>
@@ -211,7 +211,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         foreach ($user as $key => $value) {
                                             if ($value === $user['id_usuario']) {
                                                 if($_SESSION['rol']==='ADM'){
-                                                    $row .= "<td><input type='checkbox' class='account-checkbox' value='$value'></td>";
+                                                    $row .= "<td><input type='checkbox' class='account-checkbox button' value='$value'></td>";
                                                 }
                                             } else if ($value === $user['nombre']) {
                                                 $cId = htmlspecialchars($user['id_usuario']);
