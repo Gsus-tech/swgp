@@ -201,11 +201,47 @@
     cursor: pointer;
     font-size: 16px;
     margin: 10px auto;
+    border: 1.5mm ridge #e5dddd;
 }
 
 .btn:hover {
     opacity: 0.8;
 }
+
+.dsBtn{
+    background-color: #6d727d;
+    color: #42494c;
+    border: 1.5mm ridge #333;
+    transition: transform 300ms ease-out;
+    cursor: default;
+}
+
+.dsBtn:hover{
+    opacity: initial;
+}
+
+.fin-position {
+    position: fixed;
+    margin-top: 35px;
+    z-index: 1000;
+}
+
+.finishBtn{
+    background-color: #4caf508a;
+    color: #a1a2a5;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+}
+
+.finishBtn:hover{
+    background-color: #239c28;
+    color:white;
+}
+
 
 @media screen and (min-width: 600px){
     .activity-form{

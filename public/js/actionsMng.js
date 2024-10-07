@@ -526,7 +526,7 @@ function createReportView(element) {
                 
                 const optionsDiv = document.createElement('div');
                 optionsDiv.classList.add('file-options');
-                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print button' onclick='prinReport(this)' title='Imprimir reporte'></i>`;
+                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print button' onclick='printReport(this)' title='Imprimir reporte'></i>`;
                 reportContent.appendChild(optionsDiv);
                 // Recorrer el contenido y crear los elementos correspondientes
                 let mgFlag = true;
@@ -651,16 +651,4 @@ function endActivity() {
             console.log("Finalización de actividad cancelada.");
         }
     );
-}
-
-
-function closeReportView(){
-    const reportView = document.querySelector('.pdf-view-container');
-    if(reportView){
-        reportView.remove();
-    }
-}
-
-function prinReport(element){
-    alert('Imprimiendo reporte.');
 }

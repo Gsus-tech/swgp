@@ -317,6 +317,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         }
     }
     
+    if (isset($_GET['getGenReportData']) && $_GET['getGenReportData'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_GET['id_act'], FILTER_VALIDATE_INT);
+        $id_proyecto = $_SESSION['projectSelected'];
+    
+        if ($activityId !== false) {
+            $query = "SELECT id_avance, nombre, contenido, DATE(fecha_creacion) AS fecha_creacion FROM tbl_avances WHERE id_proyecto = ? AND id_actividad = ? ORDER BY id_avance ASC";
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                $stmt->bind_param('ii', $id_proyecto, $activityId);
+                $stmt->execute();
+                
+                $result = $stmt->get_result();
+                $reportData = [];
+    
+                setlocale(LC_TIME, 'es_ES.UTF-8');
+
+                while ($row = $result->fetch_assoc()) {
+                    $row['fecha_creacion'] = strftime('%e de %B de %Y', strtotime($row['fecha_creacion']));
+                    $reportData[] = $row;
+                }
+    
+                if (count($reportData) > 0) {
+                    // Enviar todos los reportes al archivo JS
+                    echo json_encode(['success' => true, 'exists' => true, 'data' => $reportData]);
+                } else {
+                    echo json_encode(['success' => true, 'exists' => false, 'message' => "No se encontraron reportes."]);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+            }
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ID de actividad no válido']);
+        }
+    }
     
 }else{
     echo"<script>window.location.href = `$destination`;</script>";

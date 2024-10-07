@@ -27,6 +27,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/activities_style.css">
+    <link rel="stylesheet" href="../css/reportes.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -151,10 +152,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         </div>
                     </div>
                 </div>
-                
-                <div class="fm-content">
-                    <h4>Mostrar contenido del reporte seleccionado</h4>
-                </div>
 
                 <div class="addBtn" onclick="openAddForm()"><a id="showUserFormBtn" title="Crear actividad" class="fa fa-plus"></a></div>
 
@@ -260,6 +257,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
+    <script src="../js/reportes.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>

@@ -25,6 +25,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/actions_style.css">
+    <link rel="stylesheet" href="../css/reportes.css">
 </head>
 <body class="short">
     <div class="container"> 
@@ -113,6 +114,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/actionsMng.js"></script>
+    <script src="../js/reportes.js"></script>
     <script src="../js/init.js"></script>
 </body>
 </html>

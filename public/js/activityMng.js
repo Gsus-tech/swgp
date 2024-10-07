@@ -169,9 +169,9 @@ function fetchAndCreateButtons(element) {
             const state = element.classList.contains('rowSelected');
             if(state===true){ 
                 if(data.revision === true){
-                    createActionButtons(true);
+                    createActionButtons(aId, true);
                 }else{
-                    createActionButtons(false);
+                    createActionButtons(aId, false);
                 }
             }
         }
@@ -182,29 +182,27 @@ function fetchAndCreateButtons(element) {
     });
 }
 
-function createActionButtons(type){
+function createActionButtons(aId, type){
     //Crear botones de acción
     const buttonsDiv = document.createElement('div');
     buttonsDiv.classList.add('buttonsDiv');
-
+    
+    const button = document.createElement('button');
+    button.type = 'button';
     if(type === true){
-        const validarButton = document.createElement('button');
-        validarButton.type = 'button';
-        validarButton.id = 'botonValidar';
-        validarButton.classList.add('btn', 'btn-blue');
-        validarButton.textContent = 'Validar finalización';
-        validarButton.setAttribute('onclick', 'mostrarReporteV(true)');
-        buttonsDiv.appendChild(validarButton);
+        button.id = 'botonValidar';
+        button.classList.add('btn', 'btn-blue');
+        button.textContent = 'Validar finalización';
+        button.setAttribute('onclick', 'mostrarReporteV(this, true)');
     }else{
-        const rpButton = document.createElement('button');
-        rpButton.type = 'button';
-        rpButton.id = 'botonReportes';
-        rpButton.classList.add('btn', 'btn-yellow');
-        rpButton.textContent = 'Ver reporte de actividad';
-        rpButton.setAttribute('title', 'Generar reporte general de la actividad.');
-        rpButton.setAttribute('onclick', 'mostrarReporteV(false)');
-        buttonsDiv.appendChild(rpButton);
+        button.id = 'botonReportes';
+        button.classList.add('btn', 'btn-yellow');
+        button.textContent = 'Ver reporte de actividad';
+        button.setAttribute('title', 'Generar reporte general de la actividad.');
+        button.setAttribute('onclick', 'mostrarReporteV(this, false)');
     }
+    button.setAttribute('ac-d', aId);
+    buttonsDiv.appendChild(button);
 
     const actDiv = document.querySelector('.activityButtonsDiv');
     actDiv.appendChild(buttonsDiv);
@@ -222,8 +220,110 @@ function doubleClickRow(element){
 }
 
 //Mostrar el reporte general y validar para finalizar
-function mostrarReporteV(type){
-    alert('mostrando reporte');
+function mostrarReporteV(element, type){
+    const trElement =  element.closest('[ac-d]');
+    const acId = trElement.getAttribute('ac-d');
+
+    // Realizar la solicitud AJAX para obtener la información del reporte
+    const url = `../controller/activityManager.php?getGenReportData=true&id_act=${acId}`;
+    const formData = new FormData();
+
+    makeAjaxRequest(url, 'POST', formData, function(response) {
+        try {
+            const data = response;
+            if (data && data.success) {
+                if (data.exists) {
+                    const reportData = response.data;
+    
+                    const reportContainer = document.createElement('div');
+                    reportContainer.classList.add('pdf-view-container');
+                    const reportContent = document.createElement('div');
+                    reportContent.classList.add('report-content');
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.classList.add('file-options');
+                    optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i>
+                                            <i class='fa fa-print button' onclick='printReport(this)' title='Imprimir reporte'></i>`;
+                    reportContent.appendChild(optionsDiv);
+                    if(element.id === 'botonValidar'){
+                        const finishDiv = document.createElement('div');
+                        finishDiv.classList.add('fin-position');
+                        const finBtn = document.createElement('button');
+                        finBtn.classList.add('finishBtn');
+                        finBtn.classList.add('btn');
+                        finBtn.setAttribute('acId', acId);
+                        finBtn.textContent = 'Finalizar actividad';
+                        finBtn.addEventListener('click', finishActivity)
+                        finishDiv.appendChild(finBtn);
+                        // finishDiv.innerHTML = `<button class="finishBtn btn">Finalizar actividad</button>`;
+                        
+                        reportContent.appendChild(finishDiv);
+                    }
+                    let piv = 0;
+
+                    reportData.forEach(report => {
+                        const contenido = JSON.parse(report.contenido);  // Decodificar el JSON del campo 'contenido'
+                        if (contenido && Array.isArray(contenido)) {
+                            const nameAndSpace = document.createElement('div');
+                            nameAndSpace.classList.add('nameAndSpace');
+                            nameAndSpace.innerHTML = `<div class="spacer">
+                                                            <div class="spacer-line"></div>
+                                                            <div class="reportName">${report.nombre}</div>
+                                                            <div class="spacer-line"></div>
+                                                        </div>`;
+                            if(piv > 0){nameAndSpace.classList.add('f-mg');}
+                            reportContent.appendChild(nameAndSpace);
+
+                            let mgFlag = true;
+                            contenido.forEach(item => {
+                                const element = document.createElement(item.type);
+                                
+                                if (item.type === 'p' || item.type === 'h3' || item.type === 'h2') {
+                                    element.innerHTML = item.value.replace(/\n/g, '<br>');
+                                } else if(item.type === 'img'){
+                                    element.setAttribute('src', item.value);
+                                } else {
+                                    element.textContent = item.value; 
+                                }
+                                if(item.type === 'h2' && mgFlag == true){
+                                    element.style = "margin-top:0;";
+                                }
+                                
+                                reportContent.appendChild(element);
+                                mgFlag = false;
+                            });
+                            
+                            addButtonEvents();
+                        } else {
+                            console.error('El contenido no es un array o está indefinido.');
+                        }
+                        piv++;
+                    });
+                    // Insertar el contenedor en la página
+                    reportContainer.appendChild(reportContent);
+                    document.body.appendChild(reportContainer);
+                } else {
+                    element.classList.add('dsBtn');
+                    element.textContent = "No hay reportes para mostrar.";
+                }
+            } else {
+                console.error('Error al obtener el reporte:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al analizar la respuesta JSON:', error);
+            console.log('Respuesta recibida:', response); // Ver la respuesta exacta que se recibe
+        }
+    }, function(error) {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+    
+
+}
+
+function finishActivity(){
+    const btn = document.querySelector('.finishBtn');
+    const id = btn.getAttribute('acid');
+    // alert(`finalizando actividad ${id}.`);
+    
 }
 
 // Actualizar el texto del nombre de encargado de la actividad - addForm
