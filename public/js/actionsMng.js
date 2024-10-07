@@ -98,7 +98,7 @@ function setActStateButtons(actividadId){
                 onRev.setAttribute('title', `En revisión desde el ${spanishDate}`);
                 onRev.setAttribute('id', 'currentActivityState');
                 actDiv.appendChild(onRev);
-            }else if(response.data.revision === 0){
+            }else if(response.data.revision === 0 && response.data.estadoActual != 4){
                 const actDiv = document.querySelector('.activityStatusDiv');
                 const finishBtn = document.createElement('button');
                 finishBtn.classList.add('finishBtn');
@@ -481,7 +481,7 @@ function createReportView(element) {
                 
                 const optionsDiv = document.createElement('div');
                 optionsDiv.classList.add('file-options');
-                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-print button' onclick='printReport(this)' title='Imprimir reporte'></i>`;
+                optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-download button' onclick='downloadReport(this)' title='Descargar reporte'></i>`;
                 reportContent.appendChild(optionsDiv);
                 // Recorrer el contenido y crear los elementos correspondientes
                 let mgFlag = true;
