@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         $id_usuario = $_SESSION['id'];
 
         if ($activityId !== false) {
-            $query = "SELECT revision, revision_date FROM tbl_actividades WHERE id_actividad = ? AND id_usuario = ?";
+            $query = "SELECT estadoActual, revision, revision_date FROM tbl_actividades WHERE id_actividad = ? AND id_usuario = ?";
 
             $stmt = $mysqli->prepare($query);
     

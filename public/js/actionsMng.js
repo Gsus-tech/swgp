@@ -35,8 +35,13 @@ function updatePageData() {
                     // Actualizar la tabla de reportes
                     updateReportsTable(actividadId, data.numeroReportes);
 
-                    if(!btnEditor){
+                    if(!btnEditor && data.estadoActual != 4){
                         createAddButton();
+                    }else{
+                        const existingBtn = document.getElementById('showReportCreator');
+                        if(existingBtn){
+                            existingBtn.remove();
+                        }
                     }
 
                     const endActBtn = document.querySelector('.finishBtn');
@@ -76,6 +81,8 @@ function updatePageData() {
             tableBody.appendChild(noReportRow);
             const existingBtn = document.getElementById('currentActivityState');
             if(existingBtn){ existingBtn.remove(); }
+            const adBtn = document.getElementById('showReportCreator');
+            if(adBtn){ adBtn.remove(); }
         }
     } else {
         console.error('No se encontró el elemento select con el id "select-actividad".');
@@ -232,7 +239,7 @@ function createSaveReport() {
     const nombrarReporte = document.createElement('div');
     nombrarReporte.id = 'saveReportNombrar';
     nombrarReporte.classList.add('nombrarReporte', 'hidden');
-    const inputDiv = createInputDiv('Guardar reporte', guardarReporte);
+    const inputDiv = createInputDiv('Guardar reporte', 'Nombre del archivo', guardarReporte);
 
     nombrarReporte.appendChild(inputDiv);
 
