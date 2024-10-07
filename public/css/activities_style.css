@@ -242,6 +242,13 @@
     color:white;
 }
 
+.revisionBg{
+    background-color: #ffb60096;       
+}
+
+.revisionSelectedRow{
+    background-color: #ffb600;       
+}
 
 @media screen and (min-width: 600px){
     .activity-form{

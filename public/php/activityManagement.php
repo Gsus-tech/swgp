@@ -94,7 +94,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             $id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['projectSelected'] ; //Obtener primer valor del comboBox proyectos
                         }
                         $p = array();
-                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario
+                        $query = "SELECT id_actividad, nombre_actividad, estadoActual, fecha_estimada, descripción, id_usuario, revision
                         FROM tbl_actividades WHERE id_proyecto = ? ORDER BY id_actividad";
 
                         $estados = [
@@ -107,8 +107,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         $p = Crud::executeResultQuery($query, [$id], "i");
                         if (count($p) > 0) {
                             for ($i = 0; $i < count($p); $i++) {
+                                $revBg = $p[$i]['revision'] === 1 ? 'class="revisionBg" ' : '';
                                 $rowN = $i+1;
-                                echo "<tr row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
+                                echo "<tr " . $revBg ."row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
                                 echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
                                 $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];

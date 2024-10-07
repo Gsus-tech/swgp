@@ -122,26 +122,30 @@ document.addEventListener("DOMContentLoaded", function() {
 function SelectThisRowAndDetails(element, tbodyName){
     const tbody = document.getElementById(`${tbodyName}`);
     const rows = tbody.getElementsByTagName('tr');
-    const state = element.classList.contains('rowSelected');
+    const state = element.classList.contains('rowSelected') || element.classList.contains('revisionSelectedRow');
     const textArea = document.getElementById('descriptionDetails');
     const buttonsDiv = document.querySelector('.buttonsDiv');
+    const clName = element.classList.contains('revisionBg') ? 'revisionSelectedRow' : 'rowSelected';
+    
     if(buttonsDiv){buttonsDiv.remove();}
 
     for (let i = 0; i < rows.length; i++) {
-        if(rows[i].classList.contains('rowSelected')){
-            rows[i].classList.remove('rowSelected');
-        }
+        if(rows[i].classList.contains('revisionBg')){rows[i].classList.remove('revisionSelectedRow');}
+        else{rows[i].classList.remove('rowSelected');}
+        
     }
+
+
     if(state===false){ 
         const descripcionCelda = element.querySelector('.thisDescription');
         const descripcionTexto = descripcionCelda ? descripcionCelda.textContent : 'Sin descripción';
         textArea.value = descripcionTexto;
         textArea.classList.remove('italic');
-        element.classList.add('rowSelected');
+        element.classList.add(clName);
 
         fetchAndCreateButtons(element);
     }else{
-        element.classList.remove('rowSelected');
+        element.classList.remove(clName);
         textArea.value = '-- Selecciona una actividad --';
         textArea.classList.add('italic');
         
@@ -166,7 +170,7 @@ function fetchAndCreateButtons(element) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            const state = element.classList.contains('rowSelected');
+            const state = element.classList.contains('rowSelected') || element.classList.contains('revisionBg');
             if(state===true){ 
                 if(data.revision === true){
                     createActionButtons(aId, true);
@@ -322,8 +326,33 @@ function mostrarReporteV(element, type){
 function finishActivity(){
     const btn = document.querySelector('.finishBtn');
     const id = btn.getAttribute('acid');
-    // alert(`finalizando actividad ${id}.`);
+    const url = `../controller/activityManager.php?finishAct=true&id_act=${id}`;
+
+    createConfirmationDialog('Finalizando actividad','Confirma la finalización de esta actividad.', function() {
     
+        makeAjaxRequest(
+            url,
+            'POST',
+            null,
+            function (data) { 
+                try {
+                    const response = data;
+                    if (response.success) {
+                        location.reload(true);
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                } catch (error) {
+                    alert('Error inesperado al procesar la respuesta del servidor.');
+                    console.error('Error de JSON:', error);
+                }
+            },
+            function (errorMessage) {
+                console.error('Error al obtener la información de la actividad:', errorMessage);
+            }
+        );
+    });
+
 }
 
 // Actualizar el texto del nombre de encargado de la actividad - addForm

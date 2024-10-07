@@ -357,6 +357,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         }
     }
     
+    if (isset($_GET['finishAct']) && $_GET['finishAct'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_GET['id_act'], FILTER_VALIDATE_INT);
+        $id_proyecto = $_SESSION['projectSelected'];
+        $newState = 4;
+    
+        if ($activityId !== false && $id_proyecto !== false) {
+            $query = "UPDATE tbl_actividades SET estadoActual = ?, revision = 0 WHERE id_actividad = ? AND id_proyecto = ?";
+            $stmt = $mysqli->prepare($query);
+        
+            if ($stmt) {
+                $stmt->bind_param('iii', $newState, $activityId, $id_proyecto);
+        
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode(['success' => true, 'message' => 'El estado se actualizó correctamente']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => "No se encontraron registros o no se actualizó ningún dato."]);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+                }
+        
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+        
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Datos inválidos o incompletos']);
+        }
+    }
+
 }else{
     echo"<script>window.location.href = `$destination`;</script>";
 }
