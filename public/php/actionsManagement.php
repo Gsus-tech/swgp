@@ -26,9 +26,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/actions_style.css">
     <link rel="stylesheet" href="../css/reportes.css">
-    <script src="
-https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js
-"></script>
 </head>
 <body class="short">
     <div class="container"> 
@@ -119,6 +116,7 @@ https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js
     <script src="../js/actionsMng.js"></script>
     <script src="../js/reportes.js"></script>
     <script src="../js/init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
 </body>
 </html>
 <?php
