@@ -255,6 +255,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div>
 
     </div> <!-- Fin de container -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.0/html-docx.min.js"></script>
     <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>

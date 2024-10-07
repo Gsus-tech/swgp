@@ -466,6 +466,98 @@ body.loading {
     color: black;
 }
 
+.mainInputDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.createdInputDiv-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.createdInputDiv-content h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.createdInputDiv-content p {
+    display: block;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.createdInputDiv-content .input-text {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    outline: none;
+    height:3rem;
+    min-height: 3rem;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 1s ease;
+}
+
+.createdInputDiv-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.createdInputDiv-buttons button {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#saveInputBtn {
+    background-color: #266b36;
+    color: white;
+}
+
+#saveInputBtn:hover {
+    background-color: #218838;
+}
+
+#cancelBtn {
+    background-color: #92232e;
+    color: white;
+}
+
+#cancelBtn:hover {
+    background-color: #c82333;
+}
+
+
+.highlight-error {
+    background-color: rgb(231 133 133 / 50%);
+}
+
 @media (max-width: 550px) {
     .header {
         width: 100%;

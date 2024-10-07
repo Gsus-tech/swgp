@@ -26,6 +26,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/actions_style.css">
     <link rel="stylesheet" href="../css/reportes.css">
+    <script src="
+https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js
+"></script>
 </head>
 <body class="short">
     <div class="container"> 
@@ -47,8 +50,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             ?>
             <div class="activity-wrapper">
                 <div class="selectActivityDiv">
-                    <label for="actividad" class="select-label">Actividad seleccionada:</label>
-                    <br><br>
+                    <p for="actividad" class="select-label">Actividad seleccionada:</p>
+                    <br>
                     <select name="actividad" class="comboBox" id="select-actividad" onchange="updatePageData()">
                         <option value="none">-- Selecciona una actividad --</option>
                         <?php

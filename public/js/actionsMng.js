@@ -236,14 +236,7 @@ function closeAddReport(){
 
 // Crear div para nombrar el reporte
 function createSaveReport() {
-    const nombrarReporte = document.createElement('div');
-    nombrarReporte.id = 'saveReportNombrar';
-    nombrarReporte.classList.add('nombrarReporte', 'hidden');
-    const inputDiv = createInputDiv('Guardar reporte', 'Nombre del archivo', guardarReporte);
-
-    nombrarReporte.appendChild(inputDiv);
-
-    document.body.appendChild(nombrarReporte);
+    createInputDiv('Guardar reporte', 'Nombre del archivo', guardarReporte);
 }
 
 

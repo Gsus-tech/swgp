@@ -246,7 +246,7 @@ function mostrarReporteV(element, type){
                     const optionsDiv = document.createElement('div');
                     optionsDiv.classList.add('file-options');
                     optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i>
-                                            <i class='fa fa-print button' onclick='printReport(this)' title='Imprimir reporte'></i>`;
+                                            <i class='fa fa-download button' onclick='downloadReport(this)' title='Descargar reporte'></i>`;
                     reportContent.appendChild(optionsDiv);
                     if(element.id === 'botonValidar'){
                         const finishDiv = document.createElement('div');

@@ -79,31 +79,36 @@ function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
 
-function createInputDiv(descriptionText, actionFunction) {
+function createInputDiv(titleText, descriptionText, actionFunction) {
+    // Crear el div principal
+    const nombrarReporte = document.createElement('div');
+    nombrarReporte.id = 'mainInputDiv';
+    nombrarReporte.classList.add('mainInputDiv', 'hidden');
+
+    // Crear el contenido del inputDiv
     const inputDiv = document.createElement('div');
-    inputDiv.classList.add('nombrarReporte-content');
+    inputDiv.classList.add('createdInputDiv-content');
 
     const title = document.createElement('h3');
-    title.textContent = descriptionText;
+    title.textContent = titleText;
     inputDiv.appendChild(title);
 
-    const label = document.createElement('label');
-    label.setAttribute('for', 'reportName');
-    label.textContent = 'Nombre del archivo:';
+    const label = document.createElement('p');
+    label.textContent = descriptionText;
     inputDiv.appendChild(label);
 
     const input = document.createElement('input');
     input.type = 'text';
-    input.id = 'reportName';
+    input.id = 'inputContent';
     input.classList.add('input-text');
     input.maxLength = 255;
     inputDiv.appendChild(input);
 
     const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('nombrarReporte-buttons');
+    buttonContainer.classList.add('createdInputDiv-buttons');
 
     const saveButton = document.createElement('button');
-    saveButton.id = 'saveReportBtn';
+    saveButton.id = 'saveInputBtn';
     saveButton.textContent = 'Guardar';
     buttonContainer.appendChild(saveButton);
 
@@ -114,22 +119,34 @@ function createInputDiv(descriptionText, actionFunction) {
 
     inputDiv.appendChild(buttonContainer);
 
+    nombrarReporte.appendChild(inputDiv);
+
+    document.body.appendChild(nombrarReporte);
+
     saveButton.addEventListener('click', function() {
-        const reportName = input.value.trim();
-        if (reportName === '') {
-            alert('Por favor, ingresa un nombre para el reporte.');
+        const inputContent = input.value.trim();
+        if (inputContent === '') {
+            //Efecto de error en caso de campo vacio
+            input.classList.add('highlight-error');
+
+            setTimeout(function() {
+                input.classList.remove('highlight-error');
+            }, 1000);
         } else {
-            actionFunction(reportName);
-            inputDiv.parentElement.remove();
+            actionFunction(inputContent);
+            // Eliminar todo el div
+            nombrarReporte.remove(); 
         }
     });
 
     cancelButton.addEventListener('click', function() {
-        inputDiv.parentElement.remove(); // Elimina el modal
+        nombrarReporte.remove();
+        return false;
     });
 
-    return inputDiv;
+    nombrarReporte.classList.remove('hidden');
 }
+
 
 function createConfirmationDialog(title, message, onConfirm, onCancel) {
     //Div del confirm
@@ -204,13 +221,3 @@ function formatSpanishDate(dateString) {
 document.addEventListener('DOMContentLoaded', function() {
     addButtonEvents();
 });
-
-function exportToDocx(docContent, reportName) {
-    const converted = htmlDocx.asBlob(docContent, {orientation: 'portrait'});
-
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(converted);
-    link.download = `${reportName}.docx`;
-
-    link.click();
-}
