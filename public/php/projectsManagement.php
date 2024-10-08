@@ -87,7 +87,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="detailsContainer scroll">
                     <div class="detailsContainerTitle">
                         <div class="name">
-                            <i><?php echo htmlspecialchars($projectData[0]['nombre'], ENT_QUOTES, 'UTF-8');?></i>
+                            <h1><?php echo htmlspecialchars($projectData[0]['nombre'], ENT_QUOTES, 'UTF-8');?></h1>
                         </div>
                         <div class="fechas">
                             <label class="fechaInicio">Fecha de inicio: <?php echo $d1?></label><br>
@@ -134,7 +134,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </div>
                     <div class="detailsContainerDiv">
                         <div class="integrantes">
-                            <h3 >Integrantes:</h3><br>
+                            <h3 >Integrantes:</h3>
                         <?php
                         if (count($integrantes) != 0) {
                             for ($i = 0; $i < count($integrantes); $i++) {
@@ -157,7 +157,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         
                 </div>   <!-- Fin detailsContainer -->
                 <script src="../js/validate.js"></script>
+                <script src="../js/reportes.js"></script>
                <script src="../js/projectDetails.js"></script>
+               <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
 
 
 
@@ -912,6 +914,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <script src="../js/validate.js"></script>
                 <script src="../js/tablePagination.js"></script>
                 <script src="../js/projectMng.js"></script>
+
                                 <?php
             }
             ?>

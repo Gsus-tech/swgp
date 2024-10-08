@@ -485,6 +485,52 @@ if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    if (isset($_GET['getFullReportData']) && $_GET['getFullReportData'] === 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+    
+        $projectSelected = $_SESSION['projectSelected'];
+    
+        if (filter_var($projectSelected, FILTER_VALIDATE_INT) !== false) {
+            $query = "SELECT tbl_actividades.nombre_actividad, tbl_avances.id_actividad, tbl_avances.nombre as reporte_nombre, tbl_avances.contenido 
+                      FROM tbl_avances INNER JOIN tbl_actividades ON tbl_actividades.id_actividad = tbl_avances.id_actividad 
+                      WHERE tbl_avances.id_proyecto = ? ORDER BY tbl_avances.id_actividad ASC";
+            $stmt = $mysqli->prepare($query);
+    
+            if ($stmt) {
+                $stmt->bind_param('i', $projectSelected);
+                $stmt->execute();
+                
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $activityName = $row['nombre_actividad'];
+                        $reportContent = [
+                            'reporte_nombre' => $row['reporte_nombre'],
+                            'contenido' => $row['contenido']
+                        ];
+                        
+                        if (!isset($structuredReports[$activityName])) {
+                            $structuredReports[$activityName] = [];
+                        }
+                        // Add the report under the correct activity
+                        $structuredReports[$activityName][] = $reportContent;
+                    }
+                    echo json_encode(['success' => true, 'data' => $structuredReports]);
+                } else {
+                    // En caso que no hayan objetivos registrados...
+                    echo json_encode(['success' => false, 'message' => 'No se encontraron reportes asociados']);
+                }
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'ID de proyecto no válido']);
+        }
+        $mysqli->close();
+    } 
+
     else {
         echo json_encode(['success' => false, 'message' => 'Método de solicitud no permitido.']);
     }

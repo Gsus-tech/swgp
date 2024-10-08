@@ -83,7 +83,7 @@ function createInputDiv(titleText, descriptionText, actionFunction) {
     // Crear el div principal
     const nombrarReporte = document.createElement('div');
     nombrarReporte.id = 'mainInputDiv';
-    nombrarReporte.classList.add('mainInputDiv', 'hidden');
+    nombrarReporte.classList.add('mainCreatedDiv', 'hidden');
 
     // Crear el contenido del inputDiv
     const inputDiv = document.createElement('div');
