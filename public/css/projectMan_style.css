@@ -484,10 +484,6 @@
     }
 }
 
-
-.detailsContainer {
-    margin-bottom: 3rem;
-}  
 .detailsContainer .fa-share-square-o {
     position: absolute;
     background-color: #0d8c7751;
@@ -501,7 +497,7 @@
     width: 85%;
     left: 0;
 }  
-.detailsContainer .detailsContainerDiv .name i { 
+.detailsContainer .detailsContainerDiv .name h1 { 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -554,6 +550,45 @@
     color: white;
 }
 
+.opcionesDiv {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.opcionesDiv-content {
+    text-align: center;
+}
+
+.opcionesDiv-content h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.opcionesDiv-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.opcionesDiv-buttons button {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.opcionesDiv-buttons button:hover {
+    opacity: 0.8;
+}
+
 @media screen and (min-width: 600px){
 
     .datesEditForm {
@@ -572,14 +607,14 @@
         position: relative;         
         width: -webkit-fill-available;  
         height: fit-content;    
-        min-height: -webkit-fill-available;
+        min-height: 100%;
     }   
     .detailsContainer .detailsContainerTitle {     
         margin: 0 auto;      
         background-color: var(--white);         
         padding: 1rem 0;    
     }     
-     .detailsContainer .detailsContainerTitle .name i{
+     .detailsContainer .detailsContainerTitle .name h1{
         display: flex;
         align-items: center;
         justify-content: center;
@@ -726,7 +761,7 @@
     .detailsContainer .detailsContainerTitle {    
         width: 96%;   
     }    
-    .detailsContainer .detailsContainerTitle .name i {  
+    .detailsContainer .detailsContainerTitle .name h1 {  
         font-size: 200%;    
     }     
     .detailsContainer .detailsContainerDiv {   

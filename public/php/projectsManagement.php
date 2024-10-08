@@ -87,7 +87,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="detailsContainer scroll">
                     <div class="detailsContainerTitle">
                         <div class="name">
-                            <i><?php echo htmlspecialchars($projectData[0]['nombre'], ENT_QUOTES, 'UTF-8');?></i>
+                            <h1><?php echo htmlspecialchars($projectData[0]['nombre'], ENT_QUOTES, 'UTF-8');?></h1>
                         </div>
                         <div class="fechas">
                             <label class="fechaInicio">Fecha de inicio: <?php echo $d1?></label><br>
@@ -134,7 +134,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </div>
                     <div class="detailsContainerDiv">
                         <div class="integrantes">
-                            <h3 >Integrantes:</h3><br>
+                            <h3 >Integrantes:</h3>
                         <?php
                         if (count($integrantes) != 0) {
                             for ($i = 0; $i < count($integrantes); $i++) {
@@ -149,7 +149,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     </div>
                     <a id="returnToProjects" class="button redBtn" onclick="returnToProjectsList()" title="Lista de Proyectos"><i class="fa fa-arrow-circle-left"></i></a>
                     <div class="optionsDiv">
-                        <a id="printDetails" class="button hide"><i class="fa fa-print" onclick="imprimirProyecto()" title="Imprimir"></i></a>
+                        <!-- <a id="printDetails" class="button hide"><i class="fa fa-print" onclick="imprimirProyecto()" title="Imprimir"></i></a> -->
                         <a id="shareProject" class="button hide"><i class="fa fa-share-square-o" onclick="exportarProyecto()" title="Exportar"></i></a>
                         <a id="editProject" class="button hide"><i class="fa fa-edit" onclick="editarProyecto(<?php echo $projectID; ?>)" title="Editar"></i></a>
                         <a id="toggleDocumentOptions" class="button"><i class="fa fa-ellipsis-v" onclick="toggleDocumentOptions()" title="Opciones"></i></a>
@@ -157,7 +157,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         
                 </div>   <!-- Fin detailsContainer -->
                 <script src="../js/validate.js"></script>
+                <script src="../js/reportes.js"></script>
                <script src="../js/projectDetails.js"></script>
+               <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
 
 
 
@@ -537,7 +539,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         
                         <div class="form-options" pg-d="<?php echo $_GET['editProject'];?>">
                             <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit" tabindex="0">Guardar cambios</button>
-                            <a id="cancel-editProject" class="close-editProject" onclick="return confirmCancel()" tabindex="0">Cancelar</a>
+                            <a id="cancel-editProject" class="close-editProject button" onclick="return confirmCancel()" tabindex="0">Cancelar</a>
                         </div>
                     </div>
                     </form> <!-- Fin de edit-project-form -->
@@ -600,7 +602,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <table class="project-list hoverTable">
                             <thead>
                                 <tr>
-                                    <th class="selectProjects"><input type="checkbox" id="selectAllBoxes"></th>
+                                    <th class="selectProjects"><input type="checkbox" class="button" id="selectAllBoxes"></th>
                                     <th class="rowName">Nombre del proyecto</th>
                                     <th class="rowDepto">Departamento asignado</th>
                                     <th class="rowFechaIni">Estado final</th>
@@ -627,7 +629,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                             $count = 0;
                                             foreach ($p[$i] as $key => $value) {
                                                 if ($count===0) {
-                                                    echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
+                                                    echo "<td><input type='checkbox' class='project-checkbox button' value='$value'></td>";
                                                 } elseif ($count===3) {
                                                     $estados = [
                                                         0 => 'Cancelado',
@@ -720,7 +722,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <table class="project-list hoverTable">
                         <thead>
                             <tr>
-                                <th class="selectProjects"><input type="checkbox" id="selectAllBoxes"></th>
+                                <th class="selectProjects"><input type="checkbox" class="button" id="selectAllBoxes"></th>
                                 <th class="rowName">Nombre del proyecto</th>
                                 <th class="rowName">Departamento asignado</th>
                                 <th class="rowFechaIni">Fecha de inicio</th>
@@ -749,7 +751,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         foreach ($p[$i] as $key => $value) {
                                             if ($count == 0) {
                                                 $currentId = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-                                                echo "<td><input type='checkbox' class='project-checkbox' value='$currentId'></td>";
+                                                echo "<td><input type='checkbox' class='project-checkbox button' value='$currentId'></td>";
                                             } 
                                             elseif ($count === 1) {
                                                 $cId = htmlspecialchars($p[$i]['id_proyecto']);
@@ -797,7 +799,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                         echo '<tr onclick="SelectThisRow(this, \'projects-list-body\')" p-p="' . $percentage . '" p-i="' . $p[$i]['id_proyecto'] . '">';
                                         foreach ($p[$i] as $key => $value) {
                                             if ($value === $p[$i]['id_proyecto']) {
-                                                echo "<td><input type='checkbox' class='project-checkbox' value='$value'></td>";
+                                                echo "<td><input type='checkbox' class='project-checkbox button' value='$value'></td>";
                                             } elseif ($value === $p[$i]['nombre']) {
                                                 $cId = htmlspecialchars($p[$i]['id_proyecto']);
                                                 echo "<td><i class='blueText' onclick=seeProjectAccount('$cId') title='Ver detalles de proyecto'>" . htmlspecialchars($value) . "</i></td>";
@@ -900,7 +902,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             <br>
                             
                             <div class="form-options">
-                            <a id="cancel-AddProject" class="close-AddProject" onclick="cerrarFormulario()">Cancelar</a>
+                            <a id="cancel-AddProject" class="close-AddProject button" onclick="cerrarFormulario()">Cancelar</a>
                             <button name="sumbit-AddProject" class="sumbit-AddProject enabled" id="sumbit-AddProject" type="submit">Crear proyecto</button>
                             </div>
                         </div>
@@ -912,6 +914,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <script src="../js/validate.js"></script>
                 <script src="../js/tablePagination.js"></script>
                 <script src="../js/projectMng.js"></script>
+
                                 <?php
             }
             ?>

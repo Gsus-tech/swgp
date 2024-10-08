@@ -79,7 +79,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <table class="activity-list">
                         <thead>
                             <tr>
-                                <th class="selectActivities"><input type="checkbox" id="selectAllActivities"></th>
+                                <th class="selectActivities"><input type="checkbox" class="button" id="selectAllActivities"></th>
                                 <th class="rowNombre">Actividad</th>
                                 <th class="rowEstado">Estado</th>
                                 <th class="rowFechaFin">Fecha de finalización</th>
@@ -111,7 +111,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 $rowN = $i+1;
                                 echo "<tr " . $revBg ."row='$rowN' u-d='" . $p[$i]['id_usuario'] . "' a-d='" . $p[$i]['id_actividad'] . "' onclick='SelectThisRowAndDetails(this, \"activity-list-body\")' ondblclick='doubleClickRow(this)'>";
                                 $value = $p[$i]['id_actividad'];
-                                echo "<td><input type='checkbox' class='activity-checkbox' value='$value'></td>";
+                                echo "<td><input type='checkbox' class='activity-checkbox button' value='$value'></td>";
                                 $camposMostrar = ['nombre_actividad', 'estadoActual', 'fecha_estimada', 'descripción'];
                                 foreach ($camposMostrar as $campo) {
                                     $value = $p[$i][$campo];
@@ -255,12 +255,12 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         </div>
 
     </div> <!-- Fin de container -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.4.0/html-docx.min.js"></script>
     <script src="../js/tablePagination.js"></script>
     <script src="../js/validate.js"></script>
     <script src="../js/activityMng.js"></script>
     <script src="../js/reportes.js"></script>
     <script src="../js/init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
 </body>
 </html>
 <?php
