@@ -26,14 +26,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 
                 newMenu.innerHTML =  `
-                <a href="#" onclick="showMoveOptions(this, '${columnId}', ${cardId})" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Mover</a>
-                <a href="#" onclick="showTags(this, '${columnId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Etiquetas</a>
-                    <a href="#" onclick="confirmDeleteAct(this)" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Eliminar</a>
+                <a href="#" onclick="showMoveOptions(this, '${columnId}', ${cardId})" class="dropdown-item"><i></i>Mover</a>
+                <a href="#" onclick="showTags(this, '${columnId}')" class="dropdown-item"><i></i>Etiquetas</a>
+                    <a href="#" onclick="confirmDeleteAct(this)" class="dropdown-item"><i></i>Eliminar</a>
                     `;
 
                 // Insertar el nuevo menú en el contenedor del botón
-                // const cardBody = button.closest('.card-body');
-                // cardBody.appendChild(newMenu);
 
                 document.body.appendChild(newMenu);  // Añadirlo al body
 
@@ -66,27 +64,27 @@ function showMoveOptions(button, columnId, cardId) {
 
         if (columnId === 'pendientes') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>En proceso</a>
-                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Retrasadas</a>
-                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Terminadas</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
+                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'proceso') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Pendiente</a>
-                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Retrasadas</a>
-                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Terminadas</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
+                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'retrasadas') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Pendiente</a>
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>En proceso</a>
-                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Terminadas</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'terminadas') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Pendiente</a>
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>En proceso</a>
-                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Retrasada</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasada</a>
             `;
         }
         // Reemplazar el contenido del menú actual con las nuevas opciones
@@ -105,9 +103,10 @@ function showTags(button){
         let menuOptionsHTML = '';
 
         menuOptionsHTML = `
-        <a href="#" onclick="cardFlags(this, 2)" class="dropdown-item"><i class="mdi mdi-pencil me-1 fa fa-circle rdFlag"></i>  Importante / Urgente</a>
-        <a href="#" onclick="cardFlags(this, 3)" class="dropdown-item"><i class="mdi mdi-pencil me-1 fa fa-circle grFlag"></i>  Completado o bajo control</a>
-        <a href="#" onclick="cardFlags(this, 4)" class="dropdown-item"><i class="mdi mdi-delete me-1 fa fa-circle ylFlag"></i>  Información adicional requerida</a>
+        <a href="#" onclick="cardFlags(this, 1)" class="dropdown-item"><i class="fa fa-circle rdFlag"></i>  Importante / Urgente</a>
+        <a href="#" onclick="cardFlags(this, 2)" class="dropdown-item"><i class="fa fa-circle grFlag"></i>  Completado o bajo control</a>
+        <a href="#" onclick="cardFlags(this, 3)" class="dropdown-item"><i class="fa fa-circle ylFlag"></i>  Información adicional requerida</a>
+        <a href="#" onclick="cardFlags(this, 4)" class="dropdown-item"><i class="fa fa-close"></i>  Quitar etiqueta</a>
         `;
 
         // Reemplazar el contenido del menú actual con las nuevas opciones
