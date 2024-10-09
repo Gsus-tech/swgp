@@ -19,16 +19,15 @@ document.addEventListener("DOMContentLoaded", function() {
                 const actId = button.closest('.card-body').id;
                 const newMenu = document.createElement('div');
                 newMenu.className = 'opciones-tarjetas';
-                newMenu.id = actId;
-
+                
                 const closestTaskDiv = button.closest('.tasks');
                 const columnId = closestTaskDiv ? closestTaskDiv.id : null;
                 const closestActDiv = button.closest('.card');
                 const cardId = closestActDiv ? closestActDiv.getAttribute('data-card-id') : null;
-
+                newMenu.setAttribute("act-id",cardId);
+                
                 newMenu.innerHTML =  `
-                    <a href="#" onclick="makeReport(this)" class="dropdown-item"><i class="mdi mdi-report me-1"></i>Crear reporte</a>
-                    `;
+                    <a href="#" onclick="makeReport(this)" class="dropdown-item"><i class="mdi mdi-report me-1"></i>Crear reporte</a>`;
 
                 document.body.appendChild(newMenu);
 
@@ -48,8 +47,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-function makeReport(){
-    //probablemente redirigir a una pagina para generar reporte de actividades
+function makeReport(element){
+    const cardId = element.closest('.opciones-tarjetas').getAttribute('act-id');
+    localStorage.setItem('openReportEditor', 'true');
+    localStorage.setItem('actId', cardId);
+    window.location.href = "../php/actionsManagement.php";
 }
 
 

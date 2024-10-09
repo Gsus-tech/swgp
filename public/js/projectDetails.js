@@ -136,7 +136,11 @@ function createProjectReport(fullReport){
                 console.log('Respuesta recibida:', response); // Ver la respuesta exacta que se recibe
             }
         }, function(error) {
-            console.error('Error en la solicitud AJAX:', error);
+            if(error === 'No se encontraron reportes asociados'){
+                alert('Lo sentimos.\nNo se encontraron reportes asociados a este proyecto.');
+            }else{
+                console.error('Error en la solicitud AJAX:', error);
+            }
         });
 
 

@@ -207,6 +207,53 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePageData();
         updateData.remove();
     }
+
+    const redirectedToReport = localStorage.getItem('openReportEditor');
+    if (redirectedToReport) {
+        const actId = localStorage.getItem('actId');
+        const selectElement = document.getElementById('select-actividad');
+        
+        if (actId && selectElement) {
+            selectElement.value = actId;
+            
+            const event = new Event('change');
+            selectElement.dispatchEvent(event);
+
+            const waitForButton = () => {
+                return new Promise((resolve, reject) => {
+                    const checkBtn = () => {
+                        const reportBtn = document.querySelector('.addBtn');
+                        if (reportBtn) {
+                            resolve(reportBtn);
+                        } else {
+                            reject('Report button not found.');
+                        }
+                    };
+                    
+                    setTimeout(checkBtn, 100);
+                });
+            };
+        
+            waitForButton()
+            .then((reportBtn) => {
+                reportBtn.click();
+                localStorage.removeItem('openReportEditor');
+                localStorage.removeItem('actId');
+            })
+            .catch((error) => {
+                waitForButton()
+                .then((reportBtn) => {
+                    reportBtn.click();
+                    localStorage.removeItem('openReportEditor');
+                    localStorage.removeItem('actId');
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            });
+        }
+    }
+    
 });
 
 //Mostrar el editor de reportes.
