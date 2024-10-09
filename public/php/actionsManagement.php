@@ -119,7 +119,32 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.min.js"></script>
 </body>
 </html>
+<script>
+//Cargar la informacion de una actividad tras insertar un reporte
+document.addEventListener('DOMContentLoaded', function() {
+    const redirectedToReport = localStorage.getItem('openReportEditor');
+    if (redirectedToReport) {
+        const actId =  localStorage.getItem('actId');
+
+        const selectElement = document.getElementById('select-actividad');
+        const reportBtn = document.querySelector('.addBtn');
+        if (actId && selectElement && reportBtn) {
+            selectElement.value = actId;
+    
+            const event = new Event('change');
+            selectElement.dispatchEvent(event);
+         
+            // const event2 = new Event('click');
+            // reportBtn.dispatchEvent(event);
+            
+            localStorage.removeItem('openReportEditor');
+            localStorage.removeItem('actId');
+        }
+    }
+});
+</script>
 <?php
+
         if (isset($_SESSION['error_message'])) {
             $error_message = $_SESSION['error_message'];
             unset($_SESSION['error_message']);
