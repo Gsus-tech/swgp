@@ -392,6 +392,117 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         }
     }
 
+    if (isset($_GET['setNote']) && $_GET['setNote'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_POST['id_actividad'], FILTER_VALIDATE_INT);
+        $tipo = filter_var($_POST['tipo'], FILTER_VALIDATE_INT);
+        $addContenido = false;
+        if ($activityId !== false && $tipo !== false) {
+            if(isset($_POST['contenido'])){
+                $contenido = Crud::antiNaughty((string)$_POST['contenido']);
+                $contenido = mb_substr(trim($contenido), 0, 80);
+                $addContenido = true;
+            }
+            
+            // Verificar si ya existe una nota para esta actividad
+            $queryCheck = "SELECT id_nota FROM tbl_notas WHERE id_actividad = ?";
+            $stmtCheck = $mysqli->prepare($queryCheck);
+            $stmtCheck->bind_param('i', $activityId);
+            $stmtCheck->execute();
+            $stmtCheck->store_result();
+            $exists = false;
+
+            if ($stmtCheck->num_rows > 0) {
+                // Si ya existe, actualizar la nota
+                if ($addContenido === true) {
+                    $query = "UPDATE tbl_notas SET tipo = ?, contenido = ? WHERE id_actividad = ?";
+                } else {
+                    $query = "UPDATE tbl_notas SET tipo = ?, contenido = null WHERE id_actividad = ?";
+                }
+                $exists = true;
+            } else {
+                // Si no existe, insertar una nueva nota
+                if ($addContenido === true) {
+                    $query = "INSERT INTO tbl_notas (id_actividad, tipo, contenido) VALUES (?, ?, ?)";
+                } else {
+                    $query = "INSERT INTO tbl_notas (id_actividad, tipo) VALUES (?, ?)";
+                }
+            }
+    
+            $stmtCheck->close();
+
+
+            $stmt = $mysqli->prepare($query);
+        
+            if ($stmt) {
+                if($exists){
+                    if($addContenido === true){
+                        $stmt->bind_param('isi', $tipo, $contenido, $activityId);
+                    }else{
+                        $stmt->bind_param('ii', $tipo, $activityId);
+                    }
+                }else{
+                    if($addContenido === true){
+                        $stmt->bind_param('iis', $activityId, $tipo, $contenido);
+                    }else{
+                        $stmt->bind_param('ii', $activityId, $tipo);
+                    }
+                }
+        
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode(['success' => true, 'message' => 'Nota agregada correctamente.']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => "No se pudo agregar la nota o no se realizaron cambios."]);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+                }
+        
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+            
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Datos inválidos o incompletos']);
+        }
+    }
+
+    if (isset($_GET['deleteNote']) && $_GET['deleteNote'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $activityId = filter_var($_POST['id_actividad'], FILTER_VALIDATE_INT);
+
+        if ($activityId !== false) {
+            $query = "DELETE FROM tbl_notas WHERE id_actividad = ?";
+            $stmt = $mysqli->prepare($query);
+            $stmt->bind_param('i', $activityId);
+        
+            if ($stmt) {        
+                if ($stmt->execute()) {
+                    if ($stmt->affected_rows > 0) {
+                        echo json_encode(['success' => true, 'message' => 'Nota eliminada correctamente.']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => "No hay notas registradas."]);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al ejecutar la consulta: ' . $stmt->error]);
+                }
+        
+                $stmt->close();
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+            }
+            
+            $mysqli->close();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Datos inválidos o incompletos']);
+        }
+    }
+
 }else{
     echo"<script>window.location.href = `$destination`;</script>";
 }

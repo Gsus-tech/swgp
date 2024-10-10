@@ -114,6 +114,106 @@ function showTags(button){
     }
 }
 
+function cardFlags(element, action){
+    const floatMenuDiv = document.querySelector('.opciones-tarjetas');
+    const id = floatMenuDiv.id;
+
+    if (action === 4) {
+        async function deleteNote(){
+            const url = '../controller/activityManager.php?deleteNote=true';
+            const data = new URLSearchParams({
+                id_actividad: id,
+            });
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: data
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('¡Etiqueta eliminada!');
+                } else {
+                    if(result.message === 'No hay notas registradas.'){
+                        floatMenuDiv.remove();
+                    }else{
+                        console.error("Error al eliminar la etiqueta:", result.message);
+                        return null;
+                    }
+                }
+            } catch (error) {
+                console.error('Error en la solicitud AJAX:', error);
+                return null;
+            }
+        }
+
+        deleteNote();
+    }else if(action >= 1 && action <= 3){
+        const id = document.querySelector('.opciones-tarjetas').id;
+        async function sendAjaxRequest(data) {
+            console.log('Entering sendAjaxRequest.');
+            const url = '../controller/activityManager.php?setNote=true';
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: data
+                });
+        
+                const result = await response.json();
+                if (result.success) {
+                    alert('¡Etiqueta guardada exitosamente!');
+                } else {
+                    console.error("Error al asignar la etiqueta:", result.message);
+                }
+                location.reload();
+            } catch (error) {
+                console.error('Error en la solicitud AJAX:', error);
+            }
+        }
+        
+
+        async function addTag(nota) {
+            console.log('Entering addtag.');
+            const action = 4;
+        
+            let data;
+            if (nota) {
+                try {
+                    const contenido = await createTextInputBox('Creación de nota', 'Contenido:');
+                    data = new URLSearchParams({
+                        id_actividad: id,
+                        tipo: action,
+                        contenido: contenido
+                    });
+                    console.log(`Contenido: ${contenido}`);
+                } catch (error) {
+                    console.error('Error en la entrada de texto:', error);
+                    return;
+                }
+            } else {
+                data = new URLSearchParams({
+                    id_actividad: id,
+                    tipo: action
+                });
+            }
+            sendAjaxRequest(data);
+        }
+        
+        
+        createConfirmationDialog('Guardando etiqueta...', '¿Deseas agregar una nota?', () => addTag(true), () => addTag(false), 'Si', 'No');
+
+    }
+    floatMenuDiv.remove();
+}
+
 // Eliminar actividad
 function confirmDeleteAct(element) {
     createConfirmationDialog(
