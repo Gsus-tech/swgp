@@ -461,6 +461,11 @@ body.loading {
     color: white;
 }
 
+.btn-orange {
+    background-color: #eb9404;
+    color: white;
+}
+
 .btn-yellow {
     background-color: #fbf404;
     color: black;
@@ -570,6 +575,23 @@ body.loading {
 
 .highlight-error {
     background-color: rgb(231 133 133 / 50%);
+}
+
+.generalBtnStyle{
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px; 
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.generalBtnStyle:hover {
+    opacity: .8;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
 }
 
 @media (max-width: 550px) {

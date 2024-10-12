@@ -14,7 +14,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - Soporte</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/soporte.css">
+    <link rel="stylesheet" href="../css/support.css">
 </head>
 <body class="short">
     <div class="container">
@@ -33,6 +33,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             <h4 class="headerTitle">Gestión de Soporte</h4>
         </div>
 
+
+
+        <script src="../js/supportAdmin.js"></script>
         <?php
 
         }else{
@@ -40,11 +43,24 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <div class="header flexAndSpaceDiv">
             <h4 class="headerTitle">Módulo de Soporte</h4>
         </div>
+
+        <div class="supportFirstAction">
+            <div class="fm-content">
+                <button class="generalBtnStyle btn-orange" id="raiseTicketBtn">Levantar ticket</button>
+                <button class="generalBtnStyle btn-blue" id="viewTicketStatusBtn">Ver estado de ticket</button>
+            </div>
+        </div>
+            
+
+
+        <script src="../js/validate.js"></script>
+        <script src="../js/support.js"></script>
         <?php
         }
         ?>
         </div> <!-- Main -->
     </div> <!-- Container -->
+
 <script src="../js/init.js"></script>
 </body>
 </html>

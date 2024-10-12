@@ -1,0 +1,178 @@
+.selectDiv {
+    width:fit-content;
+}
+
+.fm-content { 
+    margin: 20px; 
+    padding: 1px 1rem 5px 1rem;
+    border-radius: 20px;
+    background-color: var(--divBgColor);
+    padding: 1rem 20px;
+    height: fit-content;
+}
+
+.fm-content h3{ 
+    margin-bottom: 15px;
+}
+
+.ticketExplanationDiv, .projectUpdateDiv {
+    margin: 20px 0;
+    min-width: 390px;
+    max-width: 850px;
+    width:100%;
+}
+
+.projectUpdateDiv{
+    max-width: 650px;
+}
+
+.fm-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-text, .textarea-input, .file-input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.textarea-input {
+    resize: none;
+}
+
+.selectImageDiv{
+    display: flex;
+    margin-top:10px;
+}
+
+.selectImageBtn{
+    width: 11rem;
+}
+
+.fileChosenLb{
+    margin-left:1rem;
+    padding:5px 10px;
+    border: 1px solid #000;
+}
+
+.deleteMemberDiv, .permitionMemberDiv{
+    width: fit-content;
+}
+
+.fm-content div .generalBtnStyle{
+    background-color: #3498db;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    padding: 10px 20px;
+}
+
+.submitTicketBtn{
+    z-index:1;
+    position: fixed;
+    font-family: sans-serif;
+    width: 120px;
+}
+
+.closeBtn {
+    position: relative;
+    width: fit-content;
+    left: 15rem;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #000;
+    cursor: pointer;
+}
+
+.type1Btn{
+    bottom:unset;
+    top: 36rem;
+    right:3rem;
+}
+
+.type2Btn{
+    bottom:unset;
+    top:36rem;
+    right:3rem;
+}
+
+.type3Btn{
+    bottom:unset;
+    top:28rem;
+    right:3rem;
+}
+
+.ticketInputVl {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.supportFirstAction{
+    max-width: 650px;
+    min-width: 250px;
+}
+
+.supportFirstAction .fm-content{
+    width: 80%;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.supportFirstAction .fm-content .generalBtnStyle {
+     padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+}
+
+@media screen and (min-width: 650px) {
+    .type3Btn{
+        right:unset;
+        left: 30rem;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    .selectDiv{
+        width: 100%;
+        display: flex;
+        max-width:850px;
+    }
+
+    .type2Btn{
+        top:32rem;
+        right:unset;
+        left: 40rem;
+    }
+
+    .type3Btn{
+        top: 29rem;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .type1Btn{
+        right:unset;
+        left:48rem
+    }
+}
+
+@media screen and (max-height: 500px){
+    .type3Btn{
+        top:unset;
+        bottom: 2rem;
+        right:3rem;
+    }
+}
+
+@media screen and (max-height: 600px){
+    .type1Btn, .type2Btn{
+        top:unset;
+        bottom: 2rem;
+        right:3rem;
+    }
+}
