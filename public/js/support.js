@@ -78,10 +78,10 @@ function loadTicketTypes() {
                     <div class="fm-content">
                         <h3>Descripción:</h3>
                         <label for="ticketTitle">Título del ticket:</label>
-                        <input type="text" id="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100">
+                        <input type="text" id="ticketTitle" name="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100">
                         
                         <label for="ticketDescription">Motivo o descripción de la situación:</label>
-                        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="500" rows="4"></textarea>
+                        <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="500" rows="4"></textarea>
                         
                         <label for="ticketImage">Adjuntar imagen:</label>
                         <div class='selectImageDiv'>
@@ -265,7 +265,7 @@ function promoteDemote(element){
         <br>
         <p>Este usuario cuenta con permisos de usuario limitados.</p>
         <br>
-        <button class='generalBtnStyle' onclick="submitTicket(this)">Otorgar permisos</button>
+        <button class='generalBtnStyle' onclick="submitTicket()">Otorgar permisos</button>
         `;
         document.getElementById('setPermitionDiv').appendChild(dv);
     }
@@ -318,6 +318,27 @@ function updateBtnLanguage(){
     });
 }
 
+function dataForTicket(){
+    const submitType = document.getElementById('submitTicketBtn').getAttribute('submitType')
+
+    const formData = new URLSearchParams();
+    formData.append('ticketType', submitType); 
+
+    const inputs = document.querySelectorAll('.ticketInputVl');
+    inputs.forEach(input => {
+        formData.append(input.name, input.value);
+    });
+
+    const selects = document.querySelectorAll('.comboBox');
+    selects.forEach(select => {
+        if(select.id != 'categorySelect'){
+            formData.append(select.name, select.value);
+        }
+    });
+
+    return formData;    
+}
+
 function submitTicket(){
     let submitFlag = true;
     const inputs = document.querySelectorAll('.ticketInputVl');
@@ -340,8 +361,49 @@ function submitTicket(){
             }
         }
     });
+
+    const selects = document.querySelectorAll('.comboBox');
+    selects.forEach(select => {
+        if (select.value === "none"){
+            submitFlag = false;
+            select.classList.add('highlight-error');
+            setTimeout(function() {
+                select.classList.remove('highlight-error');
+            }, 1000);
+        }
+    });
+
     if(submitFlag === true){
-        const submitType = document.getElementById('submitTicketBtn').getAttribute('submitType')
-        location.href = `support.php?type=${submitType}`;
+        createConfirmationDialog(
+            "Mensaje de confimarción",
+            "¿Estás seguro que deseas abrir este ticket?",
+            function() {
+                const data = dataForTicket();
+
+                fetch('../controller/supportManager.php?newTicket=true', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: data
+                })
+                .then(response => response.json()) 
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                        
+                    } else {
+                        alert(`Error: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud AJAX:', error);
+                });
+            },
+            function() {
+                console.log("Confirmación de nuevo ticket cancelada.");
+            }
+        );
     }
 }
