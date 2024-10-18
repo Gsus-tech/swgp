@@ -15,45 +15,90 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mysqli = $crud->getMysqliConnection();
             $id_usuario = $_SESSION['id'];
         
-            if(isset($_GET['newTicket']) && $_GET['newTicket']==='true'){
+            if (isset($_GET['newTicket']) && $_GET['newTicket'] === 'true') {
                 $type = $_POST['ticketType'];
-                if($type){
+                if ($type) {
                     $submit = false;
                     $query = "";
-                    
-                    if($type === 't-1'){
+            
+                    if ($type === 't-1') {
                         $ticketTitle = Crud::antiNaughty((string)$_POST['ticketTitle']);
                         $ticketDescription = Crud::antiNaughty((string)$_POST['ticketDescription']);
-        
+            
                         $mensaje = json_encode([
-                            'titulo' => "<h2>{$ticketTitle}</h2>",
-                            'descripcion' => "<p>{$ticketDescription}</p>"
+                            'titulo' => "{$ticketTitle}",
+                            'descripcion' => "{$ticketDescription}"
                         ]);
-                        
-                        // Nos falta agregar las imagenes.
-                        // Estaba pensando en convertirlas a base64 desde js y mandarlas asi por medio de data.
-                        // Al igual que en los reportes, vamos a guardar la ruta en la bd y guardamos la imagen en un folder en la carpeta raiz.
-
-                        $query = "INSERT INTO tbl_solicitudes_soporte (id_usuario, tipoSolicitud, mensaje, estado) VALUES (?, ?, ?, 'Abierto')";
-                        $stmt = $mysqli->prepare($query);
-                        if ($stmt) {
-                            $stmt->bind_param('iis', $id_usuario, $type, $mensaje);
-                            
-                            if($stmt->execute()){
-                                echo json_encode(['success' => true, 'message' => 'Ticket enviado exitosamente.']);
-                            } else {
-                                echo json_encode(['success' => false, 'message' => 'Error al enviar el ticket.']);
-                            }
-                            
-                            $stmt->close(); 
+            
+                        $uploadDir = "../assets/suppTicketsImages/";
+            
+                        if (!is_dir($uploadDir)) {
+                            mkdir($uploadDir, 0777, true);
                         }
+            
+                        if (isset($_POST['ticketImageBase64'])) {
+                            $imgData = $_POST['ticketImageBase64'];
+            
+                            if (preg_match('/^data:image\/(\w+);base64,/', $imgData, $type)) {
+                                $imgData = substr($imgData, strpos($imgData, ',') + 1);
+                                $type = strtolower($type[1]);
+            
+                                if (!in_array($type, ['jpg', 'jpeg', 'gif', 'png'])) {
+                                    echo json_encode(['success' => false, 'message' => 'Formato de imagen no soportado.']);
+                                    exit;
+                                }
+            
+                                $imgData = base64_decode($imgData);
+                                if ($imgData === false) {
+                                    echo json_encode(['success' => false, 'message' => 'Error al decodificar la imagen.']);
+                                    exit;
+                                }
+            
+                                $uniqueFileName = uniqid('ticket_', true) . '.' . $type;
+                                $filePath = $uploadDir . $uniqueFileName;
+            
+                                if (file_put_contents($filePath, $imgData) === false) {
+                                    echo json_encode(['success' => false, 'message' => 'Error al guardar la imagen.']);
+                                    exit;
+                                }
+            
+                                $mensaje = json_encode([
+                                    'titulo' => "{$ticketTitle}",
+                                    'descripcion' => "{$ticketDescription}",
+                                    'imagen' => '../assets/suppTicketsImages/' . $uniqueFileName
+                                ]);
+                            } else {
+                                echo json_encode(['success' => false, 'message' => 'Formato de imagen inválido.']);
+                                exit;
+                            }
+                        }
+            
+                        // Prepara y ejecuta la consulta
+                        $query = "INSERT INTO tbl_solicitudes_soporte (id_usuario, tipoSolicitud, mensaje, estado) VALUES (?, 1, ?, 'Abierto')";
+                        $stmt = $mysqli->prepare($query);
+            
+                        if (!$stmt) {
+                            echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+                            exit;
+                        }
+            
+                        $stmt->bind_param('is', $id_usuario, $mensaje);
+            
+                        if (!$stmt->execute()) {
+                            echo json_encode(['success' => false, 'message' => 'Error en la ejecución: ' . $stmt->error]);
+                            exit;
+                        }
+            
+                        echo json_encode(['success' => true, 'message' => 'Ticket enviado exitosamente.']);
+                        $stmt->close();
                     } else {
                         echo json_encode(['success' => false, 'message' => 'Tipo de ticket no reconocido.']);
                     }
                 }
-            }else{
+            } else {
                 echo json_encode(['success' => false, 'message' => 'NewTicket es false.']);
             }
+            
         }
         
          else {

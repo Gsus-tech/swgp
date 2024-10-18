@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         $avId = isset($_POST['avId']) ? (int)$_POST['avId'] : null;
     
         if ($avId !== null) {
-            // Paso 1: Obtener el contenido del reporte
+            // Obtener el contenido del reporte
             $query = "SELECT contenido FROM tbl_avances WHERE id_avance = ?";
             $stmt = $mysqli->prepare($query);
     
@@ -260,20 +260,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
                     $reportData = $result->fetch_assoc();
                     $contenido = json_decode($reportData['contenido'], true);
     
-                    // Paso 2: Verificar si hay imágenes en el contenido y eliminarlas
+                    // Verificar si hay imágenes en el contenido y eliminarlas
                     foreach ($contenido as $elemento) {
                         if (isset($elemento['type']) && $elemento['type'] === 'img') {
-                            $rutaImagen = str_replace('..', '', $elemento['value']);  // Eliminar los '..' de la ruta
-                            $imagePath = $_SERVER['DOCUMENT_ROOT'] . $rutaImagen;    // Ruta completa de la imagen en el servidor
+                            $rutaImagen = str_replace('..', '', $elemento['value']);
+                            $imagePath = $_SERVER['DOCUMENT_ROOT'] . $rutaImagen;
     
-                            // Verificar si el archivo existe y eliminarlo
                             if (file_exists($imagePath)) {
-                                unlink($imagePath); // Eliminar la imagen del servidor
+                                unlink($imagePath);
                             }
                         }
                     }    
     
-                    // Paso 3: Eliminar el reporte después de eliminar las imágenes
+                    //   Eliminar el reporte después de eliminar las imágenes
                     $deleteQuery = "DELETE FROM tbl_avances WHERE id_avance = ?";
                     $stmtDelete = $mysqli->prepare($deleteQuery);
                     if ($stmtDelete) {
@@ -281,7 +280,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
     
                         if ($stmtDelete->execute()) {
                             if ($stmtDelete->affected_rows > 0) {
-                                // Respuesta exitosa
                                 echo json_encode([
                                     'success' => true,
                                     'message' => "Reporte con ID $avId y sus imágenes asociadas han sido eliminados correctamente."
@@ -316,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
     }
 
     if (isset($_GET['submitActivityRevision']) && $_GET['submitActivityRevision'] === 'true') {
-        $id_actividad = filter_var($_POST['actId'], FILTER_VALIDATE_INT);  // Cambiado de $_GET a $_POST
+        $id_actividad = filter_var($_POST['actId'], FILTER_VALIDATE_INT);
         
         if ($id_actividad) {
             
@@ -328,11 +326,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             $stmt = $mysqli->prepare($query);
             
             if ($stmt) {
-                $revision = 1; // Setear el valor de revisión a 1
+                $revision = 1; // Poner el valor de revisión a 1
                 $id_usuario = $_SESSION['id'];
                 $id_proyecto = $_SESSION['projectSelected'];
     
-                // Vinculamos los parámetros a la consulta preparada
+                // Vinculacion de parámetros a la consulta preparada
                 $stmt->bind_param('iiii', $revision, $id_actividad, $id_usuario, $id_proyecto);
                 $stmt->execute();
     

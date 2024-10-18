@@ -86,7 +86,7 @@ function loadTicketTypes() {
                         <label for="ticketImage">Adjuntar imagen:</label>
                         <div class='selectImageDiv'>
                             <input type="file" id="ticketImage" class="file-input" multiple accept="image/*" style="display: none;">
-                            <button id="selectImageBtn" class="selectImageBtn">Seleccionar imágenes</button>
+                            <button id="selectImageBtn" class="selectImageBtn">Seleccionar una imágen</button>
                             <span id="file-chosen" class="fileChosenLb">Ningún archivo seleccionado</span>
                         </div>
                     </div>
@@ -300,7 +300,7 @@ function deleteSubmitBtn(){
     }
 }
 
-function updateBtnLanguage(){
+function updateBtnLanguage() {
     const fileInput = document.getElementById('ticketImage');
     const fileChosen = document.getElementById('file-chosen');
     const customButton = document.getElementById('selectImageBtn');
@@ -311,37 +311,67 @@ function updateBtnLanguage(){
 
     fileInput.addEventListener('change', function() {
         if (fileInput.files.length > 0) {
-            fileChosen.textContent = `${fileInput.files.length} archivo(s) seleccionado(s)`;
+            fileChosen.textContent = fileInput.files[0].name;
         } else {
             fileChosen.textContent = "Ningún archivo seleccionado";
         }
     });
 }
 
-function dataForTicket(){
-    const submitType = document.getElementById('submitTicketBtn').getAttribute('submitType')
 
-    const formData = new URLSearchParams();
-    formData.append('ticketType', submitType); 
+function dataForTicket() {
+    return new Promise((resolve, reject) => {
+        const submitType = document.getElementById('submitTicketBtn').getAttribute('submitType');
+        console.log('getting data.');
+        const formData = new URLSearchParams();
+        formData.append('ticketType', submitType);
 
-    const inputs = document.querySelectorAll('.ticketInputVl');
-    inputs.forEach(input => {
-        formData.append(input.name, input.value);
-    });
+        const inputs = document.querySelectorAll('.ticketInputVl');
+        inputs.forEach(input => {
+            formData.append(input.name, input.value);
+        });
 
-    const selects = document.querySelectorAll('.comboBox');
-    selects.forEach(select => {
-        if(select.id != 'categorySelect'){
-            formData.append(select.name, select.value);
+        const selects = document.querySelectorAll('.comboBox');
+        selects.forEach(select => {
+            if(select.id !== 'categorySelect'){
+                formData.append(select.name, select.value);
+            }
+        });
+
+        if (submitType === "t-1") {
+            const fileInput = document.getElementById('ticketImage');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const maxSize = 10 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    alert('La imagen seleccionada excede los 10Mb.\nPor favor, selecciona otra imagen para continuar.');
+                    return reject('Image size too large'); 
+                }
+
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    formData.append('ticketImageBase64', reader.result); // <- esta es otra forma de convertir la imagen 
+                    resolve(formData); 
+                };
+                reader.onerror = function() {
+                    reject('Error al leer la imagen');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                resolve(formData);
+            }
+        } else {
+            resolve(formData);
         }
     });
-
-    return formData;    
 }
 
+
 function submitTicket(){
+    const submitType = document.getElementById('submitTicketBtn').getAttribute('submitType');
     let submitFlag = true;
     const inputs = document.querySelectorAll('.ticketInputVl');
+    
     inputs.forEach(input => {
         if (input.value === "") {
             submitFlag = false;
@@ -349,7 +379,7 @@ function submitTicket(){
             setTimeout(function() {
                 input.classList.remove('highlight-error');
             }, 1000);
-        }else if (input.type === "email") {
+        } else if (input.type === "email") {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(input.value)) {
                 submitFlag = false;
@@ -373,37 +403,65 @@ function submitTicket(){
         }
     });
 
-    if(submitFlag === true){
-        createConfirmationDialog(
-            "Mensaje de confimarción",
-            "¿Estás seguro que deseas abrir este ticket?",
-            function() {
-                const data = dataForTicket();
-
-                fetch('../controller/supportManager.php?newTicket=true', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+    if (submitType === "t-1") {
+        const fileInput = document.getElementById('ticketImage');
+        if(submitFlag === true){
+            if (fileInput.files.length === 0) {
+                createConfirmationDialog(
+                    "Mensaje de confimarción",
+                    "Nuestro equipo de sistemas podrá identificar y resolver este problema mucho más rápido si proporcionas una captura de pantalla del error.\n\n¿Enviar ticket sin imagenes?",
+                    function() {
+                        sendTicket();
                     },
-                    body: data
-                })
-                .then(response => response.json()) 
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        location.reload();
-                        
-                    } else {
-                        alert(`Error: ${data.message}`);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error en la solicitud AJAX:', error);
-                });
-            },
-            function() {
-                console.log("Confirmación de nuevo ticket cancelada.");
-            }
-        );
+                    function() {
+                        submitFlag = false;
+                    },
+                    'Continuar', 'Cancelar'
+                );
+            } else {
+                sendTicket();
+            } 
+        }
+    } else {
+        if (submitFlag === true) {
+            sendTicket();
+        }
     }
+}
+
+function sendTicket(){
+    createConfirmationDialog(
+        "Abriendo Ticket de Soporte",
+        "¿Estás seguro que deseas abrir este ticket?",
+        function() {
+            dataForTicket().then(data => {
+                if (data !== null) {
+                    fetch('../controller/supportManager.php?newTicket=true', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: data
+                    })
+                    .then(response => response.json()) 
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            location.reload();
+                        } else {
+                            alert(`Error: ${data.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error en la solicitud AJAX:', error);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error en el procesamiento del ticket:', error);
+            });
+        },
+        function() {
+            console.log("Confirmación de nuevo ticket cancelada.");
+        }
+    );
 }
