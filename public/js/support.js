@@ -56,21 +56,53 @@ function loadTicketTypes() {
         cleanAllDivs();
         if(selectedValue != 'none'){
             if (selectedValue === 'cambiosPro') {
-                const htmlCode = `
-                <div class="fm-content" id="correctionDiv">
-                    <label for="correctionType">Tipo de corrección:</label>
-                    <select id="correctionType" name="correctionType" class="comboBox">
-                        <option value="none">--  Selecciona una opción  --</option>
-                        <option value="addMember">Agregar miembro al equipo</option>
-                        <option value="removeMember">Eliminar miembro del equipo</option>
-                        <option value="changePermitions">Cambiar permisos de un miembro actual</option>
-                        <option value="projectDataCorrection">Corrección de datos del proyecto</option>
-                    </select>
-                </div>
-                `;
+                const url = `../controller/supportManager.php?getProjectList=true`;
                 
-                selectDiv.insertAdjacentHTML('beforeend', htmlCode);
-                addProjectSupportEvents();
+                makeAjaxRequest(url, 'POST', null, function(response) {
+                    try {
+                        if (response.success) {
+                            const projects = response.data;
+
+                            if (Array.isArray(projects) && projects.length > 0) {
+                                
+                                let projectOptions = projects.map(project => {
+                                        return `<option value="${project.id_proyecto}">${project.nombre}</option>`;
+                                    }).join('');
+                                
+                                const htmlCode = `
+                                    <div class="fm-content" id="correctionDiv">
+                                        <label for="projectSelect">Seleccionar proyecto:</label>
+                                        <select id="projectSelect" name="projectSelect" class="comboBox">
+                                            <option value="none">-- Selecciona un proyecto --</option>
+                                            ${projectOptions}
+                                        </select>
+                                    </div>
+                                `;
+                                
+                                selectDiv.insertAdjacentHTML('beforeend', htmlCode);
+                                projectSelectEvent();
+                            }else {
+                                console.error('Error al obtener el listado de proyectos:', data.message);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error al analizar la respuesta JSON:', error);
+                        console.log('Respuesta recibida:', response); // Ver la respuesta exacta que se recibe
+                    }
+                }, function(error) {
+                    if(error === 'No se encontraron proyectos a cargo del usuario actual'){
+                        const htmlCode = `
+                            <div class="fm-content" id="correctionDiv">
+                                <p>Parece que no hay proyectos a tu cargo.\nSi deseas cambiar datos de algún proyecto, consultalo con el líder del proyecto.</p>
+                            </div>
+                            `;
+                            
+                            selectDiv.insertAdjacentHTML('beforeend', htmlCode);
+                            addProjectSupportEvents();
+                    }else{
+                        console.error('Error en la solicitud AJAX:', error);
+                    }
+                });
             }
             else if(selectedValue === 'erroresSys'){
                 const htmlCode = `
@@ -229,6 +261,52 @@ function addProjectSupportEvents(){
                     
                 document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
                 createSubmitBtn('t-2');
+            }
+        }
+    });
+}
+
+function projectSelectEvent(){
+    document.getElementById('projectSelect').addEventListener('change', function(){
+        const targetDiv = document.getElementById('correctionDiv');
+        const pid = this.value;
+        const psdPid = parseInt(pid, 10);
+
+            if(Number.isInteger(psdPid)){
+                console.log('is Integer');
+                const htmlCode = `
+                <div id='selectActionPrj'>
+                <br>
+                <label for="correctionType">Tipo de corrección:</label><br>
+                <select id="correctionType" name="correctionType" class="comboBox">
+                    <option value="none">--  Selecciona una opción  --</option>
+                    <option value="addMember">Agregar integrante al equipo</option>
+                    <option value="removeMember">Eliminar integrante del equipo</option>
+                    <option value="changePermitions">Cambiar permisos de un integrante</option>
+                    <option value="projectDataCorrection">Corrección de datos del proyecto</option>
+                </select>
+                </div>
+            `;
+            targetDiv.insertAdjacentHTML('beforeend', htmlCode);
+
+            addProjectSupportEvents();
+        }else{
+            console.log('is not Integer');
+            const removeDiv = document.getElementById('selectActionPrj');
+            if(removeDiv){
+                removeDiv.remove();
+            }
+            const removeUpdateDiv = document.getElementById('projectUpdateDiv');
+            if(removeUpdateDiv){
+                removeUpdateDiv.remove();
+            }
+            const removeExplanationDiv = document.getElementById('ticketExplanationDiv');
+            if(removeExplanationDiv){
+                removeExplanationDiv.remove();
+            }
+            const removeBtn = document.getElementById('submitTicketBtn');
+            if(removeBtn){
+                removeBtn.remove();
             }
         }
     });
@@ -435,7 +513,18 @@ function submitTicket(){
             } 
         }
     }  else if (submitType === "t-2") {
-        
+        if (submitFlag === true) {
+            createConfirmationDialog(
+                "Mensaje de confirmacion",
+                `¿Confirmas que deseas hacer cambios en el proyecto?`,
+                function() {
+                    sendTicket();
+                },
+                function() {
+                    submitFlag = false;
+                }
+            );
+        }
     }else if (submitType === "t-3") {
         if (submitFlag === true) {
             const newValue = document.querySelector('.ticketInputVl').value;

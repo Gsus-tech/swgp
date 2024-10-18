@@ -132,8 +132,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo json_encode(['success' => false, 'message' => 'Tipo de ticket no reconocido.']);
                     }
                 }
-            } else {
-                echo json_encode(['success' => false, 'message' => 'NewTicket es false.']);
+            }
+
+            if (isset($_GET['getProjectList']) && $_GET['getProjectList'] === 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $id_usuario = $_SESSION['id'];
+    
+                $query = "SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ? AND integrantes.responsable = 1 AND proyectos.estado = 1;";
+    
+                $stmt = $mysqli->prepare($query);
+        
+                if ($stmt) {
+                    $stmt->bind_param('i', $id_usuario);
+                    $stmt->execute();
+                    
+                    $result = $stmt->get_result();
+        
+                    if ($result->num_rows > 0) {
+                        $projectsList = [];
+                        while ($row = $result->fetch_assoc()) {
+                            $projectsList[] = $row; // Lo convierto en array para poder usar map
+                        }
+                        // $_SESSION['projectSelected'] = $projectsList[0]['id_proyecto'];
+                        echo json_encode(['success' => true, 'data' => $projectsList]);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se encontraron proyectos a cargo del usuario actual']);
+                    }
+                $stmt->close();
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+                }
+                $mysqli->close();
             }
             
         }

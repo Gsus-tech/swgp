@@ -133,6 +133,12 @@ label{
     border-radius: 5px;
 }
 
+@media screen and (max-width: 800px){
+    .projectUpdateDiv, .ticketExplanationDiv{
+        padding-bottom: 3rem;
+    }
+}
+
 @media screen and (min-width: 650px) {
     .type3Btn{
         right:unset;
