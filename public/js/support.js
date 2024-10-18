@@ -249,11 +249,11 @@ function addProjectSupportEvents(){
                     <div class="fm-content">
                         <h3>Descripción:</h3>
                         <label for="ticketTitle">Título del ticket:</label>
-                        <input type="text" id="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100"
+                        <input type="text" id="ticketTitle" name="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100"
                         value = "Corregir datos de Proyecto." oninput="resetField(this)">
                         
                         <label for="ticketDescription">Describe los cambios que consideras necesarios realizar:</label>
-                        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="1000" rows="4" oninput="resetField(this)"></textarea>
+                        <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="1000" rows="4" oninput="resetField(this)"></textarea>
                         
                     </div>
                 </div>
@@ -479,6 +479,10 @@ function submitTicket(){
             if(!validation1){submitFlag = false;}
             const validation2 = testControlledTextInput(input.id);
             if(!validation2){submitFlag = false;}
+            if(input.id === 'ticketDescription'){
+                const validation3 = testLenght('min', 10, 'ticketDescription');
+                if(!validation3){submitFlag = false;}
+            }
         }
     });
 
@@ -515,8 +519,8 @@ function submitTicket(){
     }  else if (submitType === "t-2") {
         if (submitFlag === true) {
             createConfirmationDialog(
-                "Mensaje de confirmacion",
-                `¿Confirmas que deseas hacer cambios en el proyecto?`,
+                "Levantando ticket de corrección de datos de proyecto",
+                `¿Confirmas que deseas que se realicen los cambios a los datos del proyecto que describes en el ticket?`,
                 function() {
                     sendTicket();
                 },

@@ -95,7 +95,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     } 
 
                     else if($type === 't-2'){
+                        $query = "SELECT proyectos.id_proyecto FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ? AND integrantes.responsable = 1 AND proyectos.estado = 1;";
+                        $params = [$id_usuario];
+                        $types = "i";
+                        $userProjects = Crud::executeResultQuery($query, $params, $types);
+                        $proyectoId = filter_var($_POST['projectSelect'], FILTER_VALIDATE_INT);
+                        if($proyectoId !== false && is_array($userProjects)){   
+                            $proyectoIds = array_column($userProjects, 'id_proyecto');
+                            if (in_array($proyectoId, $proyectoIds)) {     
+                                $correctionType = Crud::antiNaughty((string)$_POST['correctionType']);
+                                $mensaje = null;
+                                if($correctionType === 'addMember'){
+                                    $nombre = Crud::antiNaughty((string)$_POST['name']);
+                                    $correo = Crud::antiNaughty((string)$_POST['email']);
+                                    $depto = Crud::antiNaughty((string)$_POST['department']);
+                                    
+                                    $mensaje = json_encode([
+                                        'Cambio' => "addMember",
+                                        'nombre' => "$nombre",
+                                        'correo' => "$correo",
+                                        'depto' => "$depto"
+                                    ]);
+                                }
+                                if($correctionType === 'removeMember'){
+                                    // $mensaje = "Eliminar integrante";
+                                }
+                                if($correctionType === 'changePermitions'){
+                                    // $mensaje = "Cambio de permisos de usuario";
+                                }
+                                if($correctionType === 'projectDataCorrection'){
+                                    $ticketTitle = Crud::antiNaughty((string)$_POST['ticketTitle']);
+                                    $ticketDescription = Crud::antiNaughty((string)$_POST['ticketDescription']);
+                                    
+                                    $mensaje = json_encode([
+                                        'Cambio' => "projectDataCorrection",
+                                        'ticketTitle' => "$ticketTitle",
+                                        'ticketDescription' => "$ticketDescription"
+                                    ]);
+                                }
 
+                                if($mensaje != null){
+                                    // Prepara y ejecuta la consulta
+                                    $query = "INSERT INTO tbl_solicitudes_soporte (id_usuario, tipoSolicitud, mensaje, estado) VALUES (?, 2, ?, 'Abierto')";
+                                    $stmt = $mysqli->prepare($query);
+                        
+                                    if (!$stmt) {
+                                        echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+                                        exit;
+                                    }
+                        
+                                    $stmt->bind_param('is', $id_usuario, $mensaje);
+                        
+                                    if (!$stmt->execute()) {
+                                        echo json_encode(['success' => false, 'message' => 'Error en la ejecución: ' . $stmt->error]);
+                                        exit;
+                                    }
+
+                                    echo json_encode(['success' => true, 'message' => 'Ticket de Corrección o cambios en un proyecto levantado.'.$mensaje]);
+                                    $stmt->close();
+                                }else{
+                                    echo json_encode(['success' => false, 'message' => 'Tipo de corrección o cambio a realizar inválido.']);
+                                }
+                            }else{
+                                echo json_encode(['success' => false, 'message' => 'Id de proyecto alterado.']);
+                            }
+                        }else{
+                            echo json_encode(['success' => false, 'message' => 'Id de proyecto inválido.']);
+                        }
                     }
                     
                     else if($type === 't-3'){
