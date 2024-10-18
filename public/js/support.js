@@ -78,14 +78,14 @@ function loadTicketTypes() {
                     <div class="fm-content">
                         <h3>Descripción:</h3>
                         <label for="ticketTitle">Título del ticket:</label>
-                        <input type="text" id="ticketTitle" name="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100">
+                        <input type="text" id="ticketTitle" name="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100" oninput="resetField(this)">
                         
                         <label for="ticketDescription">Motivo o descripción de la situación:</label>
-                        <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="500" rows="4"></textarea>
+                        <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="500" rows="4" oninput="resetField(this)"></textarea>
                         
                         <label for="ticketImage">Adjuntar imagen:</label>
                         <div class='selectImageDiv'>
-                            <input type="file" id="ticketImage" class="file-input" multiple accept="image/*" style="display: none;">
+                            <input type="file" id="ticketImage" class="file-input" accept="image/jpeg, image/png" style="display: none;">
                             <button id="selectImageBtn" class="selectImageBtn">Seleccionar una imágen</button>
                             <span id="file-chosen" class="fileChosenLb">Ningún archivo seleccionado</span>
                         </div>
@@ -113,7 +113,7 @@ function loadTicketTypes() {
 
                         <br>
                         <label for="newValue">Introduce el dato correcto:</label>
-                        <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" placeholder="Tipo de corrección de datos" maxlength="90">
+                        <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" oninput="resetField(this)" placeholder="Tipo de corrección de datos" maxlength="90">
                     </div>
                 </div>
                 `;
@@ -164,13 +164,13 @@ function addProjectSupportEvents(){
                 <div class="projectUpdateDiv" id="projectUpdateDiv">
                     <div class="fm-content">
                         <label for="name">Nombre:</label>
-                        <input type="text" id="name" name="name" class="input-text ticketInputVl" placeholder="Ingresa el nombre del nuevo integrante" autocomplete="off">
+                        <input type="text" id="name" name="name" class="input-text ticketInputVl" placeholder="Ingresa el nombre del nuevo integrante" oninput="resetField(this)" autocomplete="off">
                    
                         <label for="email">Correo:</label>
-                        <input type="email" id="email" name="email" class="input-text ticketInputVl" placeholder="Ingresa el correo del nuevo integrante" autocomplete="off">
+                        <input type="email" id="email" name="email" class="input-text ticketInputVl" placeholder="Ingresa el correo del nuevo integrante" oninput="resetField(this)" autocomplete="off">
                   
                         <label for="department">Departamento:</label>
-                        <input type="text" id="department" name="department" class="input-text ticketInputVl" placeholder="Ingresa el departamento del nuevo integrante" autocomplete="off">
+                        <input type="text" id="department" name="department" class="input-text ticketInputVl" placeholder="Ingresa el departamento del nuevo integrante" oninput="resetField(this)" autocomplete="off">
                     </div>
                 </div>
                 `;
@@ -218,10 +218,10 @@ function addProjectSupportEvents(){
                         <h3>Descripción:</h3>
                         <label for="ticketTitle">Título del ticket:</label>
                         <input type="text" id="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100"
-                        value = "Corregir datos de Proyecto.">
+                        value = "Corregir datos de Proyecto." oninput="resetField(this)">
                         
                         <label for="ticketDescription">Describe los cambios que consideras necesarios realizar:</label>
-                        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="1000" rows="4"></textarea>
+                        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="1000" rows="4" oninput="resetField(this)"></textarea>
                         
                     </div>
                 </div>
@@ -246,7 +246,7 @@ function addCauseBox(element){
         dv.innerHTML = `
         <br>
         <label for="ticketDescription">Motivo por el que deseas expulsar a este miembro:</label>
-        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa el motivo por el que deseas expulsar a este miembro" maxlength="500" rows="4"></textarea>            
+        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa el motivo por el que deseas expulsar a este miembro" maxlength="500" rows="4" oninput="resetField(this)"></textarea>            
         `;
         document.getElementById('divDeleteMember').appendChild(dv);
         createSubmitBtn('t-2');
@@ -311,7 +311,15 @@ function updateBtnLanguage() {
 
     fileInput.addEventListener('change', function() {
         if (fileInput.files.length > 0) {
-            fileChosen.textContent = fileInput.files[0].name;
+            const file = fileInput.files[0];
+            const validImageTypes = ['image/jpeg', 'image/png'];
+            if (!validImageTypes.includes(file.type)) {
+                alert('Por favor, selecciona un archivo de imagen válido (jpeg, jpg o png).');
+                fileInput.value = '';
+                fileChosen.textContent = "Ningún archivo seleccionado";
+            } else {
+                fileChosen.textContent = file.name;
+            }
         } else {
             fileChosen.textContent = "Ningún archivo seleccionado";
         }
@@ -389,6 +397,11 @@ function submitTicket(){
                     input.classList.remove('highlight-error');
                 }, 1000);
             }
+        }else{
+            const validation1 = testValue('light', input.id, 'ticket');
+            if(!validation1){submitFlag = false;}
+            const validation2 = testControlledTextInput(input.id);
+            if(!validation2){submitFlag = false;}
         }
     });
 
