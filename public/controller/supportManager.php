@@ -72,9 +72,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 exit;
                             }
                         }
-            
+                        
                         // Prepara y ejecuta la consulta
                         $query = "INSERT INTO tbl_solicitudes_soporte (id_usuario, tipoSolicitud, mensaje, estado) VALUES (?, 1, ?, 'Abierto')";
+                        $stmt = $mysqli->prepare($query);
+                        
+                        if (!$stmt) {
+                            echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta: ' . $mysqli->error]);
+                            exit;
+                        }
+                        
+                        $stmt->bind_param('is', $id_usuario, $mensaje);
+                        
+                        if (!$stmt->execute()) {
+                            echo json_encode(['success' => false, 'message' => 'Error en la ejecución: ' . $stmt->error]);
+                            exit;
+                        }
+                        
+                        echo json_encode(['success' => true, 'message' => 'Ticket enviado exitosamente.']);
+                        $stmt->close();
+                        
+                    } 
+
+                    else if($type === 't-2'){
+
+                    }
+                    
+                    else if($type === 't-3'){
+                        $onField = Crud::antiNaughty((string)$_POST['correctionType']);
+                        $newValue = Crud::antiNaughty((string)$_POST['newValue']);
+                        $field = $onField === 'deptoUpdate' ? 'Departamento' : 'Correo';
+
+                        $mensaje = json_encode([
+                            'Campo' => "{$field}",
+                            'newValue' => "{$newValue}"
+                        ]);
+
+                        // Prepara y ejecuta la consulta
+                        $query = "INSERT INTO tbl_solicitudes_soporte (id_usuario, tipoSolicitud, mensaje, estado) VALUES (?, 3, ?, 'Abierto')";
                         $stmt = $mysqli->prepare($query);
             
                         if (!$stmt) {
@@ -91,7 +126,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
                         echo json_encode(['success' => true, 'message' => 'Ticket enviado exitosamente.']);
                         $stmt->close();
-                    } else {
+                    }
+                    
+                    else {
                         echo json_encode(['success' => false, 'message' => 'Tipo de ticket no reconocido.']);
                     }
                 }

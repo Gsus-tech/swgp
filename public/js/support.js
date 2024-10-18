@@ -108,12 +108,12 @@ function loadTicketTypes() {
                         <select id="correctionType" name="correctionType" class="comboBox">
                             <option value="none">--  Selecciona una opción  --</option>
                             <option value="deptoUpdate">Cambio de departamento</option>
-                            <option value="deptoUpdate">Actualizar mi correo</option>
+                            <option value="mailUpdate">Actualizar mi correo</option>
                         </select>
 
                         <br>
                         <label for="newValue">Introduce el dato correcto:</label>
-                        <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" oninput="resetField(this)" placeholder="Tipo de corrección de datos" maxlength="90">
+                        <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" oninput="resetField(this)" placeholder="Tipo de corrección de datos" maxlength="90" autocomplete="off">
                     </div>
                 </div>
                 `;
@@ -330,7 +330,6 @@ function updateBtnLanguage() {
 function dataForTicket() {
     return new Promise((resolve, reject) => {
         const submitType = document.getElementById('submitTicketBtn').getAttribute('submitType');
-        console.log('getting data.');
         const formData = new URLSearchParams();
         formData.append('ticketType', submitType);
 
@@ -435,9 +434,24 @@ function submitTicket(){
                 sendTicket();
             } 
         }
-    } else {
+    }  else if (submitType === "t-2") {
+        
+    }else if (submitType === "t-3") {
         if (submitFlag === true) {
-            sendTicket();
+            const newValue = document.querySelector('.ticketInputVl').value;
+            const selectValue = document.getElementById('correctionType').value;
+            const field2Change = selectValue === 'deptoUpdate' ? 'Departamento' : 'Correo';
+
+            createConfirmationDialog(
+                "Confirmar actualización de información",
+                `¿Confirmas que deseas cambiar tu ${field2Change} por ${newValue}?`,
+                function() {
+                    sendTicket();
+                },
+                function() {
+                    submitFlag = false;
+                }
+            );
         }
     }
 }
