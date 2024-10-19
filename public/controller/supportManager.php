@@ -118,7 +118,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     ]);
                                 }
                                 if($correctionType === 'removeMember'){
-                                    // $mensaje = "Eliminar integrante";
+                                    $userDel = Crud::antiNaughty((string)$_POST['delMemberSelect']);
+                                    $ticketDescription = Crud::antiNaughty((string)$_POST['ticketDescription']);
+                                    
+                                    $mensaje = json_encode([
+                                        'Cambio' => "removeMember",
+                                        'userId' => "$userDel",
+                                        'ticketDescription' => "$ticketDescription"
+                                    ]);
                                 }
                                 if($correctionType === 'changePermitions'){
                                     // $mensaje = "Cambio de permisos de usuario";
@@ -200,11 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
-            if (isset($_GET['getProjectList']) && $_GET['getProjectList'] === 'true'){
-                $crud = new Crud();
-                $mysqli = $crud->getMysqliConnection();
-                $id_usuario = $_SESSION['id'];
-    
+            if (isset($_GET['getProjectList']) && $_GET['getProjectList'] === 'true'){    
                 $query = "SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ? AND integrantes.responsable = 1 AND proyectos.estado = 1;";
     
                 $stmt = $mysqli->prepare($query);
@@ -231,7 +234,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 $mysqli->close();
             }
-            
+
+
+            if (isset($_GET['getMemberList']) && $_GET['getMemberList'] === 'true'){  
+                if (isset($_GET['pid'])) {
+                    $pid = filter_var($_GET['pid'], FILTER_VALIDATE_INT);
+                    if($pid != false){      
+                        $query = "SELECT proyectos.id_proyecto FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ? AND integrantes.responsable = 1 AND proyectos.estado = 1;";
+                        $params = [$id_usuario];
+                        $types = "i";
+                        $userProjects = Crud::executeResultQuery($query, $params, $types);
+                        $proyectoIds = array_column($userProjects, 'id_proyecto');
+                        if(is_array($proyectoIds) && in_array($pid, $proyectoIds)){  
+                            $query = "SELECT integrantes.id_usuario, usuario.nombre FROM tbl_integrantes integrantes JOIN tbl_usuarios usuario ON integrantes.id_usuario = usuario.id_usuario WHERE integrantes.id_proyecto = ?;";
+                
+                            $stmt = $mysqli->prepare($query);
+                    
+                            if ($stmt) {
+                                $stmt->bind_param('i', $pid);
+                                $stmt->execute();
+                                
+                                $result = $stmt->get_result();
+                    
+                                if ($result->num_rows > 0) {
+                                    $usersList = [];
+                                    while ($row = $result->fetch_assoc()) {
+                                        if ($row['id_usuario'] != $_SESSION['id']) {
+                                            $usersList[] = $row;
+                                        }
+                                    }
+                                    echo json_encode(['success' => true, 'data' => $usersList]);
+                                } else {
+                                    echo json_encode(['success' => false, 'message' => 'No se encontraron usuarios registrados en este proyecto']);
+                                }
+                            $stmt->close();
+                            } else {
+                                echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+                            }
+                            $mysqli->close();
+
+                        }else{
+                            echo json_encode(['success' => false, 'message' => 'Id de proyecto alterado.']);
+                        }
+                    }
+                }else{
+                    echo json_encode(['success' => false, 'message' => 'Parametros de solicitud incorrectos o insuficientes.']);
+                }
+            }
         }
         
          else {

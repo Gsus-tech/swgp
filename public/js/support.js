@@ -212,36 +212,60 @@ function addProjectSupportEvents(){
             }
             else if(selectedValue === 'removeMember' || selectedValue === 'changePermitions'){
                 //Obtener integrantes para ambos selects
-                if(selectedValue === 'removeMember'){
-                    const htmlCode = `
-                    <div class="projectUpdateDiv deleteMemberDiv" id="projectUpdateDiv">
-                        <div class="fm-content" id="divDeleteMember">
-                            <label for="delMemberSelect">Selecciona al miembro que deseas eliminar:</label>
-                            <select id="memberSelect" name="delMemberSelect" class="comboBox" onchange="addCauseBox(this)">
-                                <option value="none">--  Selecciona una opción  --</option>
-                                <option value="1">Oscar Ramirez</option>
-                                <option value="2">Jorge Campos</option>
-                            </select>
-                        </div>
-                    </div>
-                    `;
-                    document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
-                }
-                if(selectedValue === 'changePermitions'){
-                    const htmlCode = `
-                    <div class="projectUpdateDiv permitionMemberDiv" id="projectUpdateDiv">
-                        <div class="fm-content" id="setPermitionDiv">
-                            <label for="permitionMemberSelect">Selecciona un integrante del proyecto:</label>
-                            <select id="memberSelect" name="permitionMemberSelect" class="comboBox" onchange="promoteDemote(this)">
-                                <option value="none">--  Selecciona una opción  --</option>
-                                <option value="1">Oscar Ramirez</option>
-                                <option value="2">Jorge Campos</option>
-                            </select>
-                        </div>
-                    </div>
-                    `;
-                    document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
-                }
+                const pid = document.getElementById('projectSelect').value;
+                const url = `../controller/supportManager.php?getMemberList=true&pid=${pid}`;
+                makeAjaxRequest(url, 'POST', null, function(response) {
+                    try {
+                        if (response.success) {
+                            const users = response.data;
+                            if (Array.isArray(users)) {
+                                
+                                let userOptions = users.length > 0 ? users.map(user => {
+                                    return `<option value="${user.id_usuario}">${user.nombre}</option>`;
+                                }).join('') : '';
+                                const active = users.length > 0 ? '' : ' disabled';
+                                const defaultOption = users.length > 0 ? `<option value="none">--  Selecciona una opción  --</option>` : `<option value="none">--  Sin integrantes registrados  --</option>`;
+
+                                if(selectedValue === 'removeMember'){
+                                    const htmlCode = `
+                                    <div class="projectUpdateDiv deleteMemberDiv" id="projectUpdateDiv">
+                                        <div class="fm-content" id="divDeleteMember">
+                                            <label for="delMemberSelect">Selecciona al miembro que deseas eliminar:</label>
+                                            <select id="memberSelect" name="delMemberSelect" class="comboBox" onchange="addCauseBox(this)">
+                                                ${defaultOption}
+                                                ${userOptions}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    `;
+                                    document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
+                                }
+                                if(selectedValue === 'changePermitions'){
+                                    const htmlCode = `
+                                    <div class="projectUpdateDiv permitionMemberDiv" id="projectUpdateDiv">
+                                        <div class="fm-content" id="setPermitionDiv">
+                                            <label for="permitionMemberSelect">Selecciona un integrante del proyecto:</label>
+                                            <select id="memberSelect" name="permitionMemberSelect" class="comboBox" onchange="promoteDemote(this)" ${active}>
+                                                ${defaultOption}
+                                                ${userOptions}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    `;
+                                    document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error al analizar la respuesta JSON:', error);
+                        console.log('Respuesta recibida:', response); // Ver la respuesta exacta que se recibe
+                    }
+                }, function(error) {
+                    console.error('No se pudo recuperar el listado de integrantes del proyecto.\n', error);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                });
             }
             else if(selectedValue === 'projectDataCorrection'){
                 const htmlCode = `
@@ -273,7 +297,6 @@ function projectSelectEvent(){
         const psdPid = parseInt(pid, 10);
 
             if(Number.isInteger(psdPid)){
-                console.log('is Integer');
                 const htmlCode = `
                 <div id='selectActionPrj'>
                 <br>
@@ -324,7 +347,7 @@ function addCauseBox(element){
         dv.innerHTML = `
         <br>
         <label for="ticketDescription">Motivo por el que deseas expulsar a este miembro:</label>
-        <textarea id="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa el motivo por el que deseas expulsar a este miembro" maxlength="500" rows="4" oninput="resetField(this)"></textarea>            
+        <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa el motivo por el que deseas expulsar a este miembro" maxlength="500" rows="4" oninput="resetField(this)"></textarea>            
         `;
         document.getElementById('divDeleteMember').appendChild(dv);
         createSubmitBtn('t-2');
