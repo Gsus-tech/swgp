@@ -68,7 +68,7 @@ label{
 }
 
 .fm-content div .generalBtnStyle{
-    background-color: #3498db;
+    /* background-color: #3498db; */
     display: block;
     margin: 0 auto;
     text-align: center;

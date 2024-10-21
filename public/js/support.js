@@ -221,7 +221,7 @@ function addProjectSupportEvents(){
                             if (Array.isArray(users)) {
                                 
                                 let userOptions = users.length > 0 ? users.map(user => {
-                                    return `<option value="${user.id_usuario}">${user.nombre}</option>`;
+                                    return `<option value="${user.id_usuario}" rp="${user.responsable}">${user.nombre}</option>`;
                                 }).join('') : '';
                                 const active = users.length > 0 ? '' : ' disabled';
                                 const defaultOption = users.length > 0 ? `<option value="none">--  Selecciona una opción  --</option>` : `<option value="none">--  Sin integrantes registrados  --</option>`;
@@ -356,17 +356,40 @@ function addCauseBox(element){
 
 function promoteDemote(element){
     const existingPermitionsDiv = document.getElementById('permitionDv');
-    if (existingPermitionsDiv) {
+    const usersDiv = document.getElementById('memberSelect');
+    const crRp = usersDiv.options[usersDiv.selectedIndex].getAttribute('rp');
+
+    let msj = "No se pudo recuperar la información del usuario.";
+    let btnTxt = "- - - - -";
+    let btnClass = "";
+    let atributo = "";
+    let dis = 'disabled';
+
+    if (existingPermitionsDiv){
         existingPermitionsDiv.remove();
     }
-    if(element.value != 'none'){
+    if(element.value != 'none' && crRp){
+        if(crRp === '0'){
+            msj = 'Este usuario cuenta con permisos limitados.';
+            btnTxt = 'Ascender usuario';
+            btnClass = 'btn-green';
+            atributo ='0';
+            dis = '';
+        }else if(crRp === '1'){
+            msj = 'Este usuario cuenta con privilegios de líder de proyecto.';
+            btnTxt = 'Quitar privilegios';
+            btnClass = 'btn-red';
+            atributo = '1';
+            dis = '';
+        }
+ 
         const dv = document.createElement('div');
         dv.id = 'permitionDv';
         dv.innerHTML = `
         <br>
-        <p>Este usuario cuenta con permisos de usuario limitados.</p>
+        <p>${msj}</p>
         <br>
-        <button class='generalBtnStyle' onclick="submitTicket()">Otorgar permisos</button>
+        <button id='submitTicketBtn' submitType='t-2' class='generalBtnStyle ${btnClass}' onclick="sendTicket()" cr-rp="${atributo}" ${dis}>${btnTxt}</button>
         `;
         document.getElementById('setPermitionDiv').appendChild(dv);
     }
@@ -468,6 +491,17 @@ function dataForTicket() {
             } else {
                 resolve(formData);
             }
+        }  else if (submitType === "t-2") {
+            const sbtBtn = document.getElementById('submitTicketBtn');
+            const crRp = sbtBtn.getAttribute('cr-rp');
+        
+            if (crRp !== null) {
+                formData.append('crRp', crRp);
+                console.log(formData);
+            } else {
+                return reject('Error: No se pudo recuperar el atributo cr-rp.');
+            }
+            resolve(formData);
         } else {
             resolve(formData);
         }

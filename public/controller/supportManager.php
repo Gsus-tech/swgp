@@ -119,16 +119,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 }
                                 if($correctionType === 'removeMember'){
                                     $userDel = Crud::antiNaughty((string)$_POST['delMemberSelect']);
+                                    $userDel = filter_var($userDel, FILTER_VALIDATE_INT);
                                     $ticketDescription = Crud::antiNaughty((string)$_POST['ticketDescription']);
                                     
-                                    $mensaje = json_encode([
-                                        'Cambio' => "removeMember",
-                                        'userId' => "$userDel",
-                                        'ticketDescription' => "$ticketDescription"
-                                    ]);
+                                    if($userDel != false){
+                                        $mensaje = json_encode([
+                                            'Cambio' => "removeMember",
+                                            'userId' => "$userDel",
+                                            'ticketDescription' => "$ticketDescription"
+                                        ]);
+                                    }
                                 }
                                 if($correctionType === 'changePermitions'){
-                                    // $mensaje = "Cambio de permisos de usuario";
+                                    $crRp = Crud::antiNaughty((string)$_POST['crRp']);
+                                    $memberId = Crud::antiNaughty((string)$_POST['permitionMemberSelect']);                                    
+                                    
+                                    $query = "SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ?";
+                                    $params = [$proyectoId];
+                                    $types = "i";
+                                    $usersListing = Crud::executeResultQuery($query, $params, $types);
+                                    $userIds = array_column($usersListing, 'id_usuario');
+
+                                    if (in_array($memberId, $userIds)) {   
+                                        if($crRp === '0' || $crRp === '1'){
+                                            $cr = $crRp === '0' ? 'member' : 'rep';
+                                            $mensaje = json_encode([
+                                                'Cambio' => "changePermitions",
+                                                'usuario' => "$memberId",
+                                                'currentPermtion' => "$cr"
+                                            ]);
+                                        }else{
+                                            echo json_encode(['success' => false, 'message' => 'Permiso de usuario actual inválido. Recarga la pagina e intenta de nuevo.']);
+                                            exit;
+                                        }
+                                    }else{
+                                        echo json_encode(['success' => false, 'message' => 'No se pudo encontrar el id de usuario. Recarga la pagina e intenta de nuevo.']);
+                                        exit;
+                                    }
                                 }
                                 if($correctionType === 'projectDataCorrection'){
                                     $ticketTitle = Crud::antiNaughty((string)$_POST['ticketTitle']);
@@ -158,7 +185,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         exit;
                                     }
 
-                                    echo json_encode(['success' => true, 'message' => 'Ticket de Corrección o cambios en un proyecto levantado.'.$mensaje]);
+                                    echo json_encode(['success' => true, 'message' => 'Ticket de Corrección o cambios en un proyecto levantado.']);
                                     $stmt->close();
                                 }else{
                                     echo json_encode(['success' => false, 'message' => 'Tipo de corrección o cambio a realizar inválido.']);
@@ -246,7 +273,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $userProjects = Crud::executeResultQuery($query, $params, $types);
                         $proyectoIds = array_column($userProjects, 'id_proyecto');
                         if(is_array($proyectoIds) && in_array($pid, $proyectoIds)){  
-                            $query = "SELECT integrantes.id_usuario, usuario.nombre FROM tbl_integrantes integrantes JOIN tbl_usuarios usuario ON integrantes.id_usuario = usuario.id_usuario WHERE integrantes.id_proyecto = ?;";
+                            $query = "SELECT integrantes.id_usuario, usuario.nombre, integrantes.responsable FROM tbl_integrantes integrantes JOIN tbl_usuarios usuario ON integrantes.id_usuario = usuario.id_usuario WHERE integrantes.id_proyecto = ?;";
                 
                             $stmt = $mysqli->prepare($query);
                     
