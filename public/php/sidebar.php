@@ -82,11 +82,11 @@
     
     <div id="accountMenu" class="accountMenu hide">
         <div class="accountDetails">
-            <a href="#" title='Detalles de cuenta' class='verCuenta' id='verCuenta'><i class="fa fa-user"><span>Ver cuenta</span></i></a>
+            <a title='Detalles de cuenta' class='verCuenta' id='verCuenta'><i class="fa fa-user"><span>Ver cuenta</span></i></a>
         </div>
         <hr style='margin: 5px 0'>
         <div class="settings">
-            <a href="#" title='Detalles de cuenta' class='ajustes' id='ajustes'><i class="fa fa-gear"><span>Ajustes</span></i></a>
+            <a title='Detalles de cuenta' class='ajustes' id='ajustes'><i class="fa fa-gear"><span>Ajustes</span></i></a>
         </div>
         <hr style='margin: 5px 0'>
         <div class="logout">

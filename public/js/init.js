@@ -290,4 +290,14 @@ function formatSpanishDate(dateString) {
 
 document.addEventListener('DOMContentLoaded', function() {
     addButtonEvents();
+    document.getElementById('verCuenta').addEventListener('click', function(){ 
+        localStorage.removeItem('accountSettings');
+        localStorage.setItem('accountSettings', 'true');
+        location.href = "accountSettings.php";
+    })
+    document.getElementById('ajustes').addEventListener('click', function(){ 
+        localStorage.removeItem('accountSettings');
+        localStorage.setItem('generalSettings', 'true');
+        location.href = "accountSettings.php";
+    })
 });
