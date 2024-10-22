@@ -1,3 +1,7 @@
+:root{
+    --kanban: #586fba;
+}
+
 /* Estructura del tablero */
 .main{
     padding-bottom: 3rem;
@@ -6,14 +10,14 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    background-color: #0a4db1;
+    background-color: var(--kanban);
     padding-bottom:2rem;
     margin: 20px;
     border-radius: 20px;
 }
 .kanban-title{
     padding: 20px;
-    background-color: #0a4db1;
+    background-color: var(--kanban);
     margin: 20px;
     margin-top: 10px;
     border-radius: 20px;
