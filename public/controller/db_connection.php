@@ -8,7 +8,7 @@ $sname = "localhost";
 $userN = "root";
 $pass = "";
 
-$db_name = "bd_swgp_cobach";
+$db_name = "bd_swgp";
 
 $conn = mysqli_connect($sname, $userN, $pass, $db_name);
 

@@ -1,0 +1,69 @@
+.topBar {
+    display: block;
+    justify-content: center;
+    background-image: var(--systemSideBarColor2);
+    padding: 5px 5px 0 7px;
+}
+
+.tabMenu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.tab {
+    padding: 6px 20px;
+    cursor: pointer;
+    color: white;
+    margin-left: 5px;
+    font-size: 1rem;
+    background-color: #69ace7;
+    transition: background-color 0.5s ease;
+}
+
+.tab:hover {
+    opacity: 90%;
+    padding: 5px 22px 7px 18px;
+    
+}
+
+.active {
+    background-color: #e2e0e0;
+    color: var(--barColor2);
+    border: 4px ridge rgb(170 170 170 / 60%);
+}
+
+.tabContent {
+    display: none;
+    margin-left: 3px;
+    padding: 20px;
+    margin-top: -1px;
+}
+
+.activeContent {
+    display: block;
+}
+
+.fm-content { 
+    /* display:flex; */
+    padding: 1rem;
+    border-radius: 20px;
+    background-color: var(--divBgColor);
+}
+
+.fm-content .input{
+    width: 96%;
+    margin: 10px 2%;
+    background-color: #d5d5d5;
+    transition: padding-left 0.3s ease; 
+}
+
+.fm-content .input:focus{
+    background-color: #fff;
+    padding-left: 1.5rem;
+}
+
+.passwordUpdate{
+    margin: 1rem;
+}

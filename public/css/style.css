@@ -1,6 +1,6 @@
 :root {
-    --barColor1: #0e2eaf;
-    --barColor2: #28029b;
+    --barColor1: #284bda;
+    --barColor2: #222779;
     --hover-items: #333;
     --hover-AddBtn: #09be00;
     --black: #101010;
@@ -16,8 +16,8 @@
     --sysBgColor: #eeeeee;
     --divBgColor: #aaa9a9;
     --divBgColorSys: #f0f4f7;
-    --systemSideBarColor1:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
-    --systemSideBarColor2:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
 }
 
 
@@ -87,7 +87,8 @@ body.loading {
 }
 
 .container .sidebar {
-    background-image: var(--systemSideBarColor1);
+    /* background-image: var(--systemSideBarColor1); */
+    background-color: var(--barColor2);
     position: fixed;
     color: var(--white);
     width: 7rem;
