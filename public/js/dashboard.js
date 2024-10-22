@@ -26,14 +26,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 
                 newMenu.innerHTML =  `
-                <a href="#" onclick="showMoveOptions(this, '${columnId}', ${cardId})" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Mover</a>
-                <a href="#" onclick="showTags(this, '${columnId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Etiquetas</a>
-                    <a href="#" onclick="confirmDeleteAct(this)" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Eliminar</a>
+                <a href="#" onclick="showMoveOptions(this, '${columnId}', ${cardId})" class="dropdown-item"><i></i>Mover</a>
+                <a href="#" onclick="showTags(this, '${columnId}')" class="dropdown-item"><i></i>Etiquetas</a>
+                    <a href="#" onclick="confirmDeleteAct(this)" class="dropdown-item"><i></i>Eliminar</a>
                     `;
 
                 // Insertar el nuevo menú en el contenedor del botón
-                // const cardBody = button.closest('.card-body');
-                // cardBody.appendChild(newMenu);
 
                 document.body.appendChild(newMenu);  // Añadirlo al body
 
@@ -66,27 +64,27 @@ function showMoveOptions(button, columnId, cardId) {
 
         if (columnId === 'pendientes') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>En proceso</a>
-                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Retrasadas</a>
-                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Terminadas</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
+                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'proceso') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Pendiente</a>
-                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Retrasadas</a>
-                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Terminadas</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
+                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'retrasadas') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Pendiente</a>
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>En proceso</a>
-                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Terminadas</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'terminadas') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>Pendiente</a>
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i class="mdi mdi-pencil me-1"></i>En proceso</a>
-                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i class="mdi mdi-delete me-1"></i>Retrasada</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasada</a>
             `;
         }
         // Reemplazar el contenido del menú actual con las nuevas opciones
@@ -105,14 +103,115 @@ function showTags(button){
         let menuOptionsHTML = '';
 
         menuOptionsHTML = `
-        <a href="#" onclick="cardFlags(this, 2)" class="dropdown-item"><i class="mdi mdi-pencil me-1 fa fa-circle rdFlag"></i>  Importante / Urgente</a>
-        <a href="#" onclick="cardFlags(this, 3)" class="dropdown-item"><i class="mdi mdi-pencil me-1 fa fa-circle grFlag"></i>  Completado o bajo control</a>
-        <a href="#" onclick="cardFlags(this, 4)" class="dropdown-item"><i class="mdi mdi-delete me-1 fa fa-circle ylFlag"></i>  Información adicional requerida</a>
+        <a href="#" onclick="cardFlags(this, 1)" class="dropdown-item"><i class="fa fa-circle rdFlag"></i>  Importante / Urgente</a>
+        <a href="#" onclick="cardFlags(this, 2)" class="dropdown-item"><i class="fa fa-circle grFlag"></i>  Completado o bajo control</a>
+        <a href="#" onclick="cardFlags(this, 3)" class="dropdown-item"><i class="fa fa-circle ylFlag"></i>  Información adicional requerida</a>
+        <a href="#" onclick="cardFlags(this, 4)" class="dropdown-item"><i class="fa fa-close"></i>  Quitar etiqueta</a>
         `;
 
         // Reemplazar el contenido del menú actual con las nuevas opciones
         menu.innerHTML = menuOptionsHTML;
     }
+}
+
+function cardFlags(element, action){
+    const floatMenuDiv = document.querySelector('.opciones-tarjetas');
+    const id = floatMenuDiv.id;
+
+    if (action === 4) {
+        async function deleteNote(){
+            const url = '../controller/activityManager.php?deleteNote=true';
+            const data = new URLSearchParams({
+                id_actividad: id,
+            });
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: data
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('¡Etiqueta eliminada!');
+                } else {
+                    if(result.message === 'No hay notas registradas.'){
+                        floatMenuDiv.remove();
+                    }else{
+                        console.error("Error al eliminar la etiqueta:", result.message);
+                        return null;
+                    }
+                }
+            } catch (error) {
+                console.error('Error en la solicitud AJAX:', error);
+                return null;
+            }
+        }
+
+        deleteNote();
+    }else if(action >= 1 && action <= 3){
+        const id = document.querySelector('.opciones-tarjetas').id;
+        async function sendAjaxRequest(data) {
+            console.log('Entering sendAjaxRequest.');
+            const url = '../controller/activityManager.php?setNote=true';
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: data
+                });
+        
+                const result = await response.json();
+                if (result.success) {
+                    alert('¡Etiqueta guardada exitosamente!');
+                } else {
+                    console.error("Error al asignar la etiqueta:", result.message);
+                }
+                location.reload();
+            } catch (error) {
+                console.error('Error en la solicitud AJAX:', error);
+            }
+        }
+        
+
+        async function addTag(nota) {
+            console.log('Entering addtag.');
+            const action = 4;
+        
+            let data;
+            if (nota) {
+                try {
+                    const contenido = await createTextInputBox('Creación de nota', 'Contenido:');
+                    data = new URLSearchParams({
+                        id_actividad: id,
+                        tipo: action,
+                        contenido: contenido
+                    });
+                    console.log(`Contenido: ${contenido}`);
+                } catch (error) {
+                    console.error('Error en la entrada de texto:', error);
+                    return;
+                }
+            } else {
+                data = new URLSearchParams({
+                    id_actividad: id,
+                    tipo: action
+                });
+            }
+            sendAjaxRequest(data);
+        }
+        
+        
+        createConfirmationDialog('Guardando etiqueta...', '¿Deseas agregar una nota?', () => addTag(true), () => addTag(false), 'Si', 'No');
+
+    }
+    floatMenuDiv.remove();
 }
 
 // Eliminar actividad

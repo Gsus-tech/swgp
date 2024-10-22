@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 newMenu.setAttribute("act-id",cardId);
                 
                 newMenu.innerHTML =  `
-                    <a href="#" onclick="makeReport(this)" class="dropdown-item"><i class="mdi mdi-report me-1"></i>Crear reporte</a>`;
+                    <a href="#" onclick="makeReport(this)" class="dropdown-item"><i>Crear reporte</i></a>`;
 
                 document.body.appendChild(newMenu);
 

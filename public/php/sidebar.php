@@ -27,7 +27,7 @@
                 class="text">Gestión de proyectos</span></i></a></li>
             <li><a href="activityManagement.php" title="Seguimiento de proyectos"><i class="fa fa-tasks"><span 
                 class="text">Seguimiento de proyectos</span></i></a></li>
-            <li><a href="#" title="Panel de soporte"><i class="fa fa-question"><span 
+            <li><a href="support.php" title="Panel de soporte"><i class="fa fa-question"><span 
                 class="text">Gestión de soporte</span></i></a></li>
                         
         <?php } ?>
@@ -62,7 +62,7 @@
                     
                 <?php
                 }
-                echo "<li><a href='#' title='Módulo de soporte'><i class='fa fa-question'><span 
+                echo "<li><a href='support.php' title='Módulo de soporte'><i class='fa fa-question'><span 
             class='text'>Soporte técnico</span></i></a></li>";
             } ?>
         </ul>
@@ -82,11 +82,11 @@
     
     <div id="accountMenu" class="accountMenu hide">
         <div class="accountDetails">
-            <a href="#" title='Detalles de cuenta' class='verCuenta' id='verCuenta'><i class="fa fa-user"><span>Ver cuenta</span></i></a>
+            <a title='Detalles de cuenta' class='verCuenta' id='verCuenta'><i class="fa fa-user"><span>Ver cuenta</span></i></a>
         </div>
         <hr style='margin: 5px 0'>
         <div class="settings">
-            <a href="#" title='Detalles de cuenta' class='ajustes' id='ajustes'><i class="fa fa-gear"><span>Ajustes</span></i></a>
+            <a title='Detalles de cuenta' class='ajustes' id='ajustes'><i class="fa fa-gear"><span>Ajustes</span></i></a>
         </div>
         <hr style='margin: 5px 0'>
         <div class="logout">

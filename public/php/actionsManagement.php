@@ -133,9 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
             const event = new Event('change');
             selectElement.dispatchEvent(event);
-         
-            // const event2 = new Event('click');
-            // reportBtn.dispatchEvent(event);
             
             localStorage.removeItem('openReportEditor');
             localStorage.removeItem('actId');

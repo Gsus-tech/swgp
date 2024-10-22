@@ -1,6 +1,6 @@
 :root {
-    --barColor1: #0e2eaf;
-    --barColor2: #28029b;
+    --barColor1: #284bda;
+    --barColor2: #222779;
     --hover-items: #333;
     --hover-AddBtn: #09be00;
     --black: #101010;
@@ -16,8 +16,8 @@
     --sysBgColor: #eeeeee;
     --divBgColor: #aaa9a9;
     --divBgColorSys: #f0f4f7;
-    --systemSideBarColor1:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
-    --systemSideBarColor2:linear-gradient(18deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
 }
 
 
@@ -87,7 +87,8 @@ body.loading {
 }
 
 .container .sidebar {
-    background-image: var(--systemSideBarColor1);
+    /* background-image: var(--systemSideBarColor1); */
+    background-color: var(--barColor2);
     position: fixed;
     color: var(--white);
     width: 7rem;
@@ -461,6 +462,11 @@ body.loading {
     color: white;
 }
 
+.btn-orange {
+    background-color: #eb9404;
+    color: white;
+}
+
 .btn-yellow {
     background-color: #fbf404;
     color: black;
@@ -518,6 +524,20 @@ body.loading {
     transition: background-color 1s ease;
 }
 
+.createdInputDiv-content .cTextarea-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    outline: none;
+    height: 5rem;
+    resize: none;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 1s ease;
+}
+
 .createdInputDiv-buttons {
     display: flex;
     justify-content: space-between;
@@ -556,6 +576,23 @@ body.loading {
 
 .highlight-error {
     background-color: rgb(231 133 133 / 50%);
+}
+
+.generalBtnStyle{
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px; 
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.generalBtnStyle:hover {
+    opacity: .8;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
 }
 
 @media (max-width: 550px) {

@@ -79,76 +79,145 @@ function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
 
-function createInputDiv(titleText, descriptionText, actionFunction) {
-    // Crear el div principal
-    const nombrarReporte = document.createElement('div');
-    nombrarReporte.id = 'mainInputDiv';
-    nombrarReporte.classList.add('mainCreatedDiv', 'hidden');
+function createTextInputBox(titleText, descriptionText) {
+    return new Promise((resolve, reject) => {
+        // Create the main div
+        const nombrarReporte = document.createElement('div');
+        nombrarReporte.id = 'mainInputDiv';
+        nombrarReporte.classList.add('mainCreatedDiv', 'hidden');
 
-    // Crear el contenido del inputDiv
-    const inputDiv = document.createElement('div');
-    inputDiv.classList.add('createdInputDiv-content');
+        // Create the input content div
+        const inputDiv = document.createElement('div');
+        inputDiv.classList.add('createdInputDiv-content');
 
-    const title = document.createElement('h3');
-    title.textContent = titleText;
-    inputDiv.appendChild(title);
+        const title = document.createElement('h3');
+        title.textContent = titleText;
+        inputDiv.appendChild(title);
 
-    const label = document.createElement('p');
-    label.textContent = descriptionText;
-    inputDiv.appendChild(label);
+        const label = document.createElement('p');
+        label.textContent = descriptionText;
+        inputDiv.appendChild(label);
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'inputContent';
-    input.classList.add('input-text');
-    input.maxLength = 255;
-    inputDiv.appendChild(input);
+        // Create textarea instead of input
+        const textarea = document.createElement('textarea');
+        textarea.id = 'textInputContent';
+        textarea.classList.add('textarea-input');
+        textarea.maxLength = 80; // Limit to 80 characters
+        textarea.rows = 4;
+        textarea.style.resize = 'none'; // Non-resizable
+        inputDiv.appendChild(textarea);
 
-    const buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('createdInputDiv-buttons');
+        const buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('createdInputDiv-buttons');
 
-    const saveButton = document.createElement('button');
-    saveButton.id = 'saveInputBtn';
-    saveButton.textContent = 'Guardar';
-    buttonContainer.appendChild(saveButton);
+        const saveButton = document.createElement('button');
+        saveButton.id = 'saveInputBtn';
+        saveButton.textContent = 'Guardar';
+        buttonContainer.appendChild(saveButton);
 
-    const cancelButton = document.createElement('button');
-    cancelButton.id = 'cancelBtn';
-    cancelButton.textContent = 'Cancelar';
-    buttonContainer.appendChild(cancelButton);
+        const cancelButton = document.createElement('button');
+        cancelButton.id = 'cancelBtn';
+        cancelButton.textContent = 'Cancelar';
+        buttonContainer.appendChild(cancelButton);
 
-    inputDiv.appendChild(buttonContainer);
+        inputDiv.appendChild(buttonContainer);
+        nombrarReporte.appendChild(inputDiv);
+        document.body.appendChild(nombrarReporte);
 
-    nombrarReporte.appendChild(inputDiv);
+        // Show the input box
+        nombrarReporte.classList.remove('hidden');
 
-    document.body.appendChild(nombrarReporte);
+        // Event when saving
+        saveButton.addEventListener('click', function() {
+            const inputContent = textarea.value.trim();
+            if (inputContent === '') {
+                // Highlight the error if empty
+                textarea.classList.add('highlight-error');
+                setTimeout(() => textarea.classList.remove('highlight-error'), 1000);
+            } else {
+                resolve(inputContent); // Resolve the promise with input content
+                nombrarReporte.remove();
+            }
+        });
 
-    saveButton.addEventListener('click', function() {
-        const inputContent = input.value.trim();
-        if (inputContent === '') {
-            //Efecto de error en caso de campo vacio
-            input.classList.add('highlight-error');
-
-            setTimeout(function() {
-                input.classList.remove('highlight-error');
-            }, 1000);
-        } else {
-            actionFunction(inputContent);
-            // Eliminar todo el div
-            nombrarReporte.remove(); 
-        }
+        // Cancel button handler
+        cancelButton.addEventListener('click', function() {
+            nombrarReporte.remove();
+            reject('User canceled input');
+        });
     });
-
-    cancelButton.addEventListener('click', function() {
-        nombrarReporte.remove();
-        return false;
-    });
-
-    nombrarReporte.classList.remove('hidden');
 }
 
 
-function createConfirmationDialog(title, message, onConfirm, onCancel) {
+
+function createTextInputBox(titleText, descriptionText) {
+    return new Promise((resolve, reject) => {
+        // Crear el div principal
+        const nombrarReporte = document.createElement('div');
+        nombrarReporte.id = 'mainInputDiv';
+        nombrarReporte.classList.add('mainCreatedDiv', 'hidden');
+
+        // Crear el contenido
+        const inputDiv = document.createElement('div');
+        inputDiv.classList.add('createdInputDiv-content');
+
+        const title = document.createElement('h3');
+        title.textContent = titleText;
+        inputDiv.appendChild(title);
+
+        const label = document.createElement('p');
+        label.textContent = descriptionText;
+        inputDiv.appendChild(label);
+
+        const textarea = document.createElement('textarea');
+        textarea.id = 'textInputContent';
+        textarea.classList.add('cTextarea-input');
+        textarea.maxLength = 80;
+        inputDiv.appendChild(textarea);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('createdInputDiv-buttons');
+
+        const saveButton = document.createElement('button');
+        saveButton.id = 'saveInputBtn';
+        saveButton.textContent = 'Guardar';
+        buttonContainer.appendChild(saveButton);
+
+        const cancelButton = document.createElement('button');
+        cancelButton.id = 'cancelBtn';
+        cancelButton.textContent = 'Cancelar';
+        buttonContainer.appendChild(cancelButton);
+
+        inputDiv.appendChild(buttonContainer);
+        nombrarReporte.appendChild(inputDiv);
+        document.body.appendChild(nombrarReporte);
+
+        saveButton.addEventListener('click', function() {
+            const inputContent = textarea.value.trim();
+            if (inputContent === '') {
+                textarea.classList.add('highlight-error');
+                setTimeout(function() {
+                    textarea.classList.remove('highlight-error');
+                }, 1000);
+            } else {
+                resolve(inputContent);
+                nombrarReporte.remove();
+            }
+        });
+
+        cancelButton.addEventListener('click', function() {
+            nombrarReporte.remove();
+            reject('Input cancelado');  // Rechaza la promesa si el usuario cancela
+        });
+
+        nombrarReporte.classList.remove('hidden');
+    });
+}
+
+
+
+
+function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rText) {
     //Div del confirm
     const confirmationDiv = document.createElement('div');
     confirmationDiv.classList.add('confirmation-overlay');
@@ -171,12 +240,12 @@ function createConfirmationDialog(title, message, onConfirm, onCancel) {
 
     // Botón de confirmar
     const confirmButton = document.createElement('button');
-    confirmButton.textContent = 'Confirmar';
+    confirmButton.textContent = gText ? gText : 'Confirmar';
     buttonContainer.appendChild(confirmButton);
 
     // Botón de cancelar
     const cancelButton = document.createElement('button');
-    cancelButton.textContent = 'Cancelar';
+    cancelButton.textContent = rText ? rText : 'Cancelar';
     buttonContainer.appendChild(cancelButton);
 
     confirmationContent.appendChild(buttonContainer);
@@ -192,6 +261,7 @@ function createConfirmationDialog(title, message, onConfirm, onCancel) {
     });
     // Evento cancelar
     cancelButton.addEventListener('click', function() {
+        if(onCancel){onCancel();}
         confirmationDiv.remove();
         return false;
     });
@@ -220,4 +290,14 @@ function formatSpanishDate(dateString) {
 
 document.addEventListener('DOMContentLoaded', function() {
     addButtonEvents();
+    document.getElementById('verCuenta').addEventListener('click', function(){ 
+        localStorage.removeItem('accountSettings');
+        localStorage.setItem('accountSettings', 'true');
+        location.href = "accountSettings.php";
+    })
+    document.getElementById('ajustes').addEventListener('click', function(){ 
+        localStorage.removeItem('accountSettings');
+        localStorage.setItem('generalSettings', 'true');
+        location.href = "accountSettings.php";
+    })
 });
