@@ -42,23 +42,34 @@ function setActiveTab(tabId) {
 }
 
 function updatePassword(){
-    const curPass = createTextInputBox('Actualizar contraseña', 'Ingresa tu contraseña actual');
-    data = new URLSearchParams({
-        password : curPass
-    });
-    let url = "accountSettingsManager.php?verify=true";
-    makeAjaxRequest(url, 'POST', data, 
-        function(){
-            document.getElementById('passwordUpdate').remove();
-            const html = `
+    const attributes = [
+        { name: 'title', value: 'Ingresa tu contraseña actual' },
+        { name: 'type', value: 'password' }
+    ];
+    createInputBox('Actualizar contraseña', 'Ingresa tu contraseña actual', attributes).then(curPass => {
+        data = new URLSearchParams({
+            password : curPass
+        });
+        let url = "../controller/accountSettingsManager.php?verify=true";
+        makeAjaxRequest(url, 'POST', data, 
+            function(){
+                document.getElementById('passwordUpdate').remove();
+                const dv = document.getElementById('settingsDiv');
+                dv.classList.add('section');
+                dv.classList.add('sct2');
+                dv.innerHTML = `
                 <label class="bold" for="newPass">Ingresa tu nueva contraseña:</label><br>
                 <input class="input" type="password" name="newPass" id="newPass" placeholder="Nueva contraseña" title="Ingresa tu nueva contraseña">    
                 <label class="bold" for="newPassConfirm">Confirmación de nueva contraseña:</label><br>
                 <input class="input" type="password" name="newPassConfirm" id="newPassConfirm" placeholder="Confirmación de contraseña" title="Confirmación de contraseña">
+                <div class="flexAndSpaceDiv"><button class="generalBtnStyle btn-blue passwordUpdate" id="passwordUpdate">Guardar contraseña</button></div>
                 `;
-        },
-        function(){
-            alert('Contraseña incorrecta.');
-        }
-    );
+                // document.getElementById('settingsDiv').appendChild(dv);
+                
+            },
+            function(){
+                alert('Contraseña incorrecta.');
+            }
+        );
+    });
 }
