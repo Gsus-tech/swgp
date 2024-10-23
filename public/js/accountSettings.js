@@ -164,7 +164,12 @@ function updateData(){
                         }
                     });
                     },
-                    function(){}
+                    function(){
+                        const divs = document.querySelectorAll('.confirmation-overlay');
+                        divs.forEach(div => {
+                            div.remove();
+                        });
+                    }
             );
             }else{
                 if(name.value.length == 0){
@@ -206,21 +211,27 @@ function updatePassword(){
                 if(data.success){
                 document.getElementById('passwordUpdate').remove();
                 const dv = document.getElementById('settingsDiv');
-                dv.classList.add('section');
-                dv.classList.add('sct2');
                 dv.innerHTML = `
                 <label class="bold" for="newPass">Ingresa tu nueva contraseña:</label><br>
-                <input class="input" type="password" name="newPass" id="newPass" placeholder="Nueva contraseña" title="Ingresa tu nueva contraseña">    
+                <div class="password1Div">
+                <input class="input" type="password" name="newPass" id="newPass" placeholder="Nueva contraseña" title="Ingresa tu nueva contraseña" oninput="resetField(this)">    
+                <i id="swapVis" class="fa fa-lock swapVis button"></i>
+                <i id="swapVis2" class="fa fa-unlock swapVis button hide"></i>
+                </div>
                 <label class="bold" for="newPassConfirm">Confirmación de nueva contraseña:</label><br>
-                <input class="input" type="password" name="newPassConfirm" id="newPassConfirm" placeholder="Confirmación de contraseña" title="Confirmación de contraseña">
+                <input class="input password2" type="password" name="newPassConfirm" id="newPassConfirm" placeholder="Confirmación de contraseña" title="Confirmación de contraseña" oninput="resetField(this)">
                 <div class="flexAndSpaceDiv">
                     <button class="generalBtnStyle btn-blue" id="saveNewPassword">Guardar contraseña</button>
                     <button class="generalBtnStyle btn-red" id="cancelPassUpd">Cancelar</button>
                 </div>
                 `;
                 setTimeout(function() {
+                    document.getElementById('newPass').addEventListener('input', () => { removeSpaces(document.getElementById('newPass')) });
+                    document.getElementById('newPassConfirm').addEventListener('input', () => { removeSpaces(document.getElementById('newPassConfirm')) });
                     document.getElementById('saveNewPassword').addEventListener('click', sendPassword);
                     document.getElementById('cancelPassUpd').addEventListener('click', cancelPassUpdate);
+                    document.getElementById('swapVis').addEventListener('click', swapPasswordVis);
+                    document.getElementById('swapVis2').addEventListener('click', swapPasswordVis);
                 }, 350);
             }else{
                 alert('Contraseña incorrecta.');
@@ -239,10 +250,117 @@ function updatePassword(){
     });
 }
 
+function swapPasswordVis(){ 
+    const eyeBtn = document.getElementById('swapVis');
+    eyeBtn.classList.toggle('hide');
+    const eyeBtn2 = document.getElementById('swapVis2');
+    eyeBtn2.classList.toggle('hide');
+    const input = document.getElementById('newPass');
+    if(input.type === 'password'){
+        input.type = 'text';
+    }else if(input.type === 'text'){
+        input.type = 'password';
+    }
+}
+
 function sendPassword(){
-    alert('Sent');
+    const password = document.getElementById('newPass');
+    const password2 = document.getElementById('newPassConfirm');
+
+    if(politicaContrasena()){
+        if(password.value === password2.value){
+            createConfirmationDialog('Actualizar contraseña', '¿Seguro que deseas actualizar tu contraseña?',
+                function(){
+                    let url = "../controller/accountSettingsManager.php?updatePassword=true";
+                    fetch(url, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            password : password.value
+                        }),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success){
+                            alert('Contraseña actualizada');
+                            initialDiv();
+                        }else{
+                            alert('No se pudieron guardar los cambios.');
+                        }
+                    })
+                    .catch(error => {
+                        if (error !== 'Input cancelado') {
+                            console.error(error);
+                        }
+                    });
+                },
+                function(){
+
+                }, 'Confirmar'
+            )
+        }else{
+            password2.setCustomValidity('Las contraseñas no coinciden.');
+            password2.reportValidity();
+        }
+    }
 }
 
 function cancelPassUpdate(){
     initialDiv();
+}
+
+function politicaContrasena(){
+    const password = document.getElementById('newPass');
+    let r = true;
+
+    var lengthPattern = /.{8,45}/;
+    var uppercasePattern = /[A-Z]/;
+    var lowercasePattern = /[a-z]/;
+    var numberPattern = /[0-9]/;
+    var specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/;
+    var noSpacesPattern = /^\S*$/;
+    var noCommonSequencesPattern = /^(?!.*(123456|abcdef)).*$/;
+    var passwordValue = password.value;
+    let mensaje = "La contraseña debe incluir:"
+
+        // Validaciones
+        if (!lengthPattern.test(passwordValue)) {
+            mensaje += '\n- entre 8 y 45 caracteres';
+            r = false;
+        }
+        if (!uppercasePattern.test(passwordValue)) {
+            mensaje += '\n- una letra mayúscula';
+            r = false;
+        }
+        if (!lowercasePattern.test(passwordValue)) {
+            mensaje += '\n- una letra minúscula';
+            r = false;
+        }
+        if (!numberPattern.test(passwordValue)) {
+            mensaje += '\n- un número';
+            r = false;
+        }
+        if (!specialCharPattern.test(passwordValue)) {
+            mensaje += '\n- un carácter especial';
+            r = false;
+        }
+        if(r==false){
+            password.setCustomValidity(mensaje);
+            password.reportValidity();
+            return false;   
+        }
+        if (!noSpacesPattern.test(passwordValue)) {
+            password.setCustomValidity('La contraseña no debe contener espacios en blanco.');
+            password.reportValidity();
+            return false;
+        }
+        if (!noCommonSequencesPattern.test(passwordValue)) {
+            password.setCustomValidity('La contraseña no debe contener secuencias comunes como "123456" o "abcdef".');
+            password.reportValidity();
+            return false;
+        }
+    
+    return r;
 }
