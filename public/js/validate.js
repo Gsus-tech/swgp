@@ -9,7 +9,7 @@ function validateDate(dateIni, dateFin) {
 
 function testRegex(elementId){
     //Se valida la introduccion de caracteres especiales innecesarios para ciertos campos.
-    var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ.,-]/g;
+    var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚñÑ.,-]/g;
     const element = document.getElementById(`${elementId}`);
 
     if(regexEspeciales.test(element.value)){

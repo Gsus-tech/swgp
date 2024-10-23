@@ -22,7 +22,8 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
         }
         if (mysqli_num_rows($result) === 1) {
             $row = mysqli_fetch_assoc($result);
-            if ($row['contrasena'] === md5($password)) {
+            // if ($row['contrasena'] === password_hash($password, PASSWORD_DEFAULT)) {
+            if(password_verify($password, $row['contrasena'])){
                 $_SESSION['id'] = $row['id_usuario'];
                 $_SESSION['rol'] = $row['rolUsuario'];
                 $_SESSION['nombre'] = $row['nombre'];

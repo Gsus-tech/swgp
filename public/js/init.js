@@ -78,7 +78,7 @@ function showLoadingCursor() {
 function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
-function createInputBox(titleText, descriptionText, attributeArray) {
+function createInputBox(titleText, descriptionText, attributeArray, btnText1, btnText2) {
     return new Promise((resolve, reject) => {
         // Crear el div principal
         const nombrarReporte = document.createElement('div');
@@ -113,12 +113,12 @@ function createInputBox(titleText, descriptionText, attributeArray) {
 
         const saveButton = document.createElement('button');
         saveButton.id = 'saveInputBtn';
-        saveButton.textContent = 'Guardar';
+        saveButton.textContent = btnText1 ? btnText1 : 'Guardar';
         buttonContainer.appendChild(saveButton);
 
         const cancelButton = document.createElement('button');
         cancelButton.id = 'cancelBtn';
-        cancelButton.textContent = 'Cancelar';
+        cancelButton.textContent = btnText2 ? btnText2 : 'Cancelar';
         buttonContainer.appendChild(cancelButton);
 
         inputDiv.appendChild(buttonContainer);
@@ -211,7 +211,7 @@ function createTextInputBox(titleText, descriptionText, attributeArray) {
 
         cancelButton.addEventListener('click', function() {
             nombrarReporte.remove();
-            reject('Input cancelado');  // Rechaza la promesa si el usuario cancela
+            reject('Input cancelado');
         });
 
         nombrarReporte.classList.remove('hidden');

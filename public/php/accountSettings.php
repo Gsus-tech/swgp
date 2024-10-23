@@ -42,21 +42,13 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div>
             <div id="accountTabContent" class="tabContent">
                 <div class="fm-content section" id="settingsDiv">
-                    <label class="bold" for="name">Nombre:</label><br>
-                    <input class="input" type="text" name="name" id="name" placeholder="Tu nombre" title="Tu nombre" autocomplete="off">
                     
-                    <label class="bold" for="nickName">Usuario:</label><br>
-                    <input class="input" type="text" name="nickName" id="nickName" placeholder="Nombre de usuario" title="Nombre que se muestra en tu sesión actual">
-                    
-                    <div class="flexAndSpaceDiv">
-                        <button class="generalBtnStyle btn-green dataUpdate" id="dataUpdate" onclick="updateData()">Guardar Cambios</button>
-                        <button class="generalBtnStyle btn-blue passwordUpdate" id="passwordUpdate" onclick="updatePassword()">Cambiar contraseña</button>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="../js/validate.js"></script>
     <script src="../js/accountSettings.js"></script>
     <script src="../js/init.js"></script>
 </body>

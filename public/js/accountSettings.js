@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
     document.getElementById('generalTab').addEventListener('click', function() {
         setActiveTab('generalTab');
         localStorage.setItem('generalSettings', 'true');
@@ -10,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setActiveTab('accountTab');
         localStorage.setItem('accountSettings', 'true');
         localStorage.removeItem('generalSettings');
+        initialDiv();
     });
 
     const valor = localStorage.getItem('accountSettings');
@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('accountTabContent').classList.add('activeContent');
         document.getElementById('generalTab').classList.remove('active');
         document.getElementById('accountTab').classList.add('active');
+        initialDiv();
     }else if(valor2){
         document.getElementById('generalTabContent').classList.add('activeContent');
         document.getElementById('accountTabContent').classList.remove('activeContent');
@@ -29,6 +30,54 @@ document.addEventListener('DOMContentLoaded', function() {
         this.location.reload();
     }
 });
+
+function initialDiv(){
+    const url = "../controller/accountSettingsManager.php?getUserInfo=true";
+    makeAjaxRequest(url, 'POST', null, 
+        function(response){
+            const dv = document.getElementById('settingsDiv');
+            dv.classList.add('section');
+            dv.classList.add('sct2');
+            dv.innerHTML = `
+            <label class="bold" for="name">Nombre:</label><br>
+            <input class="input" type="text" name="name" id="name" value="${response.data.nombre}" placeholder="Tu nombre" title="Tu nombre" autocomplete="off" oninput="resetField(this)">
+            <input type="hidden" id="nameH" value="${response.data.nombre}">
+            
+            <label class="bold" for="nickName">Usuario:</label><br>
+            <input class="input" type="text" name="nickName" id="nickName" value="${response.data.nickname}" placeholder="Nombre de usuario" title="Nombre que se muestra en tu sesión actual" oninput="resetField(this)">
+            <input type="hidden" id="nickNameH" value="${response.data.nickname}">
+            
+            <label class="bold" for="correo">Correo:</label><br>
+            <input disabled class="input" type="text" name="correo" value="${response.data.correo}" placeholder="Correo">
+
+            <label class="bold" for="departamento">Departamento:</label><br>
+            <input disabled class="input" type="text" name="departamento" value="${response.data.departamento}" placeholder="Departamento"
+
+            <div class="flexAndSpaceDiv">
+                <button class="generalBtnStyle btn-green dataUpdate" id="dataUpdate">Guardar Cambios</button>
+                <button class="generalBtnStyle btn-blue passwordUpdate" id="passwordUpdate">Cambiar contraseña</button>
+            </div>
+            `;
+            
+            setTimeout(function() {
+
+                document.getElementById('dataUpdate').addEventListener('click', updateData);
+                document.getElementById('passwordUpdate').addEventListener('click', updatePassword);
+            }, 350);
+        }, function(){
+            const dv = document.getElementById('settingsDiv');
+            dv.classList.add('section');
+            dv.innerHTML = `
+                <h3>Algo salio mal...</h3>
+                <br>
+                <p>Sucedió un error al recuperar tus datos.</p>
+                <br>
+                <p>Por favor, levanta un ticket para reportar este problema.</p>
+            `;
+        }
+    );
+
+}
 
 function setActiveTab(tabId) {
     const tabs = document.querySelectorAll('.tab');
@@ -41,18 +90,120 @@ function setActiveTab(tabId) {
     document.getElementById(`${tabId}Content`).classList.add('activeContent');
 }
 
+function validarCampos(){
+    const name = document.getElementById('name');
+    const nickName = document.getElementById('nickName');
+    let nameFlag = testRegex('name');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('min', 8, 'name');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testLenght('max', 45, 'name');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testValue('strict', 'name');
+    if(nameFlag === false){
+        return false;
+    }
+    nameFlag = testControlledTextInput('name');
+    if(nameFlag === false){
+        return false;
+    }
+
+    let nickNameFlag = testControlledTextInput('nickName');
+    if(nickNameFlag === false){
+        return false;
+    }
+    nickNameFlag = testRegex('nickName');
+    if(nickNameFlag === false){
+        return false;
+    }
+    nickNameFlag = testLenght('min', 3, 'nickName');
+    if(nickNameFlag === false){
+        return false;
+    }
+    nickNameFlag = testLenght('max', 45, 'nickName');
+    if(nickNameFlag === false){
+        return false;
+    }
+
+    return true;
+}
+
+function updateData(){
+    const name = document.getElementById('name').value;
+    const nickName = document.getElementById('nickName').value;
+    const nameH = document.getElementById('nameH');
+    const nickNameH = document.getElementById('nickNameH');
+    if (name != nameH.value || nickName != nickNameH.value) {
+        if (name.length > 0 && nickName.length > 0) {
+            const continuar = validarCampos();
+            if(continuar){
+                createConfirmationDialog('Mensaje de confirmación', '¿Actualizar datos de la cuenta?', 
+                function(){
+                    let url = "../controller/accountSettingsManager.php?updateData=true";
+                    fetch(url, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            name : name,
+                            nickName : nickName
+                        }),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success){
+                            console.log('Data: ',data.message)
+                            location.reload();
+                        }
+                    });
+                    },
+                    function(){}
+            );
+            }else{
+                if(name.value.length == 0){
+                    name.classList.add('highlight-error');
+                    setTimeout(function() {
+                        name.classList.remove('highlight-error');
+                    }, 1000);
+                }
+                if(nickName.value.length == 0){
+                    nickName.classList.add('highlight-error');
+                    setTimeout(function() {
+                        nickName.classList.remove('highlight-error');
+                    }, 1000);
+                }
+            }
+        }
+    }
+}
 function updatePassword(){
     const attributes = [
         { name: 'title', value: 'Ingresa tu contraseña actual' },
         { name: 'type', value: 'password' }
     ];
-    createInputBox('Actualizar contraseña', 'Ingresa tu contraseña actual', attributes).then(curPass => {
-        data = new URLSearchParams({
+    createInputBox('Actualizar contraseña', 'Ingresa tu contraseña actual', attributes, 'Confirmar', 'Cancelar').then(curPass => {
+        let data = new URLSearchParams({
             password : curPass
         });
         let url = "../controller/accountSettingsManager.php?verify=true";
-        makeAjaxRequest(url, 'POST', data, 
-            function(){
+        fetch("../controller/accountSettingsManager.php?verify=true", {
+            method: 'POST',
+            body: new URLSearchParams({
+                password: curPass
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }).then(response => response.json())
+          .then(data => {
+                if(data.success){
                 document.getElementById('passwordUpdate').remove();
                 const dv = document.getElementById('settingsDiv');
                 dv.classList.add('section');
@@ -62,14 +213,36 @@ function updatePassword(){
                 <input class="input" type="password" name="newPass" id="newPass" placeholder="Nueva contraseña" title="Ingresa tu nueva contraseña">    
                 <label class="bold" for="newPassConfirm">Confirmación de nueva contraseña:</label><br>
                 <input class="input" type="password" name="newPassConfirm" id="newPassConfirm" placeholder="Confirmación de contraseña" title="Confirmación de contraseña">
-                <div class="flexAndSpaceDiv"><button class="generalBtnStyle btn-blue passwordUpdate" id="passwordUpdate">Guardar contraseña</button></div>
+                <div class="flexAndSpaceDiv">
+                    <button class="generalBtnStyle btn-blue" id="saveNewPassword">Guardar contraseña</button>
+                    <button class="generalBtnStyle btn-red" id="cancelPassUpd">Cancelar</button>
+                </div>
                 `;
-                // document.getElementById('settingsDiv').appendChild(dv);
-                
-            },
-            function(){
+                setTimeout(function() {
+                    document.getElementById('saveNewPassword').addEventListener('click', sendPassword);
+                    document.getElementById('cancelPassUpd').addEventListener('click', cancelPassUpdate);
+                }, 350);
+            }else{
                 alert('Contraseña incorrecta.');
             }
-        );
+          })
+          .catch(error => {
+            if (error !== 'Input cancelado') {
+                console.error(error);
+            }
+        });
+    })
+    .catch(error => {
+        if (error !== 'Input cancelado') {
+            console.error('Error inesperado:', error);
+        }
     });
+}
+
+function sendPassword(){
+    alert('Sent');
+}
+
+function cancelPassUpdate(){
+    initialDiv();
 }

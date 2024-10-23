@@ -57,6 +57,7 @@
     margin: 10px 2%;
     background-color: #d5d5d5;
     transition: padding-left 0.3s ease;
+    transition: background-color .25s ease-in-out;
 }
 
 .fm-content .input:focus{
@@ -75,6 +76,10 @@
 
 .section .flexAndSpaceDiv{
     margin: 1rem 6%;
+}
+
+.section .highlight-error {
+    background-color: rgb(231 133 133 / 50%);
 }
 
 @media screen and (max-width: 599px) {
