@@ -96,6 +96,10 @@ function testValue(type, elementId, elementTagName){
     return true;
 }
 
+function removeSpaces(input) {
+    input.value = input.value.replace(/\s+/g, '');
+}
+
 function resetField(element){
     element.setCustomValidity('')
     element.classList.remove('invalidField');
