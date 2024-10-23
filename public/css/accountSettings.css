@@ -82,6 +82,19 @@
     background-color: rgb(231 133 133 / 50%);
 }
 
+.password1Div{
+    display:flex;
+}
+
+.swapVis{
+    margin-top: 20px;
+    margin-right: 10px;
+}
+
+.fm-content .password2{
+    width: calc(100% - 45px);
+}
+
 @media screen and (max-width: 599px) {
     .section .flexAndSpaceDiv{
         display: grid;
@@ -93,5 +106,9 @@
     .section .flexAndSpaceDiv .generalBtnStyle{
         margin: 10px;
         width: 100%;
+    }
+
+    .fm-content .password2{
+        width: calc(100% - 35px);
     }
 }

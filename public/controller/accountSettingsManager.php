@@ -89,6 +89,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         }
     }
     
+    if(isset($_GET['updatePassword']) && $_GET['updatePassword'] == 'true'){
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id_usuario = $_SESSION['id'];
+        $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+        
+        $query = "UPDATE tbl_usuarios SET contrasena = ? WHERE id_usuario = ?";
+        $stmt = $mysqli->prepare($query);
+    
+        if ($stmt) {
+            // Asegúrate de usar las variables correctas $name y $nickName
+            $stmt->bind_param('si', $password, $id_usuario);
+            $stmt->execute();
+    
+            if ($stmt->affected_rows > 0) {
+                echo json_encode(['success' => true, 'message' => 'Datos actualizados correctamente.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+        }
+    }
 
 } else {
     echo"<script>window.location.href = `../php/actionsManagement.php`;</script>";
