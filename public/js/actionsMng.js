@@ -283,7 +283,14 @@ function closeAddReport(){
 
 // Crear div para nombrar el reporte
 function createSaveReport() {
-    createInputDiv('Guardar reporte', 'Nombre del archivo', guardarReporte);
+    createInputBox('Guardar reporte', 'Nombre del archivo:').then(fileName => {
+        guardarReporte(fileName);
+    })
+    .catch(error => {
+        if (error !== 'Input cancelado') {
+            console.error('Error inesperado:', error);
+        }
+    });
 }
 
 
