@@ -144,6 +144,10 @@ function createInputBox(titleText, descriptionText, attributeArray, btnText1, bt
         });
 
         nombrarReporte.classList.remove('hidden');
+
+        setTimeout(function(){
+            document.getElementById('textInputContent').focus();
+        }, 350)
     });
 }
 
@@ -215,6 +219,10 @@ function createTextInputBox(titleText, descriptionText, attributeArray) {
         });
 
         nombrarReporte.classList.remove('hidden');
+
+        setTimeout(function(){
+            document.getElementById('textInputContent').focus();
+        }, 350);
     });
 }
 
@@ -245,6 +253,7 @@ function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rT
     // Botón de confirmar
     const confirmButton = document.createElement('button');
     confirmButton.textContent = gText ? gText : 'Confirmar';
+    confirmButton.id = 'confirmarAction';
     buttonContainer.appendChild(confirmButton);
 
     // Botón de cancelar
@@ -269,6 +278,11 @@ function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rT
         confirmationDiv.remove();
         return false;
     });
+
+    setTimeout(function(){
+        document.getElementById('confirmarAction').focus();
+    }, 350);
+
 }
 
 function addButtonEvents(){
