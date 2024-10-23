@@ -20,33 +20,16 @@ password2.addEventListener("change", (e)=>{toggleFormBtn();});
 
 function toggleFormBtn(){
     if(userName.value != "" && depto.value != "" && mail.value != "" && password.value != ""  && password2.value != ""){
-        // if(password.value == password2.value){
             addUserButton.disabled=false;
             if(!document.getElementById('sumbit-AddUser').classList.contains('enabled')){
                 document.querySelector(".sumbit-AddUser").classList.toggle('enabled');
             }
-        // }
     }else{
         addUserButton.disabled=true;
         if(document.getElementById('sumbit-AddUser').classList.contains('enabled')){
             document.querySelector(".sumbit-AddUser").classList.toggle('enabled');
         }
     }
-
-    // if(password.value != password2.value){
-    //     if(!document.getElementById('FpasswordCon').classList.contains('wrongCP')){
-    //         document.getElementById('FpasswordCon').classList.toggle('wrongCP');
-    //     }
-    //     addUserButton.disabled=true;
-    //     if(document.getElementById('sumbit-AddUser').classList.contains('enabled')){
-    //         document.querySelector(".sumbit-AddUser").classList.toggle('enabled');
-    //     }
-    // }
-    // if(password.value == password2.value){
-    //     if(document.getElementById('FpasswordCon').classList.contains('wrongCP')){
-    //         document.getElementById('FpasswordCon').classList.toggle('wrongCP');
-    //     }
-    // }
 }
 
 //Departamento select e introducir nuevo
@@ -213,27 +196,22 @@ function politicaContrasena(){
         // Validaciones
         if (!lengthPattern.test(passwordValue)) {
             mensaje += '\n- entre 8 y 45 caracteres';
-            // password.reportValidity();
             r = false;
         }
         if (!uppercasePattern.test(passwordValue)) {
             mensaje += '\n- una letra mayúscula';
-            // password.reportValidity();
             r = false;
         }
         if (!lowercasePattern.test(passwordValue)) {
             mensaje += '\n- una letra minúscula';
-            // password.reportValidity();
             r = false;
         }
         if (!numberPattern.test(passwordValue)) {
             mensaje += '\n- un número';
-            // password.reportValidity();
             r = false;
         }
         if (!specialCharPattern.test(passwordValue)) {
             mensaje += '\n- un carácter especial';
-            // password.reportValidity();
             r = false;
         }
         if(r==false){
