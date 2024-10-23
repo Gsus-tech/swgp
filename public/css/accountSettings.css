@@ -31,6 +31,7 @@
 .active {
     background-color: #e2e0e0;
     color: var(--barColor2);
+    border: 4px ridge rgb(170 170 170 / 60%);
 }
 
 .tabContent {
@@ -45,17 +46,18 @@
 }
 
 .fm-content { 
-    /* display:flex; */
     padding: 1rem;
     border-radius: 20px;
     background-color: var(--divBgColor);
+    max-width: 600px;
 }
 
 .fm-content .input{
     width: 96%;
     margin: 10px 2%;
     background-color: #d5d5d5;
-    transition: padding-left 0.3s ease; 
+    transition: padding-left 0.3s ease;
+    transition: background-color .25s ease-in-out;
 }
 
 .fm-content .input:focus{
@@ -63,6 +65,33 @@
     padding-left: 1.5rem;
 }
 
-.passwordUpdate{
-    margin: 1rem;
+.createdInputDiv-content .cTextarea-input{
+    height: 2.5rem;
+}
+
+.section{
+    padding: 10px 15px;
+    border: 3px dashed #333;
+}
+
+.section .flexAndSpaceDiv{
+    margin: 1rem 6%;
+}
+
+.section .highlight-error {
+    background-color: rgb(231 133 133 / 50%);
+}
+
+@media screen and (max-width: 599px) {
+    .section .flexAndSpaceDiv{
+        display: grid;
+        justify-content: center;
+        margin:0;
+        width: 100%;
+    }
+
+    .section .flexAndSpaceDiv .generalBtnStyle{
+        margin: 10px;
+        width: 100%;
+    }
 }

@@ -36,7 +36,7 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
             $userName = Crud::antiNaughty((string)$_POST['Uname']);
             $depto = Crud::antiNaughty((string)$_POST['Fdpto']);
             $mail = filter_var($_POST['Fmail'], FILTER_SANITIZE_EMAIL);
-            $password = md5($_POST['Fpassword']);
+            $password = password_hash($_POST['Fpassword'], PASSWORD_DEFAULT);
             $userType = htmlspecialchars($_POST['comboBoxUserType'], ENT_QUOTES, 'UTF-8');
             
             if (!containsSpecialCharacters($userName) && !containsSpecialCharacters($depto)) {

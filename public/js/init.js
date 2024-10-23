@@ -78,15 +78,14 @@ function showLoadingCursor() {
 function hideLoadingCursor() {
     document.body.classList.remove('loading');
 }
-
-function createTextInputBox(titleText, descriptionText) {
+function createInputBox(titleText, descriptionText, attributeArray, btnText1, btnText2) {
     return new Promise((resolve, reject) => {
-        // Create the main div
+        // Crear el div principal
         const nombrarReporte = document.createElement('div');
         nombrarReporte.id = 'mainInputDiv';
         nombrarReporte.classList.add('mainCreatedDiv', 'hidden');
 
-        // Create the input content div
+        // Crear el contenido
         const inputDiv = document.createElement('div');
         inputDiv.classList.add('createdInputDiv-content');
 
@@ -98,59 +97,59 @@ function createTextInputBox(titleText, descriptionText) {
         label.textContent = descriptionText;
         inputDiv.appendChild(label);
 
-        // Create textarea instead of input
-        const textarea = document.createElement('textarea');
-        textarea.id = 'textInputContent';
-        textarea.classList.add('textarea-input');
-        textarea.maxLength = 80; // Limit to 80 characters
-        textarea.rows = 4;
-        textarea.style.resize = 'none'; // Non-resizable
-        inputDiv.appendChild(textarea);
+        const inputArea = document.createElement('input');
+        inputArea.id = 'textInputContent';
+        inputArea.classList.add('cTextarea-input');
+        inputArea.maxLength = 80;
+        if (attributeArray && Array.isArray(attributeArray)) {
+            attributeArray.forEach(attr => {
+                inputArea.setAttribute(attr.name, attr.value);
+            });
+        }
+        inputDiv.appendChild(inputArea);
 
         const buttonContainer = document.createElement('div');
         buttonContainer.classList.add('createdInputDiv-buttons');
 
         const saveButton = document.createElement('button');
         saveButton.id = 'saveInputBtn';
-        saveButton.textContent = 'Guardar';
+        saveButton.textContent = btnText1 ? btnText1 : 'Guardar';
         buttonContainer.appendChild(saveButton);
 
         const cancelButton = document.createElement('button');
         cancelButton.id = 'cancelBtn';
-        cancelButton.textContent = 'Cancelar';
+        cancelButton.textContent = btnText2 ? btnText2 : 'Cancelar';
         buttonContainer.appendChild(cancelButton);
 
         inputDiv.appendChild(buttonContainer);
         nombrarReporte.appendChild(inputDiv);
         document.body.appendChild(nombrarReporte);
 
-        // Show the input box
-        nombrarReporte.classList.remove('hidden');
-
-        // Event when saving
         saveButton.addEventListener('click', function() {
-            const inputContent = textarea.value.trim();
+            const inputContent = inputArea.value.trim();
             if (inputContent === '') {
-                // Highlight the error if empty
-                textarea.classList.add('highlight-error');
-                setTimeout(() => textarea.classList.remove('highlight-error'), 1000);
+                inputArea.classList.add('highlight-error');
+                setTimeout(function() {
+                    inputArea.classList.remove('highlight-error');
+                }, 1000);
             } else {
-                resolve(inputContent); // Resolve the promise with input content
+                resolve(inputContent);
                 nombrarReporte.remove();
             }
         });
 
-        // Cancel button handler
         cancelButton.addEventListener('click', function() {
             nombrarReporte.remove();
-            reject('User canceled input');
+            reject('Input cancelado');
         });
+
+        nombrarReporte.classList.remove('hidden');
     });
 }
 
 
 
-function createTextInputBox(titleText, descriptionText) {
+function createTextInputBox(titleText, descriptionText, attributeArray) {
     return new Promise((resolve, reject) => {
         // Crear el div principal
         const nombrarReporte = document.createElement('div');
@@ -173,6 +172,11 @@ function createTextInputBox(titleText, descriptionText) {
         textarea.id = 'textInputContent';
         textarea.classList.add('cTextarea-input');
         textarea.maxLength = 80;
+        if (attributeArray && Array.isArray(attributeArray)) {
+            attributeArray.forEach(attr => {
+                textarea.setAttribute(attr.name, attr.value);
+            });
+        }
         inputDiv.appendChild(textarea);
 
         const buttonContainer = document.createElement('div');
@@ -207,7 +211,7 @@ function createTextInputBox(titleText, descriptionText) {
 
         cancelButton.addEventListener('click', function() {
             nombrarReporte.remove();
-            reject('Input cancelado');  // Rechaza la promesa si el usuario cancela
+            reject('Input cancelado');
         });
 
         nombrarReporte.classList.remove('hidden');
