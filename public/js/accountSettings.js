@@ -405,14 +405,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function changeTheme(theme){
+        const url = `../controller/accountSettingsManager.php?setTheme=true`;
+        fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams({
+                theme : theme
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                document.body.style.cursor = 'progress';
+                setTimeout(() => {
+                    if(theme === 'darkMode'){
+                        document.body.classList.add(`darkMode`);
+                        document.body.classList.remove('lightMode'); 
+                    }
+                    else if(theme === 'lightMode'){
+                        document.body.classList.add(`lightMode`);
+                        document.body.classList.remove('darkMode'); 
+                    }
+                    else if(theme === 'systemMode'){
+                        document.body.classList.remove(`lightMode`);
+                        document.body.classList.remove('darkMode'); 
+                    }
+                    setTimeout(() => {
+                        document.body.style.cursor = 'default';
+                    }, 500);
+                }, 500);
+            }
+        });
+    }
+
     document.querySelectorAll('input[name="themeToggle"]').forEach((theme) => {
         theme.addEventListener('change', function() {
             if (document.getElementById('dk-tg').checked) {
-                console.log('Dark theme selected');
+                changeTheme('darkMode');
             } else if (document.getElementById('sy-tg').checked) {
-                console.log('System theme selected');
+                changeTheme('systemMode');
             } else if (document.getElementById('lg-tg').checked) {
-                console.log('Light theme selected');
+                changeTheme('lightMode');
             }
         });
     });
