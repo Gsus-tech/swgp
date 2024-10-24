@@ -369,24 +369,35 @@ function politicaContrasena(){
     return r;
 }
 
-
+function updateNotifications(){
+    let url = "../controller/accountSettingsManager.php?notificationToggle=true";
+    fetch(url, {
+        method: 'POST',
+        body: null,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log('Data: ',data.message)
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('notificationToggle').addEventListener('change', function() {
         if (this.checked) {
             createConfirmationDialog('Activar notificaciones', '¿Seguro que deseas activar las notificaciones?', 
-                ()=>{
-                    console.log('Notifications ON');
-                },
+                updateNotifications,
                 ()=>{
                     this.checked = false;
                 }, 'Activar'
             );
         } else {
             createConfirmationDialog('Desactivar notificaciones', '¿Seguro que deseas desactivar las notificaciones?', 
-                ()=>{
-                    console.log('Notifications OFF');
-                },
+                updateNotifications,
                 ()=>{
                     this.checked = true;
                 }, 'Desactivar'
