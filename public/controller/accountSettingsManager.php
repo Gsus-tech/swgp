@@ -95,6 +95,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             echo json_encode(['success' => false, 'message' => 'Valor de tema seleccionado inválido.']);
         }
     }
+
+    if(isset($_GET['setFontSize']) && $_GET['setFontSize'] == 'true'){
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id_usuario = $_SESSION['id'];
+        $fontSize = Crud::antiNaughty($_POST['fontSize']);
+    
+        if($fontSize === 'largeSize' || $fontSize === 'normalSize'){
+            $fuente = 'Normal';
+            if($fontSize === 'largeSize'){
+                $fuente = 'Grande';
+            }
+            $query = "UPDATE tbl_preferencias_usuario SET tLetra = ? WHERE id_usuario = ?";
+            $stmt = $mysqli->prepare($query);
+            
+            if ($stmt) {
+                $stmt->bind_param('si', $fuente, $id_usuario);
+                $stmt->execute();
+                
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(['success' => true, 'message' => 'Tamaño de fuente actualizado correctamente.']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se encontró el usuario.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error en la consulta de base de datos.']);
+            }
+        }else{
+            echo json_encode(['success' => false, 'message' => 'Tamaño de fuente seleccionado inválido.']);
+        }
+    }
     
     if(isset($_GET['updateData']) && $_GET['updateData'] == 'true'){
         $crud = new Crud();

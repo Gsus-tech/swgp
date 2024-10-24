@@ -453,11 +453,45 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function changeLetterSize(fontSize){
+        const url = `../controller/accountSettingsManager.php?setFontSize=true`;
+        fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams({
+                fontSize : fontSize
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                document.body.style.cursor = 'progress';
+                setTimeout(() => {
+                    if(fontSize === 'largeSize'){
+                        document.body.classList.add(`bigFont`);
+                        console.log('Fuente grande');
+                    }
+                    else if(fontSize === 'normalSize'){
+                        document.body.classList.remove('bigFont'); 
+                        console.log('Fuente Normal');
+                    }
+                    setTimeout(() => {
+                        document.body.style.cursor = 'default';
+                    }, 500);
+                }, 500);
+            }else{
+                console.log(data.message);
+            }
+        });
+    }
+
     document.getElementById('letterToggle').addEventListener('change', function() {
         if (this.checked) {
-            console.log('Big letter size');
+            changeLetterSize('largeSize')
         } else {
-            console.log('Normal letter size');
+            changeLetterSize('normalSize')
         }
     });
 });
