@@ -20,8 +20,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     $params = [$_SESSION['id']];
     $preferences = Crud::executeResultQuery($query, $params, 'i');
     if(count($preferences) > 0){
-        if($preferences[0]['tema'] !== 'Sistema' || $preferences[0]['tLetra'] !== 'Normal'){
-            echo '<link rel="stylesheet" href="../css/preferenceStyles.css">';
+        $tema = '';
+        if($preferences[0]['tema'] !== 'Sistema'){
+            $tema = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
         }
     }
     
@@ -29,7 +30,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 
 </head>
-<body class="short">
+<body class="short <?php echo $tema; ?>">
     <div class="container"> 
         <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>

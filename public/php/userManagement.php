@@ -17,8 +17,20 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/userMan_style.css">
     <link rel="stylesheet" href="../css/table-style.css">
+    <?php
+    $query = "SELECT notificaciones,tema,tLetra FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
+    $params = [$_SESSION['id']];
+    $preferences = Crud::executeResultQuery($query, $params, 'i');
+    if(count($preferences) > 0){
+        $tema = '';
+        if($preferences[0]['tema'] !== 'Sistema'){
+            $tema = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
+        }
+    }
+    
+    ?>
 </head>
-<body class="short">
+<body class="short <?php echo $tema; ?>">
     <div class="container"> 
         <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
@@ -128,7 +140,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <label for="filtersForRol">Por rol de usuario:</label>
                     
                     <select class="comboBox dropDownFilter" id="filtersForRol" name="filtersForRol" onchange="FilterResults(this, 'filtersForDto', 2, 4)">
-                        <option value="noFilter"></option>
+                        <option value="noFilter"> - Sin filtros - </option>
                         <option value="Estándar">Usuario Estándar</option>
                         <option value="Administrador">Usuario Administrador</option>
                         <option value="Super-Usuario">Super-Usuario</option>
@@ -137,7 +149,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     <div class="dropDownFilter2 hide">
                     <label for="filtersForRol">Por departamento:</label>
                     <select class="comboBox dropDownFilter" id="filtersForDto" name="filtersForDto" onchange="FilterResults(this, 'filtersForRol', 4, 2)">
-                    <option value="noFilter"></option>
+                    <option value="noFilter"> - Sin filtros - </option>
                         <?php
                         $filters = Crud::getFiltersOptions('tbl_usuarios', 'departamento');
                         if(count($filters)>0){
