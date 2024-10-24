@@ -15,7 +15,18 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/accountSettings.css">
-    <!-- <link rel="stylesheet" href="../css/themeStyles.css"> -->
+    <?php
+    $query = "SELECT notificaciones,tema,tLetra FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
+    $params = [$_SESSION['id']];
+    $preferences = Crud::executeResultQuery($query, $params, 'i');
+    if(count($preferences) > 0){
+        if($preferences[0]['tema'] !== 'Sistema' || $preferences[0]['tLetra'] !== 'Normal'){
+            echo '<link rel="stylesheet" href="../css/preferenceStyles.css">';
+        }
+    }
+    
+    ?>
+
 
 </head>
 <body class="short">
@@ -34,12 +45,37 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </ul>
             </div>
 
+
             <div id="generalTabContent" class="tabContent">
+            <?php
+                $notification = $preferences[0]['notificaciones']===1 ? 'checked' : '';
+                $letter = $preferences[0]['tLetra']==='Grande' ? 'checked' : '';
+                $tema = $preferences[0]['tema'];
+                switch ($tema) {
+                    case 'Oscuro':
+                        $t1 = 'checked';
+                        $t2 = '';
+                        $t3 = '';
+                        break;
+                    case 'Claro':
+                        $t1 = '';
+                        $t2 = '';
+                        $t3 = 'checked';
+                        break;
+                    default:
+                        $t1 = '';
+                        $t2 = 'checked';
+                        $t3 = '';
+                        break;
+                }
+
+            ?>
+
                 <div class="fm-content section" id="notificacionesDiv">
                     <div class="sectionDiv controlSection">
                         <label class="bold" for="name">Notificaciones:</label><br>
                         <label class="switch">
-                            <input type="checkbox" id="notificationToggle">
+                            <input type="checkbox" id="notificationToggle" <?php echo $notification; ?>>
                             <span class="slider round"></span>
                         </label>
                     </div>
@@ -53,11 +89,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             
 
                             <div class="tw-toggle">
-                                <input type="radio" name="toggle" value="dark" title="Oscuro">
+                                <input <?php echo $t1; ?> type="radio" name="themeToggle" value="dark" id="dk-tg" title="Oscuro">
                                 <label class="toggle toggle-yes"><i class="fa fa-moon-o"></i></label>
-                                <input checked type="radio" name="toggle" value="system" title="Sistema">
+                                <input <?php echo $t2; ?> type="radio" name="themeToggle" value="system" id="sy-tg" title="Sistema">
                                 <label class="toggle toggle-yes"><i class="fa fa-star-half-full"></i></label>
-                                <input type="radio" name="toggle" value="light" title="Claro">
+                                <input <?php echo $t3; ?> type="radio" name="themeToggle" value="light" id="lg-tg" title="Claro">
                                 <label class="toggle toggle-yes"><i class="fa fa-sun-o"></i></label>
                                 <span></span>  
                             </div>
@@ -71,7 +107,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                 <span class="text-option lbl1">Normal</span>
                                 <span title="Normal" class="text-option lbl2">N</span>
                                 <label class="switch letterSwitch">
-                                    <input type="checkbox" class="ltInput" id="letterToggle">
+                                    <input type="checkbox" class="ltInput" id="letterToggle" <?php echo $letter; ?>>
                                     <span class="slider round ltSwSpan"></span>
                                 </label>
                                 <span title="Grande" class="text-option lbl2">G</span>

@@ -369,15 +369,48 @@ function politicaContrasena(){
     return r;
 }
 
-document.querySelectorAll('input[name="switch"]').forEach((radio) => {
-    radio.addEventListener('change', function() {
-        if (document.getElementById('switch-left').checked) {
-            console.log('Left option selected');
-        } else if (document.getElementById('switch-middle').checked) {
-            console.log('Middle option selected');
-        } else if (document.getElementById('switch-right').checked) {
-            console.log('Right option selected');
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('notificationToggle').addEventListener('change', function() {
+        if (this.checked) {
+            createConfirmationDialog('Activar notificaciones', '¿Seguro que deseas activar las notificaciones?', 
+                ()=>{
+                    console.log('Notifications ON');
+                },
+                ()=>{
+                    this.checked = false;
+                }, 'Activar'
+            );
+        } else {
+            createConfirmationDialog('Desactivar notificaciones', '¿Seguro que deseas desactivar las notificaciones?', 
+                ()=>{
+                    console.log('Notifications OFF');
+                },
+                ()=>{
+                    this.checked = true;
+                }, 'Desactivar'
+            );
+        }
+    });
+
+    document.querySelectorAll('input[name="themeToggle"]').forEach((theme) => {
+        theme.addEventListener('change', function() {
+            if (document.getElementById('dk-tg').checked) {
+                console.log('Dark theme selected');
+            } else if (document.getElementById('sy-tg').checked) {
+                console.log('System theme selected');
+            } else if (document.getElementById('lg-tg').checked) {
+                console.log('Light theme selected');
+            }
+        });
+    });
+
+    document.getElementById('letterToggle').addEventListener('change', function() {
+        if (this.checked) {
+            console.log('Big letter size');
+        } else {
+            console.log('Normal letter size');
         }
     });
 });
-    
