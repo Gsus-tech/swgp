@@ -16,9 +16,20 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css">
-
+    <?php
+    $query = "SELECT notificaciones,tema,tLetra FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
+    $params = [$_SESSION['id']];
+    $preferences = Crud::executeResultQuery($query, $params, 'i');
+    if(count($preferences) > 0){
+        $tema = '';
+        if($preferences[0]['tema'] !== 'Sistema'){
+            $tema = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
+        }
+    }
+    
+    ?>
 </head>
-<body class="short">
+<body class="short <?php echo $tema; ?>">
     <?php 
     $data1 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$_SESSION['id']], 'i');
     $screenAccess = Controller\GeneralCrud\Crud::isInArray($data1, $_SESSION['id']);

@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         $id_usuario = $_SESSION['id']; 
         $password = Crud::antiNaughty($_POST['password']);
     
-        // Consulta para obtener los datos del usuario
         $query = "SELECT contrasena FROM tbl_usuarios WHERE id_usuario = ?";
         $stmt = $mysqli->prepare($query);
     
@@ -63,6 +62,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             echo json_encode(['success' => false, 'message' => 'Error en la consulta de base de datos.']);
         }
     }
+   
+    if(isset($_GET['setTheme']) && $_GET['setTheme'] == 'true'){
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id_usuario = $_SESSION['id'];
+        $theme = Crud::antiNaughty($_POST['theme']);
+    
+        if($theme === 'darkMode' || $theme === 'systemMode' || $theme === 'lightMode'){
+            $tema = 'Sistema';
+            if($theme === 'lightMode'){
+                $tema = 'Claro';
+            }else if($theme === 'darkMode'){
+                $tema = 'Oscuro';
+            }
+            $query = "UPDATE tbl_preferencias_usuario SET tema = ? WHERE id_usuario = ?";
+            $stmt = $mysqli->prepare($query);
+            
+            if ($stmt) {
+                $stmt->bind_param('si', $tema, $id_usuario);
+                $stmt->execute();
+                
+                if ($stmt->affected_rows > 0) {
+                    echo json_encode(['success' => true, 'message' => 'Tema actualizado correctamente.']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'No se encontró el usuario.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error en la consulta de base de datos.']);
+            }
+        }else{
+            echo json_encode(['success' => false, 'message' => 'Valor de tema seleccionado inválido.']);
+        }
+    }
     
     if(isset($_GET['updateData']) && $_GET['updateData'] == 'true'){
         $crud = new Crud();
@@ -75,12 +107,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         $stmt = $mysqli->prepare($query);
     
         if ($stmt) {
-            // Asegúrate de usar las variables correctas $name y $nickName
             $stmt->bind_param('ssi', $name, $nickName, $id_usuario);
             $stmt->execute();
     
             if ($stmt->affected_rows > 0) {
                 echo json_encode(['success' => true, 'message' => 'Datos actualizados correctamente.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+        }
+    }
+    
+    if(isset($_GET['notificationToggle']) && $_GET['notificationToggle'] == 'true'){
+        $id_usuario = $_SESSION['id'];
+        $query = "SELECT notificaciones FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
+        $params = [$id_usuario];
+        $currentSetting = Crud::executeResultQuery($query, $params, 'i');
+        $newSetting = $currentSetting[0]['notificaciones'] === 1 ? 0 : 1;
+
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        
+        $query = "UPDATE tbl_preferencias_usuario SET notificaciones = ? WHERE id_usuario = ?";
+        $stmt = $mysqli->prepare($query);
+    
+        if ($stmt) {
+            $stmt->bind_param('ii', $newSetting, $id_usuario);
+            $stmt->execute();
+    
+            if ($stmt->affected_rows > 0) {
+                echo json_encode(['success' => true, 'message' => 'Ajustes de notificaciones actualizados.']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
             }
@@ -99,7 +157,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         $stmt = $mysqli->prepare($query);
     
         if ($stmt) {
-            // Asegúrate de usar las variables correctas $name y $nickName
             $stmt->bind_param('si', $password, $id_usuario);
             $stmt->execute();
     

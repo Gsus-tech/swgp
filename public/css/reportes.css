@@ -101,3 +101,7 @@
 .f-mg{
     margin: 60px 0 40px 0;
 }
+
+.createdInputDiv-content .cTextarea-input{
+    height: 2.5rem;
+}

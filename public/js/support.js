@@ -145,7 +145,7 @@ function loadTicketTypes() {
 
                         <br>
                         <label for="newValue">Introduce el dato correcto:</label>
-                        <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" oninput="resetField(this)" placeholder="Tipo de corrección de datos" maxlength="90" autocomplete="off">
+                        <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" oninput="resetField(this)" placeholder="Dato correcto del campo seleccionado." maxlength="90" autocomplete="off">
                     </div>
                 </div>
                 `;

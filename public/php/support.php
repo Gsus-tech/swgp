@@ -15,8 +15,20 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/support.css">
+    <?php
+    $query = "SELECT notificaciones,tema,tLetra FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
+    $params = [$_SESSION['id']];
+    $preferences = Crud::executeResultQuery($query, $params, 'i');
+    if(count($preferences) > 0){
+        $tema = '';
+        if($preferences[0]['tema'] !== 'Sistema'){
+            $tema = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
+        }
+    }
+    
+    ?>
 </head>
-<body class="short">
+<body class="short <?php echo $tema; ?>">
     <div class="container">
 <?php
     include 'sidebar.php';

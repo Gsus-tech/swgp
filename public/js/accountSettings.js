@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         initialDiv();
     });
 
+    // document.getElementById('notificationToggle').addEventListener('click', toggleNotification);
+
     const valor = localStorage.getItem('accountSettings');
     const valor2 = localStorage.getItem('generalSettings');
     if(valor){
@@ -30,6 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         this.location.reload();
     }
 });
+
+function toggleNotification() {
+    const button = document.getElementById('notificationToggle');
+    button.classList.toggle('on');
+    button.textContent = button.classList.contains('on') ? 'ON' : 'OFF';
+}
 
 function initialDiv(){
     const url = "../controller/accountSettingsManager.php?getUserInfo=true";
@@ -51,7 +59,7 @@ function initialDiv(){
             <input disabled class="input" type="text" name="correo" value="${response.data.correo}" placeholder="Correo">
 
             <label class="bold" for="departamento">Departamento:</label><br>
-            <input disabled class="input" type="text" name="departamento" value="${response.data.departamento}" placeholder="Departamento"
+            <input disabled class="input" type="text" name="departamento" value="${response.data.departamento}" placeholder="Departamento">
 
             <div class="flexAndSpaceDiv">
                 <button class="generalBtnStyle btn-green dataUpdate" id="dataUpdate">Guardar Cambios</button>
@@ -60,7 +68,6 @@ function initialDiv(){
             `;
             
             setTimeout(function() {
-
                 document.getElementById('dataUpdate').addEventListener('click', updateData);
                 document.getElementById('passwordUpdate').addEventListener('click', updatePassword);
             }, 350);
@@ -188,16 +195,13 @@ function updateData(){
         }
     }
 }
+
 function updatePassword(){
     const attributes = [
         { name: 'title', value: 'Ingresa tu contraseña actual' },
         { name: 'type', value: 'password' }
     ];
     createInputBox('Actualizar contraseña', 'Ingresa tu contraseña actual', attributes, 'Confirmar', 'Cancelar').then(curPass => {
-        let data = new URLSearchParams({
-            password : curPass
-        });
-        let url = "../controller/accountSettingsManager.php?verify=true";
         fetch("../controller/accountSettingsManager.php?verify=true", {
             method: 'POST',
             body: new URLSearchParams({
@@ -364,3 +368,96 @@ function politicaContrasena(){
     
     return r;
 }
+
+function updateNotifications(){
+    let url = "../controller/accountSettingsManager.php?notificationToggle=true";
+    fetch(url, {
+        method: 'POST',
+        body: null,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log('Data: ',data.message)
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('notificationToggle').addEventListener('change', function() {
+        if (this.checked) {
+            createConfirmationDialog('Activar notificaciones', '¿Seguro que deseas activar las notificaciones?', 
+                updateNotifications,
+                ()=>{
+                    this.checked = false;
+                }, 'Activar'
+            );
+        } else {
+            createConfirmationDialog('Desactivar notificaciones', '¿Seguro que deseas desactivar las notificaciones?', 
+                updateNotifications,
+                ()=>{
+                    this.checked = true;
+                }, 'Desactivar'
+            );
+        }
+    });
+
+    function changeTheme(theme){
+        const url = `../controller/accountSettingsManager.php?setTheme=true`;
+        fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams({
+                theme : theme
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                document.body.style.cursor = 'progress';
+                setTimeout(() => {
+                    if(theme === 'darkMode'){
+                        document.body.classList.add(`darkMode`);
+                        document.body.classList.remove('lightMode'); 
+                    }
+                    else if(theme === 'lightMode'){
+                        document.body.classList.add(`lightMode`);
+                        document.body.classList.remove('darkMode'); 
+                    }
+                    else if(theme === 'systemMode'){
+                        document.body.classList.remove(`lightMode`);
+                        document.body.classList.remove('darkMode'); 
+                    }
+                    setTimeout(() => {
+                        document.body.style.cursor = 'default';
+                    }, 500);
+                }, 500);
+            }
+        });
+    }
+
+    document.querySelectorAll('input[name="themeToggle"]').forEach((theme) => {
+        theme.addEventListener('change', function() {
+            if (document.getElementById('dk-tg').checked) {
+                changeTheme('darkMode');
+            } else if (document.getElementById('sy-tg').checked) {
+                changeTheme('systemMode');
+            } else if (document.getElementById('lg-tg').checked) {
+                changeTheme('lightMode');
+            }
+        });
+    });
+
+    document.getElementById('letterToggle').addEventListener('change', function() {
+        if (this.checked) {
+            console.log('Big letter size');
+        } else {
+            console.log('Normal letter size');
+        }
+    });
+});

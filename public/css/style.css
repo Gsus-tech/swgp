@@ -18,6 +18,9 @@
     --divBgColorSys: #f0f4f7;
     --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
     --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
+    --kanban: #586fba;
+    --menuItemHoverBg: #ddd;
+    --tabColor: #373c89;
 }
 
 
@@ -28,7 +31,7 @@
 }
 
 body {
-    color: var(--black);
+    color: #111;
     padding: 0;
     margin: 0;
     position: relative;
@@ -71,7 +74,7 @@ body.loading {
 }
 
 .topBarText {
-    color: white;
+    color: var(--white);
 }
 
 .listProyectos {
@@ -595,6 +598,95 @@ body.loading {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
 }
 
+/* Toggle de 2 opciones */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 25px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--sysBgColor);
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--kanban);
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+    background-color: var(--white);
+}
+
+/* Toggle de 3 opciones */
+.tw-toggle {
+    background: #ccc;
+    display: inline-block;
+    padding: 2px 3px;
+    border-radius: 20px;
+    position:relative;
+    height: 25px;
+}
+
+.tw-toggle label {
+    text-align: center;
+    font-family: sans-serif;
+    display: inline-block;
+    position:relative;
+    z-index:2;
+    margin: 0;
+    text-align: center;
+    padding: 2px 3px;
+    font-size: 15px;
+}
+
+.tw-toggle input {
+    position: absolute;
+    z-index: 3;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.tw-toggle span {
+    height: 23px;
+    width: 23px;
+    line-height: 21px;
+    border-radius: 50%;
+    background:#fff;
+    display:block;
+    position:absolute;
+    left: 22px;
+    top: 1px;
+    transition:all 0.3s ease-in-out;
+}
+
 @media (max-width: 550px) {
     .header {
         width: 100%;
@@ -1005,5 +1097,44 @@ body.loading {
     }
     to {
         opacity: 0;
+    }
+}
+
+.darkMode{
+    --barColor1: #555;
+    --barColor2: #111;
+    --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
+    --sysBgColor: #636363;
+    --divBgColor: #222;
+    --divBgColorSys: #bbb;
+    --kanban: #222;
+    --menuColor: #222;
+    --menuItem: #fff;
+    --menuItemHover:#ccc;
+    --menuItemHoverBg: #121;
+    --black: white;
+    --rowSelected: #ccc;
+    div .sidebar nav ul li a .fa, div .sidebar div .fa{
+        color: #fff;
+    }
+}
+
+.lightMode{
+    --barColor1: #eee;
+    --barColor2: #ccc;
+    --white: #333;
+    --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
+    --sysBgColor: #fff;
+    --divBgColor: #ccc;
+    --divBgColorSys: #ccc;
+    --kanban: #ccc;
+    --menuColor: #eee;
+    --menuItem: #222;
+    --menuItemHover:#555;
+    --rowSelected: #eee;
+    div .sidebar nav ul li a .fa, div .sidebar div .fa{
+        color: #333;
     }
 }

@@ -145,9 +145,8 @@ function createInputBox(titleText, descriptionText, attributeArray, btnText1, bt
 
         nombrarReporte.classList.remove('hidden');
 
-        setTimeout(function(){
-            document.getElementById('textInputContent').focus();
-        }, 350)
+        
+        
     });
 }
 

@@ -56,7 +56,11 @@
     font-size: 11px;
 }
 .container .projectManagement .filterDiv .fa {  
-    font-size: 22px; 
+    font-size: 22px;
+    color: var(--black);
+} 
+.container .projectManagement .filterDiv .fa:hover {  
+    color: var(--hover-item);
 } 
 .container .projectManagement .filterDiv:hover { 
     background-color: #b0b0b0;   
@@ -119,12 +123,11 @@
 .container .main .editContainer {  
     width: 100%; 
     height: 100%;  
-    /* background-color: var(--white); */
+    color: var(--black);
 } 
 .container .main .editContainer .form-container {  
     width: 100%; 
     height: 100%;
-    /* background-color: var(--white);  */
 } 
 .container .main .editContainer .form-container .title {   
     display: flex;
@@ -148,6 +151,7 @@
 }
 .container .main .editContainer .form-container .editProject-form .fm-content div div div table{ 
     background-color: var(--white);
+    color: #333;
 }
  .container .main .editContainer .form-container .editProject-form .fm-content .section2 .manageMembersDiv h4{
     margin-bottom: 1.5rem;
@@ -203,7 +207,7 @@
     margin-top: 10px
 } 
 .container .main .editContainer .form-container .editProject-form .form-options .sumbit-editProject {  
-    background-color: #67676769;    
+    background-color: var(--navBtnHover);    
     border: none;   
     color: var(--white);
     padding: 8px 20px;  
@@ -213,6 +217,9 @@
     font-size: 16px; 
     border-radius: 15px; 
 } 
+.lightMode .container .main .editContainer .form-container .editProject-form .form-options .sumbit-editProject {  
+    color: white;
+}
 .container .main .editContainer .form-container .editProject-form .form-options .enabled {   
     background-color: #124734; 
     cursor: pointer;
@@ -229,6 +236,9 @@
     border-radius: 15px;   
     cursor: pointer;
 } 
+.lightMode .container .main .editContainer .form-container .editProject-form .form-options .close-editProject {  
+    color: white;
+}
 .container .main .editContainer .form-container .editProject-form .form-options .close-editProject:hover { 
     background-color: #94300e;  
     transition: background-color 0.3s, color 0.3s;
@@ -438,7 +448,7 @@
 }
 
 .addRowBtn {
-    color: var(--white);
+    color: white;
     padding: 3px 10px;
     margin-left: 10px;
     border-radius: 10px;
@@ -515,11 +525,13 @@
     position: fixed;  
     top: 4rem;   
     right: 1rem;   
-    background-color: var(--navBtnBg);  
+    background-color: var(--navBtnBg);
+    color: var(--black);
     padding: 10px;  
     border-radius: 20px;   
     justify-content: space-between;
 } 
+
 .detailsContainer .optionsDiv .fa-edit
 {  
     margin: 0 9px 0 10px;
@@ -534,8 +546,15 @@
     font-size: 18px;
 }  
 .detailsContainer .optionsDiv:hover { 
-    background-color: var(--menuColor);
+    background-color: #b0b0b0;
+    transition: background-color 0.3s, color 0.3s;
 }  
+
+.detailsContainer .optionsDiv a .fa:hover {  
+    color: var(--hover-items);  
+    transition: background-color 0.3s, color 0.3s; 
+} 
+
 .detailsContainer div div h3 {   
     margin: 1rem 0 0.5rem 0;
 }
@@ -602,16 +621,17 @@
     }
 
     .detailsContainer {    
-        background-color: #3333338a;    
+        background-color: var(--sysBgColor);
         padding-top: 1rem;     
         position: relative;         
         width: -webkit-fill-available;  
         height: fit-content;    
         min-height: 100%;
+        color: var(--black);
     }   
     .detailsContainer .detailsContainerTitle {     
         margin: 0 auto;      
-        background-color: var(--white);         
+        background-color: var(--divBgColor);         
         padding: 1rem 0;    
     }     
      .detailsContainer .detailsContainerTitle .name h1{
@@ -637,13 +657,11 @@
     }  
     .detailsContainer .detailsContainerDiv {   
         margin: 10px auto;         
-        background-color: var(--white);       
+        background-color: var(--divBgColor);
         padding: 1px 2.5rem 1em 2.5rem;    
-    }     
-    .detailsContainer .optionsDiv { 
-        background-color: var(--menuColor);     
     }
 }
+
 
 @media screen and (min-width: 800px) {
 
@@ -861,45 +879,56 @@
 }
 
 @media (max-width: 650px) {
-    td:nth-of-type(1) {
-        display:none;
-    }
+    .projectManagement{
+        td:nth-of-type(1) {
+            display:none;
+        }
 
-    td:nth-of-type(2):before {
-        content: "Nombre del proyecto";
-    }
+        td:nth-of-type(2):before {
+            content: "Nombre del proyecto";
+        }
 
-    td:nth-of-type(3):before {
-        content: "Departamento asignado";
-    }
+        td:nth-of-type(3):before {
+            content: "Departamento asignado";
+        }
 
-    td:nth-of-type(4) {
-        display:none;
-    }
+        td:nth-of-type(4) {
+            display:none;
+        }
 
-    td:nth-of-type(5) {
-        display:none;
-    }
+        td:nth-of-type(5) {
+            display:none;
+        }
 
-    td:nth-of-type(6):before {
-        content: "Acciones";
+        td:nth-of-type(6):before {
+            content: "Acciones";
+        }
     }
 
     .editContainer div form div div div .table {
         table {     
             width: 95%;  
         }    
-        .members-list td:nth-of-type(1):before {   
+        .members-list td:nth-of-type(1):before {
             content: "Nombre";    
         }    
         .members-list td:nth-of-type(2):before {     
             content: "Cargo";   
-        }  
+        } 
+        .members-list td:nth-of-type(3):before {     
+            content: "Acciones";   
+        } 
         .objectiveG-list td:nth-of-type(1):before {    
-            content: "No.";    
+            content: "Descripción";    
         }      
         .objectiveG-list td:nth-of-type(2):before {   
-            content: "Descripción";   
+            content: "Acciones";   
+        }
+        .objectiveE-list td:nth-of-type(1):before {    
+            content: "Descripción";    
+        }      
+        .objectiveE-list td:nth-of-type(2):before {   
+            content: "Acciones";   
         }
     }
      
@@ -927,3 +956,4 @@
     width: 100%;
     box-sizing: border-box;
 }
+

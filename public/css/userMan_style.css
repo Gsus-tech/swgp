@@ -190,6 +190,7 @@
     display: inline-block;
     border-radius: 25px;
     background-color: var(--navBtnBg);
+    color: var(--black);
     padding: 3px 1rem 7px 1rem;
     margin-right: 2.5rem;
     margin-top: .5rem;
