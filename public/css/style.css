@@ -18,6 +18,9 @@
     --divBgColorSys: #f0f4f7;
     --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
     --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
+    --kanban: #586fba;
+    --menuItemHoverBg: #ddd;
+    --tabColor: #373c89;
 }
 
 
@@ -28,7 +31,7 @@
 }
 
 body {
-    color: var(--black);
+    color: #111;
     padding: 0;
     margin: 0;
     position: relative;
@@ -71,7 +74,7 @@ body.loading {
 }
 
 .topBarText {
-    color: white;
+    color: var(--white);
 }
 
 .listProyectos {
@@ -616,7 +619,7 @@ body.loading {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--sysBgColor);
     transition: 0.4s;
     border-radius: 34px;
 }
@@ -628,7 +631,7 @@ body.loading {
     width: 18px;
     left: 4px;
     bottom: 4px;
-    background-color: white;
+    background-color: var(--kanban);
     transition: 0.4s;
     border-radius: 50%;
 }
@@ -639,6 +642,7 @@ input:checked + .slider {
 
 input:checked + .slider:before {
     transform: translateX(18px);
+    background-color: var(--white);
 }
 
 /* Toggle de 3 opciones */
@@ -1093,5 +1097,44 @@ input:checked + .slider:before {
     }
     to {
         opacity: 0;
+    }
+}
+
+.darkMode{
+    --barColor1: #555;
+    --barColor2: #111;
+    --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
+    --sysBgColor: #636363;
+    --divBgColor: #222;
+    --divBgColorSys: #bbb;
+    --kanban: #222;
+    --menuColor: #222;
+    --menuItem: #fff;
+    --menuItemHover:#ccc;
+    --menuItemHoverBg: #121;
+    --black: white;
+    --rowSelected: #ccc;
+    div .sidebar nav ul li a .fa, div .sidebar div .fa{
+        color: #fff;
+    }
+}
+
+.lightMode{
+    --barColor1: #eee;
+    --barColor2: #ccc;
+    --white: #333;
+    --systemSideBarColor1:linear-gradient(90deg, var(--barColor1) 10%, var(--barColor2) 100%);
+    --systemSideBarColor2:linear-gradient(90deg, var(--barColor2) 10%, var(--barColor1) 100%);
+    --sysBgColor: #fff;
+    --divBgColor: #ccc;
+    --divBgColorSys: #ccc;
+    --kanban: #ccc;
+    --menuColor: #eee;
+    --menuItem: #222;
+    --menuItemHover:#555;
+    --rowSelected: #eee;
+    div .sidebar nav ul li a .fa, div .sidebar div .fa{
+        color: #333;
     }
 }

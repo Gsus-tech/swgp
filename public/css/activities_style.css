@@ -5,7 +5,8 @@
 .filterDiv {  
     display: inline-block;  
     border-radius: 25px;    
-    background-color: var(--navBtnBg);   
+    background-color: var(--navBtnBg);
+    color: var(--black);
     padding: 3px 1rem 7px 1rem; 
     margin-right: 2.5rem; 
     margin-top: 0.5rem;   
@@ -16,6 +17,7 @@
 .filterDiv:hover { 
     background-color: #b0b0b0;   
     transition: background-color 0.3s, color 0.3s;
+    color: var(--hover-items);
 }
 .filterDiv .fa {  
     font-size: 22px; 
@@ -46,6 +48,7 @@
     padding: 1px 1rem 5px 1rem;
     border-radius: 20px;
     background-color: var(--divBgColor);
+    color: var(--white);
     padding: 1rem 20px;
 }
 
@@ -75,7 +78,8 @@
 
 .container .main .activity-form {
     margin: 4rem auto 0 auto;
-    background-color: #fff; 
+    background-color: var(--barColor1); 
+    color: var(--white);
     border-radius: 1em;  
     padding: 10px 2rem;    
     transition: width 0.3s ease-in-out;

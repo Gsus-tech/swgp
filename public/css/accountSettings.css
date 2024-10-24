@@ -15,10 +15,11 @@
 .tab {
     padding: 6px 20px;
     cursor: pointer;
-    color: white;
+    color: var(--menuItem);
     margin-left: 5px;
     font-size: 1rem;
-    background-color: #69ace7;
+    background-color: var(--menuColor);
+    opacity: 60%;
     transition: background-color 0.5s ease;
 }
 
@@ -29,8 +30,9 @@
 }
 
 .active {
-    background-color: #e2e0e0;
-    color: var(--barColor2);
+    background-color: var(--divBgColorSys);
+    opacity: 100%;
+    color: var(--black);
     border: 4px ridge rgb(170 170 170 / 60%);
 }
 
@@ -49,6 +51,7 @@
     padding: 1rem;
     border-radius: 20px;
     background-color: var(--divBgColor);
+    color: var(--black);
     max-width: 600px;
 }
 
@@ -120,7 +123,7 @@
 }
 
 .tw-toggle input[value="light"]:checked ~ span{
-    background:#fff;
+    background:#ccc;
     color: #333;
     left: 51px;
 }
@@ -136,6 +139,10 @@
 .tw-toggle input {
     margin-top: 4px;
     margin-left:5px;
+}
+
+.tw-toggle {
+    background-color: var(--sysBgColor);
 }
 
 .switch-container {
@@ -158,11 +165,12 @@
 }
 
 .ltInput:checked + .slider {
-    background-color: #ccc;
+    background-color: var(--sysBgColor);
 }
 
 .ltInput:checked + .slider:before {
     transform: translateX(24px);
+    background-color: var(--kanban);
 }
 
 .lbl1{

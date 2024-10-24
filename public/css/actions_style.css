@@ -24,7 +24,8 @@
 .activityStatusDiv p {
     margin: 0;
     font-size: 1rem;
-    color: #333;
+    color: var(--black);
+    opacity: 50%;
 }
 
 .comboBox{
