@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         initialDiv();
     });
 
+    // document.getElementById('notificationToggle').addEventListener('click', toggleNotification);
+
     const valor = localStorage.getItem('accountSettings');
     const valor2 = localStorage.getItem('generalSettings');
     if(valor){
@@ -30,6 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         this.location.reload();
     }
 });
+
+function toggleNotification() {
+    const button = document.getElementById('notificationToggle');
+    button.classList.toggle('on');
+    button.textContent = button.classList.contains('on') ? 'ON' : 'OFF';
+}
 
 function initialDiv(){
     const url = "../controller/accountSettingsManager.php?getUserInfo=true";
@@ -51,7 +59,7 @@ function initialDiv(){
             <input disabled class="input" type="text" name="correo" value="${response.data.correo}" placeholder="Correo">
 
             <label class="bold" for="departamento">Departamento:</label><br>
-            <input disabled class="input" type="text" name="departamento" value="${response.data.departamento}" placeholder="Departamento"
+            <input disabled class="input" type="text" name="departamento" value="${response.data.departamento}" placeholder="Departamento">
 
             <div class="flexAndSpaceDiv">
                 <button class="generalBtnStyle btn-green dataUpdate" id="dataUpdate">Guardar Cambios</button>
@@ -60,7 +68,6 @@ function initialDiv(){
             `;
             
             setTimeout(function() {
-
                 document.getElementById('dataUpdate').addEventListener('click', updateData);
                 document.getElementById('passwordUpdate').addEventListener('click', updatePassword);
             }, 350);
@@ -188,16 +195,13 @@ function updateData(){
         }
     }
 }
+
 function updatePassword(){
     const attributes = [
         { name: 'title', value: 'Ingresa tu contraseña actual' },
         { name: 'type', value: 'password' }
     ];
     createInputBox('Actualizar contraseña', 'Ingresa tu contraseña actual', attributes, 'Confirmar', 'Cancelar').then(curPass => {
-        let data = new URLSearchParams({
-            password : curPass
-        });
-        let url = "../controller/accountSettingsManager.php?verify=true";
         fetch("../controller/accountSettingsManager.php?verify=true", {
             method: 'POST',
             body: new URLSearchParams({
@@ -364,3 +368,16 @@ function politicaContrasena(){
     
     return r;
 }
+
+document.querySelectorAll('input[name="switch"]').forEach((radio) => {
+    radio.addEventListener('change', function() {
+        if (document.getElementById('switch-left').checked) {
+            console.log('Left option selected');
+        } else if (document.getElementById('switch-middle').checked) {
+            console.log('Middle option selected');
+        } else if (document.getElementById('switch-right').checked) {
+            console.log('Right option selected');
+        }
+    });
+});
+    

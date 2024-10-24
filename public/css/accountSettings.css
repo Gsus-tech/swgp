@@ -95,6 +95,110 @@
     width: calc(100% - 45px);
 }
 
+.switch {
+    float: left;
+}
+
+.controlSection{
+    display:flex;
+    justify-content:space-between;
+}
+
+.sectionDiv{
+    padding: 10px 20px;
+}
+
+.tw-toggle input[value="dark"]:checked ~ span{
+    background:#333;
+    color:#fff;
+    left:2px;
+}
+
+.tw-toggle input[value="system"]:checked ~ span{
+    background: var(--barColor1);
+    left: 26px;
+}
+
+.tw-toggle input[value="light"]:checked ~ span{
+    background:#fff;
+    color: #333;
+    left: 51px;
+}
+
+.tw-toggle input[value="dark"]:checked + label,.tw-toggle input[value="system"]:checked + label{
+    color:#fff;
+}
+
+.tw-toggle input[value="light"]:checked + label{
+    color:#333;
+}
+
+.tw-toggle input {
+    margin-top: 4px;
+    margin-left:5px;
+}
+
+.switch-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.text-option {
+    font-size: 14px;
+}
+
+.letterSwitch{
+    width: 55px;
+    min-width: 55px;
+}
+
+.letterSwitch .slider:before{
+    width: 23px;
+}
+
+.ltInput:checked + .slider {
+    background-color: #ccc;
+}
+
+.ltInput:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.lbl1{
+    display: block;
+    cursor: default;
+}
+
+.lbl2{
+    display: none;
+    cursor: pointer;
+}
+
+.preferenceOptions{
+    margin-top: 1.3rem;
+}
+
+@media screen and (max-width: 399px) {
+    .lbl2{
+        display: block;
+    }
+    .lbl1{
+        display: none;
+    }
+    .controlSection{
+        display:block;
+    }
+
+    .section{
+        min-height: 5rem;
+    }
+
+    .switch, .tw-toggle{
+        margin-top:5px;
+    }
+}
+
 @media screen and (max-width: 599px) {
     .section .flexAndSpaceDiv{
         display: grid;

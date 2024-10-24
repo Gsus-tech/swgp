@@ -595,6 +595,94 @@ body.loading {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
 }
 
+/* Toggle de 2 opciones */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 25px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(18px);
+}
+
+/* Toggle de 3 opciones */
+.tw-toggle {
+    background: #ccc;
+    display: inline-block;
+    padding: 2px 3px;
+    border-radius: 20px;
+    position:relative;
+    height: 25px;
+}
+
+.tw-toggle label {
+    text-align: center;
+    font-family: sans-serif;
+    display: inline-block;
+    position:relative;
+    z-index:2;
+    margin: 0;
+    text-align: center;
+    padding: 2px 3px;
+    font-size: 15px;
+}
+
+.tw-toggle input {
+    position: absolute;
+    z-index: 3;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.tw-toggle span {
+    height: 23px;
+    width: 23px;
+    line-height: 21px;
+    border-radius: 50%;
+    background:#fff;
+    display:block;
+    position:absolute;
+    left: 22px;
+    top: 1px;
+    transition:all 0.3s ease-in-out;
+}
+
 @media (max-width: 550px) {
     .header {
         width: 100%;
