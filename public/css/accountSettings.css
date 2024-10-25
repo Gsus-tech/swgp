@@ -1,3 +1,13 @@
+:root{
+    --sysPostion: 26px;
+    --ltPostion: 51px;
+}
+
+.bigFont{
+    --sysPostion: 29px;
+    --ltPostion: 57px;
+}
+
 .topBar {
     display: block;
     justify-content: center;
@@ -17,7 +27,7 @@
     cursor: pointer;
     color: var(--menuItem);
     margin-left: 5px;
-    font-size: 1rem;
+    font-size: var(--px16);
     background-color: var(--menuColor);
     opacity: 60%;
     transition: background-color 0.5s ease;
@@ -61,6 +71,7 @@
     background-color: #d5d5d5;
     transition: padding-left 0.3s ease;
     transition: background-color .25s ease-in-out;
+    font-size: var(--px14);
 }
 
 .fm-content .input:focus{
@@ -119,13 +130,13 @@
 
 .tw-toggle input[value="system"]:checked ~ span{
     background: var(--barColor1);
-    left: 26px;
+    left: var(--sysPostion);
 }
 
 .tw-toggle input[value="light"]:checked ~ span{
     background:#ccc;
     color: #333;
-    left: 51px;
+    left: var(--ltPostion);
 }
 
 .tw-toggle input[value="dark"]:checked + label,.tw-toggle input[value="system"]:checked + label{
@@ -152,7 +163,7 @@
 }
 
 .text-option {
-    font-size: 14px;
+    font-size: var(--px14);
 }
 
 .letterSwitch{

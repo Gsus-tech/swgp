@@ -10,17 +10,19 @@
     padding: 3px 1rem 7px 1rem; 
     margin-right: 2.5rem; 
     margin-top: 0.5rem;   
-    margin-left: 1rem;  
-    margin-bottom: 10px;    
-    font-size: 11px;
+    margin-left: 1rem;
+    margin-bottom: 10px;
 } 
 .filterDiv:hover { 
     background-color: #b0b0b0;   
     transition: background-color 0.3s, color 0.3s;
     color: var(--hover-items);
 }
+.filterDiv div {
+    font-size: var(--px14);
+}
 .filterDiv .fa {  
-    font-size: 22px; 
+    font-size: var(--px21);
 }
 
 .closedFilterDiv {
@@ -56,12 +58,12 @@
     padding:6px;
 }
 .addBtn .fa{
-    font-size: 18px;
+    font-size: var(--px18);
 }
 .addBtn:hover{
     background-color:var(--hover-AddBtn);
     .fa{
-        font-size: 19px;
+        font-size: var(--px19);
     }
 }
 
@@ -100,7 +102,7 @@
 .formContainer .title {
     display: flex;
     margin-top: 1.33em;
-    font-size: 16px;
+    font-size: var(--px16);
     font-weight: bold;
 }
 
@@ -140,7 +142,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 15px;
 }
 
@@ -157,7 +159,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 15px;
     cursor: pointer;
 }
@@ -165,7 +167,7 @@
 
 .input{
     margin: 10px auto 0 auto;
-    font-size: 15px;
+    font-size: var(--px15);
 }
 
 .textarea {
@@ -179,7 +181,7 @@
     margin: 8px 0;
     box-sizing: border-box;
     font-family: sans-serif;
-    font-size: 15px;
+    font-size: var(--px15);
     resize: none;
     background-color: white;
 }
@@ -203,7 +205,7 @@
     padding: 10px 20px;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: var(--px16);
     margin: 10px auto;
     border: 1.5mm ridge #e5dddd;
 }
@@ -236,7 +238,7 @@
     border: none;
     padding: 8px 12px;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: var(--px12);
     cursor: pointer;
     transition: background-color 0.3s ease; 
 }
@@ -266,7 +268,7 @@
 
 @media screen and (min-width: 800px) {
     .filterDiv { 
-        font-size: 13px;      
+        font-size: var(--px13);    
         display: flex;   
         justify-content: space-between;   
         align-items: center;     

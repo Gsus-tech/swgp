@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    if(document.body.classList.contains('bigFont') || document.body.classList.contains('lightMode') || document.body.classList.contains('darkMode')){
+        addResetPreferencesBtn();
+    }
+
     document.getElementById('generalTab').addEventListener('click', function() {
         setActiveTab('generalTab');
         localStorage.setItem('generalSettings', 'true');
@@ -32,6 +37,33 @@ document.addEventListener('DOMContentLoaded', function() {
         this.location.reload();
     }
 });
+
+function addResetPreferencesBtn(){
+    const btnDiv = document.getElementById('preferenceOptions');
+    if(!document.getElementById('resetPreferencesBtn')){
+        btnDiv.innerHTML = `
+        <button class="generalBtnStyle btn-blue resetBtn" id="resetPreferencesBtn">Reestablecer configuración</button>
+        `;
+        setTimeout(function() {
+            document.getElementById('resetPreferencesBtn').addEventListener('click', resetPreferences);
+        }, 350);
+    }
+}
+
+function resetPreferences(){
+    const url = "../controller/accountSettingsManager.php?resetPreferenceValues=true";
+    makeAjaxRequest(url, 'POST', null, 
+        function(response){
+            if(response.success){
+                console.log(response.message)
+                location.reload();
+            }
+        },
+        ()=>{
+            alert('Ocurrió un error al reestablecer las preferencias de usuario. Por favor, intenta de nuevo más tarde.');
+        }
+    );
+}
 
 function toggleNotification() {
     const button = document.getElementById('notificationToggle');
@@ -423,15 +455,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     if(theme === 'darkMode'){
                         document.body.classList.add(`darkMode`);
-                        document.body.classList.remove('lightMode'); 
+                        document.body.classList.remove('lightMode');
+                        addResetPreferencesBtn();
                     }
                     else if(theme === 'lightMode'){
                         document.body.classList.add(`lightMode`);
                         document.body.classList.remove('darkMode'); 
+                        addResetPreferencesBtn();
                     }
                     else if(theme === 'systemMode'){
                         document.body.classList.remove(`lightMode`);
                         document.body.classList.remove('darkMode'); 
+                        if(!document.body.classList.contains('bigFont')) {
+                            if(document.getElementById('resetPreferencesBtn')){
+                                document.getElementById('resetPreferencesBtn').remove();
+                            }
+                        }
                     }
                     setTimeout(() => {
                         document.body.style.cursor = 'default';
@@ -453,11 +492,51 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function changeLetterSize(fontSize){
+        const url = `../controller/accountSettingsManager.php?setFontSize=true`;
+        fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams({
+                fontSize : fontSize
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                document.body.style.cursor = 'progress';
+                setTimeout(() => {
+                    if(fontSize === 'largeSize'){
+                        document.body.classList.add(`bigFont`);
+                        addResetPreferencesBtn();
+                        console.log('Fuente grande');
+                    }
+                    else if(fontSize === 'normalSize'){
+                        document.body.classList.remove('bigFont');
+                        if(!document.body.classList.contains('lighMode') && !document.body.classList.contains('darkMode')) {
+                            if(document.getElementById('resetPreferencesBtn')){
+                                document.getElementById('resetPreferencesBtn').remove();
+                            }
+                        }
+                        console.log('Fuente Normal');
+                    }
+                    setTimeout(() => {
+                        document.body.style.cursor = 'default';
+                    }, 500);
+                }, 500);
+            }else{
+                console.log(data.message);
+            }
+        });
+    }
+
     document.getElementById('letterToggle').addEventListener('change', function() {
         if (this.checked) {
-            console.log('Big letter size');
+            changeLetterSize('largeSize')
         } else {
-            console.log('Normal letter size');
+            changeLetterSize('normalSize')
         }
     });
 });

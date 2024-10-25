@@ -21,6 +21,29 @@
     --kanban: #586fba;
     --menuItemHoverBg: #ddd;
     --tabColor: #373c89;
+
+
+    /* Tamaños px/rem */
+    --px30: 30px;
+    --px29: 29px;
+    --px28: 28px;
+    --px27: 27px;
+    --px26: 26px;
+    --px25: 25px;
+    --px24: 24px;
+    --px23: 23px;
+    --px22: 22px;
+    --px21: 21px;
+    --px20: 20px;
+    --px19: 19px;
+    --px18: 18px;
+    --px17: 17px;
+    --px16: 16px;
+    --px15: 15px;
+    --px14: 14px;
+    --px13: 13px;
+    --px12: 12px;
+    --px11: 11px;
 }
 
 
@@ -38,7 +61,7 @@ body {
     min-height: 100vh;
     overflow: hidden;
     font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
+    font-size: var(--px14);
 }
 
 body.loading {
@@ -68,7 +91,7 @@ body.loading {
     margin: .5rem 0;
     margin-right: 1rem;
     display: grid;
-    font-size: 11px;
+    font-size: var(--px11);
     justify-content:end;
     align-items: center;
 }
@@ -78,14 +101,14 @@ body.loading {
 }
 
 .listProyectos {
-    font-size: 11px;
+    font-size: var(--px11);
     max-width: 5rem;
 }
 
 .container .main .header h4 {
     padding-left: 2.5rem;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 14px;
+    font-size: var(--px14);
     color: var(--white);
 }
 
@@ -169,7 +192,7 @@ body.loading {
 }
 
 .container .sidebar nav ul li a i span {
-    font-size: 12px;
+    font-size: var(--px12);
 }
 
 .container .sidebar nav ul li a .fa {
@@ -216,7 +239,7 @@ body.loading {
     .name h4 {
         padding: 0;
         margin: 0;
-        font-size: 12px;
+        font-size: var(--px12);
     }
 }
 
@@ -227,7 +250,7 @@ body.loading {
     }
 
     .logout a {
-        font-size: 1rem;
+        font-size: var(--px16);
         text-decoration: none;
         color: var(--white);
     }
@@ -276,7 +299,7 @@ body.loading {
 }
 
 .accountMenu div a i span {
-    font-size: 13px;
+    font-size: var(--px13);
     font-family: sans-serif;
     margin-left: 8px;
 }
@@ -320,7 +343,7 @@ body.loading {
 .dateCalendar, .comboBox{
     margin-top: 5px;
     padding: 0.5rem;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 5px;
     border: 1px solid #ccc;
     background-color: white;
@@ -356,13 +379,13 @@ body.loading {
 
 .no-project-container h2 {
     color: #333;
-    font-size: 24px;
+    font-size: var(--px24);
     margin-bottom: 1rem;
 }
 
 .no-project-container p {
     color: #555;
-    font-size: 16px;
+    font-size: var(--px16);
     margin-bottom: 1rem;
 }
 
@@ -373,7 +396,7 @@ body.loading {
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
     text-decoration: none;
-    font-size: 16px;
+    font-size: var(--px16);
     transition: background-color 0.3s ease;
 }
 
@@ -408,13 +431,13 @@ body.loading {
 
 .confirmation-content h3 {
     margin-top: 0;
-    font-size: 1.5rem;
+    font-size: var(--px24);
     color: #333;
 }
 
 .confirmation-content pre {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 1.1rem;
+    font-size: var(--px17);
     color: #555;
     margin: 1rem 0;
     text-wrap: wrap;
@@ -429,7 +452,7 @@ body.loading {
 
 .confirmation-buttons button {
     padding: 0.5rem 1rem;
-    font-size: 1rem;
+    font-size: var(--px16);
     cursor: pointer;
     border: none;
     border-radius: 4px;
@@ -500,14 +523,14 @@ body.loading {
 }
 
 .createdInputDiv-content h3 {
-    font-size: 1.5rem;
+    font-size: var(--px24);
     color: #333;
     margin-bottom: 1rem;
 }
 
 .createdInputDiv-content p {
     display: block;
-    font-size: 1rem;
+    font-size: var(--px16);
     color: #555;
     margin-bottom: 0.5rem;
     text-align: left;
@@ -518,7 +541,7 @@ body.loading {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
-    font-size: 1rem;
+    font-size: var(--px16);
     margin-bottom: 1.5rem;
     outline: none;
     height:3rem;
@@ -532,7 +555,7 @@ body.loading {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ddd;
-    font-size: 1rem;
+    font-size: var(--px16);
     margin-bottom: 1.5rem;
     outline: none;
     height: 5rem;
@@ -553,7 +576,7 @@ body.loading {
     padding: 0.8rem 1rem;
     border-radius: 8px;
     border: none;
-    font-size: 1rem;
+    font-size: var(--px16);
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
@@ -586,7 +609,7 @@ body.loading {
     border: none;
     border-radius: 4px;
     padding: 6px 12px; 
-    font-size: 13px;
+    font-size: var(--px13);
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -664,7 +687,7 @@ input:checked + .slider:before {
     margin: 0;
     text-align: center;
     padding: 2px 3px;
-    font-size: 15px;
+    font-size: var(--px15);
 }
 
 .tw-toggle input {
@@ -740,7 +763,7 @@ input:checked + .slider:before {
     }
 
     .container .sidebar nav ul li a i span {
-        font-size: 15px;
+        font-size: var(--px15);
     }
 
     .container .sidebar .sidebartop .sidebar-logo {
@@ -757,7 +780,7 @@ input:checked + .slider:before {
     }
 
     .container .sidebar nav ul li a i {
-        font-size: 15px;
+        font-size: var(--px15);
     }
 
     .container .main {
@@ -770,11 +793,11 @@ input:checked + .slider:before {
         width: calc(100% - 11rem);
     }
     .container .main .header h4 {
-        font-size: 16px;
+        font-size: var(--px16);
     }
 
     .container .sidebar .account .details .name h4 {
-        font-size: 15px;
+        font-size: var(--px15);
         font-weight: normal;
     }
 }
@@ -834,15 +857,15 @@ input:checked + .slider:before {
     }
 
     .accountMenu div a i {
-        font-size: 13px;
+        font-size: var(--px13);
     }
 
     .accountMenu div a i:hover {
-        font-size: 13.5px;
+        font-size: 105%;
     }
 
     .fa {
-        font-size: 1rem;
+        font-size: var(--px16);
     }
 
     .main {
@@ -857,11 +880,11 @@ input:checked + .slider:before {
 }
 
 .short .sidebar .account .logout .fa {
-    font-size: 1rem;
+    font-size: var(--px16);
 }
 
 .short .fa {
-    font-size: 1rem;
+    font-size: var(--px16);
 }
 
 .short .main {
@@ -892,7 +915,7 @@ input:checked + .slider:before {
     padding: 10px 25px;
     text-align: center;
     text-decoration: none;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 15px;
     cursor: pointer;
 }
@@ -934,7 +957,7 @@ input:checked + .slider:before {
     padding: 5px 10px;
     text-align: center;
     text-decoration: none;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 15px;
 }
 
@@ -944,7 +967,7 @@ input:checked + .slider:before {
 
 .comboBox {
     height: 30px;
-    font-size: 14px;
+    font-size: var(--px14);
     border-radius: 10px;
     padding: 2px 7px;
 }
@@ -978,7 +1001,7 @@ input:checked + .slider:before {
 
 
 .dropDownFilter {
-    font-size: 11px;
+    font-size: var(--px11);
 }
 
 
@@ -986,7 +1009,7 @@ input:checked + .slider:before {
 @media screen and (min-width: 800px) {
     .dropDownFilter {
         margin: 0 0;
-        font-size: 13px;
+        font-size: var(--px13);
     }
 
     .searchingMode {
@@ -1027,7 +1050,7 @@ input:checked + .slider:before {
 
 @media screen and (min-width: 1100px) {
     .dropDownFilter {
-        font-size: 15px;
+        font-size: var(--px15);
     }
 
     .search-bar {
@@ -1137,4 +1160,27 @@ input:checked + .slider:before {
     div .sidebar nav ul li a .fa, div .sidebar div .fa{
         color: #333;
     }
+}
+
+.bigFont{
+    --px30: 32px;
+    --px29: 31px;
+    --px28: 30px;
+    --px27: 29px;
+    --px26: 28px;
+    --px25: 27px;
+    --px24: 26px;
+    --px23: 25px;
+    --px22: 24px;
+    --px21: 23px;
+    --px20: 22px;
+    --px19: 21px;
+    --px18: 20px;
+    --px17: 19px;
+    --px16: 18px;
+    --px15: 17px;
+    --px14: 16px;
+    --px13: 15px;
+    --px12: 14px;
+    --px11: 13px;
 }

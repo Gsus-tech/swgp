@@ -68,7 +68,7 @@
     margin: auto;
     padding: .3px 1px;
     border-radius: 25px;
-    font-size: 15px; 
+    font-size: var(--px15);
 }
 .dropdown-item .fa-close{
     background-color: #00000000;
@@ -78,7 +78,7 @@
     /* display: inline-block;
     float: left; */
     padding: 0.25em 0.4em;
-    font-size: 0.75em;
+    font-size: var(--px12);
     font-weight: 700;
     line-height: 1;
     color: #fff;
@@ -97,7 +97,8 @@
 
 .text-bg-secondary { background-color: #6c757d; color: #fff; }
 .card-body h5{
-    font-size: 14px;
+    font-size: var(--px14);
+    margin-bottom: 10px;
 }
 .text-body {
     color: #333;
@@ -138,7 +139,7 @@
     background-color: var(--menuColor);
     width: fit-content;
     padding: 3px 0;
-    font-size: 12px;
+    font-size: var(--px12);
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 1;
@@ -167,7 +168,7 @@
     padding-top: 3px; 
     padding-bottom: 5px;  
     margin: 2px 5px;  
-    font-size: 15px;   
+    font-size: var(--px15);   
     color: var(--black);
 }  
 

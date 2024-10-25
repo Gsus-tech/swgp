@@ -20,7 +20,7 @@
 
 .container .main .userManagement .addBtn .add-user-btn {
     padding: 5px 5px;
-    font-size: 20px;
+    font-size: var(--px20);
 }
 
 .container .main .userManagement .addBtn .add-user-btn:hover {
@@ -64,7 +64,7 @@
 .container .main .userManagement .addUser-form .form-bg .form-container .fm-content .title {
     display: flex;
     margin-top: 1.33em;
-    font-size: 16px;
+    font-size: var(--px16);
     font-weight: bold;
 }
 
@@ -81,7 +81,7 @@
 
 .container .main .userManagement .addUser-form .form-bg .form-container .fm-content .fa {
     position: inline;
-    font-size: 20px;
+    font-size: var(--px20);
     display: inline;
     transition: background-color .25s ease-in-out;
     color: var(--black);
@@ -112,7 +112,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 15px;
 }
 
@@ -129,7 +129,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: var(--px16);
     border-radius: 15px;
     cursor: pointer;
 }
@@ -158,7 +158,7 @@
 .container .userManagement .nav-buttons i {
     padding: 5px;
     margin: 2px 5px;
-    font-size: 22px;
+    font-size: var(--px22);
     color: var(--black);
 }
 
@@ -196,11 +196,11 @@
     margin-top: .5rem;
     margin-left: 1rem;
     margin-bottom: 10px;
-    font-size: 11px;
+    font-size: var(--px11);
 }
 
 .container .userManagement .filterDiv .fa {
-    font-size: 22px;
+    font-size: var(--px22);
 }
 
 .closedFilterDiv {
@@ -257,13 +257,17 @@
     position: revert;
 }
 
+input{
+    font-size: var(--px14);
+}
+
 @media screen and (min-width: 700px) {
     .container .main .userManagement .addBtn .add-user-btn {
-            font-size: 22.5px;
+            font-size: var(--px22);
     }
 
     .container .userManagement .filterDiv {
-        font-size: 13px;
+        font-size: var(--px13);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -280,7 +284,7 @@
 
     .container .userManagement .table {
         .users-list {
-            font-size: 13px;
+            font-size: var(--px14);
         }
 
         .rowID {
@@ -337,7 +341,7 @@
 
 @media screen and (min-width: 1100px) {
     .container .main .userManagement .addBtn .add-user-btn {
-            font-size: 25px;
+            font-size: var(--px25);
     }
 
     .openFilterDiv {
@@ -351,13 +355,13 @@
 
     .container .userManagement .filterDiv,
     .container .userManagement .nav-buttons {
-        font-size: 15px;
+        font-size: var(--px15);
         flex-direction: row;
     }
 
     .container .userManagement .table {
         .users-list {
-            font-size: 15px;
+            font-size: var(--px15);
         }
 
         .rowID {
@@ -412,11 +416,11 @@
 
 .short {
     .container .main .userManagement .add-user-btn .addBtn i {
-        font-size: 22px;
+        font-size: var(--px22);
     }
 
     .container .main .userManagement .add-user-btn .addBtn:hover i {
-        font-size: 30px;
+        font-size: var(--px30);
         padding-bottom: 5px;
         display: inline-block;
     }

@@ -89,7 +89,7 @@ label{
     left: 15rem;
     background: none;
     border: none;
-    font-size: 1.2rem;
+    font-size: var(--px19);
     color: var(--black);
     cursor: pointer;
 }

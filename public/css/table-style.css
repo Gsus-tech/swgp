@@ -34,7 +34,7 @@ table,
     padding: 8px;
     word-wrap: break-word;
     .fa{
-        font-size:20px;
+        font-size: var(--px20);
     }
 }
 
@@ -56,7 +56,7 @@ table:hover {
 
 .addFloatingButton {
     padding: 5px 5px;
-    font-size: 20px;
+    font-size: var(--px20);
 }
 
 .addFloatingButton:hover {
@@ -113,14 +113,14 @@ table:hover {
         bottom: 15px;
 
         .addFloatingButton {
-            font-size: 22.5px;
+            font-size: var(--px23);
         }
     }
 
     .table td {
-        font-size: 14px;
+        font-size: var(--px16);
         .fa{
-            font-size:22px;
+            font-size: var(--px22);
         }
     }
 }
@@ -130,14 +130,14 @@ table:hover {
         bottom: 20px;
 
         .addFloatingButton {
-            font-size: 25px;
+            font-size: var(--px25);
         }
     }
 
     .table td {
-        font-size: 18px;
+        font-size: var(--px18);
         .fa{
-            font-size:25px;
+            font-size: var(--px25);
         }
     }
 }

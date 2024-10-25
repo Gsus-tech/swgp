@@ -26,11 +26,15 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         if($preferences[0]['tema'] !== 'Sistema'){
             $tema = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
         }
+        $fontStyle = '';
+        if($preferences[0]['tLetra'] === 'Grande'){
+            $fontStyle = 'bigFont';
+        }
     }
     
     ?>
 </head>
-<body class="short <?php echo $tema; ?>">
+<body class="short <?php $classes="$tema $fontStyle"; echo $classes; ?>">
     <div class="container"> 
         <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
