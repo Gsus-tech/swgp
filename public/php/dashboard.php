@@ -25,11 +25,15 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         if($preferences[0]['tema'] !== 'Sistema'){
             $tema = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
         }
+        $fontStyle = '';
+        if($preferences[0]['tLetra'] === 'Grande'){
+            $fontStyle = 'bigFont';
+        }
     }
     
     ?>
 </head>
-<body class="short <?php echo $tema; ?>">
+<body class="short <?php $classes="$tema $fontStyle"; echo $classes; ?>">
     <?php 
     $data1 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$_SESSION['id']], 'i');
     $screenAccess = Controller\GeneralCrud\Crud::isInArray($data1, $_SESSION['id']);
