@@ -123,7 +123,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
                 </div>
                 <div id="preferenceOptions" class="flexAndSpaceDiv preferenceOptions">
-                    <button class="generalBtnStyle btn-blue resetBtn">Reestablecer configuración</button>
                 </div>
             </div>
 

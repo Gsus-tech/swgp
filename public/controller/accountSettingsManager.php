@@ -127,6 +127,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         }
     }
     
+    if(isset($_GET['resetPreferenceValues']) && $_GET['resetPreferenceValues'] == 'true'){
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id_usuario = $_SESSION['id'];
+        $fuente = 'Normal';
+        $tema = 'Sistema';
+        $query = "UPDATE tbl_preferencias_usuario SET tLetra = ?, tema = ? WHERE id_usuario = ?";
+        $stmt = $mysqli->prepare($query);
+        
+        if ($stmt) {
+            $stmt->bind_param('ssi', $fuente, $tema, $id_usuario);
+            $stmt->execute();
+            
+            if ($stmt->affected_rows > 0) {
+                echo json_encode(['success' => true, 'message' => 'Preferencias de usuario restablecidas correctamente.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se encontró el usuario.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta de base de datos.']);
+        }
+    }
+    
     if(isset($_GET['updateData']) && $_GET['updateData'] == 'true'){
         $crud = new Crud();
         $mysqli = $crud->getMysqliConnection();
@@ -202,6 +225,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
     }
 
 } else {
-    echo"<script>window.location.href = `../php/actionsManagement.php`;</script>";
+    echo"<script>window.location.href = `../php/accountSettings.php`;</script>";
 }
 ?>
