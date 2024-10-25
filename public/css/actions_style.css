@@ -15,7 +15,7 @@
 }
 
 .select-label, .activityStatusDiv label {
-    font-size: 14px;
+    font-size: var(--px14);
     color: var(--black);
     margin-bottom: 0.5rem;
     font-weight: bold;
@@ -23,7 +23,7 @@
 
 .activityStatusDiv p {
     margin: 0;
-    font-size: 1rem;
+    font-size: var(--px16);
     color: var(--black);
     opacity: 50%;
 }
@@ -71,7 +71,7 @@
 
 .toolbar i {
     color: white;
-    font-size: 1.5rem;
+    font-size: var(--px24);
     cursor: pointer;
 }
 
@@ -82,7 +82,7 @@
 .toolbar button{
     padding: 5px 10px;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: var(--px16);
     background-color: #f4f4f4;
 
 }
@@ -113,12 +113,12 @@
 }
 
 .input-title {
-    font-size: 1.5rem;
+    font-size: var(--px24);
     text-align: center;
 }
 
 .input-subtitle {
-    font-size: 1.25rem;
+    font-size: var(--px20);
 }
 
 .input-text {
@@ -160,7 +160,7 @@
 }
 
 .closeEditor:hover {
-    font-size: 20px;
+    font-size: var(--px20);
     top: -14px;
     color: #b11313;
 }
@@ -169,12 +169,12 @@
     padding:6px;
 }
 .addBtn .fa{
-    font-size: 18px;
+    font-size: var(--px18);
 }
 .addBtn:hover{
     background-color:var(--hover-AddBtn);
     .fa{
-        font-size: 19px;
+        font-size: var(--px19);
     }
 }
 
@@ -186,7 +186,7 @@
     text-align: center;
     text-decoration: none;
     display: block;
-    font-size: 14px; 
+    font-size: var(--px14);
     margin: 10px auto;
     cursor: pointer; 
     border-radius: 5px;
@@ -202,7 +202,7 @@
     color: #6a727a;
     border: 1px solid #c0c0c0;
     padding: 10px 20px;
-    font-size: 14px;
+    font-size: var(--px14);
     font-weight: bold;
     border-radius: 5px;
     opacity: 0.6;
