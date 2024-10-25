@@ -138,6 +138,7 @@ function cardFlags(element, action){
 
                 if (result.success) {
                     alert('¡Etiqueta eliminada!');
+                    location.reload();
                 } else {
                     if(result.message === 'No hay notas registradas.'){
                         floatMenuDiv.remove();
