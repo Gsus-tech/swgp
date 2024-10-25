@@ -10,7 +10,7 @@ function pageEvents(){
 
     const htmlCode = `
         <div class="selectDiv" id="categorySelectDiv">
-            <div class="fm-content">
+            <div class="fm-content firstDiv">
                 <button class="closeBtn" id="closeBtn">
                     <i class="fa fa-close"></i>
                 </button>
@@ -93,12 +93,13 @@ function loadTicketTypes() {
                     if(error === 'No se encontraron proyectos a cargo del usuario actual'){
                         const htmlCode = `
                             <div class="fm-content" id="correctionDiv">
-                                <p>Parece que no hay proyectos a tu cargo.\nSi deseas cambiar datos de algún proyecto, consultalo con el líder del proyecto.</p>
+                                <p>Parece que no hay proyectos a tu cargo.</p><br>
+                                <p>Si deseas cambiar datos de algún proyecto, consultalo con el líder del proyecto.</p>
                             </div>
                             `;
                             
                             selectDiv.insertAdjacentHTML('beforeend', htmlCode);
-                            addProjectSupportEvents();
+                            // addProjectSupportEvents();
                     }else{
                         console.error('Error en la solicitud AJAX:', error);
                     }
