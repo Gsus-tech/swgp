@@ -87,8 +87,8 @@
     vertical-align: baseline;
     border-radius: 0.25rem;
 }
-.red-flag { background-color: red; color: #fff; }
-.blue-flag { background-color:  rgb(255, 255, 0); color: #fff; }
+.red-flag { background-color: #c71414; color: #fff; }
+.orange-flag { background-color:  rgb(236 180 18); color: #fff; }
 .green-flag { background-color: rgb(0, 128, 0); color: #fff; }
 .rdFlag{ color: rgb(255, 0, 0); }
 .grFlag{ color: rgb(0, 128, 0); }

@@ -156,7 +156,7 @@ function cardFlags(element, action){
     }else if(action >= 1 && action <= 3){
         const id = document.querySelector('.opciones-tarjetas').id;
         async function sendAjaxRequest(data) {
-            console.log('Entering sendAjaxRequest.');
+            // console.log('Entering sendAjaxRequest.');
             const url = '../controller/activityManager.php?setNote=true';
             try {
                 const response = await fetch(url, {
@@ -181,9 +181,7 @@ function cardFlags(element, action){
         
 
         async function addTag(nota) {
-            console.log('Entering addtag.');
-            const action = 4;
-        
+            // console.log('Entering addtag.');
             let data;
             if (nota) {
                 try {
@@ -195,7 +193,9 @@ function cardFlags(element, action){
                     });
                     console.log(`Contenido: ${contenido}`);
                 } catch (error) {
-                    console.error('Error en la entrada de texto:', error);
+                    if (error !== 'Input cancelado') {
+                        console.error(error);
+                    }
                     return;
                 }
             } else {

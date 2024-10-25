@@ -398,7 +398,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         $activityId = filter_var($_POST['id_actividad'], FILTER_VALIDATE_INT);
         $tipo = filter_var($_POST['tipo'], FILTER_VALIDATE_INT);
         $addContenido = false;
-        if ($activityId !== false && $tipo !== false) {
+        if ($activityId !== false && $tipo !== false && $tipo > 0 && $tipo < 4) {
+            switch ($tipo) {
+                case 1:
+                    $formattedTipo = 'Importante';
+                    break;
+                case 2:
+                    $formattedTipo = 'Completado';
+                    break;
+                case 3:
+                    $formattedTipo = 'InfoRequerida';
+                    break;
+            }
             if(isset($_POST['contenido'])){
                 $contenido = Crud::antiNaughty((string)$_POST['contenido']);
                 $contenido = mb_substr(trim($contenido), 0, 80);
@@ -438,15 +449,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             if ($stmt) {
                 if($exists){
                     if($addContenido === true){
-                        $stmt->bind_param('isi', $tipo, $contenido, $activityId);
+                        $stmt->bind_param('ssi', $formattedTipo, $contenido, $activityId);
                     }else{
-                        $stmt->bind_param('ii', $tipo, $activityId);
+                        $stmt->bind_param('si', $formattedTipo, $activityId);
                     }
                 }else{
                     if($addContenido === true){
-                        $stmt->bind_param('iis', $activityId, $tipo, $contenido);
+                        $stmt->bind_param('iss', $activityId, $formattedTipo, $contenido);
                     }else{
-                        $stmt->bind_param('ii', $activityId, $tipo);
+                        $stmt->bind_param('is', $activityId, $formattedTipo);
                     }
                 }
         
