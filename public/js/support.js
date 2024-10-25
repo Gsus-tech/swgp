@@ -99,7 +99,6 @@ function loadTicketTypes() {
                             `;
                             
                             selectDiv.insertAdjacentHTML('beforeend', htmlCode);
-                            // addProjectSupportEvents();
                     }else{
                         console.error('Error en la solicitud AJAX:', error);
                     }
