@@ -134,6 +134,10 @@ label{
     border-radius: 5px;
 }
 
+.firstDiv{
+    width: fit-content;
+}
+
 @media screen and (max-width: 800px){
     .projectUpdateDiv, .ticketExplanationDiv{
         padding-bottom: 3rem;

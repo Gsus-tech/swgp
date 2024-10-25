@@ -38,11 +38,16 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
             $mail = filter_var($_POST['Fmail'], FILTER_SANITIZE_EMAIL);
             $password = password_hash($_POST['Fpassword'], PASSWORD_DEFAULT);
             $userType = htmlspecialchars($_POST['comboBoxUserType'], ENT_QUOTES, 'UTF-8');
+
+            //Obtener el nickName
+            $partes = explode(' ', $userName);
+            $nickName = isset($partes[1]) ? $partes[0] . ' ' . substr($partes[1], 0, 1) . '.' : $partes[0];
+
             
             if (!containsSpecialCharacters($userName) && !containsSpecialCharacters($depto)) {
                 $query = "INSERT INTO tbl_usuarios (rolUsuario, nombre, correo, contrasena, departamento, nickname)
                         VALUES (?, ?, ?, ?, ?, ?)";
-                $params = [$userType, $userName, $mail, $password, $depto, $userName];
+                $params = [$userType, $userName, $mail, $password, $depto, $nickName];
                 $types = "ssssss";
                 
                 Crud::executeNonResultQuery($query, $params, $types, $destination);
