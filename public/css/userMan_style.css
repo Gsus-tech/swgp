@@ -51,10 +51,14 @@
 .container .main .userManagement .addUser-form .form-bg .form-container {
     margin: 4rem auto 0 auto;
     width: 20rem;
-    background-color: #fff;
+    background-color: var(--formBg);
+    color: var(--black);
     border-radius: 1em;
     padding: 10px 0;
     transition: width .3s ease-in-out;
+}
+.darkMode .container .main .userManagement .addUser-form .form-bg .form-container {
+    color: var(--white);
 }
 
 .container .main .userManagement .addUser-form .form-bg .form-container .fm-content {

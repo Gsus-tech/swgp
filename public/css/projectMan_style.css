@@ -89,7 +89,8 @@
 .container .main .projectManagement .addProject-form .form-bg .form-container {
     margin: 4rem auto 0 auto;   
     width: 380px;    
-    background-color: #fff; 
+    background-color: var(--formBg);
+    color: var(--black);
     border-radius: 1em;  
     padding: 10px 2rem;    
     transition: width 0.3s ease-in-out;
