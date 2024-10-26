@@ -3,7 +3,7 @@
     <!-- Encabezado de barra -->
     <div class="sidebartop">
         <div class="sidebar-logo">
-            <span id="LogoBtn" title="Dashboard">
+            <span id="LogoBtn">
                 <img src="../assets/logoCBC.png">
             </span>
         </div>
