@@ -21,6 +21,7 @@ function activateBtn(){
     if(!btn.classList.contains('enabled')){
         btn.disabled = false;
         btn.classList.add('enabled')
+        document.getElementById('cancel-editProject').textContent = 'Cancelar';
     }
 }
 function deactivateBtn(){
@@ -28,6 +29,7 @@ function deactivateBtn(){
     if(btn.classList.contains('enabled')){
         btn.disabled = true;
         btn.classList.remove('enabled')
+        document.getElementById('cancel-editProject').textContent = 'Salir';
     }
 }
 
