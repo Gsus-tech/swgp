@@ -208,20 +208,21 @@
     margin-top: 10px
 } 
 .container .main .editContainer .form-container .editProject-form .form-options .sumbit-editProject {  
+    display: none;
     background-color: var(--navBtnHover);    
     border: none;   
     color: var(--white);
     padding: 8px 20px;  
     text-align: center;   
     text-decoration: none; 
-    display: inline-block;     
     font-size: var(--px16);
     border-radius: 15px; 
 } 
 .lightMode .container .main .editContainer .form-container .editProject-form .form-options .sumbit-editProject {  
     color: white;
 }
-.container .main .editContainer .form-container .editProject-form .form-options .enabled {   
+.container .main .editContainer .form-container .editProject-form .form-options .enabled {
+    display: inline;
     background-color: #124734; 
     cursor: pointer;
 }
