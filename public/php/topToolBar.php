@@ -27,7 +27,9 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
         else{ 
             $selected=0;
             $user_id=$_SESSION['id'];
-            $myProject = Controller\GeneralCrud\Crud::executeResultQuery("SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = '$user_id' AND integrantes.responsable = 1 AND proyectos.estado = 1;");
+            $query = "SELECT proyectos.id_proyecto, proyectos.nombre FROM tbl_proyectos proyectos JOIN tbl_integrantes integrantes ON proyectos.id_proyecto = integrantes.id_proyecto WHERE integrantes.id_usuario = ? AND integrantes.responsable = ? AND proyectos.estado = ?;";
+            $params = [$user_id, 1, 1];
+            $myProject = Controller\GeneralCrud\Crud::executeResultQuery($query, $params, 'iii');
             $_SESSION['projectSelected'] = $myProject[0]['id_proyecto'];
             $selectedP = $_SESSION['projectSelected'];
         }
@@ -102,9 +104,28 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
                 if(isset($projectDetails) && $projectDetails===true){
                     echo "window.location.href = '{$pagina}.php?projectDetails=' + selectedValue;";
                 }else{
-                    echo "window.location.href = '{$pagina}.php?id=' + selectedValue;";
-                }
             ?>
+                const formData = new FormData();
+        formData.append('selectedProject', selectedValue);
+
+        fetch('../controller/PHP-Request.php?change-selectedProject=true', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Proyecto cambiado exitosamente');
+                window.location.reload();
+            } else {
+                console.error('Error al cambiar proyecto');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+        });
+
+            <?php } ?>
             });
         });
 
@@ -113,6 +134,7 @@ if($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD' || $_SESSION['responsabl
     const hiddenInput = document.getElementById('selectedProject');
 
     selectElement.addEventListener('change', function() {
+        console.log('switching project');
         const selectedValue = selectElement.value;
         hiddenInput.value = selectedValue;
 

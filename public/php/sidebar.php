@@ -36,7 +36,11 @@
                 $user=$condition=$_SESSION['id'];
                 $data = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$user], 'i');
                 $isMember[0] = Controller\GeneralCrud\Crud::isInArray($data, $_SESSION['id']);
-                $data2 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT responsable FROM tbl_integrantes WHERE id_usuario = ?", [$user], 'i');
+                $q2="SELECT i.responsable
+                    FROM tbl_integrantes AS i
+                    JOIN tbl_proyectos AS p ON i.id_proyecto = p.id_proyecto
+                    WHERE i.id_usuario = ? AND i.responsable = 1 AND p.estado = 1;";
+                $data2 = Controller\GeneralCrud\Crud::executeResultQuery($q2, [$user], 'i');
                 $isMember[1] = Controller\GeneralCrud\Crud::isInArray($data2, 1);
                 
                 if($isMember[0]==true){ ?>
