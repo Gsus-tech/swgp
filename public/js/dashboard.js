@@ -422,5 +422,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
+
+    checkForLateActivities();
 });
 

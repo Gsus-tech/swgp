@@ -35,9 +35,29 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 </head>
 <body class="short <?php $classes="$tema $fontStyle"; echo $classes; ?>">
     <?php 
-    $data1 = Controller\GeneralCrud\Crud::executeResultQuery("SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ?", [$_SESSION['id']], 'i');
+    $query = "SELECT i.id_usuario
+    FROM tbl_integrantes AS i
+    JOIN tbl_proyectos AS p ON i.id_proyecto = p.id_proyecto
+    WHERE i.id_usuario = ? AND p.estado = 1;";
+    $data1 = Controller\GeneralCrud\Crud::executeResultQuery($query, [$_SESSION['id']], 'i');
     $screenAccess = Controller\GeneralCrud\Crud::isInArray($data1, $_SESSION['id']);
     if($screenAccess || $_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD'){
+
+        if($_SESSION['rol'] === 'EST' && $_SESSION['projectSelected']===0){
+            $q1 = "SELECT i.id_proyecto
+            FROM tbl_integrantes AS i
+            JOIN tbl_proyectos AS p ON i.id_proyecto = p.id_proyecto
+            WHERE i.id_usuario = ? AND p.estado = 1;";
+            $pts = Controller\GeneralCrud\Crud::executeResultQuery($q1, [$_SESSION['id']], 'i');
+            $projectId = $pts[0]['id_proyecto'];
+        }else if($_SESSION['projectSelected']===0){
+            $q1 = "SELECT tbl_proyectos.id_proyecto, tbl_proyectos.nombre 
+            FROM tbl_proyectos WHERE tbl_proyectos.estado = 1;";
+            $pts = Controller\GeneralCrud\Crud::executeResultQuery($q1);
+            $projectId = $pts[0]['id_proyecto'];
+        }else{
+            $projectId = $_SESSION['projectSelected'];
+        }
         ?>
     <div class="container"> 
         <!-- Sidebar -->
@@ -50,7 +70,6 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div>
 
             <?php
-            $projectId = $_SESSION['projectSelected'];
             // Consulta para identificar si el usuario es responsable del proyecto
             $query = "SELECT responsable FROM tbl_integrantes WHERE id_proyecto = ? AND id_usuario = ?";
             $amIrep = Crud::executeResultQuery($query, [$projectId, $_SESSION['id']], 'ii');
@@ -124,6 +143,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                     }
                 }
             }
+
+            $q3 = "SELECT nombre FROM tbl_proyectos WHERE id_proyecto = ?";
+            // echo "<script>console.log(`$q3`)</script>";
+            $pName = Crud::executeResultQuery($q3, [$projectId], 'i');
             ?>
 
 
@@ -131,7 +154,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
  
 
 <div class="kanban">
-    <div class="kanban-title"><h2>Tablero de actividades</h2></div>
+    <div class="kanban-title"><h2>Tablero de actividades</h2><br><h3>Proyecto: <?php echo $pName[0]['nombre'] ?></h3></div>
     <div class="kanban-board">
         <!-- Columna de pendientes -->
     <div class="tasks" data-plugin="dragula" id="pendientes">
@@ -140,12 +163,11 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             <?php foreach ($pendientes as $tarjeta) : ?>
                 <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
-                        <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
+                        <small id="beforeThisDate" class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                        <?php 
                             $q2 = "SELECT * FROM tbl_notas WHERE id_actividad = ?";
                             $p2 = [$tarjeta['id_actividad']];
                             $actNotes = Crud::executeResultQuery($q2, $p2, 'i');
-                            // echo "<script>console.log($q2)</script>";
                             if($actNotes && count($actNotes) > 0){
                                 switch ($actNotes[0]['tipo']) {
                                     case 'Importante':
@@ -169,7 +191,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                             
                         ?>
                         <h5 class="pt-10">
-                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                            <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
                         <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
                         <p class="mb-0 hide"><?php
@@ -198,7 +220,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
                         <h5 class="pt-10">
-                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                            <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
                         <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
                         <p class="mb-0 hide"><?php 
@@ -227,7 +249,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
                         <h5 class="pt-10">
-                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                            <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
                         <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
                         <p class="mb-0 hide"><?php 
@@ -255,7 +277,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
                         <!-- <span class="badge bg-danger">lol</span> -->
                         <h5 class="pt-10">
-                            <a href="#" class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
+                            <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
                         <p class="respName"><?php echo $arrayParticipantes[$tarjeta['id_usuario']] ?></p>
                         <p class="mb-0 hide"><?php 
@@ -264,9 +286,10 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <?php 
                         if($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD' || (!empty($amIrep) && (int)$amIrep[0]['responsable'] === 1)){
                             echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
-                        } else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
-                            echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
-                        }
+                        } 
+                        // else if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){
+                        //     echo '<i class="fa fa-plus-square button cardMenu" title="Opciones"></i>';
+                        // }
                         ?>
                     </div> <!-- end card-body -->
                 </div>
