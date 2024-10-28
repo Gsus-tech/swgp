@@ -67,11 +67,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
-function removeLateClass(el){
-    el.classList.remove('almostLate');
-    el.classList.remove('lateActivity');
-}
-
 //Auto scroll - todavia no esta terminada.
 
 let autoScrollInterval;

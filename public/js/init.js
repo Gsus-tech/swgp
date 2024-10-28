@@ -249,6 +249,11 @@ function checkForLateActivities() {
     }
 }
 
+function removeLateClass(el){
+    el.classList.remove('almostLate');
+    el.classList.remove('lateActivity');
+}
+
 function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rText) {
     //Div del confirm
     const confirmationDiv = document.createElement('div');
