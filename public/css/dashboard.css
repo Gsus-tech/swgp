@@ -207,6 +207,41 @@
     background-color: #ffe2a2;
 }
 
+.lateActivity{
+    background-color: #620000;
+    color: white;
+}
+.lateActivity div small, .lateActivity div h5 a{
+    color: white;
+}
+.tmc.lateActivity:hover{
+    box-shadow: 0 0 15px 5px rgb(211 108 108 / 60%);
+    transition: box-shadow 0.3s ease-in-out;
+    cursor:pointer;
+}
+.tmc.lateActivity {
+    background-color: #be4726;
+    border: 5px solid #ffd485;
+    color: white;
+}
+
+.almostLate{
+    background-color: #ffab40;
+    color: black;
+}
+.almostLate div small, .almostLate div h5 a{
+    color: black;
+}
+.tmc.almostLate:hover{
+    box-shadow: 0 0 15px 5px rgb(211 159 108 / 60%);
+    transition: box-shadow 0.3s ease-in-out;
+    cursor:pointer;
+}
+.tmc.almostLate {
+    background-color: #ffab40;
+    border: 5px solid #e47e1c;
+
+}
 
 /* Responsive */
 @media (max-width: 768px) {

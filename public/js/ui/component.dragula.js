@@ -27,6 +27,11 @@ document.addEventListener("DOMContentLoaded", function() {
         updateProjectPercentage();
         const col = getColumnaId(target.id);
         updateCardColumn(el.getAttribute('data-card-id'), col);
+        if(target.id !== 'task-list-one'){
+            removeLateClass(el);
+        }else{
+            setTimeout(350,checkForLateActivities());
+        }
     });
 
     function checkForEmptyContainers(containers) {
@@ -62,7 +67,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
-
+function removeLateClass(el){
+    el.classList.remove('almostLate');
+    el.classList.remove('lateActivity');
+}
 
 //Auto scroll - todavia no esta terminada.
 
