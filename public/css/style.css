@@ -21,6 +21,7 @@
     --kanban: #586fba;
     --menuItemHoverBg: #ddd;
     --tabColor: #373c89;
+    --formBg: #efefef;
 
 
     /* Tamaños px/rem */
@@ -1138,6 +1139,7 @@ input:checked + .slider:before {
     --menuItemHoverBg: #121;
     --black: white;
     --rowSelected: #ccc;
+    --formBg: #4f4f4f;
     div .sidebar nav ul li a .fa, div .sidebar div .fa{
         color: #fff;
     }
@@ -1157,6 +1159,7 @@ input:checked + .slider:before {
     --menuItem: #222;
     --menuItemHover:#555;
     --rowSelected: #eee;
+    --formBg: #fff;
     div .sidebar nav ul li a .fa, div .sidebar div .fa{
         color: #333;
     }

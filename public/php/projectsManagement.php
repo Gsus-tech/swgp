@@ -555,7 +555,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         
                         <div class="form-options" pg-d="<?php echo $_GET['editProject'];?>">
                             <button disabled class="sumbit-editProject" id="sumbit-editProject" type="submit" tabindex="0">Guardar cambios</button>
-                            <a id="cancel-editProject" class="close-editProject button" onclick="return confirmCancel()" tabindex="0">Cancelar</a>
+                            <a id="cancel-editProject" class="close-editProject button" onclick="return confirmCancel()" tabindex="0">Salir</a>
                         </div>
                     </div>
                     </form> <!-- Fin de edit-project-form -->

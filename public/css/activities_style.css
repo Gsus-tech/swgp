@@ -50,7 +50,7 @@
     padding: 1px 1rem 5px 1rem;
     border-radius: 20px;
     background-color: var(--divBgColor);
-    color: var(--white);
+    color: var(--black);
     padding: 1rem 20px;
 }
 
@@ -80,11 +80,14 @@
 
 .container .main .activity-form {
     margin: 4rem auto 0 auto;
-    background-color: var(--barColor1); 
-    color: var(--white);
+    background-color: var(--formBg); 
+    color: var(--black);
     border-radius: 1em;  
     padding: 10px 2rem;    
     transition: width 0.3s ease-in-out;
+}
+.darkMode .container .main .activity-form {
+    color: var(--white);
 }
 
 .formContainer .fm-content .section1, .formContainer .fm-content .section2 {   

@@ -22,7 +22,6 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
         }
         if (mysqli_num_rows($result) === 1) {
             $row = mysqli_fetch_assoc($result);
-            // if ($row['contrasena'] === password_hash($password, PASSWORD_DEFAULT)) {
             if(password_verify($password, $row['contrasena'])){
                 $_SESSION['id'] = $row['id_usuario'];
                 $_SESSION['rol'] = $row['rolUsuario'];
@@ -32,9 +31,19 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                 $_SESSION['nickname'] = $row['nickname'];
                 $_SESSION['projectSelected'] = 0;
                 if ($_SESSION['rol'] == 'EST') {
+
+                    $q1 = "SELECT i.id_proyecto
+                    FROM tbl_integrantes AS i
+                    JOIN tbl_proyectos AS p ON i.id_proyecto = p.id_proyecto
+                    WHERE i.id_usuario = ? AND p.estado = 1;";
+                    $pts = Controller\GeneralCrud\Crud::executeResultQuery($q1, [$_SESSION['id']], 'i');
+                    $_SESSION['projectSelected'] = $pts[0]['id_proyecto'];
                     $user=$_SESSION['id'];
                     $accountProjects=array();
-                    $query = "SELECT responsable FROM tbl_integrantes WHERE id_usuario = ? AND responsable = 1;";
+                    $query = "SELECT i.responsable
+                        FROM tbl_integrantes AS i
+                        JOIN tbl_proyectos AS p ON i.id_proyecto = p.id_proyecto
+                        WHERE i.id_usuario = ? AND i.responsable = 1 AND p.estado = 1;";
                     $params = [$user];
                     $types = "i";
                     $accountProjects = Crud::executeResultQuery($query, $params, $types);

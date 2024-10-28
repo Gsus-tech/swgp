@@ -21,6 +21,7 @@ function activateBtn(){
     if(!btn.classList.contains('enabled')){
         btn.disabled = false;
         btn.classList.add('enabled')
+        document.getElementById('cancel-editProject').textContent = 'Cancelar';
     }
 }
 function deactivateBtn(){
@@ -28,6 +29,7 @@ function deactivateBtn(){
     if(btn.classList.contains('enabled')){
         btn.disabled = true;
         btn.classList.remove('enabled')
+        document.getElementById('cancel-editProject').textContent = 'Salir';
     }
 }
 
@@ -306,6 +308,9 @@ function agregarMiembro(projectId) {
                     if (opcionAEliminar) {
                         opcionAEliminar.remove();
                     }
+                    
+                    const notaUser = document.getElementById('msgForUserMembers');
+                    if(notaUser){ notaUser.remove(); }
 
                     console.log(response.message);
                 } else {
@@ -501,9 +506,9 @@ function agregarObjetivoAjax(projectId, tipo, contenido, tablaBody) {
 
             descriptionCelda.textContent = content;
             removeBtn.innerHTML = 
-            `<a class='fa fa-trash removeMemberBtn' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'${tipo}',${projectId}, ${newId})\"></a>
-            <a class='fa fa-edit tableIconBtn mt1r' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
-            <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'${tipo}',${projectId},${newId})\"></a>`;
+            `<a class='fa fa-trash removeMemberBtn button' title='Eliminar objetivo' onclick=\"DeleteObjective(this,'${tipo}',${projectId}, ${newId})\"></a>
+            <a class='fa fa-edit tableIconBtn mt1r button' title='Editar objetivo' onclick=\"EditObjective(this)\"></a>
+            <a id='saveChangesObj' class='fa fa-save tableIconBtn mt1r hide button' title='Guardar cambios' onclick=\"SaveObjectiveChanges(this,'${tipo}',${projectId},${newId})\"></a>`;
 
             nuevaFila.appendChild(descriptionCelda);
             nuevaFila.appendChild(removeBtn);   
@@ -511,6 +516,9 @@ function agregarObjetivoAjax(projectId, tipo, contenido, tablaBody) {
 
             // Limpiar el campo de entrada
             contenido.value = "";
+
+            const notaUser = document.getElementById('msgForUserObjE');
+            if(notaUser){ notaUser.remove(); }
 
         } else {
             alert('Error al agregar el objetivo: ' + response.message);
@@ -557,6 +565,20 @@ function DeleteObjective(element, type, projectId, objId) {
                                 const fila = element.closest('tr');
                                 fila.remove()
                             console.log(`Objetivo eliminado correctamente: ${JSON.stringify(response.data)}`);
+
+                            const tbody = type === 'especifico' ? document.getElementById('objectiveE-list-body') : document.getElementById('objectiveG-list-body');
+                            const noObjectiveRow = document.createElement('tr');
+                            noObjectiveRow.id = type === 'especifico' ? 'no-objectiveE-row' : 'no-objectiveG-row';
+                            
+                            const td = document.createElement('td');
+                            td.colSpan = 3;
+                            td.textContent = 'No se encontraron objetivos registrados.';
+                            
+                            noObjectiveRow.appendChild(td);
+                            tbody.appendChild(noObjectiveRow);
+                            setTimeout(() => {
+                                addObjectiveEspNeededMsg(); 
+                            }, 350);
                         } else {
                             alert('Error al eliminar el objetivo: ' + response.message);
                         }
@@ -752,4 +774,44 @@ document.addEventListener("DOMContentLoaded", function() {
     
     init();    
     addEvents();
+    addObjectiveEspNeededMsg();
+    repMemberNeededMsg();
 });
+
+
+function addObjectiveEspNeededMsg(){
+    const tbody = document.getElementById('objectiveE-list-body');
+
+    if (tbody) {
+        const noObjectiveRow = tbody.querySelector('#no-objectiveE-row');
+        
+        if (noObjectiveRow) {
+            const div = tbody.closest('.section1');
+            if (div) {
+                const notaUser = document.createElement('i');
+                notaUser.id= 'msgForUserObjE';
+                notaUser.classList.add('notaMsj');
+                notaUser.textContent = 'Nota: Los objetivos específicos son necesarios para la creación de actividades.';
+                div.appendChild(notaUser);
+            }
+        }
+    }
+}
+
+function repMemberNeededMsg(){
+    const tbody = document.getElementById('members-list-body');
+    if (tbody) {
+        const noMemberRow = tbody.querySelector('#no-integrantes-row');
+        
+        if (noMemberRow) {
+            const div = tbody.closest('.section1');
+            if (div) {
+                const notaUser = document.createElement('i');
+                notaUser.id= 'msgForUserMembers';
+                notaUser.classList.add('notaMsj');
+                notaUser.textContent = 'Nota: Como primera acción, es importante agregar al usuario responsable del proyecto.';
+                div.appendChild(notaUser);
+            }
+        }
+    }
+}

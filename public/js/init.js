@@ -226,7 +226,33 @@ function createTextInputBox(titleText, descriptionText, attributeArray) {
 }
 
 
+function checkForLateActivities() {
+    const taskList = document.getElementById('task-list-one');
+    if (taskList) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
+        const cards = taskList.querySelectorAll('.card');
+        cards.forEach(card => {
+            const dateElement = card.querySelector('#beforeThisDate');
+            if (!dateElement) return;
+            const [year, month, day] = dateElement.textContent.trim().split('-').map(Number);
+            const dueDate = new Date(year, month - 1, day);
+            dueDate.setHours(0, 0, 0, 0);
+            // console.log(today, ' : ', dueDate);
+            if (dueDate.getTime() === today.getTime()) {
+                card.classList.add('almostLate');
+            } else if (dueDate.getTime() < today.getTime()) {
+                card.classList.add('lateActivity'); 
+            }
+        });
+    }
+}
+
+function removeLateClass(el){
+    el.classList.remove('almostLate');
+    el.classList.remove('lateActivity');
+}
 
 function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rText) {
     //Div del confirm

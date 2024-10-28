@@ -323,6 +323,9 @@ function moveCard(targetColumnId, cardId) {
 
         // Codigo para actualizar en la base de datos
         updateCardColumn(cardId, targetColumnId);
+
+        removeLateClass(card);
+        setTimeout(350,checkForLateActivities());
     }
 }
 
@@ -422,5 +425,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
+
+    checkForLateActivities();
 });
 
