@@ -308,6 +308,9 @@ function agregarMiembro(projectId) {
                     if (opcionAEliminar) {
                         opcionAEliminar.remove();
                     }
+                    
+                    const notaUser = document.getElementById('msgForUserMembers');
+                    if(notaUser){ notaUser.remove(); }
 
                     console.log(response.message);
                 } else {
@@ -772,6 +775,7 @@ document.addEventListener("DOMContentLoaded", function() {
     init();    
     addEvents();
     addObjectiveEspNeededMsg();
+    repMemberNeededMsg();
 });
 
 
@@ -784,9 +788,28 @@ function addObjectiveEspNeededMsg(){
         if (noObjectiveRow) {
             const div = tbody.closest('.section1');
             if (div) {
-                const notaUser = document.createElement('p');
+                const notaUser = document.createElement('i');
                 notaUser.id= 'msgForUserObjE';
+                notaUser.classList.add('notaMsj');
                 notaUser.textContent = 'Nota: Los objetivos específicos son necesarios para la creación de actividades.';
+                div.appendChild(notaUser);
+            }
+        }
+    }
+}
+
+function repMemberNeededMsg(){
+    const tbody = document.getElementById('members-list-body');
+    if (tbody) {
+        const noMemberRow = tbody.querySelector('#no-integrantes-row');
+        
+        if (noMemberRow) {
+            const div = tbody.closest('.section1');
+            if (div) {
+                const notaUser = document.createElement('i');
+                notaUser.id= 'msgForUserMembers';
+                notaUser.classList.add('notaMsj');
+                notaUser.textContent = 'Nota: Como primera acción, es importante agregar al usuario responsable del proyecto.';
                 div.appendChild(notaUser);
             }
         }

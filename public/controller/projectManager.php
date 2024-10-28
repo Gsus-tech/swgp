@@ -174,7 +174,7 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
             $responsableProyecto = $result->fetch_all(MYSQLI_ASSOC);
             $stmt->close();
 
-            if (!$responsableProyecto) {
+            if (!$responsableProyecto || (count($responsableProyecto)===1 && $responsableProyecto[0]['id_usuario']===$idUsuario)) {
                 echo json_encode([
                     'success' => false,
                     'message' => "No se encontró un responsable del proyecto para transferir actividades."
