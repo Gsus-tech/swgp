@@ -4,7 +4,7 @@ require_once '../controller/generalCRUD.php';
 use Controller\GeneralCrud\Crud;
 
 $destination = "../php/projectsManagement.php";
-if ($_SESSION['rol']==='ADM' && $_SERVER["REQUEST_METHOD"] == "POST") {
+if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_METHOD"] == "POST") {
     function deleteDirectory($dir) {
         if (!is_dir($dir)) {
             return;
