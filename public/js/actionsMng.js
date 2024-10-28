@@ -248,6 +248,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.removeItem('actId');
                 })
                 .catch((error) => {
+                    localStorage.removeItem('openReportEditor');
+                    localStorage.removeItem('actId');
                     console.error(error);
                 });
             });
