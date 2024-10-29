@@ -155,6 +155,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
 <div class="kanban">
     <div class="kanban-title"><h2>Tablero de actividades</h2><br><h3>Proyecto: <?php echo $pName[0]['nombre'] ?></h3></div>
+    <div id='bg-color-descriptions' class="bg-color-descriptions"></div>
     <div class="kanban-board">
         <!-- Columna de pendientes -->
     <div class="tasks" data-plugin="dragula" id="pendientes">

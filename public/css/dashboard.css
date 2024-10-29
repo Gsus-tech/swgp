@@ -240,7 +240,46 @@
 .tmc.almostLate {
     background-color: #ffab40;
     border: 5px solid #e47e1c;
+}
 
+
+.bg-color-descriptions{
+    display:flex;
+    width: 100%;
+    margin: 20px;
+    padding:0 40px;
+    padding-right: 80px;
+    color: var(--black);
+    font-size: var(--px13);
+    justify-content: space-between;
+}
+
+.bg-color-descriptions .flexAndSpaceDiv{
+    margin-top: 10px;
+    display:flex;
+    justify-content: left;
+}
+
+.bg-color-descriptions div div{
+    background-color: var(--kanban);
+    padding: 0 2px;
+    border-radius: 5px;
+}
+
+.bg-color-descriptions .lateActSq{
+    color: #620000;   
+}
+
+.bg-color-descriptions .almostLateSq{
+    color: #ffab40;
+}
+
+.bg-color-descriptions div p{
+    margin-left: 10px;
+}
+
+.bg-color-descriptions div .fa{
+    font-size: var(--px11);
 }
 
 /* Responsive */
@@ -250,6 +289,15 @@
     }
     .tasks {
         margin-bottom: 20px;
+    }
+
+    .bg-color-descriptions .flexAndSpaceDiv{
+        display:flex;
+        justify-content: left;
+    }
+    .bg-color-descriptions{
+        width: fit-content;
+        display:block;
     }
 }
 
