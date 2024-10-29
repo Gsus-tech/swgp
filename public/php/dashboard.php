@@ -219,7 +219,32 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
-                        <!-- <span class="badge bg-danger">lol</span> -->
+                        <?php 
+                            $q2 = "SELECT * FROM tbl_notas WHERE id_actividad = ?";
+                            $p2 = [$tarjeta['id_actividad']];
+                            $actNotes = Crud::executeResultQuery($q2, $p2, 'i');
+                            if($actNotes && count($actNotes) > 0){
+                                switch ($actNotes[0]['tipo']) {
+                                    case 'Importante':
+                                        $color = 'red-flag';
+                                        break;
+                                    case 'Completado':
+                                        $color = 'green-flag';
+                                        break;
+                                    case 'InfoRequerida':
+                                        $color = 'orange-flag';
+                                        break;
+                                    default:
+                                        $color = null;
+                                        break;
+                                }
+                                if($color !== null){
+                                    $contenido = htmlspecialchars($actNotes[0]['contenido']);
+                                    echo "<span title=\"$contenido\" class=\"button badge fa fa-sticky-note $color\"></span>";
+                                }
+                            }
+                            
+                        ?>
                         <h5 class="pt-10">
                             <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
@@ -248,7 +273,32 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3" >
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
-                        <!-- <span class="badge bg-danger">lol</span> -->
+                        <?php 
+                            $q2 = "SELECT * FROM tbl_notas WHERE id_actividad = ?";
+                            $p2 = [$tarjeta['id_actividad']];
+                            $actNotes = Crud::executeResultQuery($q2, $p2, 'i');
+                            if($actNotes && count($actNotes) > 0){
+                                switch ($actNotes[0]['tipo']) {
+                                    case 'Importante':
+                                        $color = 'red-flag';
+                                        break;
+                                    case 'Completado':
+                                        $color = 'green-flag';
+                                        break;
+                                    case 'InfoRequerida':
+                                        $color = 'orange-flag';
+                                        break;
+                                    default:
+                                        $color = null;
+                                        break;
+                                }
+                                if($color !== null){
+                                    $contenido = htmlspecialchars($actNotes[0]['contenido']);
+                                    echo "<span title=\"$contenido\" class=\"button badge fa fa-sticky-note $color\"></span>";
+                                }
+                            }
+                            
+                        ?>
                         <h5 class="pt-10">
                             <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
@@ -276,7 +326,32 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
                     <div class="card-body p-3">
                         <small class="float-end text-muted"><?php echo htmlspecialchars($tarjeta['fecha_estimada']); ?></small>
-                        <!-- <span class="badge bg-danger">lol</span> -->
+                        <?php 
+                            $q2 = "SELECT * FROM tbl_notas WHERE id_actividad = ?";
+                            $p2 = [$tarjeta['id_actividad']];
+                            $actNotes = Crud::executeResultQuery($q2, $p2, 'i');
+                            if($actNotes && count($actNotes) > 0){
+                                switch ($actNotes[0]['tipo']) {
+                                    case 'Importante':
+                                        $color = 'red-flag';
+                                        break;
+                                    case 'Completado':
+                                        $color = 'green-flag';
+                                        break;
+                                    case 'InfoRequerida':
+                                        $color = 'orange-flag';
+                                        break;
+                                    default:
+                                        $color = null;
+                                        break;
+                                }
+                                if($color !== null){
+                                    $contenido = htmlspecialchars($actNotes[0]['contenido']);
+                                    echo "<span title=\"$contenido\" class=\"button badge fa fa-sticky-note $color\"></span>";
+                                }
+                            }
+                            
+                        ?>
                         <h5 class="pt-10">
                             <a class="text-body"><?php echo htmlspecialchars($tarjeta['nombre_actividad']); ?></a>
                         </h5>
