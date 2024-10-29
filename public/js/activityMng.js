@@ -784,8 +784,53 @@ function setLimitDates(){
     });
 }
 
+function applyBulkAction(){
+    const select = document.getElementById('actionSelected');
+    const selectedAct = document.querySelectorAll('.activity-checkbox:checked');
+    let msj=null;
+    if(select.value === 'delete' && selectedAct.length >= 1){ 
+        let acti = selectedAct.length === 1 ? 'actividad' : 'actividades';
+        msj = `¿Estás seguro de querer eliminar ${selectedAct.length} ${acti}?` }
+    if(msj !== null){
+        createConfirmationDialog('Confirmar acción', msj, 
+            ()=>{
+                const activityIds = Array.from(selectedAct).map(actividad => actividad.value).join(',');
+                const url = `../controller/activityManager.php?submitBulkActivity=true`;
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        ids: activityIds
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Actividades eliminadas correctamente.');
+                        location.reload();
+                    }else{
+                        console.error('Error en la solicitud:', data.message);
+                    }
+                })
+                .catch(error => {
+                     // Manejo de errores
+                     console.error('Error en la solicitud:', error);
+                });
+            },()=>{}
+        );
+    }
+}
+
+function addApplyEvents(){
+    const btn1 = document.getElementById('applyAction');
+    const btn2 = document.getElementById('applyAction2');
+    btn1.addEventListener('click', ()=>{applyBulkAction()});
+    btn2.addEventListener('click', ()=>{applyBulkAction()});
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     paginateTable('activity-list-body', 8, 'pagination');
-    
+    addApplyEvents();
 })

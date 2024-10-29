@@ -83,6 +83,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         $types = "iii";
         Crud::executeNonResultQuery($query, $params, $types, $destination);
     }
+    
+    if (isset($_GET['submitBulkActivity']) && $_GET['submitBulkActivity'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $ids = Crud::antiNaughty($_POST['ids']);
+        $actIds = explode(',', $ids);
+    
+        if ($actIds) {
+            $q1 = "SELECT id_actividad FROM tbl_actividades WHERE id_proyecto = ?";
+            $pid = $_SESSION['projectSelected'];
+            $projectActivities = Crud::executeResultQuery($q1, [$pid], 'i');
+            $pidsArray = array_column($projectActivities, 'id_actividad');
+            if($pidsArray && count($pidsArray) >= count($actIds)){
+                $flag = true;
+                foreach ($actIds as $activity) {
+                    if(filter_var($activity, FILTER_VALIDATE_INT) === false){
+                        echo json_encode(['success' => false, 'message' => 'Formato de ID erróneo.']);
+                        exit();
+                    }
+                    if(!in_array($activity, $pidsArray)){ $flag=false;}
+                }
+                if($flag){
+                    foreach ($actIds as $activity) {
+                        $q2 = 'DELETE FROM tbl_actividades WHERE id_actividad = ? AND id_proyecto = ?';
+                        $par = [$activity, $pid];
+                        Crud::executeNonResultQuery2($q2, $par, 'ii', '../php/activityManagement.php');
+                    }
+                    echo json_encode(['success' => true, 'message' => 'Actividades eliminadas.']);
+                }else{
+                    echo json_encode(['success' => false, 'message' => 'Id de actividad no encontrado en el proyecto.']);
+                }
+            }else{
+                echo json_encode(['success' => false, 'message' => 'Cantidad de actividades a elminar inválido.']);
+            }
+            
+
+            // $cardIdEscaped = $mysqli->real_escape_string($cardId);
+            // $columnIdEscaped = $mysqli->real_escape_string($columnId);
+    
+            // $sql = "UPDATE tbl_actividades SET estadoActual = '$columnIdEscaped' WHERE id_actividad = '$cardIdEscaped' AND id_proyecto = '". $_SESSION['projectSelected'] ."'";
+    
+            // if ($mysqli->query($sql) === TRUE) {
+            //     if ($mysqli->affected_rows > 0) {
+            //         echo json_encode(['success' => true, 'message' => 'Actividad actualizada.']);
+            //     } else {
+            //         echo json_encode(['success' => false, 'message' => 'No se encontró la actividad o no se realizaron cambios.']);
+            //     }
+            // } else {
+            //     echo json_encode(['success' => false, 'message' => 'Error al actualizar la actividad: ' . $mysqli->error]);
+            // }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+    }
 
 
 
