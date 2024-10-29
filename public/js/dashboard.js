@@ -68,7 +68,7 @@ function showMoveOptions(button, columnId, cardId) {
                 <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
                 <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
-        } else if (columnId === 'proceso') {
+        } else if (columnId === 'proceso') { 
             menuOptionsHTML = `
                 <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Actividades</a>
                 <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
