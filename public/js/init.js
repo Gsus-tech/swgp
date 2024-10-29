@@ -254,6 +254,34 @@ function removeLateClass(el){
     el.classList.remove('lateActivity');
 }
 
+function addColorActTags(){
+    const kanbanBody = document.querySelector('.kanban-board');
+    if(kanbanBody){
+        const tagsDiv = document.getElementById('bg-color-descriptions');
+        if(tagsDiv && tagsDiv.innerHTML === ''){
+            const lateAct = kanbanBody.querySelectorAll('.lateActivity');
+            const almostLateAct = kanbanBody.querySelectorAll('.almostLate');
+            if (lateAct.length > 0) {
+                console.log('la: ',lateAct);
+                const frDiv = document.createElement('div');
+                frDiv.classList.add('flexAndSpaceDiv');
+                frDiv.innerHTML = `<div class="lateActSq">
+                <i class='fa fa-square'></i></div><p>Actividades retrasadas</p>`;
+                tagsDiv.appendChild(frDiv);
+            }
+            
+            if (almostLateAct.length > 0) {
+                console.log('al: ',almostLateAct);
+                const frDiv = document.createElement('div');
+                frDiv.classList.add('flexAndSpaceDiv');
+                frDiv.innerHTML =`<div class="almostLateSq">
+                <i class='fa fa-square'></i></div><p>Último día para finalizar</p>`
+                tagsDiv.appendChild(frDiv);
+            }
+        }
+    }
+}
+
 function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rText) {
     //Div del confirm
     const confirmationDiv = document.createElement('div');
