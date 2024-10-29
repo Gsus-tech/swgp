@@ -72,8 +72,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <label for="filtersForRol">Estado</label>
                         <select class="dropDownEstadoFilter comboBox mL-2r" id="dropDownEstadoFilter" name="dropDownEstadoFilter" onchange="FilterResults(this)">
                             <option value="noFilter">Todos</option>
-                            <option value="pendiente">Pendientes</option>
-                            <option value="en proceso">En proceso</option>
+                            <option value="inicial">Inicial</option>
+                            <option value="urgente">Urgentes</option>
                             <option value="retrasado">Retrasadas</option>
                             <option value="finalizado">Terminadas</option>
                         </select>
@@ -114,8 +114,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         FROM tbl_actividades WHERE id_proyecto = ? ORDER BY id_actividad";
 
                         $estados = [
-                            1 => 'pendiente',
-                            2 => 'en proceso',
+                            1 => 'inicial',
+                            2 => 'urgente',
                             3 => 'retrasado',
                             4 => 'finalizado'
                         ];
@@ -208,7 +208,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
                                     
                                     if(count($users)>=1){
-                                    echo "<select name='userRespList' id='userRespList' class='comboBox' onchange='resetField(this); updateRep(this)'>";
+                                    echo "<select name='userRespList' id='userRespList' class='comboBox repSelectCx' onchange='resetField(this); updateRep(this)'>";
                                     echo "<option value='none'> - Selecciona un responsable - </option>";
                                         for($i=0;$i<count($users);$i++){
                                             echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';
