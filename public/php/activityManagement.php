@@ -208,7 +208,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     $users = Crud::executeResultQuery("SELECT usuarios.id_usuario, usuarios.nombre FROM tbl_usuarios usuarios JOIN tbl_integrantes integrantes ON usuarios.id_usuario = integrantes.id_usuario WHERE integrantes.id_proyecto = '$id'");
                                     
                                     if(count($users)>=1){
-                                    echo "<select name='userRespList' id='userRespList' class='comboBox' onchange='resetField(this); updateRep(this)'>";
+                                    echo "<select name='userRespList' id='userRespList' class='comboBox repSelectCx' onchange='resetField(this); updateRep(this)'>";
                                     echo "<option value='none'> - Selecciona un responsable - </option>";
                                         for($i=0;$i<count($users);$i++){
                                             echo '<option value='.$users[$i]['id_usuario'].'>'.$users[$i]['nombre'].'</option>';

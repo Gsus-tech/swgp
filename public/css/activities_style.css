@@ -323,6 +323,9 @@
         align-items: stretch;
         margin-top: 0;
     } 
+    .repSelectCx{
+        max-width: 14rem;
+    }
 }
 
 
