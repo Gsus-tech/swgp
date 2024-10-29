@@ -159,7 +159,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <div class="kanban-board">
         <!-- Columna de pendientes -->
     <div class="tasks" data-plugin="dragula" id="pendientes">
-        <h5 class="mt-0 task-header text-uppercase">Pendientes (<?php echo count($pendientes); ?>)</h5>
+        <h5 class="mt-0 task-header text-uppercase">Actividades (<?php echo count($pendientes); ?>)</h5>
         <div id="task-list-one" class="task-list-items">
             <?php foreach ($pendientes as $tarjeta) : ?>
                 <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">
@@ -213,7 +213,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
 
     <!-- Columna de en proceso -->
     <div class="tasks" data-plugin="dragula" id="proceso">
-        <h5 class="mt-0 task-header text-uppercase">En Proceso (<?php echo count($en_proceso); ?>)</h5>
+        <h5 class="mt-0 task-header text-uppercase">Urgentes (<?php echo count($en_proceso); ?>)</h5>
         <div id="task-list-two" class="task-list-items">
             <?php foreach ($en_proceso as $tarjeta) : ?>
                 <div class="card mb-0 <?php if((int)$_SESSION['id'] === (int)$tarjeta['id_usuario']){ echo 'tmc';} ?>" data-card-id="<?php echo htmlspecialchars($tarjeta['id_actividad']); ?>">

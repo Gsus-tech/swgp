@@ -72,8 +72,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         <label for="filtersForRol">Estado</label>
                         <select class="dropDownEstadoFilter comboBox mL-2r" id="dropDownEstadoFilter" name="dropDownEstadoFilter" onchange="FilterResults(this)">
                             <option value="noFilter">Todos</option>
-                            <option value="pendiente">Pendientes</option>
-                            <option value="en proceso">En proceso</option>
+                            <option value="inicial">Inicial</option>
+                            <option value="urgente">Urgentes</option>
                             <option value="retrasado">Retrasadas</option>
                             <option value="finalizado">Terminadas</option>
                         </select>
@@ -114,8 +114,8 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                         FROM tbl_actividades WHERE id_proyecto = ? ORDER BY id_actividad";
 
                         $estados = [
-                            1 => 'pendiente',
-                            2 => 'en proceso',
+                            1 => 'inicial',
+                            2 => 'urgente',
                             3 => 'retrasado',
                             4 => 'finalizado'
                         ];
