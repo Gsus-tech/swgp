@@ -198,18 +198,47 @@ function createActionButtons(aId, type){
         button.classList.add('btn', 'btn-blue');
         button.textContent = 'Validar finalización';
         button.setAttribute('onclick', 'mostrarReporteV(this, true)');
-    }else{
-        button.id = 'botonReportes';
-        button.classList.add('btn', 'btn-yellow');
-        button.textContent = 'Ver reporte de actividad';
-        button.setAttribute('title', 'Generar reporte general de la actividad.');
-        button.setAttribute('onclick', 'mostrarReporteV(this, false)');
-    }
-    button.setAttribute('ac-d', aId);
-    buttonsDiv.appendChild(button);
+        button.setAttribute('ac-d', aId);
+        buttonsDiv.appendChild(button);
 
-    const actDiv = document.querySelector('.activityButtonsDiv');
-    actDiv.appendChild(buttonsDiv);
+        const actDiv = document.querySelector('.activityButtonsDiv');
+        actDiv.appendChild(buttonsDiv);
+    }else{
+        const url = `../controller/activityManager.php?doesItHaveReports=true`;
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                aId: aId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if(data.result){
+                    button.id = 'botonReportes';
+                    button.classList.add('btn', 'btn-yellow');
+                    button.textContent = 'Ver reporte de actividad';
+                    button.setAttribute('title', 'Generar reporte general de la actividad.');
+                    button.setAttribute('onclick', 'mostrarReporteV(this, false)');
+                    button.setAttribute('ac-d', aId);
+                    buttonsDiv.appendChild(button);
+
+                    const actDiv = document.querySelector('.activityButtonsDiv');
+                    actDiv.appendChild(buttonsDiv);
+                }
+            }else{
+                console.error('Error en la solicitud:', data.message);
+            }
+        })
+        .catch(error => {
+             // Manejo de errores
+             console.error('Error en la solicitud:', error);
+        });
+    }
+    
 }
 
 // Evento de doble clic sobre una actividad

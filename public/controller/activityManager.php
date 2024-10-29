@@ -117,24 +117,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             }else{
                 echo json_encode(['success' => false, 'message' => 'Cantidad de actividades a elminar inválido.']);
             }
-            
-
-            // $cardIdEscaped = $mysqli->real_escape_string($cardId);
-            // $columnIdEscaped = $mysqli->real_escape_string($columnId);
-    
-            // $sql = "UPDATE tbl_actividades SET estadoActual = '$columnIdEscaped' WHERE id_actividad = '$cardIdEscaped' AND id_proyecto = '". $_SESSION['projectSelected'] ."'";
-    
-            // if ($mysqli->query($sql) === TRUE) {
-            //     if ($mysqli->affected_rows > 0) {
-            //         echo json_encode(['success' => true, 'message' => 'Actividad actualizada.']);
-            //     } else {
-            //         echo json_encode(['success' => false, 'message' => 'No se encontró la actividad o no se realizaron cambios.']);
-            //     }
-            // } else {
-            //     echo json_encode(['success' => false, 'message' => 'Error al actualizar la actividad: ' . $mysqli->error]);
-            // }
         } else {
             echo json_encode(['success' => false, 'message' => 'Los datos proporcionados no son válidos.']);
+        }
+    }
+    
+    if (isset($_GET['doesItHaveReports']) && $_GET['doesItHaveReports'] == 'true') {
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        $id = filter_var($_POST['aId'], FILTER_VALIDATE_INT);
+        if ($id !== false) {
+            $q1 = "SELECT id_avance FROM tbl_avances WHERE id_actividad = ? AND id_proyecto = ?";
+            $pid = $_SESSION['projectSelected'];
+            $reports = Crud::executeResultQuery($q1, [$id, $pid], 'ii');
+            $reportsArray = array_column($reports, 'id_avance');
+            if($reportsArray && count($reportsArray) >= 1){
+                echo json_encode(['success' => true, 'message' => 'Se encontraron reportes.','result'=>true]);
+            }else{
+                echo json_encode(['success' => true, 'message' => 'Sin reportes.', 'result'=>false]);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'El id proporcionado no es válido.']);
         }
     }
 
