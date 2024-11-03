@@ -138,6 +138,24 @@ label{
     width: fit-content;
 }
 
+.solvingArea{
+    margin: 30px auto;
+    max-width: fit-content;
+    align-items:center;
+}
+
+.solvingArea div {
+    width: 95%;
+}
+
+.AccountFieldUpdate{
+    max-width: 600px;
+}
+
+.ticketCreator{
+    margin:15px 0;
+}
+
 @media screen and (max-width: 800px){
     .projectUpdateDiv, .ticketExplanationDiv{
         padding-bottom: 3rem;
@@ -173,6 +191,17 @@ label{
     .type1Btn{
         right:unset;
         left:48rem
+    }
+
+    .container .main .solvingArea.fm-content{
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .solvingArea .s1, .solvingArea .s2{
+        flex: 1;
+        width: 95%;
     }
 }
 

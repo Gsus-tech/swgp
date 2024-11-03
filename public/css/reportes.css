@@ -98,6 +98,10 @@
     margin: 0 10px;
 }
 
+.darkMode .toolbar .fa, .lightMode .toolbar .fa{
+    color: var(--black);
+}
+
 .f-mg{
     margin: 60px 0 40px 0;
 }

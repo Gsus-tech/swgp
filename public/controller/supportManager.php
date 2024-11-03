@@ -8,8 +8,151 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar el rol del usuario
     if (isset($_SESSION['rol'])) {
         if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD') {
+
+            if(isset($_GET['switchTicketState']) && $_GET['switchTicketState'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $idTicket = filter_var($_POST['ticketId'], FILTER_VALIDATE_INT);
+                $newState = Crud::antiNaughty($_POST['toState']);
+                
+                if($newState === 'Abierto' || $newState === 'Pendiente' || $newState === 'Cerrado'){
+
+                    $query = "UPDATE tbl_solicitudes_soporte SET estado = ? WHERE id_solicitud = ?";
+                    $stmt = $mysqli->prepare($query);
+                    
+                    if ($stmt) {
+                        $stmt->bind_param('si', $newState, $idTicket);
+                        $stmt->execute();
+                        
+                        if ($stmt->affected_rows > 0) {
+                            echo json_encode(['success' => true, 'message' => 'Estado de ticket actualizado correctamente.']);
+                        } else {
+                            echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                        }
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+                    }
+                }else {
+                    echo json_encode(['success' => false, 'message' => 'Nuevo estado de ticket inválido.']);
+                }
+            }
             
-            echo json_encode(['success' => true, 'message' => 'AJAX REQUEST realizado correctamente.']);
+            if(isset($_GET['AccountFieldUpdate']) && $_GET['AccountFieldUpdate'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $newValue = Crud::antiNaughty($_POST['newValue']);
+                $column = Crud::antiNaughty($_POST['column']);
+                $user = filter_var($_POST['ticketRem'], FILTER_VALIDATE_INT);
+                $idTicket = filter_var($_POST['ticketId'], FILTER_VALIDATE_INT);
+                
+                if(($column === 'departamento' || $column === 'correo') && $user !== false && $idTicket !== false){
+                    $query = "UPDATE tbl_usuarios SET $column = ? WHERE id_usuario = ?";
+                    $stmt = $mysqli->prepare($query);
+                    
+                    if ($stmt) {
+                        $stmt->bind_param('si', $newValue, $user);
+                        $stmt->execute();
+                        
+                        if ($stmt->affected_rows > 0) {
+                            $q2 = "UPDATE tbl_solicitudes_soporte SET estado = ? WHERE id_solicitud = ?";
+                            $stmt2 = $mysqli->prepare($q2);
+                            
+                            if ($stmt2) {
+                                $newState = 'Cerrado';
+                                $stmt2->bind_param('si', $newState, $idTicket);
+                                $stmt2->execute();
+                                
+                                // Aquí usamos $stmt2->affected_rows para validar si el segundo UPDATE se ejecutó correctamente
+                                if ($stmt2->affected_rows > 0) {
+                                    echo json_encode(['success' => true, 'message' => 'Datos de la cuenta y estado del ticket actualizados correctamente.']);
+                                } else {
+                                    echo json_encode(['success' => true, 'message' => 'Datos actualizados. Error al actualizar el estado del ticket.']);
+                                }
+                            } else {
+                                echo json_encode(['success' => true, 'message' => 'Datos actualizados. Error 2 al actualizar el estado del ticket.']);
+                            }
+                        } else {
+                            echo json_encode(['success' => false, 'message' => 'No se realizaron cambios en los datos del usuario.']);
+                        }
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta para actualizar el usuario.']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error de datos: Columna desconocida o id de creador de ticket inválido.']);
+                }
+            }
+            
+            
+            if (isset($_GET['getTicket']) && $_GET['getTicket'] == 'true') {
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $idTicket = filter_var($_POST['ticketId'], FILTER_VALIDATE_INT);
+            
+                $query = "SELECT id_usuario, tipoSolicitud, mensaje FROM tbl_solicitudes_soporte WHERE id_solicitud = ?";
+                $stmt = $mysqli->prepare($query);
+            
+                if ($stmt) {
+                    $stmt->bind_param('i', $idTicket);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+            
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc(); 
+                        $mensaje = json_decode($row['mensaje'], true);
+                        $tipo = htmlspecialchars($row['tipoSolicitud']);
+                        $user = htmlspecialchars($row['id_usuario']);
+                        if($tipo > 0 && $tipo < 4){
+                            switch ($tipo){
+                                case 1:
+                                    break;
+                                case 2:
+                                    break;
+                                case 3:
+                                    $campo = htmlspecialchars($mensaje['Campo']);
+                                    $newValue = htmlspecialchars($mensaje['newValue']);
+                                    $q2 = "SELECT nombre,$campo FROM tbl_usuarios WHERE id_usuario = ?";
+                                    $oldValue = Crud::executeResultQuery($q2, [$user], 'i');
+                                    if($oldValue && count($oldValue)>0){
+                                        $value = $oldValue[0][$campo];
+                                        $userName = $oldValue[0]['nombre'];
+                                        $html = "
+                                        <div t1p0='AccountFieldUpdate' class='AccountFieldUpdate'>
+                                        <h2>Ticket de Soporte</h2>
+                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                        <span>Solicitado por:  </span><i>$userName</i></div>
+                                        <div class='s1'>
+                                            <label>Valor actual registrado:</label>
+                                            <input disabled class='input' value='$value'>
+                                        </div>
+                                        <div class='s2'>
+                                            <label>Valor del nuevo dato:</label>
+                                            <input id='newValue' class='input' field='$campo' value='$newValue' oninput='resetField(this)'>
+                                        </div>
+                                        <button class='generalBtnStyle btn-green' id='solveAndClose'>Actualizar datos</button>
+                                        </div>
+                                        ";
+                                    }else{
+                                        echo json_encode(['success' => false, 'message' => 'Error al recuperar los datos del usuario.']);
+                                        exit();
+                                    }
+                                    break;
+                            }
+                            
+                            echo json_encode(['success' => true, 'message' => 'Estado de ticket actualizado correctamente.', 'html' => $html]);
+                        }else{
+                            echo json_encode(['success' => false, 'message' => 'Tipo de solicitud no válido.']);
+                        }
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                    }
+                    $stmt->close();
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+                }
+                $mysqli->close();
+            }
+            
+
         } else if ($_SESSION['rol'] === 'EST') {
             $crud = new Crud();
             $mysqli = $crud->getMysqliConnection();
@@ -201,7 +344,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     else if($type === 't-3'){
                         $onField = Crud::antiNaughty((string)$_POST['correctionType']);
                         $newValue = Crud::antiNaughty((string)$_POST['newValue']);
-                        $field = $onField === 'deptoUpdate' ? 'Departamento' : 'Correo';
+                        $field = $onField === 'deptoUpdate' ? 'departamento' : 'correo';
 
                         $mensaje = json_encode([
                             'Campo' => "{$field}",

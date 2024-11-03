@@ -14,6 +14,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <title>SWGP - Soporte</title>
     <link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">    
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/table-style.css">
     <link rel="stylesheet" href="../css/support.css">
     <?php
     $query = "SELECT notificaciones,tema,tLetra FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
@@ -44,14 +45,72 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         }
 
         if ($_SESSION['rol'] === 'ADM' || $_SESSION['rol'] === 'SAD') {
+            $query = 'SELECT tck.id_solicitud, usr.nombre, tck.tipoSolicitud, tck.estado, tck.fecha_creacion
+            FROM tbl_solicitudes_soporte tck JOIN tbl_usuarios usr ON tck.id_usuario = usr.id_usuario 
+            WHERE tck.estado = ? OR tck.estado = ?';
+            $par = ['Abierto', 'Pendiente'];
+            $tickets = Crud::executeResultQuery($query, $par, 'ss');
         ?>
         <div class="header flexAndSpaceDiv">
             <h4 class="headerTitle">Gestión de Soporte</h4>
         </div>
 
+        <div class="table">
+                <table id="ticketsTable">
+                    <thead>
+                        <tr>
+                            <th class="rowNombre">Tipo de ticket</th>
+                            <th class="rowAcciones">Usuario</th>
+                            <th class="rowFecha">Fecha de creación</th>
+                            <th class="rowEstado">Estado</th>
+                            <th class="rowActions">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketsTable_tbody">
+                        <?php
+                            if($tickets && count($tickets)>0){
+                                foreach ($tickets as $ticket) {
+                                    if($ticket['tipoSolicitud'] > 0 && $ticket['tipoSolicitud'] < 4){
+                                        $ticketId = $ticket['id_solicitud'];
+                                        $user = $ticket['nombre'];
+                                        switch ($ticket['tipoSolicitud']) {
+                                            case 1:
+                                                $tipo = 'Error del Sistema';
+                                                break;
+                                            case 2:
+                                                $tipo = 'Actualización de proyectos';
+                                                break;
+                                            case 3:
+                                                $tipo = 'Cuentas de usuario';
+                                                break;
+                                        }
+                                        $state = $ticket['estado'];
+                                        $date = $ticket['fecha_creacion'];
+                                        $switchState = $state === 'Abierto' ?
+                                        "<i title=\"Marcar como pendiente\" class=\"button fa fa-toggle-on\"></i>" :
+                                        "<i title=\"Marcar como abierto\" class=\"button fa fa-toggle-off\"></i>";
+                                        echo 
+                                        "<tr tck=\"$ticketId\" tcp=\"".$ticket['tipoSolicitud']."\">
+                                            <td>".htmlspecialchars($tipo)."</td>
+                                            <td>".htmlspecialchars($user)."</td>
+                                            <td class='dateRow'>".htmlspecialchars($date)."</td>
+                                            <td>".htmlspecialchars($state)."</td>
+                                            <td>$switchState<i title=\"Resolver solicitud\" class=\"button fa fa-reply\"></i></td>
+                                        </tr>";
+                                    }
+                                }
+                            }else{
+                                echo "<tr><td colspan='4' id='noRows'><i>Sin tickets de soporte que atender</i></td></tr>";
+                            }
+                        ?>
+                        
+                    </tbody>
+                </table>
+            </div>
 
-
+        <div class="solvingArea"></div>
         <script src="../js/supportAdmin.js"></script>
+        <script src="../js/validate.js"></script>
         <?php
 
         }else{
