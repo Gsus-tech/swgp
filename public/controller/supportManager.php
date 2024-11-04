@@ -37,6 +37,143 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
             
+            if(isset($_GET['addTeamMember']) && $_GET['addTeamMember'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $user = filter_var($_POST['userId'], FILTER_VALIDATE_INT);
+                $project = filter_var($_POST['proyecto'], FILTER_VALIDATE_INT);
+                
+                if($user !== false && $project !== false){
+
+                    $checkQuery = "SELECT id_usuario FROM tbl_integrantes WHERE id_usuario = ? AND id_proyecto = ?";
+                    $checkStmt = $mysqli->prepare($checkQuery);
+
+                    if ($checkStmt) {
+                        $checkStmt->bind_param('ii', $user, $project);
+                        $checkStmt->execute();
+                        $result = $checkStmt->get_result();
+                        
+                        if ($result->num_rows > 0) {
+                            echo json_encode(['success' => true, 'message' => 'El usuario ya es miembro del proyecto.']);
+                        } 
+                        else {
+                            $query = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, 0)";
+                            $stmt = $mysqli->prepare($query);
+                            
+                            if ($stmt) {
+                                $stmt->bind_param('ii', $user, $project);
+                                $stmt->execute();
+                                
+                                if ($stmt->affected_rows > 0) {
+                                    echo json_encode(['success' => true, 'message' => 'Integrante de equipo añadido.']);
+                                } else {
+                                    echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                                }
+                            } else {
+                                echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.'. $mysqli->error]);
+                            }
+                        }
+                    }
+                }else {
+                    echo json_encode(['success' => false, 'message' => 'Id de usuario o de proyecto inválido.']);
+                }
+            }
+            
+            if(isset($_GET['createAndAddTeamMember']) && $_GET['createAndAddTeamMember'] == 'true'){
+                if($_SESSION['rol']==='ADM'){
+                    $crud = new Crud();
+                    $mysqli = $crud->getMysqliConnection();
+                    $project = filter_var($_POST['proyecto'], FILTER_VALIDATE_INT);
+                    
+                    if($project !== false){
+                        $name = Crud::antiNaughty((string)$_POST['name']);
+                        $depto = Crud::antiNaughty((string)$_POST['depto']);
+                        $mail = Crud::antiNaughty((string)$_POST['mail']);
+                        $password = password_hash('Cobach123!', PASSWORD_DEFAULT);
+                        $partes = explode(' ', $name);
+                        $nickName = isset($partes[1]) ? $partes[0] . ' ' . substr($partes[1], 0, 1) . '.' : $partes[0];
+
+                        $createUserQuery = "INSERT INTO tbl_usuarios (rolUsuario, nombre, correo, contrasena, departamento, nickname)
+                        VALUES (?, ?, ?, ?, ?, ?)";
+                        $params = ['EST', $name, $mail, $password, $depto, $nickName];
+                        $types = "ssssss";
+                        Crud::executeNonResultQuery2($createUserQuery, $params, $types, './php/support.php');
+                        $success = Crud::executeResultQuery('SELECT id_usuario FROM tbl_usuarios WHERE nombre = ? AND correo = ? AND departamento = ?',
+                            [$name, $mail, $depto],'sss');
+                        if (count($success) > 0) {
+                            $query = "INSERT INTO tbl_integrantes (id_usuario, id_proyecto, responsable) VALUES (?, ?, 0)";
+                            $stmt = $mysqli->prepare($query);
+                            $user = $success[0]['id_usuario'];
+                            if ($stmt) {
+                                $stmt->bind_param('ii', $user, $project);
+                                $stmt->execute();
+                                
+                                if ($stmt->affected_rows > 0) {
+                                    echo json_encode(['success' => true, 'message' => 'Integrante de equipo añadido.']);
+                                } else {
+                                    echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                                }
+                            } else {
+                                echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.'. $mysqli->error]);
+                            }
+                        }else{
+                            echo json_encode(['success' => false, 'message' => 'No se pudo crear la cuenta de usuario.']);
+                        }
+                    }else {
+                        echo json_encode(['success' => false, 'message' => 'Id de usuario o de proyecto inválido.']);
+                    }
+                }else{
+                    echo json_encode(['success' => false, 'message' => 'No cuentas con los permisos necesarios para crear cuentas de usuario.']);
+                }
+            }
+            
+            if(isset($_GET['findExistingUser']) && $_GET['findExistingUser'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $name = Crud::antiNaughty($_POST['name']);
+                $mail = Crud::antiNaughty($_POST['mail']);
+                
+                if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                    $query = "SELECT id_usuario, nombre, correo, departamento FROM tbl_usuarios WHERE correo = ?";
+                    $stmt = $mysqli->prepare($query);
+                    
+                    if ($stmt) {
+                        $stmt->bind_param("s", $mail);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                            $userInfo = $result->fetch_assoc();
+                            echo json_encode(['success' => true, 'exists'=>true, 'message' => 'Correo de usuario existente.', 'userInfo'=>$userInfo]);
+                        } else {
+                            $nameParts = explode(" ", $name);
+                            $likeConditions = [];
+                            foreach ($nameParts as $part) {
+                                $part = $mysqli->real_escape_string($part);
+                                $likeConditions[] = "nombre LIKE '%$part%'";
+                            }
+
+                            $likeQuery = implode(" AND ", $likeConditions);
+                            $q2 = "SELECT id_usuario, nombre, correo, departamento FROM tbl_usuarios WHERE $likeQuery";
+                            
+                            $result2 = $mysqli->query($q2);
+
+                            if ($result2 && $result2->num_rows > 0) {
+                                $userInfo = $result2->fetch_assoc();
+                                echo json_encode(['success' => true, 'exists' => true, 'message' => 'Se encontraron coincidencias parciales en el nombre.', 'userInfo'=>$userInfo]);
+                            } else {
+                                echo json_encode(['success' => true, 'exists' => false, 'message' => 'No se encontraron coincidencias.']);
+                            }
+                        
+                        }
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+                    }
+                }else {
+                    echo json_encode(['success' => false, 'message' => 'El correo electrónico proporcionado es inválido.']);
+                }
+            }
+            
             if(isset($_GET['AccountFieldUpdate']) && $_GET['AccountFieldUpdate'] == 'true'){
                 $crud = new Crud();
                 $mysqli = $crud->getMysqliConnection();
@@ -130,6 +267,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $mensaje = json_decode($row['mensaje'], true);
                         $tipo = htmlspecialchars($row['tipoSolicitud']);
                         $user = htmlspecialchars($row['id_usuario']);
+                        $q2 = "SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?";
+                        $userName = Crud::executeResultQuery($q2, [$user], 'i');
+                        $nombre = $userName[0]['nombre'];
                         if($tipo > 0 && $tipo < 4){
                             switch ($tipo){
                                 case 1:
@@ -140,9 +280,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         $imgPath = htmlspecialchars($mensaje['imagen']);
                                         $imgContent = "<div><label>Imagen capturada:</label><br><img src='$imgPath' alt='Imagen del ticket' class='ticketImage'></div>";
                                     }
-                                    $q2 = "SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?";
-                                    $userName = Crud::executeResultQuery($q2, [$user], 'i');
-                                    $nombre = $userName[0]['nombre'];
                                     $html = "
                                         <div t1p0='systemErrorReport' class='systemErrorReport'>
                                         <h2>Ticket de Soporte</h2>
@@ -164,36 +301,86 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         </div>
                                         ";  
                                     break;
-                                case 2:
-                                    $titulo = htmlspecialchars($mensaje['titulo']);
-                                    $descripcion = htmlspecialchars($mensaje['descripcion']);
-                                    $imgContent = '';
-                                    if(isset($mensaje['imagen'])){
-                                        $imgContent = '<div><label>Imagen aqui</label></div>';
-                                    }
-                                    $q2 = "SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?";
-                                    $userName = Crud::executeResultQuery($q2, [$user], 'i');
-                                    $nombre = $userName[0]['nombre'];
-                                    $html = "
-                                        <div t1p0='systemErrorReport' class='systemErrorReport'>
-                                        <h2>Ticket de Soporte</h2>
-                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
-                                        <span>Solicitado por:  </span><i>$nombre</i></div>
-                                        <div class='s1'>
-                                            <label>Error del sistema encontrado:</label>
-                                            <input disabled class='input' value='$titulo'>
-                                        </div>
-                                        <div class='s2'>
-                                        <label>Descripción del error:</label>
-                                        <input disabled class='input' value='$descripcion'>
-                                        </div>
-                                        $imgContent
-                                        <div class='btnOptions'>
-                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Cerrar ticket</button>
-                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
-                                        </div>
-                                        </div>
-                                        ";
+                                    case 2: 
+                                        $changeType = htmlspecialchars($mensaje['Cambio']);
+                                        $idProject = filter_var($mensaje['Proyecto'], FILTER_VALIDATE_INT);
+                                        if($idProject !== false){
+                                            $q3 = "SELECT nombre FROM tbl_proyectos WHERE id_proyecto = ?";
+                                            $projectInf = Crud::executeResultQuery($q3, [$idProject], 'i');
+                                            $pName = $projectInf[0]['nombre'];
+                                            if($changeType === 'addMember') {
+                                                $newUserN = htmlspecialchars($mensaje['nombre']);
+                                                $correo = htmlspecialchars($mensaje['correo']);
+                                                $depto = htmlspecialchars($mensaje['depto']);
+                                                $html = "
+                                                    <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='addMember' pid='$idProject'>
+                                                        <h2>Ticket de Soporte</h2>
+                                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                                            <span>Proyecto: </span><i>$pName</i><br>
+                                                            <span>Solicitado por: </span><i>$nombre</i></div>
+                                                        <div class='s1'>
+                                                            <label>Nombre:</label>
+                                                            <input disabled id='newUserName' class='input' value='$newUserN'>
+                                                        </div>
+                                                        <div class='s2'>
+                                                            <label>Departamento:</label>
+                                                            <input disabled id='newUserDepto' class='input' value='$depto'>
+                                                        </div>
+                                                        <div class='s1'>
+                                                            <label>Correo:</label>
+                                                            <input disabled id='newUserMail' class='input' value='$correo'>
+                                                        </div>
+                                                        <br>
+                                                        <div class='btnOptions'>
+                                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Agregar usuario</button>
+                                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                        </div>
+                                                    </div>
+                                                ";
+                                            }
+                                            else if($changeType === 'removeMember') {
+                                                $html = "
+                                                    <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='removeMember' pid='$idProject'>
+                                                        <h2>Ticket de Soporte</h2>
+                                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                                            <span>Proyecto: </span><i>$pName</i><br>
+                                                            <span>Solicitado por: </span><i>$nombre</i></div>
+                                                        <div class='btnOptions'>
+                                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Eliminar usuario</button>
+                                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                        </div>
+                                                    </div>
+                                                ";
+                                            }
+                                            else if($changeType === 'changePermitions') {
+                                                $html = "
+                                                    <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='changePermitions' pid='$idProject'>
+                                                        <h2>Ticket de Soporte</h2>
+                                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                                            <span>Proyecto: </span><i>$pName</i><br>
+                                                            <span>Solicitado por: </span><i>$nombre</i></div>
+                                                        <div class='btnOptions'>
+                                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Cambiar permisos</button>
+                                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                        </div>
+                                                    </div>
+                                                ";
+                                            }
+                                            else if($changeType === 'projectDataCorrection') {
+                                                $html = "
+                                                    <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='projectDataCorrection' pid='$idProject'>
+                                                        <h2>Ticket de Soporte</h2>
+                                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                                            <span>Proyecto: </span><i>$pName</i><br>
+                                                            <span>Solicitado por: </span><i>$nombre</i></div>
+                                                        <div class='btnOptions'>
+                                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Corregir datos del proyecto</button>
+                                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                        </div>
+                                                    </div>
+                                                ";
+                                            }
+                                        }
                                     break;
                                 case 3:
                                     $campo = htmlspecialchars($mensaje['Campo']);
@@ -228,8 +415,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     }
                                     break;
                             }
-                            
-                            echo json_encode(['success' => true, 'message' => 'Ticket recuperado correctamente.', 'html' => $html]);
+                            if($html !== ''){
+                                echo json_encode(['success' => true, 'message' => 'Ticket recuperado correctamente.', 'html' => $html]);
+                            }else{
+                                echo json_encode(['success' => false, 'message' => 'Error al preparar la interfaz de resolución.']);
+                            }
                         }else{
                             echo json_encode(['success' => false, 'message' => 'Tipo de solicitud no válido.']);
                         }
@@ -346,6 +536,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     
                                     $mensaje = json_encode([
                                         'Cambio' => "addMember",
+                                        'Proyecto' => "$proyectoId",
                                         'nombre' => "$nombre",
                                         'correo' => "$correo",
                                         'depto' => "$depto"
@@ -359,6 +550,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     if($userDel != false){
                                         $mensaje = json_encode([
                                             'Cambio' => "removeMember",
+                                            'Proyecto' => "$proyectoId",
                                             'userId' => "$userDel",
                                             'ticketDescription' => "$ticketDescription"
                                         ]);
@@ -379,6 +571,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             $cr = $crRp === '0' ? 'member' : 'rep';
                                             $mensaje = json_encode([
                                                 'Cambio' => "changePermitions",
+                                                'Proyecto' => "$proyectoId",
                                                 'usuario' => "$memberId",
                                                 'currentPermtion' => "$cr"
                                             ]);
@@ -397,6 +590,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     
                                     $mensaje = json_encode([
                                         'Cambio' => "projectDataCorrection",
+                                        'Proyecto' => "$proyectoId",
                                         'ticketTitle' => "$ticketTitle",
                                         'ticketDescription' => "$ticketDescription"
                                     ]);

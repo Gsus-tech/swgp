@@ -54,7 +54,6 @@ function switchTicketState(id, toState){
         if(data.success){
             console.log('Estado actualizado:', data.message);
             location.reload();
-            // Quiza en lugar de actualizar la pagina quitar boton y crear otro.
         } else {
             console.log('Error al actualizar estado:', data.message);
         }
@@ -102,6 +101,16 @@ function fixAndCloseTicket(tck, type, vle, fl){
         fl = true;
     }
 
+    if(type==='projectInfoUpdate'){
+
+        data = new URLSearchParams({
+            response: vle,
+            ticketRem: userId,
+            ticketId: tck
+        });
+        fl = true;
+    }
+
     if(fl){
         fetch(url, {
             method: 'POST',
@@ -127,88 +136,198 @@ function fixAndCloseTicket(tck, type, vle, fl){
 
 function resolveTicket(id, tipo) {
     const areaDiv = document.querySelector('.solvingArea');
-        const url = `../controller/supportManager.php?getTicket=true`;
-        fetch(url, {
-            method: 'POST',
-            body: new URLSearchParams({
-                ticketId: id
-            }),
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                areaDiv.innerHTML = data.html;
-                areaDiv.classList.add('fm-content');
-                setTimeout(
-                    ()=>{
-                        areaDiv.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                        const solveBtn = document.getElementById('solveAndClose');
-                        solveBtn.addEventListener('click', ()=>{
-                            const child = areaDiv.children[0];
-                            const t = child.getAttribute('t1p0');
-                            if(t==='AccountFieldUpdate'){
-                                const col = document.getElementById('newValue').getAttribute('field');
-                                fixAndCloseTicket(id, t, col, false);
-                            }
-                            else if(t==='systemErrorReport'){
-                                createConfirmationDialog('Respuesta', '¿Deseas agregar un mensaje de respuesta para el usuario?',
-                                    async ()=>{
-                                        try{
-                                            const mensaje = await createTextInputBox( 'Respondiendo...',
-                                                'Ingresa el mensaje de respuesta para el usuario:',
-                                                [{name:'maxlength', value:'250'}]
-                                            );
-                                            fixAndCloseTicket(id, t, mensaje, false);
-                                        } catch (error) {
-                                            if (error !== 'Input cancelado') {
-                                                console.error(error);
-                                            }else{
-                                                console.log('Acción cancelada.')
-                                            }
-                                            return;
+    const url = `../controller/supportManager.php?getTicket=true`;
+    fetch(url, {
+        method: 'POST',
+        body: new URLSearchParams({
+            ticketId: id
+        }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log('Got info.')
+            areaDiv.innerHTML = data.html;
+            areaDiv.classList.add('fm-content');
+            setTimeout(
+                ()=>{
+                    areaDiv.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    const solveBtn = document.getElementById('solveAndClose');
+                    solveBtn.addEventListener('click', ()=>{
+                        const child = areaDiv.children[0];
+                        const t = child.getAttribute('t1p0');
+                        if(t==='AccountFieldUpdate'){
+                            const col = document.getElementById('newValue').getAttribute('field');
+                            fixAndCloseTicket(id, t, col, false);
+                        }
+                        else if(t==='systemErrorReport'){
+                            createConfirmationDialog('Respuesta', '¿Deseas agregar un mensaje de respuesta para el usuario?',
+                                async ()=>{
+                                    try{
+                                        const mensaje = await createTextInputBox( 'Respondiendo...',
+                                            'Ingresa el mensaje de respuesta para el usuario:',
+                                            [{name:'maxlength', value:'250'}]
+                                        );
+                                        fixAndCloseTicket(id, t, mensaje, false);
+                                    } catch (error) {
+                                        if (error !== 'Input cancelado') {
+                                            console.error(error);
+                                        }else{
+                                            console.log('Acción cancelada.')
                                         }
-                                    }, 
-                                    ()=>{
-                                        fixAndCloseTicket(id, t, null, false);
-                                    }, 'Agregar mensaje', 'Enviar sin mensaje'
-                                );
+                                        return;
+                                    }
+                                }, 
+                                ()=>{
+                                    fixAndCloseTicket(id, t, null, false);
+                                }, 'Agregar mensaje', 'Enviar sin mensaje'
+                            );
+                        }
+                        else if(t==='projectInfoUpdate'){
+                            t2 = child.getAttribute('tcp2');
+                            console.log(t2);
+                            pid = child.getAttribute('pid');
+                            if(t2 === 'addMember') {
+                                addUserToProject(pid, id);
+                            }
+                            else if(t2 === 'removeMember') {
+                                createConfirmationDialog('Finalizando ticket', 
+                                    'Este ticket requiere eliminar un integrante del proyecto');
+                            }
+                            else if(t2 === 'changePermitions') {}
+                            else if(t2 === 'projectDataCorrection') {}
+                            
+                        }
+                    })
+                    const cancelBtn = document.getElementById('cancelAndClose');
+                    cancelBtn.addEventListener('click', ()=>{
+                        areaDiv.innerHTML = '';
+                        areaDiv.classList.remove('fm-content');
+                    });
+                },
+                350
+            );
+        } else {
+            console.log('Error al actualizar estado:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+}
+
+function addUserToProject(project, tik){
+    const userName = document.getElementById('newUserName').value;
+    const userDepto = document.getElementById('newUserDepto').value;
+    const userMail = document.getElementById('newUserMail').value;
+    const url = `../controller/supportManager.php?findExistingUser=true`;
+    fetch(url, {
+        method: 'POST',
+        body: new URLSearchParams({
+            name: userName,
+            mail: userMail
+        }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log(data.message);
+            if(data.exists){
+                if(data.message === 'Correo de usuario existente.'){
+                    $hdr = "Correo registrado";
+                    $texto = "Se encontró una cuenta asociada al correo";
+                }else{
+                    $hdr = "Nombre registrado";
+                    $texto = "Se encontraron coincidencias del nombre de usuario por agregar";
+                }
+                foundId = data.userInfo.id_usuario;
+                createConfirmationDialog($hdr, 
+                    `${$texto}.\n\nInformación de cuenta:\n`+
+                    `Nombre: ${data.userInfo.nombre}\nCorreo: ${data.userInfo.correo}\nDepartamento: ${data.userInfo.departamento}`,
+                    ()=>{
+                        fetch('../controller/supportManager.php?addTeamMember=true', {
+                            method: 'POST',
+                            body: new URLSearchParams({
+                                userId: foundId,
+                                proyecto: project
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                alert(result.message);
+                                closeTicketConfirmation(tik);
+                            } else {
+                                alert(result.message || 'Error al añadir al usuario al equipo del proyecto.');
                             }
                         })
-                        const cancelBtn = document.getElementById('cancelAndClose');
-                        cancelBtn.addEventListener('click', ()=>{
-                            areaDiv.innerHTML = '';
-                            areaDiv.classList.remove('fm-content');
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            alert('Error al añadir al usuario al equipo del proyecto.');
+                        });
+                        
+                    },
+                    ()=>{
+                        console.log('Acción cancelada.');                            
+                    }, 'Agregar esta cuenta', 'Cancelar'
+                );
+            }else{
+                createConfirmationDialog('Crear nuevo usuario', 
+                    `No se encontró una cuenta asociada al correo '${userMail}'.\n¿Crear una cuenta para el usuario ${userName}?`,
+                    ()=>{
+                        fetch('../controller/supportManager.php?createAndAddTeamMember=true', {
+                            method: 'POST',
+                            body: new URLSearchParams({
+                                proyecto: project,
+                                name: userName,
+                                depto: userDepto,
+                                mail: userMail
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                alert(result.message);
+                                closeTicketConfirmation(tik);
+                            } else {
+                                alert(result.message || 'Error al añadir al usuario al equipo del proyecto.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error en la solicitud:', error);
+                            alert('Error al añadir al usuario al equipo del proyecto.');
                         });
                     },
-                    350
+                    ()=>{
+                        alert('Cancelado.');
+                    }, 'Crear cuenta', 'Cancelar'
                 );
-            } else {
-                console.log('Error al actualizar estado:', data.message);
             }
-        })
-        .catch(error => {
-            console.error('Error en la solicitud AJAX:', error);
-        });
+        } else {
+            console.log('Error al validar existencia de usuario:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+}
 
-    // switch (tipo) {
-    //     case '1':
-    //         console.log(`Ticket ${id} is in state 1.`);
-    //         break;
-    //     case '2':
-    //         console.log(`Ticket ${id} is in state 2.`);
-    //         break;
-    //     case '3':
-    //         // Esto deberia ser lo mismo para los 3 escenarios. 
-    //         // El case solo define el nombre de la clase conjunto al div solvingArea
-        
-    //         break;
-    //     default:
-    //         console.log(`No se reconoce el tipo de cambio solicitado.`);
-    //         break;
-    // }
+function closeTicketConfirmation(tik){
+    createConfirmationDialog('Mensaje de confirmación',
+        '¿Deseas cerrar este ticket?',
+        ()=>{
+            switchTicketState(tik, 'Cerrado');
+            console.log('Ticket cerrado.')
+        },
+        ()=>{console.log('El ticket no se cerró.')}, 
+        'Cerrar ticket', 'Dejar como está'
+    );
 }
