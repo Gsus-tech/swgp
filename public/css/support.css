@@ -156,6 +156,29 @@ label{
     margin:15px 0;
 }
 
+.btnOptions{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.ticketImage{
+    width:100%; 
+    max-width: 650px; 
+    height: auto;
+    margin: 15px;
+}
+
+@media screen and (max-width: 450px) {
+    .btnOptions{
+        display: grid;
+        justify-content: center;
+    }
+    .btnOptions .generalBtnStyle{
+        margin-bottom: 55px;
+    }
+}
+
 @media screen and (max-width: 800px){
     .projectUpdateDiv, .ticketExplanationDiv{
         padding-bottom: 3rem;

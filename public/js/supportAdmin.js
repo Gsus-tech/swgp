@@ -64,32 +64,38 @@ function switchTicketState(id, toState){
     });
 }
 
-function fixAndCloseTicket(tck, type, column, fl){
-    var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
-    const field = document.getElementById('newValue');
-
-    if (regexEspeciales.test(field.value)) {
-        field.setCustomValidity('No se permiten caracteres especiales.');
-        field.classList.add('invalidField');
-        field.reportValidity();
-        return false;
-    }
-    if(!testValue('strict', 'newValue', column)){
-        return false;
-    }
-    if(!testLenght('max',45,'newValue') || !testLenght('min',8,'newValue')){
-        return false;
-    }
-
-    console.log(`tck= ${tck}`);
+function fixAndCloseTicket(tck, type, vle, fl){
+    const userId = document.getElementById('ticketCreator').getAttribute('tcid'); 
     const url = `../controller/supportManager.php?${type}=true`;
     let data;
     if(type==='AccountFieldUpdate'){
+        var regexEspeciales = /[^a-zA-Z0-9 áéíóúÁÉÍÓÚ]/g;
+        const field = document.getElementById('newValue');
+        if (regexEspeciales.test(field.value)) {
+            field.setCustomValidity('No se permiten caracteres especiales.');
+            field.classList.add('invalidField');
+            field.reportValidity();
+            return false;
+        }
+        if(!testValue('strict', 'newValue', vle)){
+            return false;
+        }
+        if(!testLenght('max',45,'newValue') || !testLenght('min',8,'newValue')){
+            return false;
+        }
         const value = document.getElementById('newValue').value; 
-        const userId = document.getElementById('ticketCreator').getAttribute('tcid'); 
         data = new URLSearchParams({
-            column: column,
+            column: vle,
             newValue: value,
+            ticketRem: userId,
+            ticketId: tck
+        });
+        fl = true;
+    }
+
+    if(type==='systemErrorReport'){
+        data = new URLSearchParams({
+            response: vle,
             ticketRem: userId,
             ticketId: tck
         });
@@ -120,52 +126,89 @@ function fixAndCloseTicket(tck, type, column, fl){
 }
 
 function resolveTicket(id, tipo) {
-    switch (tipo) {
-        case '1':
-            console.log(`Ticket ${id} is in state 1.`);
-            break;
-        case '2':
-            console.log(`Ticket ${id} is in state 2.`);
-            break;
-        case '3':
-            const areaDiv = document.querySelector('.solvingArea');
-            const url = `../controller/supportManager.php?getTicket=true`;
-            fetch(url, {
-                method: 'POST',
-                body: new URLSearchParams({
-                    ticketId: id
-                }),
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success){
-                    areaDiv.innerHTML = data.html;
-                    areaDiv.classList.add('fm-content');
-                    setTimeout(
-                        ()=>{
-                            const solveBtn = document.getElementById('solveAndClose');
-                            solveBtn.addEventListener('click', ()=>{
-                                const child = areaDiv.children[0];
-                                const t = child.getAttribute('t1p0');
+    const areaDiv = document.querySelector('.solvingArea');
+        const url = `../controller/supportManager.php?getTicket=true`;
+        fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams({
+                ticketId: id
+            }),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                areaDiv.innerHTML = data.html;
+                areaDiv.classList.add('fm-content');
+                setTimeout(
+                    ()=>{
+                        areaDiv.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                        const solveBtn = document.getElementById('solveAndClose');
+                        solveBtn.addEventListener('click', ()=>{
+                            const child = areaDiv.children[0];
+                            const t = child.getAttribute('t1p0');
+                            if(t==='AccountFieldUpdate'){
                                 const col = document.getElementById('newValue').getAttribute('field');
-                                fixAndCloseTicket(id, t,col, false);
-                            })
-                        },
-                        350
-                    );
-                } else {
-                    console.log('Error al actualizar estado:', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud AJAX:', error);
-            });
-            break;
-        default:
-            console.log(`No se reconoce el tipo de cambio solicitado.`);
-            break;
-    }
+                                fixAndCloseTicket(id, t, col, false);
+                            }
+                            else if(t==='systemErrorReport'){
+                                createConfirmationDialog('Respuesta', '¿Deseas agregar un mensaje de respuesta para el usuario?',
+                                    async ()=>{
+                                        try{
+                                            const mensaje = await createTextInputBox( 'Respondiendo...',
+                                                'Ingresa el mensaje de respuesta para el usuario:',
+                                                [{name:'maxlength', value:'250'}]
+                                            );
+                                            fixAndCloseTicket(id, t, mensaje, false);
+                                        } catch (error) {
+                                            if (error !== 'Input cancelado') {
+                                                console.error(error);
+                                            }else{
+                                                console.log('Acción cancelada.')
+                                            }
+                                            return;
+                                        }
+                                    }, 
+                                    ()=>{
+                                        fixAndCloseTicket(id, t, null, false);
+                                    }, 'Agregar mensaje', 'Enviar sin mensaje'
+                                );
+                            }
+                        })
+                        const cancelBtn = document.getElementById('cancelAndClose');
+                        cancelBtn.addEventListener('click', ()=>{
+                            areaDiv.innerHTML = '';
+                            areaDiv.classList.remove('fm-content');
+                        });
+                    },
+                    350
+                );
+            } else {
+                console.log('Error al actualizar estado:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud AJAX:', error);
+        });
+
+    // switch (tipo) {
+    //     case '1':
+    //         console.log(`Ticket ${id} is in state 1.`);
+    //         break;
+    //     case '2':
+    //         console.log(`Ticket ${id} is in state 2.`);
+    //         break;
+    //     case '3':
+    //         // Esto deberia ser lo mismo para los 3 escenarios. 
+    //         // El case solo define el nombre de la clase conjunto al div solvingArea
+        
+    //         break;
+    //     default:
+    //         console.log(`No se reconoce el tipo de cambio solicitado.`);
+    //         break;
+    // }
 }

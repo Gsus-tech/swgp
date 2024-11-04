@@ -82,6 +82,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
             
+            if(isset($_GET['systemErrorReport']) && $_GET['systemErrorReport'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $response = Crud::antiNaughty($_POST['response']);
+                $user = filter_var($_POST['ticketRem'], FILTER_VALIDATE_INT);
+                $idTicket = filter_var($_POST['ticketId'], FILTER_VALIDATE_INT);
+                
+                if($user !== false && $idTicket !== false){
+                    $query = "UPDATE tbl_solicitudes_soporte SET estado = ?, response = ? WHERE id_solicitud = ?";
+                    $stmt = $mysqli->prepare($query);
+                    
+                    if ($stmt) {
+                        $newState = 'Cerrado';
+                        $stmt->bind_param('ssi', $newState, $response, $idTicket);
+                        $stmt->execute();
+                        
+                        if ($stmt->affected_rows > 0) {
+                            echo json_encode(['success' => true, 'message' => 'Ticket actualizado correctamente.']);
+                        } else {
+                            echo json_encode(['success' => true, 'message' => 'Error al ejecutar la consulta. No se realizaron cambios.']);
+                        }
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta.']);
+                    }        
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error de datos: Id de usuario o de ticket inválido.']);
+                }
+            }
+            
             
             if (isset($_GET['getTicket']) && $_GET['getTicket'] == 'true') {
                 $crud = new Crud();
@@ -104,8 +133,67 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if($tipo > 0 && $tipo < 4){
                             switch ($tipo){
                                 case 1:
+                                    $titulo = htmlspecialchars($mensaje['titulo']);
+                                    $descripcion = htmlspecialchars($mensaje['descripcion']);
+                                    $imgContent = '';
+                                    if (isset($mensaje['imagen'])) {
+                                        $imgPath = htmlspecialchars($mensaje['imagen']);
+                                        $imgContent = "<div><label>Imagen capturada:</label><br><img src='$imgPath' alt='Imagen del ticket' class='ticketImage'></div>";
+                                    }
+                                    $q2 = "SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?";
+                                    $userName = Crud::executeResultQuery($q2, [$user], 'i');
+                                    $nombre = $userName[0]['nombre'];
+                                    $html = "
+                                        <div t1p0='systemErrorReport' class='systemErrorReport'>
+                                        <h2>Ticket de Soporte</h2>
+                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                        <span>Solicitado por:  </span><i>$nombre</i></div>
+                                        <div class='s1'>
+                                            <label>Error del sistema encontrado:</label>
+                                            <input disabled class='input' value='$titulo'>
+                                        </div>
+                                        <div class='s2'>
+                                            <label>Descripción del error:</label>
+                                            <input disabled class='input' value='$descripcion'>
+                                        </div>
+                                        $imgContent
+                                        <div class='btnOptions'>
+                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Cerrar ticket</button>
+                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                        </div>
+                                        </div>
+                                        ";  
                                     break;
                                 case 2:
+                                    $titulo = htmlspecialchars($mensaje['titulo']);
+                                    $descripcion = htmlspecialchars($mensaje['descripcion']);
+                                    $imgContent = '';
+                                    if(isset($mensaje['imagen'])){
+                                        $imgContent = '<div><label>Imagen aqui</label></div>';
+                                    }
+                                    $q2 = "SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?";
+                                    $userName = Crud::executeResultQuery($q2, [$user], 'i');
+                                    $nombre = $userName[0]['nombre'];
+                                    $html = "
+                                        <div t1p0='systemErrorReport' class='systemErrorReport'>
+                                        <h2>Ticket de Soporte</h2>
+                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                        <span>Solicitado por:  </span><i>$nombre</i></div>
+                                        <div class='s1'>
+                                            <label>Error del sistema encontrado:</label>
+                                            <input disabled class='input' value='$titulo'>
+                                        </div>
+                                        <div class='s2'>
+                                        <label>Descripción del error:</label>
+                                        <input disabled class='input' value='$descripcion'>
+                                        </div>
+                                        $imgContent
+                                        <div class='btnOptions'>
+                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Cerrar ticket</button>
+                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                        </div>
+                                        </div>
+                                        ";
                                     break;
                                 case 3:
                                     $campo = htmlspecialchars($mensaje['Campo']);
@@ -128,7 +216,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <label>Valor del nuevo dato:</label>
                                             <input id='newValue' class='input' field='$campo' value='$newValue' oninput='resetField(this)'>
                                         </div>
-                                        <button class='generalBtnStyle btn-green' id='solveAndClose'>Actualizar datos</button>
+                                        <div class='btnOptions'>
+                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Actualizar datos</button>
+                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                        </div>
                                         </div>
                                         ";
                                     }else{
@@ -138,12 +229,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     break;
                             }
                             
-                            echo json_encode(['success' => true, 'message' => 'Estado de ticket actualizado correctamente.', 'html' => $html]);
+                            echo json_encode(['success' => true, 'message' => 'Ticket recuperado correctamente.', 'html' => $html]);
                         }else{
                             echo json_encode(['success' => false, 'message' => 'Tipo de solicitud no válido.']);
                         }
                     } else {
-                        echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                        echo json_encode(['success' => false, 'message' => 'No se pudo recuperar el ticket.']);
                     }
                     $stmt->close();
                 } else {
