@@ -227,7 +227,15 @@ function resolveTicket(id, tipo) {
                                 );
                             }
                             else if(t2 === 'projectDataCorrection') {
-                                console.log('Corrigiendo datos de Proyecto');   
+                                createConfirmationDialog('Redirigiendo...',
+                                    '¿Ir a la edición del proyecto?',
+                                    ()=>{
+                                        location.href = `../php/projectsManagement.php?editProject=${pid}`;
+                                    },
+                                    ()=>{
+                                        console.log('Acción Cancelada');
+                                    },'Redirígeme', 'Cancelar'
+                                );
                             }
                             
                         }
@@ -407,7 +415,6 @@ function deleteMemberFromProject(project, user, tik){
         console.error('Error en la solicitud AJAX:', error);
     });
 }
-
 
 function closeTicketConfirmation(tik){
     createConfirmationDialog('Mensaje de confirmación',
