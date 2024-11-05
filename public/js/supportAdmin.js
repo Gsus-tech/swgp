@@ -196,10 +196,26 @@ function resolveTicket(id, tipo) {
                                 addUserToProject(pid, id);
                             }
                             else if(t2 === 'removeMember') {
-                                createConfirmationDialog('Finalizando ticket', 
-                                    'Este ticket requiere eliminar un integrante del proyecto');
+                                
                             }
-                            else if(t2 === 'changePermitions') {}
+                            else if(t2 === 'changePermitions') {
+                                const currentRol = document.getElementById('currentRol').getAttribute('currol');
+                                let msg = ''
+                                if(currentRol === 'rep'){
+                                    msg = 'Esta acción quitará los privilegios de representante de proyecto.\n\n'+
+                                    'Esto significa que el usuario no podrá administrar actividades del proyecto.\n\n';
+                                }else{
+                                    msg = 'Esta acción brindará privilegios de representante de proyecto al usuario.\n\n'+
+                                    'Esto significa que el usuario podrá crear y administrar actividades del proyecto.\n\n';
+                                }
+                                createConfirmationDialog(`Cambio de permisos de usuario`,
+                                    `${msg}¿Deseas continuar?`, 
+                                    ()=>{
+                                        changeUserRolInProject(currentRol, pid, id);
+                                    }, 
+                                    ()=>{ console.log('Acción cancelada.'); }
+                                );
+                            }
                             else if(t2 === 'projectDataCorrection') {}
                             
                         }
@@ -320,6 +336,40 @@ function addUserToProject(project, tik){
     });
 }
 
+function changeUserRolInProject(rol, project, tik){
+    const user = document.getElementById('alterThisUser').getAttribute('uid');
+    const url = `../controller/supportManager.php?changeUserRolInProject=true`;
+    fetch(url, {
+        method: 'POST',
+        body: new URLSearchParams({
+            user: user,
+            project: project,
+            rol: rol
+        }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log(data.message);
+            if(data.chg){
+                alert('Permisos de usuario actualizados.');
+            }else{
+                alert(`${data.message}\nYa puedes cerrar este ticket.`);
+            }
+            closeTicketConfirmation(tik);
+        } else {
+            console.log('Error al cambiar los permisos del usuario:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+}
+
+
 function closeTicketConfirmation(tik){
     createConfirmationDialog('Mensaje de confirmación',
         '¿Deseas cerrar este ticket?',
@@ -327,7 +377,12 @@ function closeTicketConfirmation(tik){
             switchTicketState(tik, 'Cerrado');
             console.log('Ticket cerrado.')
         },
-        ()=>{console.log('El ticket no se cerró.')}, 
+        ()=>{
+            console.log('El ticket no se cerró.'); 
+            const areaDiv = document.querySelector('.solvingArea');
+            areaDiv.innerHTML = '';
+            areaDiv.classList.remove('fm-content');
+        }, 
         'Cerrar ticket', 'Dejar como está'
     );
 }

@@ -37,6 +37,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
             
+            if(isset($_GET['changeUserRolInProject']) && $_GET['changeUserRolInProject'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $user = filter_var($_POST['user'], FILTER_VALIDATE_INT);
+                $project = filter_var($_POST['project'], FILTER_VALIDATE_INT);
+                $rol = Crud::antiNaughty($_POST['rol']);
+                
+                if($rol === 'rep' || $rol === 'member'){
+                    if($user !== false && $project !== false){
+                        $confirmCurrentRol = Crud::executeResultQuery('SELECT responsable FROM tbl_integrantes WHERE id_usuario = ? AND id_proyecto = ?',[$user, $project], 'ii');
+                        if(count($confirmCurrentRol)>0){
+                            $rol = $rol === 'rep' ? 1 : 0;
+                            if($rol===$confirmCurrentRol[0]['responsable']){
+                                $newRol = $rol === 1 ? 0 : 1;
+                                
+                                $query = "UPDATE tbl_integrantes SET responsable = ? WHERE id_usuario = ? AND id_proyecto = ?";
+                                $stmt = $mysqli->prepare($query);
+                                
+                                if ($stmt) {
+                                    $stmt->bind_param('iii', $newRol, $user, $project);
+                                    $stmt->execute();
+                                    
+                                    if ($stmt->affected_rows > 0) {
+                                        echo json_encode(['success' => true, 'chg'=>true, 'message' => 'Permisos de usuario actualizados.']);
+                                    } else {
+                                        echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                                    }
+                                } else {
+                                    echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+                                }
+                            }else{
+                                if($confirmCurrentRol[0]['responsable']===1){
+                                    echo json_encode(['success' => true, 'chg'=>false, 'message' => 'No se realizaron cambios. El usuario ya cuenta con los privilegios de representante de proyecto.']);
+                                }else{
+                                    echo json_encode(['success' => true, 'chg'=>false, 'message' => 'No se realizaron cambios. El usuario no cuenta con privilegios.']);
+                                }                            }
+                        }else{
+                            echo json_encode(['success' => false, 'message' => 'Error al consultar la confirmación del rol actual.']);   
+                        }
+                    }else{
+                        echo json_encode(['success' => false, 'message' => 'Id de usuario o de proyecto inválido.']);
+                    }
+                }else {
+                    echo json_encode(['success' => false, 'message' => 'Rol actual del usuario inválido.']);
+                }
+            }
+            
             if(isset($_GET['addTeamMember']) && $_GET['addTeamMember'] == 'true'){
                 $crud = new Crud();
                 $mysqli = $crud->getMysqliConnection();
@@ -318,6 +365,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                         <div id='ticketCreator' tcid='$user' class='ticketCreator'>
                                                             <span>Proyecto: </span><i>$pName</i><br>
                                                             <span>Solicitado por: </span><i>$nombre</i></div>
+                                                        <span>Asunto: </span>
+                                                        <h3>Añadir integrante de equipo</h3>
+
+                                                        <br><span>Información del nuevo integrante: </span>
+                                                        <br><br>
                                                         <div class='s1'>
                                                             <label>Nombre:</label>
                                                             <input disabled id='newUserName' class='input' value='$newUserN'>
@@ -353,18 +405,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 ";
                                             }
                                             else if($changeType === 'changePermitions') {
-                                                $html = "
-                                                    <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='changePermitions' pid='$idProject'>
-                                                        <h2>Ticket de Soporte</h2>
-                                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
-                                                            <span>Proyecto: </span><i>$pName</i><br>
-                                                            <span>Solicitado por: </span><i>$nombre</i></div>
-                                                        <div class='btnOptions'>
-                                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Cambiar permisos</button>
-                                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                $user = htmlspecialchars($mensaje['usuario']);
+                                                $rolActual = htmlspecialchars($mensaje['currentPermtion']);
+                                                $userInfo = Crud::executeResultQuery('SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?',[$user], 'i');
+                                                if(count($userInfo) > 0){
+                                                    $targetUserName = $userInfo[0]['nombre'];
+                                                    $currentRol = $rolActual === 'member' ? 'Integrante sin privilegios' : 'Integrante con privilegios de lider de proyecto';
+                                                    $html = "
+                                                        <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='changePermitions' pid='$idProject'>
+                                                            <h2>Ticket de Soporte</h2>
+                                                            <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                                                <span>Proyecto: </span><i>$pName</i><br>
+                                                                <span>Solicitado por: </span><i>$nombre</i></div>
+                                                            <span>Asunto: </span>
+                                                            <h3>Cambiar permisos de integrante</h3>
+    
+                                                            <br><span>Información del ticket: </span>
+                                                            <br><br>
+                                                            <div class='s1'>
+                                                                <label>Nombre de integrante:</label>
+                                                                <input disabled id='alterThisUser' class='input' uid='$user' value='$targetUserName'>
+                                                            </div>
+                                                            <div class='s2'>
+                                                                <label>Rol actual dentro del proyecto:</label>
+                                                                <input disabled id='currentRol' curRol='$rolActual' class='input' value='$currentRol'>
+                                                            </div>
+                                                            <div class='btnOptions'>
+                                                                <button class='generalBtnStyle btn-green' id='solveAndClose'>Cambiar permisos</button>
+                                                                <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ";
+                                                    ";
+
+                                                }else{
+                                                    echo json_encode(['success' => false, 'message' => 'No se encontró la información del usuario.']);
+                                                }
                                             }
                                             else if($changeType === 'projectDataCorrection') {
                                                 $html = "
