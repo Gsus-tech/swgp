@@ -169,6 +169,16 @@ label{
     margin: 15px;
 }
 
+.input{
+    font-size: var(--px14);
+}
+
+.input.textarea{
+    resize:none;
+    font-family: Arial, Helvetica, sans-serif;
+    max-height: 5rem;
+}
+
 @media screen and (max-width: 450px) {
     .btnOptions{
         display: grid;

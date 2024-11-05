@@ -149,7 +149,6 @@ function resolveTicket(id, tipo) {
     .then(response => response.json())
     .then(data => {
         if(data.success){
-            console.log('Got info.')
             areaDiv.innerHTML = data.html;
             areaDiv.classList.add('fm-content');
             setTimeout(
@@ -190,13 +189,24 @@ function resolveTicket(id, tipo) {
                         }
                         else if(t==='projectInfoUpdate'){
                             t2 = child.getAttribute('tcp2');
-                            console.log(t2);
                             pid = child.getAttribute('pid');
                             if(t2 === 'addMember') {
                                 addUserToProject(pid, id);
                             }
                             else if(t2 === 'removeMember') {
-                                
+                                createConfirmationDialog('Eliminando integrante',
+                                    'Estas a punto de eliminar un integrante de un proyecto.\n'+
+                                    'Está acción es irreversible.\nTodas las responsabilidades de este integrante pasarán al representante del proyecto.\n\n'+
+                                    'Esto no eliminará la cuenta de usuario, simplemente removerá el acceso del usuario al proyecto seleccionado.\n\n'+
+                                    '¿Deseas continuar?',
+                                    ()=>{
+                                        const user = document.getElementById('alterThisUser').getAttribute('uid');
+                                        deleteMemberFromProject(pid, user, id);
+                                    }, 
+                                    ()=>{
+                                        console.log('Acción cancelada. No se eliminó al integrante del proyecto.')
+                                    }, 'Continuar'
+                                );
                             }
                             else if(t2 === 'changePermitions') {
                                 const currentRol = document.getElementById('currentRol').getAttribute('currol');
@@ -216,7 +226,9 @@ function resolveTicket(id, tipo) {
                                     ()=>{ console.log('Acción cancelada.'); }
                                 );
                             }
-                            else if(t2 === 'projectDataCorrection') {}
+                            else if(t2 === 'projectDataCorrection') {
+                                console.log('Corrigiendo datos de Proyecto');   
+                            }
                             
                         }
                     })
@@ -362,6 +374,33 @@ function changeUserRolInProject(rol, project, tik){
             closeTicketConfirmation(tik);
         } else {
             console.log('Error al cambiar los permisos del usuario:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+}
+
+function deleteMemberFromProject(project, user, tik){
+    const url = `../controller/projectManager.php?deleteMember=true`;
+    fetch(url, {
+        method: 'POST',
+        body: new URLSearchParams({
+            idUsuario: user,
+            projectId: project
+        }),
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            console.log(data.message);
+            alert('Integrante eliminado del Proyecto.');
+            closeTicketConfirmation(tik);
+        } else {
+            console.log('Error al eliminar al integrante del Proyecto:', data.message);
         }
     })
     .catch(error => {

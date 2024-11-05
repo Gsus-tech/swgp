@@ -37,6 +37,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
             
+            if(isset($_GET['deleteMemberFromProject']) && $_GET['deleteMemberFromProject'] == 'true'){
+                $crud = new Crud();
+                $mysqli = $crud->getMysqliConnection();
+                $user = filter_var($_POST['user'], FILTER_VALIDATE_INT);
+                $project = filter_var($_POST['project'], FILTER_VALIDATE_INT);
+                
+                if($user !== false && $project !== false){
+
+                    // $query = "UPDATE tbl_solicitudes_soporte SET estado = ? WHERE id_solicitud = ?";
+                    // $stmt = $mysqli->prepare($query);
+                    
+                    // if ($stmt) {
+                    //     $stmt->bind_param('si', $newState, $idTicket);
+                    //     $stmt->execute();
+                        
+                    //     if ($stmt->affected_rows > 0) {
+                    //         echo json_encode(['success' => true, 'message' => 'Estado de ticket actualizado correctamente.']);
+                    //     } else {
+                    //         echo json_encode(['success' => false, 'message' => 'No se realizaron cambios.']);
+                    //     }
+                    // } else {
+                    //     echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+                    // }
+                    echo json_encode(['success' => true, 'chg' => true, 'message' => 'Eliminando al usuario.']);
+                }else {
+                    echo json_encode(['success' => false, 'message' => 'Id de usuario o de proyecto inválido.']);
+                }
+            }
+            
             if(isset($_GET['changeUserRolInProject']) && $_GET['changeUserRolInProject'] == 'true'){
                 $crud = new Crud();
                 $mysqli = $crud->getMysqliConnection();
@@ -391,18 +420,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                                 ";
                                             }
                                             else if($changeType === 'removeMember') {
-                                                $html = "
-                                                    <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='removeMember' pid='$idProject'>
-                                                        <h2>Ticket de Soporte</h2>
-                                                        <div id='ticketCreator' tcid='$user' class='ticketCreator'>
-                                                            <span>Proyecto: </span><i>$pName</i><br>
-                                                            <span>Solicitado por: </span><i>$nombre</i></div>
-                                                        <div class='btnOptions'>
-                                                            <button class='generalBtnStyle btn-green' id='solveAndClose'>Eliminar usuario</button>
-                                                            <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                $user = htmlspecialchars($mensaje['userId']);
+                                                $description = htmlspecialchars($mensaje['ticketDescription']);
+                                                $userInfo = Crud::executeResultQuery('SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?',[$user], 'i');
+                                                if(count($userInfo) > 0){
+                                                    $targetUserName = $userInfo[0]['nombre'];
+                                                    $html = "
+                                                        <div t1p0='projectInfoUpdate' class='projectInfoUpdate' tcp2='removeMember' pid='$idProject'>
+                                                            <h2>Ticket de Soporte</h2>
+                                                            <div id='ticketCreator' tcid='$user' class='ticketCreator'>
+                                                                <span>Proyecto: </span><i>$pName</i><br>
+                                                                <span>Solicitado por: </span><i>$nombre</i></div>
+                                                            <span>Asunto: </span>
+                                                            <h3>Eliminar integrante del proyecto</h3>
+
+                                                            <br><span>Información del ticket: </span>
+                                                            <br><br>
+                                                            <div class='s1'>
+                                                                <label>Integrante por expulsar:</label>
+                                                                <input disabled id='alterThisUser' class='input' uid='$user' value='$targetUserName'>
+                                                            </div>
+                                                            <div class='s2'>
+                                                                <label>Razón o motivo para realizar esta acción:</label>
+                                                                <textarea disabled id='currentRol' class='input textarea'>$description</textarea>
+                                                            </div>
+                                                            <div class='btnOptions'>
+                                                                <button class='generalBtnStyle btn-green' id='solveAndClose'>Eliminar integrante</button>
+                                                                <button class='generalBtnStyle btn-red' id='cancelAndClose'>Cancelar</button>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                ";
+                                                    ";
+                                                }
                                             }
                                             else if($changeType === 'changePermitions') {
                                                 $user = htmlspecialchars($mensaje['usuario']);
