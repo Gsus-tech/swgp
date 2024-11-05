@@ -64,26 +64,26 @@ function showMoveOptions(button, columnId, cardId) {
 
         if (columnId === 'pendientes') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>Urgentes</a>
                 <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
                 <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
-        } else if (columnId === 'proceso') {
+        } else if (columnId === 'proceso') { 
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Actividades</a>
                 <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasadas</a>
                 <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'retrasadas') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Actividades</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>Urgentes</a>
                 <a href="#" onclick="moveCard(4, '${cardId}')" class="dropdown-item"><i></i>Terminadas</a>
             `;
         } else if (columnId === 'terminadas') {
             menuOptionsHTML = `
-                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Pendiente</a>
-                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>En proceso</a>
+                <a href="#" onclick="moveCard(1, '${cardId}')" class="dropdown-item"><i></i>Actividades</a>
+                <a href="#" onclick="moveCard(2, '${cardId}')" class="dropdown-item"><i></i>Urgentes</a>
                 <a href="#" onclick="moveCard(3, '${cardId}')" class="dropdown-item"><i></i>Retrasada</a>
             `;
         }

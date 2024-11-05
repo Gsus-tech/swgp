@@ -218,6 +218,9 @@ function createActionButtons(aId, type){
         .then(data => {
             if (data.success) {
                 if(data.result){
+                    if(document.getElementById('botonReportes')){
+                        document.getElementById('botonReportes').remove();
+                    }
                     button.id = 'botonReportes';
                     button.classList.add('btn', 'btn-yellow');
                     button.textContent = 'Ver reporte de actividad';

@@ -138,6 +138,57 @@ label{
     width: fit-content;
 }
 
+.solvingArea{
+    margin: 30px auto;
+    max-width: fit-content;
+    align-items:center;
+}
+
+.solvingArea div {
+    width: 95%;
+}
+
+.AccountFieldUpdate{
+    max-width: 600px;
+}
+
+.ticketCreator{
+    margin:15px 0;
+}
+
+.btnOptions{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.ticketImage{
+    width:100%; 
+    max-width: 650px; 
+    height: auto;
+    margin: 15px;
+}
+
+.input{
+    font-size: var(--px14);
+}
+
+.input.textarea{
+    resize:none;
+    font-family: Arial, Helvetica, sans-serif;
+    max-height: 5rem;
+}
+
+@media screen and (max-width: 450px) {
+    .btnOptions{
+        display: grid;
+        justify-content: center;
+    }
+    .btnOptions .generalBtnStyle{
+        margin-bottom: 55px;
+    }
+}
+
 @media screen and (max-width: 800px){
     .projectUpdateDiv, .ticketExplanationDiv{
         padding-bottom: 3rem;
@@ -173,6 +224,17 @@ label{
     .type1Btn{
         right:unset;
         left:48rem
+    }
+
+    .container .main .solvingArea.fm-content{
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .solvingArea .s1, .solvingArea .s2{
+        flex: 1;
+        width: 95%;
     }
 }
 

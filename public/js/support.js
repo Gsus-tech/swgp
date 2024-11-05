@@ -492,14 +492,17 @@ function dataForTicket() {
                 resolve(formData);
             }
         }  else if (submitType === "t-2") {
+            const projectCorrectionType = document.getElementById('correctionType').value;
             const sbtBtn = document.getElementById('submitTicketBtn');
-            const crRp = sbtBtn.getAttribute('cr-rp');
-        
-            if (crRp !== null) {
-                formData.append('crRp', crRp);
-                console.log(formData);
-            } else {
-                return reject('Error: No se pudo recuperar el atributo cr-rp.');
+            if(projectCorrectionType === 'changePermitions'){
+                const crRp = sbtBtn.getAttribute('cr-rp');
+                
+                if (crRp !== null) {
+                    formData.append('crRp', crRp);
+                    console.log(formData);
+                } else {
+                    return reject('Error: No se pudo recuperar el atributo cr-rp.');
+                }
             }
             resolve(formData);
         } else {
