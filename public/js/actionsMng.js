@@ -16,8 +16,8 @@ function updatePageData() {
                     const data = response.data;
 
                     const estados = {
-                        1: 'Pendiente',
-                        2: 'En proceso',
+                        1: 'En proceso',
+                        2: 'Urgentes',
                         3: 'Retrasado',
                         4: 'Finalizado'
                     };
