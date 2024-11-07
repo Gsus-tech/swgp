@@ -797,7 +797,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mysqli->close();
             }
 
-
             if (isset($_GET['getMemberList']) && $_GET['getMemberList'] === 'true'){  
                 if (isset($_GET['pid'])) {
                     $pid = filter_var($_GET['pid'], FILTER_VALIDATE_INT);
@@ -842,6 +841,200 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }else{
                     echo json_encode(['success' => false, 'message' => 'Parametros de solicitud incorrectos o insuficientes.']);
                 }
+            }
+            
+            if (isset($_GET['showTicketDetails']) && $_GET['showTicketDetails'] === 'true'){  
+                $ticket = filter_var($_POST['ticket'], FILTER_VALIDATE_INT);
+                if($ticket != false){
+                    $id_usuario = $_SESSION['id'];
+                    $query = "SELECT tipoSolicitud, mensaje, estado, fecha_creacion, response FROM tbl_solicitudes_soporte WHERE id_usuario = ? AND id_solicitud = ?";    
+                   
+                    $stmt = $mysqli->prepare($query);
+            
+                    if ($stmt) {
+                        $stmt->bind_param('ii', $id_usuario, $ticket);
+                        $stmt->execute();
+                        
+                        $result = $stmt->get_result();
+            
+                        if ($result->num_rows > 0) {
+                            $html = '';
+                            $row = $result->fetch_assoc();
+                            $mensaje = json_decode($row['mensaje'], true);
+                            $tckClass = 'bg-'.$row['estado'];
+                            $date = new DateTime($row['fecha_creacion']);
+                            $dateFormatted = $date->format('d-m-Y'); 
+                            switch($row['tipoSolicitud']){
+                                case 1:
+                                    $html = '<div class="ticketDate"><span>Fecha de creación: </span><i>' . $dateFormatted . '</i></div>';
+                                    $html .= '<div><h3>Reporte de errores del sistema: </h4></div>';
+                                    $html .= '<div class="'.$tckClass.'"><span>Estado del ticket: <i>'.htmlspecialchars($row['estado']).'</i></span></div>';                                    $html .= '<div><h4>Titulo del ticket:  <i>'.htmlspecialchars($mensaje['titulo']).'</i></h4><div>';
+                                    $html .= '<div><textarea disabled class="textarea-input">'.htmlspecialchars($mensaje['descripcion']).'</textarea></div>';
+                                    if(isset($mensaje['imagen'])){
+                                        $imgPath = htmlspecialchars($mensaje['imagen']);
+                                        $html .= "<div><label>Imagen capturada:</label><br><img src='$imgPath' alt='Imagen del ticket' class='ticketImage'></div>";
+                                    }
+                                    break;
+                                case 2:
+                                    $html = '<div class="ticketDate"><span>Fecha de creación: </span><i>' . $dateFormatted . '</i></div>';
+                                    $html .= '<div><h3>Corrección de datos de proyecto: </h4></div>';
+                                    $html .= '<div class="'.$tckClass.'"><span>Estado del ticket: <i>'.htmlspecialchars($row['estado']).'</i></span></div>';
+                                    // Haz consulta para recuperar nombre del proyecto, y del usuario si es necesario.
+                                    $projectInfo = Crud::executeResultQuery('SELECT nombre FROM tbl_proyectos WHERE id_proyecto = ?', [$mensaje['Proyecto']], 'i');
+                                    $html .= '<div><b>Proyecto: '.htmlspecialchars($projectInfo[0]['nombre']).'</b></div>';
+                                    if(isset($mensaje['usuario']) || isset($mensaje['userId'])){
+                                        $x = isset($mensaje['usuario']) ? $mensaje['usuario'] : $mensaje['userId'];
+                                        $userInfo = Crud::executeResultQuery('SELECT nombre FROM tbl_usuarios WHERE id_usuario = ?', [$x], 'i');
+                                    }
+                                    if($mensaje['Cambio']==='changePermitions'){
+                                        $currentPermtion = $mensaje['currentPermtion'] === 'member' ? 'Integrante sin privilegios' : 'Integrante con privilegios';
+                                        $html .= '<div><b>Cambio solicitado: </b><span>Cambio de permisos de usuario</span></div>';
+                                        $html .= '<div><b>Usuario: </b><span>'.htmlspecialchars($userInfo[0]['nombre']).'</span></div>';
+                                        $html .= '<div><b>Permisos actuales: </b><span>'.htmlspecialchars($currentPermtion).'</span></div>';
+
+                                    }
+                                    else if($mensaje['Cambio']==='removeMember'){
+                                        $html .= '<div><b>Cambio solicitado: </b><span>Eliminar integrante</span></div>';
+                                        $html .= '<div><b>Usuario: </b><span>'.htmlspecialchars($userInfo[0]['nombre']).'</span></div>';
+                                    }
+                                    else if($mensaje['Cambio']==='addMember'){
+                                        $html .= '<div><b>Cambio solicitado: </b><span>Añadir integrante</span></div>';
+                                    }
+                                    else if($mensaje['Cambio']==='projectDataCorrection'){
+                                        $html .= '<div><b>Cambio solicitado: </b><span>Corrección de datos de un proyecto</span></div>';
+                                    }
+                                    break;
+                                case 3:
+                                    $html = '<div class="ticketDate"><span>Fecha de creación: </span><i>' . $dateFormatted . '</i></div>';
+                                    $html .= '<div><h3>Corrección de datos de cuenta: </h4></div>';
+                                    $html .= '<div class="'.$tckClass.'"><span>Estado del ticket: <i>'.htmlspecialchars($row['estado']).'</i></span></div>';
+                                    $html .= '<div><span>Solicito corregir mi:</span><input disabled class="input" value="'.htmlspecialchars($mensaje['Campo']).'"></div>';
+                                    $html .= '<div><span>Dato correcto:</span><input disabled class="input" value="'.htmlspecialchars($mensaje['newValue']).'"></div>';
+                                    break;    
+                                }
+                                if($row['response']!=null){
+                                    $html .= "<div class=\"responseDiv\"><h4>Respuesta del equipo de soporte:</h4>
+                                        <div><textarea disabled class='textarea-input'>".$row['response']."</textarea></div>
+                                    </div>";
+                                }
+                            echo json_encode(['success' => true, 'mensaje' => $html, 'data' => $html]);
+                        } else {
+                            echo json_encode(['success' => false, 'message' => 'No se encontró el ticket solicitado.']);
+                        }
+                    $stmt->close();
+        
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+                    }
+                    $mysqli->close();
+                }else{
+                    echo json_encode(['success' => false, 'message' => 'Id de ticket inválido.']);
+                }
+            }
+            
+            if (isset($_GET['checkMyticketStatus']) && $_GET['checkMyticketStatus'] === 'true'){
+                $user = $_SESSION['id'];
+                $query = "SELECT id_solicitud, tipoSolicitud, mensaje, estado, fecha_creacion, response FROM tbl_solicitudes_soporte WHERE id_usuario = ?";    
+                $stmt = $mysqli->prepare($query);
+        
+                if ($stmt) {
+                    $stmt->bind_param('i', $user);
+                    $stmt->execute();
+                    
+                    $result = $stmt->get_result();
+        
+                    if ($result->num_rows > 0) {
+                        $tickets = [];
+                        while ($row = $result->fetch_assoc()) {
+                            switch ($row['tipoSolicitud']) {
+                                case 1:
+                                    $tickets1[] = $row;
+                                    break;
+                                case 2:
+                                    $tickets2[] = $row;
+                                    break;
+                                case 3:
+                                    $tickets3[] = $row;
+                                    break;
+                            }
+                        }
+
+                        $selectHtml1 = "<select id='selectTick' class='comboBox' name='ticketType1'>";
+                        if(count($tickets1)>0){
+                            $html = '';
+                            $piv=1;
+                            foreach ($tickets1 as $ticket) {
+                                if($ticket['estado'] != 'Cerrado'){
+                                    $date = new DateTime($ticket['fecha_creacion']);
+                                    $html .= "<option value='{$ticket['id_solicitud']}'>Ticket: {$piv} - Fecha: {$date->format('d-m-Y')}</option>";
+                                    $piv++;
+                                }
+                            }
+                            if($html != ''){
+                                $selectHtml1 .= "<option value='noTicketSelected'>Seleccione un ticket</option>";
+                                $selectHtml1 .= $html;
+                            }
+                        }else{
+                            $selectHtml1 .= "<option value='noTickets'>No se encontraron tickets de este tipo</option>";
+                        }
+                        $selectHtml1 .= "</select>";
+
+                        $selectHtml2 = "<select id='selectTick' class='comboBox' name='ticketType2'>";
+                        if(count($tickets2)>0){
+                            $html='';
+                            $piv=1;
+                            foreach ($tickets2 as $ticket) {
+                                if($ticket['estado'] != 'Cerrado'){
+                                    $date = new DateTime($ticket['fecha_creacion']);
+                                    $html .= "<option value='{$ticket['id_solicitud']}'>Ticket: {$piv} - Fecha: {$date->format('d-m-Y')}</option>";
+                                    $piv++;
+                                }
+                            }
+                            if($html != ''){
+                                $selectHtml2 .= "<option value='noTicketSelected'>Seleccione un ticket</option>";
+                                $selectHtml2 .= $html;
+                            }
+                        }else{
+                            $selectHtml2 .= "<option value='noTickets'>No se encontraron tickets de este tipo</option>";
+                        }
+                        $selectHtml2 .= "</select>";
+                
+                        $selectHtml3 = "<select id='selectTick' class='comboBox' name='ticketType3'>";
+                        if(count($tickets3)>0){
+                            $piv=1;
+                            $html = '';
+                            foreach ($tickets3 as $ticket) {
+                                if($ticket['estado'] != 'Cerrado'){
+                                    $date = new DateTime($ticket['fecha_creacion']);
+                                    $html .= "<option value='{$ticket['id_solicitud']}'>Ticket: {$piv} - Fecha: {$date->format('d-m-Y')}</option>";
+                                    $piv++;
+                                }
+                            }
+                            if($html != ''){
+                                $selectHtml3 .= "<option value='noTicketSelected'>Seleccione un ticket</option>";
+                                $selectHtml3 .= $html;
+                            }
+                        }else{
+                            $selectHtml3 .= "<option value='noTickets'>No se encontraron tickets de este tipo</option>";
+                        }
+                        $selectHtml3 .= "</select>";
+
+                        echo json_encode([
+                            'success' => true,
+                            'found' => true,
+                            'message' => 'Tickets de soporte encontrados.',
+                            'selectHtml1' => $selectHtml1,
+                            'selectHtml2' => $selectHtml2,
+                            'selectHtml3' => $selectHtml3
+                        ]);
+                    } else {
+                        echo json_encode(['success' => true, 'found' => false, 'message' => 'No se encontraron tickets de soporte.']);
+                    }
+                $stmt->close();
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al preparar la consulta']);
+                }
+                $mysqli->close();
             }
         }
         
