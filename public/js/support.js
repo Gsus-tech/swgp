@@ -1,7 +1,137 @@
 document.addEventListener('DOMContentLoaded', function(){
-    document.getElementById('raiseTicketBtn').addEventListener('click', pageEvents);
+    addMainEvents();
 });
     
+function addMainEvents(){
+    document.getElementById('raiseTicketBtn').addEventListener('click', pageEvents);
+    document.getElementById('viewTicketStatusBtn').addEventListener('click', viewTicketStatus);
+}
+
+function viewTicketStatus(){
+    fetch('../controller/supportManager.php?checkMyticketStatus=true', {
+        method: 'POST',
+        body: null,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+    .then(response => response.json()) 
+    .then(data => {
+        if (data.success) {
+            if(data.found){
+                document.querySelector('.supportFirstAction').remove();
+                typeTicketSelection = 
+                `<div id='watchTicketDiv' class='fm-content watchTicketDiv'>
+                <button class='closeBtn' id='exWatchTicket'><i class='fa fa-times'></i></button >
+                <h3>Ver estado de ticket</h3>
+                <i>Selecciona un tipo de ticket: </i>
+                <select name='watchTypeSelect' id='watchTypeSelect' class='comboBox'>
+                    <option value='none'>Selecciona un tipo de ticket</option>
+                    <option value='1'>Reporte de errores del sistema</option>
+                    <option value='2'>Actualización de datos de proyecto</option>
+                    <option value='3'>Actualización de datos de cuenta</option>
+                </select>
+                <div>`;
+                document.querySelector('.ticketDetails').insertAdjacentHTML('beforeend', typeTicketSelection);
+                setTimeout(() => {
+                    document.getElementById('exWatchTicket').addEventListener('click', ()=>{
+                        cleanAllDivs();
+                        createFirstDiv();
+                    });
+                    document.getElementById('watchTypeSelect').addEventListener('change', ()=>{
+                        const selectedValue = document.getElementById('watchTypeSelect').value;
+                        const container = document.querySelector('.ticketDetails');
+                        const existingDiv = document.getElementById('ticketSelectElement');
+                        if(existingDiv){ existingDiv.remove(); }
+                        const existingDiv2 = document.getElementById('ticketDetailsDiv');
+                        if(existingDiv2){ existingDiv2.remove(); }
+
+                        if(selectedValue !== 'none'){
+                            const div = document.createElement('div');
+                            div.classList.add('fm-content');
+                            div.classList.add('watchTicketDiv');
+                            div.id = 'ticketSelectElement';
+
+                            const tag = document.createElement('i');
+                            tag.textContent = 'Selecciona un ticket:';
+                            let selectHtml;
+                            if (selectedValue === '1') {
+                                selectHtml = data.selectHtml1;
+                            } else if (selectedValue === '2') {
+                                selectHtml = data.selectHtml2;
+                            } else if (selectedValue === '3') {
+                                selectHtml = data.selectHtml3;
+                            }
+                            div.innerHTML = tag.outerHTML + selectHtml;
+                            container.appendChild(div);
+
+                            setTimeout(() => {
+                                const sel = document.getElementById('selectTick');
+                                if(sel){
+                                    if (sel.options.length === 0) {
+                                        const noOption = document.createElement('option');
+                                        noOption.textContent = 'No se encontraron tickets de este tipo';
+                                        noOption.value = 'noTickets';
+                                        sel.appendChild(noOption);
+                                    }
+                                }
+                                sel.addEventListener('change', ()=>{showTicketDetails(sel.value);});
+                            }, 100);
+                        }
+                    });
+                }, 350);
+            }else{
+                alert('failed: '+data.message);
+            }
+        } else {
+            alert(`Error: ${data.message}`);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud AJAX:', error);
+    });
+}
+
+function showTicketDetails(ticket){
+    if(ticket==='noTicketSelected'){
+        const existingDiv = document.getElementById('ticketDetailsDiv');
+        if(existingDiv){ existingDiv.remove(); }
+    }else{
+        fetch('../controller/supportManager.php?showTicketDetails=true', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                ticket: ticket
+            })
+        })
+        .then(response => response.json()) 
+        .then(data => {
+            if (data.success) {
+                const existingDiv = document.getElementById('ticketDetailsDiv');
+                if(existingDiv){existingDiv.remove();}
+                
+                const container = document.querySelector('.ticketDetails');
+                const div = document.createElement('div');
+                div.classList.add('fm-content');
+                div.classList.add('ticketDetailsDiv');
+                div.id = 'ticketDetailsDiv';
+
+                div.innerHTML = data.data;
+                document.querySelector('.main').appendChild(div);
+
+
+            } else {
+                alert(`Error: ${data.mensaje}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud AJAX:', error);
+        });
+    }
+}
+
 function pageEvents(){
     const existingNewTicketDiv = document.getElementById('categorySelectDiv');
     if (existingNewTicketDiv) {
@@ -15,7 +145,7 @@ function pageEvents(){
                     <i class="fa fa-close"></i>
                 </button>
                 <h3>Levantar un ticket:</h3>
-                <label for="categorySelect">Categoría del ticket:</label>
+                <span>Categoría del ticket:</span>
                 <select id="categorySelect" name="categorySelect" class="comboBox">
                     <option value="none">--  Selecciona una opción  --</option>
                     <option value="erroresSys">Errores del sistema</option>
@@ -32,6 +162,21 @@ function pageEvents(){
     document.querySelector('.supportFirstAction').remove();
 }
 
+function createFirstDiv(){
+    const htmlCode = `
+    <div class="supportFirstAction">
+        <div class="fm-content">
+            <button class="generalBtnStyle btn-orange" id="raiseTicketBtn">Levantar ticket</button>
+            <button class="generalBtnStyle btn-blue" id="viewTicketStatusBtn">Ver estado de ticket</button>
+        </div>
+    </div>
+    `;
+            
+    document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
+    setTimeout(() => {
+        addMainEvents();
+    }, 250);
+}
 function cleanAllDivs(){
     const existingTypeDiv = document.getElementById('correctionDiv');
         if (existingTypeDiv) {
@@ -45,6 +190,14 @@ function cleanAllDivs(){
         if (existingUpdateDiv) {
             existingUpdateDiv.remove();
         }
+
+        const ticketDetailsDiv = document.getElementById('ticketDetailsDiv');
+        if(ticketDetailsDiv){ ticketDetailsDiv.remove();}
+        const ticketSelectElement = document.getElementById('ticketSelectElement');
+        if(ticketSelectElement){ ticketSelectElement.remove();}
+        const watchTicketDiv = document.getElementById('watchTicketDiv');
+        if(watchTicketDiv){ watchTicketDiv.remove();}
+
         deleteSubmitBtn();
 }
     
@@ -71,7 +224,7 @@ function loadTicketTypes() {
                                 
                                 const htmlCode = `
                                     <div class="fm-content" id="correctionDiv">
-                                        <label for="projectSelect">Seleccionar proyecto:</label>
+                                        <span>Seleccionar proyecto:</span>
                                         <select id="projectSelect" name="projectSelect" class="comboBox">
                                             <option value="none">-- Selecciona un proyecto --</option>
                                             ${projectOptions}
@@ -109,13 +262,13 @@ function loadTicketTypes() {
                 <div class="ticketExplanationDiv" id="ticketExplanationDiv">
                     <div class="fm-content">
                         <h3>Descripción:</h3>
-                        <label for="ticketTitle">Título del ticket:</label>
+                        <span for="ticketTitle">Título del ticket:</span>
                         <input type="text" id="ticketTitle" name="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100" oninput="resetField(this)">
                         
-                        <label for="ticketDescription">Motivo o descripción de la situación:</label>
+                        <span for="ticketDescription">Motivo o descripción de la situación:</span>
                         <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="500" rows="4" oninput="resetField(this)"></textarea>
                         
-                        <label for="ticketImage">Adjuntar imagen:</label>
+                        <span for="ticketImage">Adjuntar imagen:</span>
                         <div class='selectImageDiv'>
                             <input type="file" id="ticketImage" class="file-input" accept="image/jpeg, image/png" style="display: none;">
                             <button id="selectImageBtn" class="selectImageBtn">Seleccionar una imágen</button>
@@ -144,7 +297,7 @@ function loadTicketTypes() {
                         </select>
 
                         <br>
-                        <label for="newValue">Introduce el dato correcto:</label>
+                        <span for="newValue">Introduce el dato correcto:</span>
                         <input type="text" name="newValue" id="newValue" class="input-text ticketInputVl" oninput="resetField(this)" placeholder="Dato correcto del campo seleccionado." maxlength="90" autocomplete="off">
                     </div>
                 </div>
@@ -162,17 +315,7 @@ function loadTicketTypes() {
             ticketDiv.remove();
         }
         cleanAllDivs();
-            const htmlCode = `
-            <div class="supportFirstAction">
-                <div class="fm-content">
-                    <button class="generalBtnStyle btn-orange" id="raiseTicketBtn">Levantar ticket</button>
-                    <button class="generalBtnStyle btn-blue" id="viewTicketStatusBtn">Ver estado de ticket</button>
-                </div>
-            </div>
-            `;
-                    
-            document.querySelector('.main').insertAdjacentHTML('beforeend', htmlCode);
-            document.getElementById('raiseTicketBtn').addEventListener('click', pageEvents);
+        createFirstDiv();
     });
 }
 
@@ -195,13 +338,13 @@ function addProjectSupportEvents(){
                 const htmlCode = `
                 <div class="projectUpdateDiv" id="projectUpdateDiv">
                     <div class="fm-content">
-                        <label for="name">Nombre:</label>
+                        <span for="name">Nombre:</span>
                         <input type="text" id="name" name="name" class="input-text ticketInputVl" placeholder="Ingresa el nombre del nuevo integrante" oninput="resetField(this)" autocomplete="off">
                    
-                        <label for="email">Correo:</label>
+                        <span for="email">Correo:</span>
                         <input type="email" id="email" name="email" class="input-text ticketInputVl" placeholder="Ingresa el correo del nuevo integrante" oninput="resetField(this)" autocomplete="off">
                   
-                        <label for="department">Departamento:</label>
+                        <span for="department">Departamento:</span>
                         <input type="text" id="department" name="department" class="input-text ticketInputVl" placeholder="Ingresa el departamento del nuevo integrante" oninput="resetField(this)" autocomplete="off">
                     </div>
                 </div>
@@ -230,7 +373,7 @@ function addProjectSupportEvents(){
                                     const htmlCode = `
                                     <div class="projectUpdateDiv deleteMemberDiv" id="projectUpdateDiv">
                                         <div class="fm-content" id="divDeleteMember">
-                                            <label for="delMemberSelect">Selecciona al miembro que deseas eliminar:</label>
+                                            <span for="delMemberSelect">Selecciona al miembro que deseas eliminar:</span>
                                             <select id="memberSelect" name="delMemberSelect" class="comboBox" onchange="addCauseBox(this)">
                                                 ${defaultOption}
                                                 ${userOptions}
@@ -244,7 +387,7 @@ function addProjectSupportEvents(){
                                     const htmlCode = `
                                     <div class="projectUpdateDiv permitionMemberDiv" id="projectUpdateDiv">
                                         <div class="fm-content" id="setPermitionDiv">
-                                            <label for="permitionMemberSelect">Selecciona un integrante del proyecto:</label>
+                                            <span for="permitionMemberSelect">Selecciona un integrante del proyecto:</span>
                                             <select id="memberSelect" name="permitionMemberSelect" class="comboBox" onchange="promoteDemote(this)" ${active}>
                                                 ${defaultOption}
                                                 ${userOptions}
@@ -272,11 +415,11 @@ function addProjectSupportEvents(){
                 <div class="ticketExplanationDiv" id="ticketExplanationDiv">
                     <div class="fm-content">
                         <h3>Descripción:</h3>
-                        <label for="ticketTitle">Título del ticket:</label>
+                        <span for="ticketTitle">Título del ticket:</span>
                         <input type="text" id="ticketTitle" name="ticketTitle" class="input-text ticketInputVl" placeholder="Ingresa el título del ticket" maxlength="100"
                         value = "Corregir datos de Proyecto." oninput="resetField(this)">
                         
-                        <label for="ticketDescription">Describe los cambios que consideras necesarios realizar:</label>
+                        <span for="ticketDescription">Describe los cambios que consideras necesarios realizar:</span>
                         <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa la descripción del ticket" maxlength="1000" rows="4" oninput="resetField(this)"></textarea>
                         
                     </div>
@@ -300,7 +443,7 @@ function projectSelectEvent(){
                 const htmlCode = `
                 <div id='selectActionPrj'>
                 <br>
-                <label for="correctionType">Tipo de corrección:</label><br>
+                <span for="correctionType">Tipo de corrección:</span><br>
                 <select id="correctionType" name="correctionType" class="comboBox">
                     <option value="none">--  Selecciona una opción  --</option>
                     <option value="addMember">Agregar integrante al equipo</option>
@@ -346,7 +489,7 @@ function addCauseBox(element){
         dv.id = 'expulsionDiv';
         dv.innerHTML = `
         <br>
-        <label for="ticketDescription">Motivo por el que deseas expulsar a este miembro:</label>
+        <span for="ticketDescription">Motivo por el que deseas expulsar a este miembro:</span>
         <textarea id="ticketDescription" name="ticketDescription" class="textarea-input ticketInputVl" placeholder="Ingresa el motivo por el que deseas expulsar a este miembro" maxlength="500" rows="4" oninput="resetField(this)"></textarea>            
         `;
         document.getElementById('divDeleteMember').appendChild(dv);

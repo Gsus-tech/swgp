@@ -100,7 +100,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                                     }
                                 }
                             }else{
-                                echo "<tr><td colspan='4' id='noRows'><i>Sin tickets de soporte que atender</i></td></tr>";
+                                echo "<tr><td colspan='5' id='noRows'><i>Sin tickets de soporte que atender</i></td></tr>";
                             }
                         ?>
                         
@@ -126,7 +126,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
             </div>
         </div>
             
-
+        <div class="ticketDetails"></div>
 
         <script src="../js/validate.js"></script>
         <script src="../js/support.js"></script>

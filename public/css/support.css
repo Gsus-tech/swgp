@@ -1,4 +1,4 @@
-label{
+span{
     width:fit-content;
 }
 
@@ -179,6 +179,109 @@ label{
     max-height: 5rem;
 }
 
+.watchTicketDiv{
+    padding: 20px 30px;
+    width: fit-content;
+    min-width: fit-content;
+}
+
+.watchTicketDiv span{
+    position: fixed;
+    margin-top: 15px;
+    font-style: italic;
+}
+
+.exWatchTicket{
+    width:fit-content;
+    align-self: end;
+}
+
+.ticketDetails{
+    display: flex;
+    align-items: center;
+    max-width: 720px;
+    margin: 20px auto;
+    gap: 15px;
+}
+
+.ticketDetailsDiv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 40px;
+    max-width: fit-content;
+    margin: 20px auto;
+    /* border-radius: 8px; */
+    gap: 15px;
+}
+
+.ticketDetailsDiv *{
+    margin: 10px 0;
+}
+.ticketDetailsDiv h3, .ticketDetailsDiv h4 {
+    text-align: left;
+    width: 100%;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.ticketDetailsDiv img{
+    max-width: 600px;
+}
+
+.ticketDetailsDiv div{
+    margin-top: 0;
+}
+
+.bg-Abierto, .bg-Pendiente, .bg-Cerrado{
+    width: fit-content;
+    padding: 0 5px;
+}
+
+.bg-Abierto{
+    background-color: #05a805;
+}
+
+.bg-Pendiente{
+    background-color: #e7cf31;
+}
+
+.bg-Cerrado{
+    background-color: #bd0d0d;
+}
+
+.ticketDate {
+    margin: 0;
+}
+
+.ticketDate span {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+/* .ticketDetailsDiv div .textarea-input{
+    min-width: 100px;
+    width:100%;
+    max-width: 400px;
+    min-height: 4rem;
+    height: ;
+    max-height: 8rem;
+}
+
+.ticketDetailsDiv div .input{
+    min-width: 100px;
+    width:100%;
+    max-width: 400px;
+} */
+
+.ticketDetailsDiv div .responseDiv{
+    border-top: thick double var(--black);
+}
+
+.ticketDetailsDiv div .responseDiv h4{
+    margin-top: 20px;
+}
+
 @media screen and (max-width: 450px) {
     .btnOptions{
         display: grid;
@@ -202,11 +305,42 @@ label{
     }
 }
 
+@media screen and (max-width: 700px){
+    .ticketDetails{
+        display: block;   
+    }
+
+    .ticketDetailsDiv{
+        margin: 20px;
+    }
+
+    .ticketDetailsDiv img{
+        width: 95%;
+    }
+}
+
 @media screen and (min-width: 800px) {
     .selectDiv{
         width: 100%;
         display: flex;
-        max-width:850px;
+        max-width: 850px;
+    }
+    .selectDiv .fm-content{
+        margin: 20px auto;
+    }
+
+    .deleteMemberDiv, .permitionMemberDiv{
+        width: fit-content;
+        margin-left: 3rem;
+    }
+
+    .projectUpdateDiv, .ticketExplanationDiv{
+        margin-left: 3rem;
+    }
+
+    .ticketExplanationDiv{
+        width: 90%;
+        max-width: 750px;
     }
 
     .type2Btn{
