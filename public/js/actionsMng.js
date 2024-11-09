@@ -3,8 +3,6 @@ function updatePageData() {
     const selectActividad = document.getElementById('select-actividad');
     if (selectActividad) {
         const actividadId = selectActividad.value;
-        const reportMakingDiv = document.getElementById('reportCreator');
-        reportMakingDiv.classList.add('hide');
         const btnEditor = document.getElementById('showReportCreator');
         if (actividadId !== 'none' && Number.isInteger(parseInt(actividadId))) {
             
@@ -123,14 +121,13 @@ function setActStateButtons(actividadId){
 
 }
 
-
 //Boton para abrir el editor de reporte
 function createAddButton() {
     const addBtnDiv = document.createElement('div');
     addBtnDiv.classList.add('addBtn');
 
     addBtnDiv.onclick = function() {
-        openAddReport(this);
+        createEditorArea();
     };
     
     const anchor = document.createElement('a');
@@ -197,7 +194,7 @@ function updateReportsTable(actividadId, reportes) {
     }
 }
 
-//Cargar la informacion de una actividad tras insertar un reporte
+//Abrir info de actividad, tras insertar un nuevo reporte o venir de dashboard a 'crear reporte'
 document.addEventListener('DOMContentLoaded', function() {
     const updateData = document.getElementById('updateDataNow');
     if (updateData) {
@@ -255,267 +252,23 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    const redirectedToAct = localStorage.getItem('openActDetails');
+    if(redirectedToAct){
+        const actId = localStorage.getItem('actId');
+        const selectElement = document.getElementById('select-actividad');
+        
+        if (actId && selectElement) {
+            selectElement.value = actId;
+            
+            const event = new Event('change');
+            selectElement.dispatchEvent(event);
+            localStorage.getItem('openActDetails');
+            localStorage.removeItem('actId');
+        }
+    }
     
 });
-
-//Mostrar el editor de reportes.
-function openAddReport(element){
-    const reportMakingDiv = document.getElementById('reportCreator');
-    reportMakingDiv.classList.remove('hide');
-    const btnTarget = document.getElementById('createReport');
-    btnTarget.scrollIntoView({ behavior: 'smooth' });
-    element.remove();
-
-    addButtonEvents();
-}
-
-function closeAddReport(){
-    const reportMakingArea = document.getElementById('reportInputArea');
-    if (!reportInputArea || reportInputArea.children.length === 0) {
-        reportMakingArea.parentElement.classList.add('hide');
-        createAddButton();
-    }else{
-        createConfirmationDialog('Advertencia','Se eliminará el avance del reporte en curso.\n\n¿Continuar?', function() {
-            reportMakingArea.innerHTML = "";
-            reportMakingArea.parentElement.classList.add('hide');
-            createAddButton();
-        });
-    }
-}
-
-// Crear div para nombrar el reporte
-function createSaveReport() {
-    createInputBox('Guardar reporte', 'Nombre del archivo:').then(fileName => {
-        guardarReporte(fileName);
-    })
-    .catch(error => {
-        if (error !== 'Input cancelado') {
-            console.error('Error inesperado:', error);
-        }
-    });
-}
-
-
-//Validar el contenido del reporte a guardar
-function saveNewReport() {
-    const reportContainer = document.querySelector('.report-input-area'); // Selecciona el contenedor del reporte
-
-    if (reportContainer && reportContainer.children.length === 0) {
-        reportContainer.classList.add('highlight-error');
-
-        setTimeout(function() {
-            reportContainer.classList.remove('highlight-error');
-        }, 1000);
-    } else {
-        createSaveReport();
-    }
-}
-
-//AJAX para guardar el reporte
-function guardarReporte(reportName) {
-    const reportContainer = document.querySelector('.report-input-area');
-    const reportElements = reportContainer.children;
-    if(!reportName){
-        return;
-    }
-    let contenido = [];
-    let imagenes = [];
-
-    // Recorremos todos los elementos de la sección del reporte
-    Array.from(reportElements).forEach(container => {
-        // Obtener todos los textarea e img dentro del contenedor
-        const inputElements = container.querySelectorAll('textarea, img');
-        inputElements.forEach(inputElement => {
-            if (inputElement.tagName === 'TEXTAREA') {
-                let type = '';
-
-                if (inputElement.classList.contains('input-title')) {
-                    type = 'h2';
-                } else if (inputElement.classList.contains('input-subtitle')) {
-                    type = 'h3';
-                } else if (inputElement.classList.contains('input-text')) {
-                    type = 'p';
-                }
-
-                // Añadir el contenido del textarea al array
-                if (type) {
-                    contenido.push({ type: type, value: inputElement.value.trim() });
-                }
-            } else if (inputElement.tagName === 'IMG') {
-                contenido.push({ type: 'img', value: '' });
-                imagenes.push(inputElement.src); // Guardar la imagen (base64)
-            }
-        });
-    });
-
-    const actividadId = document.getElementById('select-actividad').value;
-
-    // Crear el formulario dinámicamente
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '../controller/actionsManager.php?saveNewReport=true';
-    form.enctype = 'multipart/form-data';
-
-    // Agregar el contenido JSON al formulario
-    const contenidoInput = document.createElement('input');
-    contenidoInput.type = 'hidden';
-    contenidoInput.name = 'contenido';
-    contenidoInput.value = JSON.stringify(contenido);
-    form.appendChild(contenidoInput);
-
-    // Agregar el contenido JSON al formulario
-    const nombreR = document.createElement('input');
-    nombreR.type = 'hidden';
-    nombreR.name = 'nombreReporte';
-    nombreR.value = reportName;
-    form.appendChild(nombreR);
-
-    // Agregar el ID de la actividad
-    const actividadInput = document.createElement('input');
-    actividadInput.type = 'hidden';
-    actividadInput.name = 'id_actividad';
-    actividadInput.value = actividadId;
-    form.appendChild(actividadInput);
-
-    // Agregar las imágenes (si existen)
-    imagenes.forEach((imagenSrc, index) => {
-        const imagenInput = document.createElement('input');
-        imagenInput.type = 'hidden';
-        imagenInput.name = `imagen_${index}`;
-        imagenInput.value = imagenSrc;
-        form.appendChild(imagenInput);
-    });
-
-    // Añadir el formulario al DOM y enviarlo
-    document.body.appendChild(form);
-    form.submit();
-}
-
-// Evento para el botón de guardar
-document.getElementById('createReport').addEventListener('click', function () {
-    // Validar si hay contenido en el reporte antes de guardar
-    if (document.querySelector('.input-container') !== null) {
-        guardarReporte();
-    }
-});
-
- 
-const reportInputArea = document.getElementById('reportInputArea');
-const imageUploader = document.getElementById('imageUploader');
-
-// Crear el botón de eliminación dentro del contenedor del elemento
-function createRemoveButton(targetContainer) {
-    const removeBtn = document.createElement('i');
-    removeBtn.classList.add('fa', 'fa-close', 'remove-btn');
-    removeBtn.title = 'Eliminar';
-
-    removeBtn.addEventListener('click', function () {
-        targetContainer.remove(); // Eliminar el elemento
-    });
-    return removeBtn;
-}
-
-function autoResize(element) {
-    element.style.height = 'auto';
-    element.style.height = element.scrollHeight + 'px';
-}
-
-// Agregar título (h2)
-document.getElementById('addTitle').addEventListener('click', function () {
-    const container = document.createElement('div');
-    container.classList.add('input-container');
-
-    const titleInput = document.createElement('textarea');
-    titleInput.placeholder = 'Escribe el título aquí...';
-    titleInput.classList.add('input-title');
-    titleInput.rows = 1;
-    titleInput.addEventListener('input', function () {
-        autoResize(titleInput);
-    });
-
-    container.appendChild(titleInput);
-    container.appendChild(createRemoveButton(container));
-    reportInputArea.appendChild(container);
-});
-
-// Agregar subtítulo (h3)
-document.getElementById('addSubtitle').addEventListener('click', function () {
-    const container = document.createElement('div');
-    container.classList.add('input-container');
-
-    const subtitleInput = document.createElement('textarea');
-    subtitleInput.placeholder = 'Escribe el subtítulo aquí...';
-    subtitleInput.classList.add('input-subtitle');
-    subtitleInput.rows = 1;
-    subtitleInput.addEventListener('input', function () {
-        autoResize(subtitleInput);
-    });
-
-    container.appendChild(subtitleInput);
-    container.appendChild(createRemoveButton(container));
-    reportInputArea.appendChild(container);
-});
-
-// Agregar texto (textarea)
-document.getElementById('addText').addEventListener('click', function () {
-    const container = document.createElement('div');
-    container.classList.add('input-container');
-
-    const textArea = document.createElement('textarea');
-    textArea.placeholder = 'Escribe el texto aquí...';
-    textArea.classList.add('input-text');
-    textArea.rows = 1;
-    textArea.addEventListener('input', function () {
-        autoResize(textArea);
-    });
-
-    container.appendChild(textArea);
-    container.appendChild(createRemoveButton(container));
-    reportInputArea.appendChild(container);
-});
-
-// Abrir seleccionador de archivos para agregar imagen
-document.getElementById('addImage').addEventListener('click', function () {
-    imageUploader.click();
-});
-
-// Mostrar imagen seleccionada en el reporte
-imageUploader.addEventListener('change', function (event) {
-    const file = event.target.files[0];
-
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
-
-    if (file) {
-        // Verificar el tipo del archivo
-        if (!allowedTypes.includes(file.type)) {
-            alert('Solo se permiten archivos PNG, JPG, JPEG o WEBP.');
-            return;
-        }
-
-        // Verificar el tamaño del archivo
-        if (file.size > 2 * 1024 * 1024) {
-            alert('La imagen debe ser menor a 2 MB.');
-            return;
-        }
-
-        // Leer y cargar la imagen si pasa las validaciones
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const container = document.createElement('div');
-            container.classList.add('input-container');
-
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.classList.add('report-image');
-
-            container.appendChild(img);
-            container.appendChild(createRemoveButton(container));
-            reportInputArea.appendChild(container);
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
 
 function createReportView(element) {
     const trElement =  element.closest('[av-id]');
@@ -538,27 +291,13 @@ function createReportView(element) {
                 const optionsDiv = document.createElement('div');
                 optionsDiv.classList.add('file-options');
                 optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i><i class='fa fa-download button' onclick='downloadReport(this)' title='Descargar reporte'></i>`;
-                reportContent.appendChild(optionsDiv);
-                // Recorrer el contenido y crear los elementos correspondientes
-                let mgFlag = true;
-                data.contenido.forEach(item => {
-                    const element = document.createElement(item.type);
-                    
-                    if (item.type === 'p' || item.type === 'h3' || item.type === 'h2') {
-                        element.innerHTML = item.value.replace(/\n/g, '<br>');
-                    } else if(item.type === 'img'){
-                        element.setAttribute('src', item.value);
-                    }else {
-                        element.textContent = item.value; 
-                    }
-                    if(item.type === 'h2' && mgFlag == true){
-                        element.style = "margin-top:0;";
-                    }
-                    
-                    reportContent.appendChild(element);
-                    mgFlag = false;
-                });
                 
+                const opciones = `<div class='file-options'>
+                <i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i>
+                <i class='fa fa-download button' onclick='downloadReport(this)' title='Descargar reporte'></i>
+                </div>`;
+                reportContent.innerHTML = `${opciones}${data.contenido}`;
+                reportContent.setAttribute('rpName', data.nombre);
                 // Insertar el contenedor en la página
                 reportContainer.appendChild(reportContent);
                 document.body.appendChild(reportContainer);
@@ -662,4 +401,325 @@ function endActivity() {
             console.log("Finalización de actividad cancelada.");
         }
     );
+}
+
+
+function createEditorArea(){
+    const existingContainer = document.querySelector('.editor-container');
+    if (existingContainer) {
+        existingContainer.remove();
+    }
+
+    // Crear el contenedor principal
+    const editorContainer = document.createElement('div');
+    editorContainer.className = 'editor-container';
+
+    // Crear la barra de herramientas
+    const editorToolbar = document.createElement('div');
+    editorToolbar.className = 'editorToolbar';
+
+    // Crear botones de la barra de herramientas
+    const buttons = [
+        { id: 'boldButton', innerHTML: '<b>B</b>' },
+        { id: 'italicButton', innerHTML: '<i>I</i>' },
+        { id: 'underlineButton', innerHTML: '<u>U</u>' },
+        { id: 'orderedListButton', className: 'fa fa-list-ol' },
+        { id: 'unorderedListButton', className: 'fa fa-list-ul' },
+        { id: 'justifyLeftButton', className: 'fa fa-align-left' },
+        { id: 'justifyCenterButton', className: 'fa fa-align-center' },
+        { id: 'justifyRightButton', className: 'fa fa-align-right' },
+        { id: 'header1Button', innerHTML: 'H1', style: 'font-size:var(--px18);' },
+        { id: 'header2Button', innerHTML: 'H2', style: 'font-size:var(--px15);' },
+        { id: 'imageButton', className: 'fa fa-image' }
+    ];
+
+    buttons.forEach(btn => {
+        const button = document.createElement('button');
+        button.id = btn.id;
+        if (btn.innerHTML) button.innerHTML = btn.innerHTML;
+        if (btn.className) button.className = btn.className;
+        if (btn.style) button.style = btn.style;
+        editorToolbar.appendChild(button);
+    });
+
+    // Crear el input para subir imágenes
+    const imageInput = document.createElement('input');
+    imageInput.type = 'file';
+    imageInput.id = 'imageInput';
+    imageInput.accept = 'image/*';
+    imageInput.style.display = 'none';
+    editorToolbar.appendChild(imageInput);
+
+    // Crear el slider de tamaño de imagen
+    const imageSizeSlider = document.createElement('input');
+    imageSizeSlider.type = 'range';
+    imageSizeSlider.id = 'imageSizeSlider';
+    imageSizeSlider.min = '100';
+    imageSizeSlider.max = '1000';
+    imageSizeSlider.value = '100';
+    imageSizeSlider.style.display = 'none';
+    editorToolbar.appendChild(imageSizeSlider);
+
+    // Añadir la barra de herramientas al contenedor principal
+    editorContainer.appendChild(editorToolbar);
+
+    // Crear el editor de contenido
+    const editor = document.createElement('div');
+    editor.id = 'editor';
+    editor.className = 'editor';
+    editor.contentEditable = 'true';
+    editorContainer.appendChild(editor);
+
+    // Crear la barra de herramientas inferior con el botón de guardar
+    const bottomToolbar = document.createElement('div');
+    bottomToolbar.className = 'bottomToolBar';
+    const saveButton = document.createElement('button');
+    saveButton.id = 'saveButton';
+    saveButton.className = 'saveButton';
+    saveButton.textContent = 'Guardar';
+    bottomToolbar.appendChild(saveButton);
+    editorContainer.appendChild(bottomToolbar);
+
+    // Añadir el contenedor principal al cuerpo del documento
+    document.querySelector('.main').appendChild(editorContainer);
+    document.getElementById('showReportCreator').remove();
+
+    setTimeout(() => {
+        addEditorEvents();
+    }, 100);
+}
+
+function addEditorEvents(){
+    document.getElementById("boldButton").addEventListener("click", () => formatText("bold"));
+    document.getElementById("italicButton").addEventListener("click", () => formatText("italic"));
+    document.getElementById("underlineButton").addEventListener("click", () => formatText("underline"));
+    document.getElementById("orderedListButton").addEventListener("click", () => formatText("insertOrderedList"));
+    document.getElementById("unorderedListButton").addEventListener("click", () => formatText("insertUnorderedList"));
+    document.getElementById("justifyLeftButton").addEventListener("click", () => formatText("justifyLeft"));
+    document.getElementById("justifyCenterButton").addEventListener("click", () => formatText("justifyCenter"));
+    document.getElementById("justifyRightButton").addEventListener("click", () => formatText("justifyRight"));
+    document.getElementById("header1Button").addEventListener("click", () => addHeader("h1"));
+    document.getElementById("header2Button").addEventListener("click", () => addHeader("h2"));
+
+    document.getElementById("imageButton").addEventListener("click", () => {
+        document.getElementById("imageInput").click(); // Abre el selector de archivos
+    });
+
+    document.getElementById("imageInput").addEventListener("change", handleImageUpload);
+    document.getElementById("imageSizeSlider").addEventListener("input", handleImageResize);
+
+    document.addEventListener("click", (event) => {
+        if (selectedImage && !selectedImage.contains(event.target) && event.target.id !== "imageSizeSlider") {
+            deselectImage();
+        }
+    });
+
+    document.getElementById("saveButton").addEventListener("click", saveContent);
+
+    const editor = document.getElementById("editor");
+    editor.addEventListener("paste", () => {
+        setTimeout(() => {
+            const editorContent = editor.innerHTML;
+            
+            if (editorContent.includes("<img")) {
+                assignImageEvents();
+            }
+        }, 150);
+    });
+}
+
+let selectedImage = null;
+
+function handleImageClick(event) {
+    selectImage(event.target);
+}
+
+function assignImageEvents() {
+    const images = document.querySelectorAll("#editor img");
+    images.forEach(img => {
+        img.removeEventListener("click", handleImageClick);
+        img.addEventListener("click", handleImageClick);
+    });
+}
+
+
+function formatText(command) {
+    document.execCommand(command, false, null);
+}
+
+function addHeader(tag) {
+    document.execCommand('formatBlock', false, tag);
+}
+
+function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.style.maxWidth = "1000px";
+            img.style.width = "500px";
+            img.style.cursor = "pointer"; 
+            img.addEventListener("click", () => selectImage(img));
+            document.getElementById("editor").appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function selectImage(img) {
+    const slider = document.getElementById("imageSizeSlider");
+    if(img.style.border==='' || img.style.border==='none'){
+        if (selectedImage) {
+            selectedImage.style.border = "none";
+        }
+        selectedImage = img;
+        selectedImage.style.border = "2px solid #007bff";
+
+        slider.style.display = "inline-block";
+        slider.value = parseInt(selectedImage.style.width);
+    }else{
+        deselectImage();
+    }
+}
+
+function deselectImage() {
+    if (selectedImage) {
+        selectedImage.style.border = "none"; // Quita el borde de selección
+        selectedImage = null; // Deselecciona la imagen
+    }
+    const slider = document.getElementById("imageSizeSlider");
+    slider.style.display = "none";
+}
+
+function handleImageResize(event) {
+    if (selectedImage) {
+        const newSize = event.target.value + "px";
+        selectedImage.style.width = newSize; // Ajusta el ancho de la imagen
+    }
+}
+
+function saveContent() {
+    const reportContainer = document.getElementById('editor');
+
+    if (reportContainer && reportContainer.children.length === 0) {
+        reportContainer.classList.add('highlight-error');
+
+        setTimeout(function() {
+            reportContainer.classList.remove('highlight-error');
+        }, 1000);
+    } else {
+        createInputBox('Guardar reporte', 'Nombre del archivo:').then(fileName => {
+            saveReport(fileName);
+        })
+        .catch(error => {
+            if (error !== 'Input cancelado') {
+                console.error('Error inesperado:', error);
+            }
+        });
+    }
+}
+
+function saveReport(reportName) {
+    const reportContainer = document.querySelector('.editor');
+    const actividadId = document.getElementById('select-actividad').value;
+
+    if (!reportName || !reportContainer) return;
+
+    // Clonar el HTML del contenedor
+    const reportHTML = reportContainer.innerHTML;
+
+    // Seleccionar todas las imágenes en el editor
+    const images = reportContainer.querySelectorAll('img');
+    const base64Images = {};
+
+    let promises = [];
+    
+    images.forEach((img, index) => {
+        // Crear un canvas para convertir la imagen a base64
+        let promise = new Promise((resolve, reject) => {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            context.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            const base64Image = canvas.toDataURL("image/png"); // Cambia el formato si es necesario
+            
+            // Capturar los estilos del elemento img
+            const styles = {
+                maxWidth: img.style.maxWidth || '',
+                width: img.style.width || '',
+                height: img.style.height || '',
+                cursor: img.style.cursor || '',
+                border: img.style.border || ''
+            };
+            
+            // Almacenar la imagen base64 y sus estilos
+            base64Images[`imagen_${index}`] = {
+                image: base64Image,
+                styles: styles
+            };
+            
+            resolve();
+        });
+        promises.push(promise);
+    });
+
+    Promise.all(promises).then(() => {
+        // Crear el formulario dinámicamente
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '../controller/actionsManager.php?saveNewReport2=true';
+
+        // Agregar el nombre del reporte al formulario
+        const nameInput = document.createElement('input');
+        nameInput.type = 'hidden';
+        nameInput.name = 'reportName';
+        nameInput.value = reportName;
+        form.appendChild(nameInput);
+
+        const actividad = document.createElement('input');
+        actividad.type = 'hidden';
+        actividad.name = 'id_actividad';
+        actividad.value = actividadId;
+        form.appendChild(actividad);
+
+        // Agregar el HTML del reporte al formulario
+        const htmlInput = document.createElement('input');
+        htmlInput.type = 'hidden';
+        htmlInput.name = 'reportHTML';
+        htmlInput.value = reportHTML;
+        form.appendChild(htmlInput);
+
+        // Agregar las imágenes codificadas en base64 al formulario
+        Object.keys(base64Images).forEach((key) => {
+            const imageInput = document.createElement('input');
+            imageInput.type = 'hidden';
+            imageInput.name = key;
+            imageInput.value = JSON.stringify(base64Images[key]);
+            form.appendChild(imageInput);
+        });
+        // Agregar el formulario al DOM y enviarlo
+        document.body.appendChild(form);
+        if(htmlInput.value !== ''){
+            form.submit();
+        }else{
+            alert('No HTML');
+        }
+    });
+}
+
+
+// Convertir imagen a Base64
+function toBase64(img) {
+    return new Promise((resolve) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+    });
 }
