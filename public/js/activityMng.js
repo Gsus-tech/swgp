@@ -255,104 +255,68 @@ function doubleClickRow(element){
     }
 }
 
-//Mostrar el reporte general y validar para finalizar
-function mostrarReporteV(element, type){
-    const trElement =  element.closest('[ac-d]');
+function mostrarReporteV(element, type) {
+    const trElement = element.closest('[ac-d]');
     const acId = trElement.getAttribute('ac-d');
 
-    // Realizar la solicitud AJAX para obtener la información del reporte
+    // Realizar la solicitud para obtener la información del reporte
     const url = `../controller/activityManager.php?getGenReportData=true&id_act=${acId}`;
-    const formData = new FormData();
-
-    makeAjaxRequest(url, 'POST', formData, function(response) {
-        try {
-            const data = response;
-            if (data && data.success) {
-                if (data.exists) {
-                    const reportData = response.data;
     
-                    const reportContainer = document.createElement('div');
-                    reportContainer.classList.add('pdf-view-container');
-                    const reportContent = document.createElement('div');
-                    reportContent.classList.add('report-content');
-                    const optionsDiv = document.createElement('div');
-                    optionsDiv.classList.add('file-options');
-                    optionsDiv.innerHTML = `<i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i>
-                                            <i class='fa fa-download button' onclick='downloadReport(this)' title='Descargar reporte'></i>`;
-                    reportContent.appendChild(optionsDiv);
-                    if(element.id === 'botonValidar'){
-                        const finishDiv = document.createElement('div');
-                        finishDiv.classList.add('fin-position');
-                        const finBtn = document.createElement('button');
-                        finBtn.classList.add('finishBtn');
-                        finBtn.classList.add('btn');
-                        finBtn.setAttribute('acId', acId);
-                        finBtn.textContent = 'Finalizar actividad';
-                        finBtn.addEventListener('click', finishActivity)
-                        finishDiv.appendChild(finBtn);
-                        // finishDiv.innerHTML = `<button class="finishBtn btn">Finalizar actividad</button>`;
-                        
-                        reportContent.appendChild(finishDiv);
-                    }
-                    let piv = 0;
+    fetch(url, {
+        method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.exists) {
+            const reportData = data.data;
 
-                    reportData.forEach(report => {
-                        const contenido = JSON.parse(report.contenido);  // Decodificar el JSON del campo 'contenido'
-                        if (contenido && Array.isArray(contenido)) {
-                            const nameAndSpace = document.createElement('div');
-                            nameAndSpace.classList.add('nameAndSpace');
-                            nameAndSpace.innerHTML = `<div class="spacer">
-                                                            <div class="spacer-line"></div>
-                                                            <div class="reportName">${report.nombre}</div>
-                                                            <div class="spacer-line"></div>
-                                                        </div>`;
-                            if(piv > 0){nameAndSpace.classList.add('f-mg');}
-                            reportContent.appendChild(nameAndSpace);
+            const reportContainer = document.createElement('div');
+            reportContainer.classList.add('pdf-view-container');
+            const reportContent = document.createElement('div');
+            reportContent.classList.add('report-content');
 
-                            let mgFlag = true;
-                            contenido.forEach(item => {
-                                const element = document.createElement(item.type);
-                                
-                                if (item.type === 'p' || item.type === 'h3' || item.type === 'h2') {
-                                    element.innerHTML = item.value.replace(/\n/g, '<br>');
-                                } else if(item.type === 'img'){
-                                    element.setAttribute('src', item.value);
-                                } else {
-                                    element.textContent = item.value; 
-                                }
-                                if(item.type === 'h2' && mgFlag == true){
-                                    element.style = "margin-top:0;";
-                                }
-                                
-                                reportContent.appendChild(element);
-                                mgFlag = false;
-                            });
-                            
-                            addButtonEvents();
-                        } else {
-                            console.error('El contenido no es un array o está indefinido.');
-                        }
-                        piv++;
-                    });
-                    // Insertar el contenedor en la página
-                    reportContainer.appendChild(reportContent);
-                    document.body.appendChild(reportContainer);
-                } else {
-                    element.classList.add('dsBtn');
-                    element.textContent = "No hay reportes para mostrar.";
-                }
-            } else {
-                console.error('Error al obtener el reporte:', data.message);
-            }
-        } catch (error) {
-            console.error('Error al analizar la respuesta JSON:', error);
-            console.log('Respuesta recibida:', response); // Ver la respuesta exacta que se recibe
+            const opciones = `<div class='file-options'>
+            <i class='fa fa-times-rectangle button' title='Cerrar' onclick='closeReportView()'></i>
+            <i class='fa fa-download button' onclick='downloadGenReport(this)' title='Descargar reporte'></i>
+            </div>`;
+            reportContent.innerHTML = opciones;
+            reportData.forEach(report => {
+                const reportNameDiv = document.createElement('div');
+                reportNameDiv.classList.add('nameAndSpace');
+                reportNameDiv.innerHTML = `<div class="spacer">
+                                                <div class="spacer-line"></div>
+                                                <div class="reportName">${report.nombre}</div>
+                                                <div class="spacer-line"></div>
+                                            </div>`;
+                reportContent.appendChild(reportNameDiv);
+
+                // Insertar el contenido HTML directamente en lugar de intentar parsearlo
+                const reportHtmlContent = document.createElement('div');
+                reportHtmlContent.innerHTML = report.contenido; // Usar el HTML directamente
+                reportContent.appendChild(reportHtmlContent);
+            });
+
+            reportContainer.appendChild(reportContent);
+            document.body.appendChild(reportContainer);
+        } else {
+            console.error('No hay reportes para mostrar.');
         }
-    }, function(error) {
+    })
+    .catch(error => {
         console.error('Error en la solicitud AJAX:', error);
     });
-    
+}
 
+function downloadGenReport(element) {
+    createInputBox('Descargar reporte', 'Nombre del archivo:', null, 'Descargar', 'Cancelar')
+        .then(reportName => {
+            downloadFunction(reportName, true);
+        })
+        .catch(error => {
+            if(error !== 'Input cancelado'){
+                console.error(error);
+            }
+        });
 }
 
 function finishActivity(){
@@ -433,7 +397,6 @@ function submitNewActivity() {
 
 // Envia el formulario de editar actividad - editForm
 function submitEditActivity() {
-    console.log('Validando datos de actividad');
     const isValid = validateActivityForm('editFname', 'editFdescription', 'editFdate', 'editUserRespList', 'editObjetivoList');
     if (!isValid) {
         return false;
@@ -443,10 +406,8 @@ function submitEditActivity() {
     const n = document.getElementById('editFname');
     let id = n.getAttribute('ac-id');
     id = parseInt(id);
-    console.log(`id actividad: ${id}`);
     if(Number.isInteger(id)){
         const form = document.getElementById('edit-activity-form');
-        console.log(`../controller/activityManager.php?editActivity=true&editId=${id}`);
         const actionUrl = `../controller/activityManager.php?editActivity=true&editId=${id}`;
         form.action = actionUrl;
         form.submit();

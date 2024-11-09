@@ -381,18 +381,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
         $id_proyecto = $_SESSION['projectSelected'];
     
         if ($activityId !== false) {
-            $query = "SELECT id_avance, nombre, contenido, DATE(fecha_creacion) AS fecha_creacion FROM tbl_avances WHERE id_proyecto = ? AND id_actividad = ? ORDER BY id_avance ASC";
+            $query = "SELECT id_avance, nombre, contenido, DATE(fecha_creacion) AS fecha_creacion 
+                      FROM tbl_avances 
+                      WHERE id_proyecto = ? AND id_actividad = ? 
+                      ORDER BY id_avance ASC";
             $stmt = $mysqli->prepare($query);
     
             if ($stmt) {
                 $stmt->bind_param('ii', $id_proyecto, $activityId);
                 $stmt->execute();
-                
                 $result = $stmt->get_result();
                 $reportData = [];
     
                 setlocale(LC_TIME, 'es_ES.UTF-8');
-
+    
                 while ($row = $result->fetch_assoc()) {
                     $row['fecha_creacion'] = strftime('%e de %B de %Y', strtotime($row['fecha_creacion']));
                     $reportData[] = $row;
@@ -413,6 +415,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_SESSION['rol']==='ADM' || $_SESSI
             echo json_encode(['success' => false, 'message' => 'ID de actividad no válido']);
         }
     }
+    
     
     if (isset($_GET['finishAct']) && $_GET['finishAct'] == 'true') {
         $crud = new Crud();
