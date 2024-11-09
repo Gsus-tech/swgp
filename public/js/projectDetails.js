@@ -68,7 +68,7 @@ function createProjectReport(fullReport){
                     let reporteCompleto = document.createElement('div');
                     let piv = false;
 
-                    // Iterar sobre las actividades existentes.
+                    // Hay que actualizar como se genera este reporte general. 
                     for (const [activityName, reports] of Object.entries(data)) {
                         if(piv===true){
                             const pageBreak = document.createElement('br');
@@ -78,50 +78,28 @@ function createProjectReport(fullReport){
                         const activityDiv = document.createElement('div'); 
                         activityDiv.classList.add('activity-report');
             
-                        const activityTitle = document.createElement('h1');
-                        activityTitle.textContent = activityName;
-                        activityDiv.appendChild(activityTitle);
                         let piv2 = false;
+                        let fullHtml = '';
                         //Iterar sobre los reportes registrados de cada actividad.
                         reports.forEach(report => {
                             const reportDiv = document.createElement('div'); 
                             reportDiv.classList.add('report-content');
-                            
+                            reportDiv.innerHTML = '';
                             if(piv2===true){
                                 const pageBreak = document.createElement('br');
                                 pageBreak.setAttribute("class", "page-break");
                                 reportDiv.appendChild(pageBreak);
                             }
-                            const reportContentArray = JSON.parse(report.contenido);
                             
-                            //Iterar sobre el contenido de cada reporte para dar formato.
-                            reportContentArray.forEach(item => {
-                                let element;
-                                if (item.type === 'h2' || item.type === 'h3' || item.type === 'p') {
-                                    element = document.createElement(item.type);
-                                    element.innerHTML = item.value.replace(/\n/g, '<br>');
-                                } else if (item.type === 'img') {
-                                    element = document.createElement('img');
-                                    element.setAttribute('src', item.value);
-                                    element.alt = 'Report image';
-                                }else {
-                                    element.textContent = item.value; 
-                                }
-            
-                                if (element) {
-                                    reportDiv.appendChild(element);
-                                }
-                            });
+                            let htmlContent = '';
+                            htmlContent += report.contenido;
                             
+                            reportDiv.innerHTML += htmlContent;
                             piv2 = true; //Bandera para poner saltos de pagina
                             activityDiv.appendChild(reportDiv);
                         });
                         
-                        const separador = document.createElement('hr');
-                        activityDiv.appendChild(separador);
-                        
                         reporteCompleto.appendChild(activityDiv);
-
                         piv = true; //Bandera para poner saltos de pagina
                     }
             
@@ -171,94 +149,96 @@ function downloadFunction(fullReport, projectDetails, reportContent) {
                 <meta charset="utf-8">
                 <title>Reporte</title>
                 <style>
-                    .pdf-view-container {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0, 0, 0, 0.6);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 1000;
-                    }
-                    .report-content {
+                    .detailsContainer {
                         position: relative;
-                        width: 80%;
+                        width: 100%;
                         max-width: 800px;
-                        background-color: white;
-                        padding: 2rem;
-                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                        margin: auto;
+                        padding: 40px;
+                        border: 1px solid #ddd;
                         border-radius: 8px;
-                        z-index: 1000;
-                        text-align: left;
-                        overflow: auto;
-                        max-height: 80vh;
-                    }
-                    .report-content h2 {
+                        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+                        background-color: #fdfdfd;
                         text-align: center;
-                        margin: 2rem auto;
-                    }
-                    .report-content h3, .report-content p {
-                        text-align: justify;
-                        margin-bottom: 1rem;
-                    }
-                    .report-content img {
-                        max-width: 80%;
-                        display: block;
-                        margin: 1rem auto;
-                        text-align: center;
-                        max-height: 15rem;
-                    }
-                    .file-options {
-                        position: fixed;
-                        padding: 9px 15px;
-                        justify-content: space-between;
-                        background-color: var(--navBtnBg);
-                        width: 5.5rem;
-                        display: flex;
-                        gap: 1rem;
-                        border-radius: 10px;
-                    }
-                    .spacer {
-                        display: flex;
-                        align-items: center;
-                        text-align: center;
-                        margin: 20px 0 40px 0;
-                    }
-                    .spacer-line {
-                        flex-grow: 1;
-                        border-bottom: 1px solid #ccc;
-                        margin: 0 10px;
-                    }
-                    .f-mg {
-                        margin: 60px 0 40px 0;
                     }
 
-                    .name h1, .reportTitle br{
+                    .detailsContainerTitle {
                         display: flex;
+                        flex-direction: column;
                         align-items: center;
-                        justify-content: center;
-                        font-style: normal;
-                        font-size:2rem;
+                        text-align: center;
+                        margin-bottom: 20px;
+                    }
+
+                    .name h1 {
+                        font-size: 3rem;
                         font-weight: bold;
+                        margin: 0;
+                        padding-top: 20px;
+                        text-align: center;
                     }
 
-                    .page-break{
-                        page-break-before: always;
+                    .fechas {
+                        position: absolute;
+                        right: 20px;
+                        top: 20px;
+                        text-align: right;
+                    }
+
+                    .fechas label {
+                        display: block;
+                        font-size: 0.9rem;
+                        color: #555;
+                    }
+
+                    .detailsContainerDiv h3 {
+                        font-weight: bold;
+                        font-size: 1.25rem;
+                        color: #333;
+                        margin-bottom: 0.5rem;
+                        text-align: left;
+                    }
+
+                    .detailsContainerDiv i {
+                        display: block;
+                        font-size: 1rem;
+                        color: #666;
+                        margin-bottom: 15px;
+                        text-align: left;
+                    }
+
+                    a {
+                        font-style: normal;
+                        color: #555;
+                    }
+
+                    #returnToProjects {
+                        position: absolute;
+                        bottom: 20px;
+                        left: 20px;
+                        font-size: 1.5rem;
+                        color: #e74c3c;
+                        text-decoration: none;
+                    }
+
+                    .optionsDiv {
+                        position: absolute;
+                        top: 20px;
+                        right: 20px;
+                    }
+
+                    .redBtn {
+                        color: #fff;
+                        background-color: #e74c3c;
+                        padding: 10px 15px;
+                        border-radius: 50%;
+                        text-decoration: none;
                     }
                         
-                    .page {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100vh; /* Full height of the page */
+                   .page-break{
+                        page-break-before: always;
                     }
-
-                    .reportTitle {
-                        text-align: center;
-                    }
+                      
                 </style>
             </head>
             <body>

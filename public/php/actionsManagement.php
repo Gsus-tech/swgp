@@ -106,24 +106,9 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
                 </table>
             </div>
 
-            <!-- Comienza testing de interface -->
-            <div class="report-creator hide" id="reportCreator">
-                 <div class="closeBtn" onclick="closeAddReport()"><a id="hideReportCreator" title="Cerrar editor" class="fa fa-times-rectangle closeEditor"></a></div>
-                <div class="report-input-area" id="reportInputArea">
-                </div>
-
-                <div class="toolbar">
-                    <i class="fa fa-header button" id="addTitle" title="Título"></i>
-                    <i class="fa fa-font button" id="addSubtitle" title="Subtítulo"></i>
-                    <i class="fa fa-align-justify button" id="addText" title="Texto"></i>
-                    <i class="fa fa-image button" id="addImage" title="Subir imagen"></i>
-                    <button class="button" title="Guardar reporte" id="createReport" onclick="saveNewReport()">Guardar</button>
-                    <input type="file" id="imageUploader" class="hidden" accept=".png, .jpg, .jpeg, .webp">
-                </div>
-            </div>
-
-            <!-- fin de testing  -->
-
+            
+            
+            
         </div>
 
     </div> <!-- Fin de container -->

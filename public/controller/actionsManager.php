@@ -156,6 +156,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
             echo "<script>window.location.href = `../php/actionsManagement.php?Data-success=true`;</script>";            
         }        
     }
+    
+    if (isset($_GET['saveNewReport2']) && $_GET['saveNewReport2'] == 'true') {
+        $id_usuario = $_SESSION['id'];
+        $projectId = $_SESSION['projectSelected'];
+        $id_actividad = filter_var($_POST['id_actividad'], FILTER_VALIDATE_INT);
+        $reportName = $_POST['reportName'];
+        $reportHTML = $_POST['reportHTML'];
+        $imageNamesList = [];
+        $uploadDir = "../assets/report-images/project-" . $projectId . "/";
+        
+        // Crear la carpeta si no existe
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+    
+        preg_match_all('/<img([^>]+)src=["\']data:image\/(jpeg|jpg|png|webp);base64,([^"\']+)["\']([^>]*)>/i', $reportHTML, $matches, PREG_SET_ORDER);
+        
+    foreach ($matches as $match) {
+        $imageType = strtolower($match[2]);
+        $base64Image = $match[3]; 
+        $attributesBeforeSrc = trim($match[1]); // Atributos antes del src
+        $attributesAfterSrc = trim($match[4]);  // Atributos después del src
+
+        // Validar el tipo de archivo
+        if (in_array($imageType, ['jpeg', 'jpg', 'png', 'webp'])) {
+            $decodedImage = base64_decode($base64Image);
+        
+            if ($decodedImage !== false) {
+                // Generar un nombre único para la imagen
+                $imageName = 'act' . $id_actividad . '-' . uniqid() . '.' . $imageType;
+                $imagePath = $uploadDir . $imageName;
+
+                // Guardar la imagen en el servidor
+                file_put_contents($imagePath, $decodedImage);
+
+                // Crear el nuevo tag de imagen con la ruta del servidor
+                $newImageTag = '<img ' . $attributesBeforeSrc . ' src="' . $imagePath . '"' . $attributesAfterSrc . '>';
+                
+                // Reemplazar la imagen base64 en el HTML con el nuevo tag
+                $pattern = '/<img([^>]+)src=["\']data:image\/(jpeg|jpg|png|webp);base64,([^"\']+)["\']([^>]*)>/i';
+                $replacement = $newImageTag;
+                $reportHTML = preg_replace($pattern, $replacement, $reportHTML, 1);
+            } else {
+                echo json_encode(['success' => false, 'message' => "Error al decodificar la imagen."]);
+                exit;
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => "Tipo de archivo no permitido: $imageType"]);
+            exit;
+        }
+    }
+    
+        // Conexión a la base de datos
+        $crud = new Crud();
+        $mysqli = $crud->getMysqliConnection();
+        // Insertar el reporte en la base de datos
+        $query = "INSERT INTO tbl_avances (contenido, nombre, id_usuario, id_proyecto, id_actividad) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $mysqli->prepare($query);
+        if (!$stmt) {
+            echo "<script>window.location.href = `../php/actionsManagement.php?Data-success=false`;</script>";
+        }
+    
+        $stmt->bind_param("ssiii", $reportHTML, $reportName, $id_usuario, $projectId, $id_actividad);
+        $flag = false;
+        if ($stmt->execute()) {
+            echo "<script>localStorage.setItem('openActDetails', 'true');localStorage.setItem('actId', '$id_actividad');window.location.href = `../php/actionsManagement.php?Data-success=true`;</script>";               
+        } else {
+            echo "<script>localStorage.setItem('openActDetails', 'true');localStorage.setItem('actId', '$id_actividad');window.location.href = `../php/actionsManagement.php?Data-success=false`;</script>";            
+        }
+    
+        // Cerrar la conexión y liberar recursos
+        $stmt->close();
+        $mysqli->close();
+    }
+    
 
     if (isset($_GET['getReportInfo']) && $_GET['getReportInfo'] == 'true') {
         $crud = new Crud();
@@ -219,7 +294,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
                     $reportData = $result->fetch_assoc();
 
                     // Decodificar el contenido JSON almacenado en la base de datos
-                    $contenido = json_decode($reportData['contenido'], true);
+                    // $contenido = json_decode($reportData['contenido'], true);
+                    $contenido = $reportData['contenido'];
 
                     echo json_encode(['success' => true, 'data' => [
                         'nombre' => $reportData['nombre'],
@@ -258,21 +334,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
     
                 if ($result->num_rows > 0) {
                     $reportData = $result->fetch_assoc();
-                    $contenido = json_decode($reportData['contenido'], true);
+                    $contenidoHTML = $reportData['contenido']; // Contenido del reporte en HTML
     
-                    // Verificar si hay imágenes en el contenido y eliminarlas
-                    foreach ($contenido as $elemento) {
-                        if (isset($elemento['type']) && $elemento['type'] === 'img') {
-                            $rutaImagen = str_replace('..', '', $elemento['value']);
-                            $imagePath = $_SERVER['DOCUMENT_ROOT'] . $rutaImagen;
+                    // Buscar todas las imágenes en el HTML del contenido
+                    preg_match_all('/<img[^>]+src=["\']([^"\']+)["\'][^>]*>/i', $contenidoHTML, $matches);
     
-                            if (file_exists($imagePath)) {
-                                unlink($imagePath);
-                            }
+                    // Eliminar cada imagen encontrada en el servidor
+                    foreach ($matches[1] as $rutaImagen) {
+                        $rutaImagen = str_replace('..', '', $rutaImagen); // Asegurarse de no permitir caminos fuera del directorio raíz
+                        $imagePath = $_SERVER['DOCUMENT_ROOT'] . $rutaImagen;
+    
+                        if (file_exists($imagePath)) {
+                            unlink($imagePath);
                         }
-                    }    
+                    }
     
-                    //   Eliminar el reporte después de eliminar las imágenes
+                    // Eliminar el reporte después de eliminar las imágenes
                     $deleteQuery = "DELETE FROM tbl_avances WHERE id_avance = ?";
                     $stmtDelete = $mysqli->prepare($deleteQuery);
                     if ($stmtDelete) {
@@ -312,6 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
     
         exit();
     }
+    
 
     if (isset($_GET['submitActivityRevision']) && $_GET['submitActivityRevision'] === 'true') {
         $id_actividad = filter_var($_POST['actId'], FILTER_VALIDATE_INT);
@@ -353,7 +431,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
         }
     }
     
+    function saveImage($base64Image, $uploadDir, $id_actividad) {
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
+            $imageType = strtolower($type[1]);
     
+            if (!in_array($imageType, ['jpeg', 'jpg', 'png', 'webp'])) {
+                return ["success" => false, "message" => "Tipo de archivo no permitido: $imageType"];
+            }
+    
+            $base64Image = substr($base64Image, strpos($base64Image, ',') + 1);
+            $decodedImage = base64_decode($base64Image);
+    
+            if ($decodedImage === false) {
+                return ["success" => false, "message" => "Error al decodificar la imagen."];
+            }
+    
+            $imageName = 'act' . $id_actividad . '-' . uniqid() . '.' . $imageType;
+            $imagePath = $uploadDir . $imageName;
+    
+            if (file_put_contents($imagePath, $decodedImage)) {
+                return ["success" => true, "path" => $imagePath];
+            } else {
+                return ["success" => false, "message" => "No se pudo guardar la imagen en el servidor."];
+            }
+        } else {
+            return ["success" => false, "message" => "Formato de imagen no válido."];
+        }
+    }
+
+    function responseJson($success, $message) {
+        echo json_encode(["success" => $success, "message" => $message]);
+        exit;
+    }
     
 } else {
      echo"<script>window.location.href = `../php/actionsManagement.php`;</script>";
