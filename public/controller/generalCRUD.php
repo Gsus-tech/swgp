@@ -473,6 +473,47 @@ class Crud
         }
         return false;
     }
+
+
+    public static function logAction($usuario, $tipo, $logfor, $accion, $proyecto = null, $notifyUser = null, $seleccionados = null, $destinationPage) {
+        include "db_connection.php";
+        $query = "INSERT INTO `tbl_logs` (`usuario`, `tipo`, `logfor`, `accion`, `proyecto`, `notifyUser`, `seleccionados`, `fecha`, `viewed`)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), 0)";
+        
+        try {
+            // Preparar la consulta
+            $stmt = $conn->prepare($query);
+    
+            // Validar y asignar parámetros
+            $usuario = filter_var($usuario, FILTER_VALIDATE_INT);
+            $tipo = in_array($tipo, ['general', 'personal']) ? $tipo : 'personal';
+            $logfor = in_array($logfor, ['sistema', 'usuario', 'todos', 'especificos']) ? $logfor : 'sistema';
+            $accion = htmlspecialchars($accion, ENT_QUOTES, 'UTF-8');
+            $proyecto = $proyecto !== null ? filter_var($proyecto, FILTER_VALIDATE_INT) : null;
+            $notifyUser = $notifyUser !== null ? filter_var($notifyUser, FILTER_VALIDATE_INT) : null;
+            $seleccionados = $seleccionados !== null ? htmlspecialchars($seleccionados, ENT_QUOTES, 'UTF-8') : null;
+    
+            // Vincular parámetros
+            $stmt->bind_param('issssis', $usuario, $tipo, $logfor, $accion, $proyecto, $notifyUser, $seleccionados);
+    
+            $stmt->execute();
+    
+            // Verificar si la inserción fue exitosa
+            if ($stmt->affected_rows > 0) {
+                $stmt->close();
+            } else {
+                throw new mysqli_sql_exception("No se pudo registrar el log. Affected rows: " . $stmt->affected_rows);
+            }
+        } catch (mysqli_sql_exception $e) {
+            $error = $e->getMessage();
+            echo "<script>window.location.href = '../php/$destinationPage?error=noLogSaved';</script>";
+            exit();
+        } finally {
+            $conn->close();
+        }
+    }
+    
+    
     
 
      public function getMysqliConnection() {
