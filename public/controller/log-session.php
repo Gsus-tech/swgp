@@ -59,6 +59,20 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                     $_SESSION['responsable+2'] = false;
                     $_SESSION['varios-proyectos'] = false;
                 }
+
+                // Guardar las preferencias
+                $q3 = "SELECT notificaciones,tema,tLetra FROM `tbl_preferencias_usuario` WHERE id_usuario = ?";
+                $par3 = [$_SESSION['id']];
+                $preferences = Crud::executeResultQuery($q3, $par3, 'i');
+                if(count($preferences) > 0){
+                    $_SESSION['notificaciones'] =$preferences[0]['notificaciones'];  
+                    if($preferences[0]['tema'] !== 'Sistema'){
+                        $_SESSION['tema'] = $preferences[0]['tema'] === 'Claro' ? 'lightMode' : 'darkMode';
+                    }
+                    if($preferences[0]['tLetra'] === 'Grande'){
+                        $_SESSION['fontStyle'] = 'bigFont';
+                    }
+                }
                 header("Location: ../php/dashboard.php");
                 exit();
             } else {
