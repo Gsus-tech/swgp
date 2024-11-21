@@ -45,6 +45,9 @@
     --px13: 13px;
     --px12: 12px;
     --px11: 11px;
+    --px10: 10px;
+    --px9: 9px;
+    --px8: 8px;
 }
 
 
@@ -174,38 +177,45 @@ body.loading {
 .container .sidebar nav ul li {
     display: block;
     justify-content: space-between;
-    padding: .8rem 0;
+    padding: 0.8rem 0;
     position: relative;
     background-color: transparent;
-    transition: background-color .25s ease-in-out;
+    transition: background-color 0.25s ease-in-out;
     margin: 0 10px;
 }
 
-.container .sidebar nav ul li a {
-    display: block;
+.container .sidebar nav ul li button {
+    display: flex;
+    align-items: center;
     cursor: pointer;
     text-decoration: none;
     color: var(--sysBgColor);
+    background: none;
+    border: none;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+    transition: text-shadow 0.3s ease, padding-left 0.3s ease;
 }
 
-.container .sidebar nav ul li a:hover {
+.container .sidebar nav ul li button:hover {
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    padding-left: .1rem;
+    padding-left: 0.1rem;
 }
 
-.container .sidebar nav ul li a i span {
+.container .sidebar nav ul li button i span {
     font-size: var(--px12);
 }
 
-.container .sidebar nav ul li a .fa {
+.container .sidebar nav ul li button .fa {
     display: flex;
 }
 
-.container .sidebar nav ul li a .text {
+.container .sidebar nav ul li button .text {
     position: relative;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    left: .5rem;
-    top: -.2rem;
+    left: 0.5rem;
+    top: -0.2rem;
 }
 
 .container .sidebar .account {
@@ -239,10 +249,12 @@ body.loading {
         margin: auto 0;
     }
 
-    .name h4 {
+    .name span {
         padding: 0;
         margin: 0;
-        font-size: var(--px12);
+        font-size: var(--px11);
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-style: normal;
     }
 }
 
@@ -290,21 +302,25 @@ body.loading {
     margin: 0 .5rem;
 }
 
-.accountMenu div a {
+.accountMenu div button {
     cursor: pointer;
     text-decoration: none;
+    display:grid;
+    text-align: left;
     color: var(--menuItem);
+    border:none;
+    background-color: #00000000;
 }
 
-.accountMenu div a:hover {
+.accountMenu div button:hover {
     color: var(--menuItemHover);
     font-size: 105%;
 }
 
-.accountMenu div a i span {
+.accountMenu div button i span {
     font-size: var(--px13);
     font-family: sans-serif;
-    margin-left: 8px;
+    margin-left: 5px;
 }
 
 .flexAndSpaceDiv {
@@ -740,6 +756,10 @@ input:checked + .slider:before {
         width: calc(100% - 9rem);
     }
 
+    .header{
+        width: calc(100% - 9rem);
+    }
+
     .container .sidebar {
         position: fixed;
     }
@@ -765,10 +785,6 @@ input:checked + .slider:before {
         width: 9rem;
     }
 
-    .container .sidebar nav ul li a i span {
-        font-size: var(--px15);
-    }
-
     .container .sidebar .sidebartop .sidebar-logo {
         width: 100%;
         padding-top: 1rem;
@@ -778,14 +794,16 @@ input:checked + .slider:before {
         margin-top: 2.5rem;
     }
 
+    .container .sidebar nav ul li button i span {
+        font-size: var(--px15);
+    }
     .container .sidebar nav ul li {
         padding: 1.4em 0;
     }
-
-    .container .sidebar nav ul li a i {
+    .container .sidebar nav ul li button i {
         font-size: var(--px15);
     }
-
+    
     .container .main {
         margin-left: 11rem;
         width: calc(100% - 10rem);
@@ -850,7 +868,7 @@ input:checked + .slider:before {
         margin: 0;
     }
 
-    .sidebar nav ul li a i span {
+    .sidebar nav ul li button span {
         display: none;
     }
 
@@ -859,11 +877,11 @@ input:checked + .slider:before {
         bottom: 2.7rem;
     }
 
-    .accountMenu div a i {
+    .accountMenu div button i {
         font-size: var(--px13);
     }
 
-    .accountMenu div a i:hover {
+    .accountMenu div button i:hover {
         font-size: 105%;
     }
 
@@ -1147,8 +1165,7 @@ input:checked + .slider:before {
     .sidebar nav ul li {
         margin: 0;
     }
-
-    .sidebar nav ul li a i span {
+    .sidebar nav ul li button i span {
         display: none;
     }
 
@@ -1157,11 +1174,11 @@ input:checked + .slider:before {
         bottom: 2.7rem;
     }
 
-    .accountMenu div a i {
+    .accountMenu div button i {
         font-size: var(--px13);
     }
 
-    .accountMenu div a i:hover {
+    .accountMenu div button i:hover {
         font-size: 105%;
     }
 
@@ -1207,7 +1224,8 @@ input:checked + .slider:before {
     --black: white;
     --rowSelected: #ccc;
     --formBg: #4f4f4f;
-    div .sidebar nav ul li a .fa, div .sidebar div .fa{
+    div .sidebar nav ul li button .fa, div .sidebar div .fa, 
+    div .sidebar nav ul li button span {
         color: #fff;
     }
 }
@@ -1227,8 +1245,12 @@ input:checked + .slider:before {
     --menuItemHover:#555;
     --rowSelected: #eee;
     --formBg: #fff;
-    div .sidebar nav ul li a .fa, div .sidebar div .fa{
+    div .sidebar nav ul li button .fa, div .sidebar div .fa, 
+    div .sidebar nav ul li button span {
         color: #333;
+    }
+    div .sidebar .sidebartop .sidebar-logo span img{
+        background-color: #4e5353;
     }
 }
 
@@ -1253,4 +1275,7 @@ input:checked + .slider:before {
     --px13: 15px;
     --px12: 14px;
     --px11: 13px;
+    --px10: 12px;
+    --px9: 11px;
+    --px8: 10px;
 }
