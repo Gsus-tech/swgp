@@ -288,6 +288,20 @@ body.loading {
     top: 0;
 }
 
+.container .main .fondoCobach{
+    width: 100%;
+    height: 100%;
+    z-index:-1;
+    position: fixed;
+    top: 0;
+    opacity: .3;
+    padding: 3rem;
+    background-image: url('../assets/systemBg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
 .accountMenu {
     position: absolute;
     bottom: 2.5rem;

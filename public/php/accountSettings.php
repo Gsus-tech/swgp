@@ -40,6 +40,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <?php include 'sidebar.php'; ?>
 
         <div class="main">
+            <div class="fondoCobach"></div>
             <div class="header flexAndSpaceDiv">
                 <h4 class="headerTitle">Ajustes de cuenta</h4>
             </div>

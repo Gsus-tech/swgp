@@ -37,7 +37,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
     <div class="container">
 <?php
     include 'sidebar.php';
-    echo " <div class='main'>";
+    echo " <div class='main'> <div class='fondoCobach'></div>";
         if (isset($_SESSION['error_message'])) {
             $error_message = $_SESSION['error_message'];
             unset($_SESSION['error_message']);
