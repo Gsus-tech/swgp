@@ -401,6 +401,122 @@ function politicaContrasena(){
     return r;
 }
 
+function addNotificationsControls(){
+    if(document.getElementById('notificationsControl')){
+        document.getElementById('notificationsControl').remove();
+    }
+    const url = "../controller/accountSettingsManager.php?getNotificationPreferences=true";
+    fetch(url, {
+        method: 'POST',
+        body: null,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const general = data.result.generales === 1 ? ' checked="true"' : ''; 
+                const personal = data.result.personales === 1 ? ' checked="true"' : ''; 
+                const mail = data.result.byMail === 1 ? ' checked="true"' : ''; 
+                const notificacionesDiv = document.getElementById('notificacionesDiv');
+                const newDiv = document.createElement('div');
+                newDiv.id = 'notificationsControl';
+                newDiv.classList.add('notificationsControl');
+                const htmlCode = `
+                    <div class="sectionDiv controlSection" title='Cambios en el proyecto que no estén relacionados conmigo.'>
+                        <label class="bold" for="name">Generales del proyecto:</label><br>
+                        <label class="switch">
+                            <input type="checkbox" id="generalNotificationToggle"${general}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="sectionDiv controlSection" title='Cambios en el proyecto que estén relacionados conmigo.'>
+                        <label class="bold" for="name">Pesonales:</label><br>
+                        <label class="switch">
+                            <input type="checkbox" id="personalNotificationToggle"${personal}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="sectionDiv controlSection" title='Enviar notificaciones por correo.'>
+                        <label class="bold" for="name">Por correo:</label><br>
+                        <label class="switch">
+                            <input type="checkbox" id="emailNotificationToggle"${mail}>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                `;
+                newDiv.innerHTML = htmlCode;
+                notificacionesDiv.appendChild(newDiv);
+
+                setTimeout(() => {
+                    addNotificationControlEvents();
+                }, 250);
+            } else {
+                console.error(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud:', error);
+        });
+}
+
+function confirmNotificationChanges(type, element) {
+    let notype = '';
+    if (type === 'general') {
+        notype = 'generales';
+    } else if (type === 'personal') {
+        notype = 'personales';
+    } else if (type === 'email') {
+        notype = 'por correo';
+    }
+
+    const state = element.checked ? 'Activar' : 'Desactivar';
+    const mensaje = `${state} las notificaciones ${notype}?`;
+
+    createConfirmationDialog('Gestión de notificaciones', mensaje,
+        () => {
+            const chk = element.checked;
+            const url = "../controller/accountSettingsManager.php?updateNotifications=true";
+            fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    type: notype,
+                    value: chk
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Preferencias de notificaciones actualizadas.');
+                        console.log(data.message);
+                    } else {
+                        console.error(`Error: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+        },
+        () => {
+            console.log('Acción cancelada.');
+            element.checked = state === 'Activar' ? false : true;
+        }
+    );
+}
+
+function addNotificationControlEvents(){
+    document.getElementById('generalNotificationToggle').addEventListener('change', 
+        ()=>{confirmNotificationChanges('general', document.getElementById('generalNotificationToggle'))});
+    document.getElementById('personalNotificationToggle').addEventListener('change', 
+        ()=>{confirmNotificationChanges('personal', document.getElementById('personalNotificationToggle'))});
+    document.getElementById('emailNotificationToggle').addEventListener('change', 
+        ()=>{confirmNotificationChanges('email', document.getElementById('emailNotificationToggle'))});
+}
+
 function updateNotifications(){
     let url = "../controller/accountSettingsManager.php?notificationToggle=true";
     fetch(url, {
@@ -413,12 +529,23 @@ function updateNotifications(){
     .then(response => response.json())
     .then(data => {
         if(data.success){
-            console.log('Data: ',data.message)
+            console.log('Data: ',data.message);
+            if(data.newState === 1){
+                addNotificationsControls();
+            }else{
+                if(document.getElementById('notificationsControl')){
+                    document.getElementById('notificationsControl').remove();
+                }
+            }
         }
     });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    if(document.getElementById('notificationToggle').checked === true){
+        addNotificationsControls();
+    }
+
     document.getElementById('notificationToggle').addEventListener('change', function() {
         if (this.checked) {
             createConfirmationDialog('Activar notificaciones', '¿Seguro que deseas activar las notificaciones?', 
