@@ -302,6 +302,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_SESSION['rol']) && isset($_S
 
     // Usar solo al implementar la actualizacion.
     // Cambia el nombre de la funcion por el parametro del boton que utilizaras.
+    // Para realizar los cambios en el sistema online, recuerda actualizar la tabla notificaciones, crear la tabla logs y agregar los triggers.
     function initializeNotificationsForUsers() {
         include "db_connection.php"; // Asegúrate de incluir tu archivo de conexión
     
