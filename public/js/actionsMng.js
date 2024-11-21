@@ -430,6 +430,8 @@ function createEditorArea(){
         { id: 'justifyRightButton', className: 'fa fa-align-right' },
         { id: 'header1Button', innerHTML: 'H1', style: 'font-size:var(--px18);' },
         { id: 'header2Button', innerHTML: 'H2', style: 'font-size:var(--px15);' },
+        { id: 'normalTextButton', innerHTML: 'N', style: 'font-size:var(--px13);' },
+
         { id: 'imageButton', className: 'fa fa-image' }
     ];
 
@@ -500,6 +502,7 @@ function addEditorEvents(){
     document.getElementById("justifyRightButton").addEventListener("click", () => formatText("justifyRight"));
     document.getElementById("header1Button").addEventListener("click", () => addHeader("h1"));
     document.getElementById("header2Button").addEventListener("click", () => addHeader("h2"));
+    document.getElementById("normalTextButton").addEventListener("click", () => addHeader("p"));
 
     document.getElementById("imageButton").addEventListener("click", () => {
         document.getElementById("imageInput").click(); // Abre el selector de archivos

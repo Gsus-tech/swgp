@@ -32,7 +32,7 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
     if (isset($_GET['editProject']) && $_GET['editProject'] == 'true' && isset($_GET['id'])) {
         $id =  (int)$_GET['id'];
         $destination = $destination ."?editProject=". $id;
-            
+        
         //Actualizar tbl_proyectos
         $nombre = Crud::antiNaughty((string)$_POST['Fname']);
         $depto = Crud::antiNaughty((string)$_POST['eFdptoText']);
@@ -40,12 +40,26 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
         $meta = Crud::antiNaughty((string)$_POST['Fmeta']);
         $fechaIni = $_POST['thisDate_inicio'];
         $fechaFin = $_POST['thisDate_cierre'];
-    
+
         $query = "UPDATE tbl_proyectos SET nombre=?, descripción=?, meta=?, fecha_inicio=?, fecha_cierre=?, departamentoAsignado=? WHERE id_proyecto=?";
         $params = [$nombre, $description, $meta, $fechaIni, $fechaFin, $depto, $id];
         $types = "ssssssi";
-        Crud::executeNonResultQuery($query, $params, $types, $destination);
-        
+        Crud::executeNonResultQuery2($query, $params, $types, $destination);
+        // Log action
+        $userRep = Crud::executeResultQuery('SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ? AND responsable = ?', [$id, 1], 'ii');
+        if ($userRep && count($userRep) > 0) {
+            Crud::logAction(
+                $_SESSION['id'],                     // Usuario actual (sesión iniciada)
+                'personal',                          // Tipo de log
+                'usuario',                          // logFor
+                'Edición de proyecto',               // Acción realizada
+                $id,                                 // ID del proyecto editado
+                $userRep[0]['id_usuario'],           // Usuario responsable del proyecto
+                null,                                 // Campo `seleccionados` en este caso no es relevante
+                $destination                          // Página destino en caso de error
+            );
+        }
+        header("Location: $destination");
     }
 
 
@@ -94,6 +108,8 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
             $newProjectId = Crud::getLastInserted('id_proyecto', 'tbl_proyectos');
             $flag = $newProjectId != null ? true : false;
             if($flag){
+                // Log action
+                Crud::logAction($_SESSION['id'], 'personal', 'sistema', 'Creación de proyecto', $newProjectId, null, null, $destination);
                 header("Location: ../php/projectsManagement.php?editProject=$newProjectId");
             }
 
@@ -123,6 +139,14 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
                 // Ejecutar la consulta
                 if ($stmt->execute()) {
                     if ($stmt->affected_rows > 0) {
+                        $userRep = Crud::executeResultQuery('SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ? AND responsable = ?', [$projectId, 1], 'ii');
+                        if ($userRep && count($userRep) > 0 && $userRep[0]['id_usuario'] != $usuarioId) {
+                            // log action
+                            $selectedUsers = '"rep" => '.$userRep[0]['id_usuario'].', "rebView" => 0, "user" => '.$usuarioId.', "userViewed" => 0';
+                            Crud::logAction($_SESSION['id'], 'personal', 'especificos', 'Integrante de proyecto agregado', $projectId, null, $selectedUsers, $destination);
+                        }else{
+                            Crud::logAction($_SESSION['id'], 'personal', 'usuario', 'Integrante de proyecto agregado', $projectId, $usuarioId, null, $destination);
+                        }
                         echo json_encode([
                             'success' => true,
                             'message' => 'Miembro agregado correctamente.'

@@ -58,6 +58,7 @@
 }
 
 .fm-content { 
+    display: grid;
     padding: 1rem;
     border-radius: 20px;
     background-color: var(--divBgColor);
@@ -196,6 +197,14 @@
 
 .preferenceOptions{
     margin-top: 1.3rem;
+}
+
+.notificationsControl {
+    display: grid;
+    margin: 10px 5%;
+    color: #000;
+    z-index: 10;
+    border: 1px solid var(--white);
 }
 
 @media screen and (max-width: 399px) {
