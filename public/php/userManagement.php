@@ -40,6 +40,7 @@ if(isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <?php include 'sidebar.php'; ?>
 
         <div class="main">
+            <div class="fondoCobach"></div>
         <?php
 
         if(isset($_GET['detailsId'])){

@@ -23,6 +23,7 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
         if (mysqli_num_rows($result) === 1) {
             $row = mysqli_fetch_assoc($result);
             if(password_verify($password, $row['contrasena'])){
+                date_default_timezone_set('America/Mexico_City');
                 $_SESSION['id'] = $row['id_usuario'];
                 $_SESSION['rol'] = $row['rolUsuario'];
                 $_SESSION['nombre'] = $row['nombre'];
@@ -73,6 +74,13 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
                         $_SESSION['fontStyle'] = 'bigFont';
                     }
                 }
+
+                // Guardar los datos de la sesion
+                $sessionId = session_id();
+                $_SESSION['sessionId'] = $sessionId;
+                $sessionQuery = "UPDATE tbl_usuarios SET id_sesion = ?, last_activity = NOW() WHERE id_usuario = ?";
+                Crud::executeNonResultQuery2($sessionQuery, [$sessionId, $_SESSION['id']], 'si','../php/dashboard.php');
+
                 header("Location: ../php/dashboard.php");
                 exit();
             } else {
@@ -89,9 +97,11 @@ if (isset($_GET['login']) && $_GET['login']=='true') {
         exit();
     }
 } elseif (isset($_GET['logout']) && $_GET['logout']=='true') {
-
     session_start();
     
+    $sessionQuery = "UPDATE tbl_usuarios SET id_sesion = NULL, last_activity = NULL WHERE id_usuario = ?";
+                Crud::executeNonResultQuery2($sessionQuery, [$_SESSION['id']], 'i','../php/../index.php');
+                
     session_unset();
     session_destroy();
     

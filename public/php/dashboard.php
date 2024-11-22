@@ -64,6 +64,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <?php include 'sidebar.php'; ?>
 
         <div class="main">
+        <div class="fondoCobach"></div>
             <div class="header flexAndSpaceDiv">
                 <h4 class="headerTitle">Gestión de proyecto</h4>
                 <?php $pagina="dashboard"; include 'topToolBar.php'; ?>

@@ -40,6 +40,7 @@ if (isset($_SESSION['rol']) && isset($_SESSION['nombre'])) {
         <?php include 'sidebar.php'; ?>
 
         <div class="main">
+            <div class="fondoCobach"></div>
             <?php
             function getActPercentage($id){
                 $query = "SELECT estadoActual FROM tbl_actividades WHERE id_proyecto = ?";
