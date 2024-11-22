@@ -10,7 +10,7 @@ class Crud
         // Aquí estableces la conexión a la base de datos
         include "db_connection.php";
         $this->mysqli = new \mysqli($sname, $userN, $pass, $db_name);
-
+        
         if ($this->mysqli->connect_error) {
             die('Error de Conexión (' . $this->mysqli->connect_errno . ') ' . $this->mysqli->connect_error);
         }
@@ -513,7 +513,38 @@ class Crud
         }
     }
     
+    public static function validateSession(){
+        if (!isset($_SESSION['id']) || !isset($_SESSION['sessionId'])) {
+            return false;
+            exit();
+        }
     
+        $userId = $_SESSION['id'];
+        $sessionId = $_SESSION['sessionId'];
+    
+        $query = "SELECT id_sesion, last_activity FROM tbl_usuarios WHERE id_usuario = ?";
+        $lastSessionId = Crud::executeResultQuery($query, [$userId], 'i');
+    
+        if (count($lastSessionId) === 0) {
+            return false;
+            exit();
+        }
+    
+        $isValidSessionId = ($lastSessionId[0]['id_sesion'] === $sessionId);
+        $lastActivity = $lastSessionId[0]['last_activity'];
+
+        $lastActivityTimestamp = strtotime($lastActivity);
+        $currentTimestamp = time();
+        $timeDifference = ($currentTimestamp - $lastActivityTimestamp) / 60;
+    
+        $isValidLastActivity = ($timeDifference <= 30);
+
+        if ($isValidSessionId && $isValidLastActivity) {
+            return true;
+        } else {
+           return false;
+        }
+    }
     
 
      public function getMysqliConnection() {

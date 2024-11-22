@@ -1,3 +1,7 @@
+document.addEventListener('DOMContentLoaded', function() {
+    validateSession();
+});
+
 //Barra lateral
 const menu = document.querySelector(".sidebar-menu")
 
@@ -372,3 +376,28 @@ document.addEventListener('DOMContentLoaded', function() {
         location.href = "accountSettings.php";
     })
 });
+
+function validateSession(){
+    const url = '../controller/PHP-REQUEST.php?validateSession=true'
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body:null})
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.value) {
+            console.log('Session: '+data.value);
+            return true;
+        } else if (!data.success) {
+            console.error('Error:', data.message);
+            return false;
+        } else {
+            alert('Sesión inválida. Por favor, inicia sesión nuevamente.');
+            console.warn('Sesión no válida, redirigiendo al login...',data.message);
+            window.location.href = '../index.php';
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
