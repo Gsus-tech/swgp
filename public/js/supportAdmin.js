@@ -122,10 +122,10 @@ function fixAndCloseTicket(tck, type, vle, fl){
         .then(response => response.json())
         .then(data => {
             if(data.success){
-                alert('Datos actualizados correctamente.'); 
-                location.reload();
+                createAlertDialog('¡Completado!', 'Datos actualizados correctamente.', ()=>{location.reload();}, 'Aceptar');
             } else {
                 console.log('Error al resolver el ticket: ', data.message);
+                createAlertDialog('Acción no realizada', 'Error al resolver el ticket: ', data.message, null, 'Aceptar');
             }
         })
         .catch(error => {
@@ -299,15 +299,14 @@ function addUserToProject(project, tik){
                         .then(response => response.json())
                         .then(result => {
                             if (result.success) {
-                                alert(result.message);
-                                closeTicketConfirmation(tik);
+                                createAlertDialog('¡Completado!', result.message, ()=>{closeTicketConfirmation(tik);}, 'Aceptar');
                             } else {
-                                alert(result.message || 'Error al añadir al usuario al equipo del proyecto.');
+                                createAlertDialog('Acción no realizada', 'Error al añadir al usuario al equipo del proyecto.\n\n'+result.message , null, 'Aceptar');
                             }
                         })
                         .catch(error => {
                             console.error('Error en la solicitud:', error);
-                            alert('Error al añadir al usuario al equipo del proyecto.');
+                            createAlertDialog('¡Error!', 'Error al añadir al usuario al equipo del proyecto: '+error, null, 'Aceptar');
                         });
                         
                     },
@@ -331,19 +330,18 @@ function addUserToProject(project, tik){
                         .then(response => response.json())
                         .then(result => {
                             if (result.success) {
-                                alert(result.message);
-                                closeTicketConfirmation(tik);
+                                createAlertDialog('¡Completado!', result.message, ()=>{closeTicketConfirmation(tik);}, 'Aceptar');
                             } else {
-                                alert(result.message || 'Error al añadir al usuario al equipo del proyecto.');
+                                createAlertDialog('Acción no realizada', 'Error al añadir al usuario al equipo del proyecto.\n\n'+result.message , null, 'Aceptar');
                             }
                         })
                         .catch(error => {
                             console.error('Error en la solicitud:', error);
-                            alert('Error al añadir al usuario al equipo del proyecto.');
+                            createAlertDialog('¡Error!', 'Error al añadir al usuario al equipo del proyecto: '+error, null, 'Aceptar');
                         });
                     },
                     ()=>{
-                        alert('Cancelado.');
+                        createAlertDialog('¡Acción cancelada!', 'No se realizaron cambios.', null, 'Aceptar');
                     }, 'Crear cuenta', 'Cancelar'
                 );
             }
@@ -375,13 +373,14 @@ function changeUserRolInProject(rol, project, tik){
         if(data.success){
             console.log(data.message);
             if(data.chg){
-                alert('Permisos de usuario actualizados.');
+                createAlertDialog('¡Completado!', 'Permisos de usuario actualizados.', null, 'Aceptar');
             }else{
-                alert(`${data.message}\nYa puedes cerrar este ticket.`);
+                createAlertDialog('¡Completado!', `${data.message}\nYa puedes cerrar este ticket.`, null, 'Aceptar');
             }
             closeTicketConfirmation(tik);
         } else {
             console.log('Error al cambiar los permisos del usuario:', data.message);
+            createAlertDialog('Acción no realizada', 'Error al cambiar los permisos del usuario: '+data.message , null, 'Aceptar');
         }
     })
     .catch(error => {
@@ -405,8 +404,7 @@ function deleteMemberFromProject(project, user, tik){
     .then(data => {
         if(data.success){
             console.log(data.message);
-            alert('Integrante eliminado del Proyecto.');
-            closeTicketConfirmation(tik);
+            createAlertDialog('¡Completado!', 'Integrante eliminado del Proyecto.', ()=>{closeTicketConfirmation(tik);}, 'Aceptar');
         } else {
             console.log('Error al eliminar al integrante del Proyecto:', data.message);
         }

@@ -209,8 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!foundInjectionPattern) {
                 window.location.href = `projectsManagement.php?search=${encodeURIComponent(query)}`;
             }else {
-                alert('Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parámetros de búsqueda.');
-                toggleSearchItems();
+                createAlertDialog('¡Aviso!', 'Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parámetros de búsqueda.', ()=>{toggleSearchItems();}, 'Aceptar');
             }
         } else {
             toggleSearchItems();
@@ -567,7 +566,7 @@ function projectHistory(){
 // Mostrar alertas almacenadas en el localStorage
 document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem('showEndedProjectsAlert') === 'true') {
-        alert('Proyectos finalizados éxitosamente.');
         localStorage.removeItem('showEndedProjectsAlert');
+        createAlertDialog('¡Completado!', 'Proyectos finalizados éxitosamente.', null, 'Aceptar');
     }
 });

@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (isset($_GET['validateSession']) && $_GET['validateSession'] === 'true') {
-    
+        date_default_timezone_set('America/Mexico_City');
         if (!isset($_SESSION['id']) || !isset($_SESSION['sessionId'])) {
             echo json_encode(['success' => false, 'message' => 'no se encontró una sesión abierta']);
             exit();
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $currentTimestamp = time();
         $timeDifference = ($currentTimestamp - $lastActivityTimestamp) / 60;
     
-        $isValidLastActivity = ($timeDifference >= 30);
+        $isValidLastActivity = ($timeDifference <= 30);
 
         if ($isValidSessionId && $isValidLastActivity) {
             $sessionQuery = "UPDATE tbl_usuarios SET last_activity = NOW() WHERE id_usuario = ?";

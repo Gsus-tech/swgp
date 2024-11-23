@@ -177,10 +177,11 @@ function updateReportsTable(actividadId, reportes) {
                     addButtonEvents();
                 } else {
                     console.error('Respuesta inválida o no exitosa:', response);
-                    alert('No se pudieron cargar los reportes de la actividad.');
+                    createAlertDialog('Acción no realizada', 'No se pudieron cargar los reportes de la actividad.', null, 'Aceptar');
                 }
             }, function(error) {
                 console.error('Error en la solicitud:', error);
+                createAlertDialog('Acción no realizada', 'Ocurrió un error al establecer la conexión.\nPor favor, toma captura de pantalla y levanta un ticket de soporte.', null, 'Aceptar');
             });
         } else {
             tableBody.innerHTML = '';
@@ -344,12 +345,12 @@ function deleteReport(element) {
                             trElement.remove();
                             console.log('Reporte eliminado correctamente:', data.message);
                         } else {
-                            alert('Error al eliminar el reporte: ' + data.message);
+                            createAlertDialog('Acción no realizada', 'Error al eliminar el reporte: ' + data.message, null, 'Aceptar');
                         }
                     })
                     .catch(error => {
                         console.error('Error en la solicitud AJAX:', error);
-                        alert('Error al eliminar el reporte.');
+                        createAlertDialog('Acción no realizada', 'Ocurrió un error al establecer la conexión.\nPor favor, toma captura de pantalla y levanta un ticket de soporte.', null, 'Aceptar');
                     });
                 },
                 function() {
@@ -387,14 +388,14 @@ function endActivity() {
                 if (data.success) {
                     console.log('Actividad enviada a revisión:', data.message);
                     setActStateButtons(actId);
-                    alert('Actividad enviada correctamente a revisión.');
+                    createAlertDialog('¡Completado!', 'Actividad enviada correctamente a revisión.', null, 'Aceptar');
                 } else {
-                    alert('Error al finalizar la actividad: ' + data.message);
+                    createAlertDialog('Acción no realizada', 'Error al finalizar la actividad: ' + data.message, null, 'Aceptar');
                 }
             })
             .catch(error => {
                 console.error('Error en la solicitud AJAX:', error);
-                alert('Parece que hubo un error en la acción.\nSi ves este mensaje, levanta un ticket de soporte.');
+                createAlertDialog('Acción no realizada', 'Ocurrió un error al establecer la conexión.\nPor favor, toma captura de pantalla y levanta un ticket de soporte.', null, 'Aceptar');
             });
         },
         function() {
@@ -709,7 +710,7 @@ function saveReport(reportName) {
         if(htmlInput.value !== ''){
             form.submit();
         }else{
-            alert('No HTML');
+            console.error('No HTML');
         }
     });
 }

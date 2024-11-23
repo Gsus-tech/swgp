@@ -137,8 +137,7 @@ function cardFlags(element, action){
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('¡Etiqueta eliminada!');
-                    location.reload();
+                    createAlertDialog('Aviso', '¡Etiqueta eliminada!', ()=>{location.reload();}, 'Aceptar');
                 } else {
                     if(result.message === 'No hay notas registradas.'){
                         floatMenuDiv.remove();
@@ -170,11 +169,10 @@ function cardFlags(element, action){
         
                 const result = await response.json();
                 if (result.success) {
-                    alert('¡Etiqueta guardada exitosamente!');
+                    createAlertDialog('¡Aviso!', '¡Etiqueta guardada exitosamente!', ()=>{location.reload();}, 'Aceptar');
                 } else {
                     console.error("Error al asignar la etiqueta:", result.message);
                 }
-                location.reload();
             } catch (error) {
                 console.error('Error en la solicitud AJAX:', error);
             }

@@ -1,5 +1,5 @@
 function imprimirProyecto(){
-    alert('Imprimiendo proyecto');
+    createAlertDialog('¡Aviso!', 'Imprimiendo proyecto...', null, 'Aceptar');
 }
 
 function exportarProyecto(){
@@ -115,7 +115,7 @@ function createProjectReport(fullReport){
             }
         }, function(error) {
             if(error === 'No se encontraron reportes asociados'){
-                alert('Lo sentimos.\nNo se encontraron reportes asociados a este proyecto.');
+                createAlertDialog('¡Aviso!', 'Lo sentimos.\nNo se encontraron reportes asociados a este proyecto.', null, 'Aceptar');
             }else{
                 console.error('Error en la solicitud AJAX:', error);
             }

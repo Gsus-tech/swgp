@@ -117,6 +117,7 @@
 .controlSection{
     display:flex;
     justify-content:space-between;
+    color: var(--white);
 }
 
 .sectionDiv{

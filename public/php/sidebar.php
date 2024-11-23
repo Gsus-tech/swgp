@@ -64,13 +64,21 @@
                 $data2 = Controller\GeneralCrud\Crud::executeResultQuery($q2, [$user], 'i');
                 $isMember[1] = Controller\GeneralCrud\Crud::isInArray($data2, 1);
                 
-                if($isMember[0]==true){ ?>
-                    <li><a href="dashboard.php" title="Tablero Kanban"><i class="fa fa-dashboard"><span 
-                    class="text">Tablero Kanban</span></i></a></li>
-                    <?php 
-                    if($isMember[1]==true){ ?>
-                    <li><a href="activityManagement.php" title="Actividades del proyecto"><i class="fa fa-gears"><span 
-                    class="text">Actividades del proyecto</span></i></a></li>
+                if ($isMember[0] == true) { ?>
+                    <li>
+                        <button onclick="window.location.href='dashboard.php'" title="Tablero Kanban">
+                            <i class="fa fa-dashboard"></i>
+                            <span class="text">Tablero Kanban</span>
+                        </button>
+                    </li>
+                    <?php
+                    if ($isMember[1] == true) { ?>
+                        <li>
+                            <button onclick="window.location.href='activityManagement.php'" title="Actividades del proyecto">
+                                <i class="fa fa-gears"></i>
+                                <span class="text">Actividades del proyecto</span>
+                            </button>
+                        </li>
                     <?php }
                     $allow2 = false;
 
@@ -79,16 +87,23 @@
                     $reportAccess = Controller\GeneralCrud\Crud::executeResultQuery($query, [$_SESSION['id']], 'i');
                     $allow2 = count($reportAccess) >= 1;
                 
-                    if ($allow2) { 
-                        echo "<li><a href='actionsManagement.php' title='Reporte de actividades'><i class='fa fa-tasks'><span 
-                        class='text'>Reporte de actividades</span></i></a></li>";
+                    if ($allow2) { ?>
+                        <li>
+                            <button onclick="window.location.href='actionsManagement.php'" title="Reporte de actividades">
+                                <i class="fa fa-tasks"></i>
+                                <span class="text">Reporte de actividades</span>
+                            </button>
+                        </li>
+                    <?php }
                     }
                     ?>
-                    
-                <?php
-                }
-                echo "<li><a href='support.php' title='Módulo de soporte'><i class='fa fa-question'><span 
-            class='text'>Soporte técnico</span></i></a></li>";
+               <li>
+                    <button onclick="window.location.href='support.php'" title="Módulo de soporte">
+                        <i class="fa fa-question"></i>
+                        <span class="text">Soporte técnico</span>
+                    </button>
+                </li>
+            <?php
             } ?>
         </ul>
     </nav> 
