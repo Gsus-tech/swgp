@@ -476,6 +476,13 @@ body.loading {
     text-wrap: wrap;
 }
 
+.alert-button {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}  
+
 .confirmation-buttons {
     display: flex;
     justify-content: space-between;
