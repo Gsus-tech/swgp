@@ -336,15 +336,16 @@ function finishActivity(){
                     if (response.success) {
                         location.reload(true);
                     } else {
-                        alert('Error: ' + response.message);
+                        createAlertDialog('Acción no realizada', 'Error capturado:'+response.message, null, 'Aceptar');
                     }
                 } catch (error) {
-                    alert('Error inesperado al procesar la respuesta del servidor.');
                     console.error('Error de JSON:', error);
+                    createAlertDialog('Acción no realizada', 'Error inesperado al procesar la respuesta del servidor.', null, 'Aceptar');
                 }
             },
             function (errorMessage) {
                 console.error('Error al obtener la información de la actividad:', errorMessage);
+                createAlertDialog('Acción no realizada', 'Ocurrió un error al establecer la conexión.\nPor favor, toma captura de pantalla y levanta un ticket de soporte.', null, 'Aceptar');
             }
         );
     });
@@ -413,7 +414,7 @@ function submitEditActivity() {
         form.submit();
         return true;
     }else{
-        alert('El id de la actividad ha sido modificado y es inválido.\nIntenta de nuevo.');
+        createAlertDialog('Acción no realizada', 'El id de la actividad ha sido modificado y es inválido.\nIntenta de nuevo.', null, 'Aceptar');
         return false;
     }
 }
@@ -743,7 +744,7 @@ function updateFormData(activityId) {
             updateFieldValue('ObjectiveDescription', data.objectiveDescription || 'Descripción no disponible');
         } else {
             console.error('Respuesta inválida o no exitosa:', response);
-            alert('No se pudo cargar la actividad.');
+            createAlertDialog('¡Error!', 'No se pudo cargar la actividad.', null, 'Aceptar');
         }
     },
     function(error) {
@@ -768,7 +769,7 @@ function setLimitDates(){
             datesDiv.setAttribute('end-date', data.fecha_cierre);
         } else {
             console.error('Respuesta inválida o no exitosa:', response);
-            alert('No se pudo cargar la actividad.');
+            createAlertDialog('¡Error!', 'No se pudo cargar la actividad.', null, 'Aceptar');
         }
     },
     function(error) {
@@ -801,7 +802,7 @@ function applyBulkAction(){
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Actividades eliminadas correctamente.');
+                        createAlertDialog('¡Completado!', 'Actividades eliminadas correctamente.', null, 'Aceptar');
                         location.reload();
                     }else{
                         console.error('Error en la solicitud:', data.message);

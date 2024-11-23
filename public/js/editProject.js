@@ -314,13 +314,11 @@ function agregarMiembro(projectId) {
 
                     console.log(response.message);
                 } else {
-                    alert('Error al agregar el miembro: ' + response.message);
-                }
+                    createAlertDialog('Acción no realizada', 'Error al agregar el miembro: '+response.message, null, 'Aceptar');                }
             })
             .catch(error => {
                 console.error('Error en la solicitud AJAX:', error);
-                alert('Error al agregar el miembro: ' + error.message);
-            });
+                createAlertDialog('Acción no realizada', 'Error al agregar el miembro: '+error.message, null, 'Aceptar');            });
         },
         function() {
             console.log("Agregación de miembro cancelada");
@@ -365,12 +363,12 @@ function ConfirmDeleteMember(idUsuario, buttonElement) {
                                 fila.remove();
                                 console.log('Miembro eliminado correctamente');
                             } else {
-                                alert('Error al eliminar el miembro: ' + response.message);
+                                createAlertDialog('Acción no realizada', 'Error al eliminar al integrante: '+response.message, null, 'Aceptar');
                             }
                         })
                         .catch(error => {
                             console.error('Error en la solicitud AJAX:', error);
-                            alert('Error al eliminar el miembro: ' + error.message);
+                            createAlertDialog('Acción no realizada', 'Error al eliminar al integrante: '+error.message, null, 'Aceptar');
                         });
                     },
                     function() {
@@ -378,7 +376,7 @@ function ConfirmDeleteMember(idUsuario, buttonElement) {
                     }
                 );
             } else {
-                alert('Error al eliminar al usuario.\nAgrega un Responsable de proyecto antes de eliminar al Responsable actual.');
+                createAlertDialog('Acción no realizada', 'Error al eliminar al usuario.\nAgrega un Responsable de proyecto antes de eliminar al Responsable actual.', null, 'Aceptar');
             }
         },
         function() {
@@ -431,7 +429,7 @@ function agregarObjetivo(projectId, tipo) {
     const contenido = document.getElementById(tipo === 'general' ? 'objetivoG' : 'objetivoE');
 
     if (contenido.value.length < 10) {
-        alert('Longitud mínima de 10 caracteres para la descripción del objetivo.');
+        createAlertDialog('¡Aviso!', 'Longitud mínima de 10 caracteres para la descripción del objetivo.', null, 'Aceptar');
     } else {
         const cadenasSinSentido = [
             'poiuy', 'lkjhg', 'mnbv', 'uhas83e73u', 'xyz123',
@@ -521,12 +519,12 @@ function agregarObjetivoAjax(projectId, tipo, contenido, tablaBody) {
             if(notaUser){ notaUser.remove(); }
 
         } else {
-            alert('Error al agregar el objetivo: ' + response.message);
+            createAlertDialog('¡Aviso!', 'Error al agregar el objetivo: ' + response.message, null, 'Aceptar');
         }
     })
     .catch(error => {
         console.error('Error en la solicitud AJAX:', error);
-        alert('Error al agregar el objetivo: ' + error.message);
+        createAlertDialog('¡Aviso!', 'Error al agregar el objetivo: ' + error.message, null, 'Aceptar');
     });
 }
 
@@ -580,12 +578,12 @@ function DeleteObjective(element, type, projectId, objId) {
                                 addObjectiveEspNeededMsg(); 
                             }, 350);
                         } else {
-                            alert('Error al eliminar el objetivo: ' + response.message);
+                            createAlertDialog('¡Aviso!', 'Error al eliminar el objetivo: ' + response.message, null, 'Aceptar');
                         }
                     })
                     .catch(error => {
                         console.error('Error en la solicitud AJAX:', error);
-                        alert('Error al eliminar el objetivo: ' + error.message);
+                        createAlertDialog('¡Aviso!', 'Error al eliminar el objetivo: ' + error.message, null, 'Aceptar');
                     });
                 },
                 function() {
@@ -660,13 +658,11 @@ function SaveObjectiveChanges(button, tipo, idProyecto, idObjetivo) {
     }
 
     if (nuevaDescripcion.length < 10) {
-        alert("Mínimo 10 caracteres para este campo");
-        return false;
+        createAlertDialog('¡Aviso!', 'Mínimo 10 caracteres para este campo', ()=>{return false;}, 'Aceptar');
     }
 
     if (nuevaDescripcion.length > 1000) {
-        alert("Máximo 1000 caracteres para este campo");
-        return false;
+        createAlertDialog('¡Aviso!', 'Máximo 1000 caracteres para este campo', ()=>{return false;}, 'Aceptar');
     }
 
     // Si pasa todas las validaciones, continuar con el guardado
@@ -699,12 +695,12 @@ function proceedWithSave(button, fila, tipo, idProyecto, idObjetivo, nuevaDescri
             fila.querySelector('.fa-edit').classList.remove('hide');
             console.log('Objetivo actualizado correctamente:', response.message);
         } else {
-            alert('Error al actualizar el objetivo: ' + response.message);
+            createAlertDialog('Acción no realizada', 'Error al actualizar el objetivo: ' + response.message, null, 'Aceptar');
         }
     })
     .catch(error => {
         console.error('Error en la solicitud AJAX:', error);
-        alert('Error al actualizar el objetivo: ' + error.message);
+        createAlertDialog('Acción no realizada', 'Error al actualizar el objetivo: ' + error.message, null, 'Aceptar');
     });
 }
 

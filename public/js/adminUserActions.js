@@ -312,7 +312,7 @@ function deleteSelectedAccounts() {
             }
         );
     } else {
-        alert("No hay cuentas seleccionadas para eliminar.");
+        createAlertDialog('¡Aviso!', 'No hay cuentas seleccionadas para eliminar.', null, 'Aceptar');
     }
 }
 

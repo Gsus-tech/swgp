@@ -81,10 +81,10 @@ function viewTicketStatus(){
                     });
                 }, 350);
             }else{
-                alert('failed: '+data.message);
+                createAlertDialog('¡Error en la conexión!', 'Error capturado: ' + data.message, null, 'Aceptar');
             }
         } else {
-            alert(`Error: ${data.message}`);
+            createAlertDialog('¡Error en la conexión!', 'Error capturado: ' + data.message, null, 'Aceptar');
         }
     })
     .catch(error => {
@@ -123,7 +123,7 @@ function showTicketDetails(ticket){
 
 
             } else {
-                alert(`Error: ${data.mensaje}`);
+                createAlertDialog('¡Error en la conexión!', 'Error capturado: ' + data.message, null, 'Aceptar');
             }
         })
         .catch(error => {
@@ -581,9 +581,10 @@ function updateBtnLanguage() {
             const file = fileInput.files[0];
             const validImageTypes = ['image/jpeg', 'image/png'];
             if (!validImageTypes.includes(file.type)) {
-                alert('Por favor, selecciona un archivo de imagen válido (jpeg, jpg o png).');
-                fileInput.value = '';
-                fileChosen.textContent = "Ningún archivo seleccionado";
+                createAlertDialog('¡Aviso!', 'Por favor, selecciona un archivo de imagen válido (jpeg, jpg o png).', 
+                ()=>{fileInput.value = '';
+                fileChosen.textContent = "Ningún archivo seleccionado";},
+                'Aceptar');
             } else {
                 fileChosen.textContent = file.name;
             }
@@ -618,8 +619,8 @@ function dataForTicket() {
                 const file = fileInput.files[0];
                 const maxSize = 10 * 1024 * 1024;
                 if (file.size > maxSize) {
-                    alert('La imagen seleccionada excede los 10Mb.\nPor favor, selecciona otra imagen para continuar.');
-                    return reject('Image size too large'); 
+                    createAlertDialog('¡Aviso!', 'La imagen seleccionada excede los 10Mb.\nPor favor, selecciona otra imagen para continuar.', 
+                        ()=>{ return reject('Image size too large'); }, 'Aceptar');   
                 }
 
                 const reader = new FileReader();
@@ -769,14 +770,14 @@ function sendTicket(){
                     .then(response => response.json()) 
                     .then(data => {
                         if (data.success) {
-                            alert(data.message);
-                            location.reload();
+                            createAlertDialog('¡Aviso!', data.message, ()=>{location.reload();}, 'Aceptar');  
                         } else {
-                            alert(`Error: ${data.message}`);
+                            createAlertDialog('¡Error!', data.message, ()=>{location.reload();}, 'Aceptar');  
                         }
                     })
                     .catch(error => {
                         console.error('Error en la solicitud AJAX:', error);
+                        createAlertDialog('¡Error!', 'Ocurrió un error al establecer la conexión.\nPor favor, toma captura de pantalla y levanta un ticket de soporte.', null, 'Aceptar');
                     });
                 }
             }).catch(error => {

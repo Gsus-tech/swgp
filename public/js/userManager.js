@@ -55,8 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
            if (!foundInjectionPattern) {
                window.location.href = `userManagement.php?search=${encodeURIComponent(query)}`;
            } else {
-               alert('Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parámetros de búsqueda.');
-               toggleSearchItems();
+                createAlertDialog('¡Aviso!', 'Se detectaron patrones maliciosos en tu entrada de datos. \nIntenta de nuevo con diferentes parámetros de búsqueda.', ()=>{toggleSearchItems();}, 'Aceptar');
            }
        } else {
            toggleSearchItems();

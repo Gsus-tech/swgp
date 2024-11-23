@@ -342,6 +342,55 @@ function createConfirmationDialog(title, message, onConfirm, onCancel, gText, rT
 
 }
 
+function createAlertDialog(title, message, onClose, buttonText) {
+    // Crear el overlay y el contenedor del diálogo
+    const alertDiv = document.createElement('div');
+    alertDiv.classList.add('confirmation-overlay');
+    const alertDialog = document.createElement('div');
+    alertDialog.classList.add('confirmation-dialog');
+    const alertContent = document.createElement('div');
+    alertContent.classList.add('confirmation-content');
+    
+    // Título
+    const titleElement = document.createElement('h3');
+    titleElement.textContent = title;
+    alertContent.appendChild(titleElement);
+
+    // Mensaje del alert
+    const messageParagraph = document.createElement('pre');
+    messageParagraph.textContent = message;
+    alertContent.appendChild(messageParagraph);
+
+    // Botón para cerrar el diálogo
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('alert-button');
+    const closeButton = document.createElement('button');
+    closeButton.textContent = buttonText ? buttonText : 'Cerrar';
+    closeButton.classList.add('generalBtnStyle');
+    closeButton.classList.add('btn-green');
+    buttonContainer.appendChild(closeButton);
+
+    alertContent.appendChild(buttonContainer);
+    alertDialog.appendChild(alertContent);
+    alertDiv.appendChild(alertDialog);
+
+    document.body.appendChild(alertDiv);
+
+    // Evento para cerrar el diálogo
+    closeButton.addEventListener('click', function() {
+        if (onClose) {
+            onClose();
+        }
+        alertDiv.remove();
+    });
+
+    // Foco automático en el botón
+    setTimeout(function(){
+        closeButton.focus();
+    }, 350);
+}
+
+
 function addButtonEvents(){
     const buttons = document.querySelectorAll('.button');
     buttons.forEach(button => {
@@ -394,9 +443,8 @@ function validateSession(){
             console.error('Error:', data.message);
             return false;
         } else {
-            alert('Sesión inválida. Por favor, inicia sesión nuevamente.');
             console.warn('Sesión no válida, redirigiendo al login...',data.message);
-            window.location.href = '../index.php';
+            createAlertDialog('Sesión inválida.', 'Por favor, inicia sesión nuevamente.', ()=>{window.location.href = '../index.php';}, 'Aceptar');
         }
     })
     .catch(error => console.error('Error:', error));

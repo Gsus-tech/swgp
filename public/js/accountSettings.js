@@ -52,15 +52,18 @@ function addResetPreferencesBtn(){
 
 function resetPreferences(){
     const url = "../controller/accountSettingsManager.php?resetPreferenceValues=true";
+    document.body.style.cursor = 'wait';
     makeAjaxRequest(url, 'POST', null, 
         function(response){
+            document.body.style.cursor = 'default';
             if(response.success){
                 console.log(response.message)
                 location.reload();
             }
         },
         ()=>{
-            alert('Ocurrió un error al reestablecer las preferencias de usuario. Por favor, intenta de nuevo más tarde.');
+            document.body.style.cursor = 'default';
+            createAlertDialog('¡Aviso!', 'Ocurrió un error al reestablecer las preferencias de usuario. \nPor favor, intenta de nuevo más tarde.', null, 'Aceptar');
         }
     );
 }
@@ -270,7 +273,7 @@ function updatePassword(){
                     document.getElementById('swapVis2').addEventListener('click', swapPasswordVis);
                 }, 350);
             }else{
-                alert('Contraseña incorrecta.');
+                createAlertDialog('¡Aviso!', 'Contraseña incorrecta.', null, 'Aceptar');
             }
           })
           .catch(error => {
@@ -320,16 +323,17 @@ function sendPassword(){
                     .then(response => response.json())
                     .then(data => {
                         if(data.success){
-                            alert('Contraseña actualizada');
+                            createAlertDialog('¡Guardado!', 'Contraseña actualizada.', null, 'Aceptar');
                             initialDiv();
                         }else{
-                            alert('No se pudieron guardar los cambios.');
+                            createAlertDialog('¡Aviso!', 'No se pudieron guardar los cambios.', null, 'Aceptar');
                         }
                     })
                     .catch(error => {
                         if (error !== 'Input cancelado') {
                             console.error(error);
                         }
+                        createAlertDialog('¡Aviso!', 'Ocurrió un error al establecer la conexión.\nPor favor, toma captura de pantalla y levanta un ticket de soporte.', null, 'Aceptar');
                     });
                 },
                 function(){
