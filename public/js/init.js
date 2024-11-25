@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function validateSession(){
-    const url = '../controller/PHP-REQUEST.php?validateSession=true'
+    const url = '../controller/PHP-Request.php?validateSession=true'
     fetch(url, {
         method: 'POST',
         headers: {
