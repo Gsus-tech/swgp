@@ -607,10 +607,12 @@ function createEditForm(element) {
     
     const divH = document.querySelector('.activityManagement ');
     divH.appendChild(formContainer);
-    setOptionsRep('editUserRespList');
-    setOptionsObjectives('editObjetivoList');
-    setLimitDates();
-    updateFormData(idAct);
+    setTimeout(() => {
+        setOptionsRep('editUserRespList');
+        setOptionsObjectives('editObjetivoList');
+        setLimitDates();
+        updateFormData(idAct);
+    }, 150);
     formContainer.style = "display: flex;"
 }
 
