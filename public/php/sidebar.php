@@ -1,3 +1,12 @@
+<?php
+    $notQuery = "SELECT notificaciones FROM tbl_preferencias_usuario WHERE id_usuario = ?";
+    $notifications = Controller\GeneralCrud\Crud::executeResultQuery($notQuery, [$_SESSION['id']], 'i');
+    if($notifications[0]['notificaciones']===1){
+        $notificationState = 'ON';
+    }else{
+        $notificationState = 'OFF';
+    }
+?>
 <!-- Barra lateral -->
 <div class="sidebar">
     <!-- Encabezado de barra -->
@@ -110,6 +119,11 @@
 
     <!-- Pie de barra -->
     <div class="account">
+    <?php
+        if( $notificationState === 'ON'){
+            echo "<i class='fa fa-bell notifications button' title='Notificaciones' id='notificationsBell'></i>";
+        } 
+        ?>
         <div class="details">
             <div class="avatar button" id="avatarBtn" onclick="openAccountMenu()">
                 <img src="../assets/profilePictures/pp_1.png">

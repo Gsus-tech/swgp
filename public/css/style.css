@@ -230,6 +230,11 @@ body.loading {
     background-color: var(--barColor2);
 }
 
+.container .sidebar .account .notifications{
+    position: absolute;
+    bottom: 3rem;
+    left: 7px;
+}
 .container .sidebar .account .details {
     display: flex;
 
@@ -273,6 +278,7 @@ body.loading {
     .logout a:hover {
         color: hsl(36, 100%, 50%);
     }
+    
 }
 
 .container .main {
@@ -750,6 +756,31 @@ input:checked + .slider:before {
     transition:all 0.3s ease-in-out;
 }
 
+.foundNotifications {
+    animation: pulseColor 2s infinite; /* Animación para cambiar gradualmente el color */
+}
+
+.foundNotifications i {
+    color: orange; /* Color inicial del ícono */
+    animation: pulseColor 2s infinite; /* Aplicar animación */
+    box-shadow: 0 0 10px 5px rgba(255, 165, 0, 0.6); /* Brillo alrededor */
+}
+
+@keyframes pulseColor {
+    0% {
+        color: orange;
+        box-shadow: 0 0 10px 5px rgba(255, 165, 0, 0.6);
+    }
+    50% {
+        color: darkorange;
+        box-shadow: 0 0 15px 8px rgba(255, 140, 0, 0.8);
+    }
+    100% {
+        color: orange;
+        box-shadow: 0 0 10px 5px rgba(255, 165, 0, 0.6);
+    }
+}
+
 @media (max-width: 550px) {
     .header {
         width: 100%;
@@ -881,6 +912,11 @@ input:checked + .slider:before {
                 position: absolute;
                 bottom: .3rem;
                 left: -.4rem;
+            }
+            .notifications{
+                position: absolute;
+                bottom: 3rem;
+                left: -.01rem;
             }
         }
     }
@@ -1179,6 +1215,11 @@ input:checked + .slider:before {
                 position: absolute;
                 bottom: .3rem;
                 left: -.4rem;
+            }
+            .notifications{
+                position: absolute;
+                bottom: 3rem;
+                left: -.01rem;
             }
         }
     }
