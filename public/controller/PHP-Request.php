@@ -56,4 +56,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
+    if(isset($_GET['checkForNotifications']) && $_GET['checkForNotifications'] === 'true'){
+        if($_SESSION['rol']==='EST'){
+            $userId = $_SESSION['id'];
+            // Obtener proyectos asociados al usuario
+            $queryProjects = "SELECT id_proyecto FROM tbl_integrantes WHERE id_usuario = ?";
+            $userProjects = Crud::executeResultQuery($queryProjects, [$userId], 'i', $_SERVER['HTTP_REFERER']);
+            $projectIds = array_column($userProjects, 'id_proyecto');
+        
+            if (empty($projectIds)) {
+                // No hay proyectos asociados
+                echo json_encode(['success' => false, 'message' => 'No se encontraron proyectos asociados']);
+                exit();
+            }
+        
+            // Filtrar registros en tbl_logs para los proyectos asociados
+            $placeholders = implode(',', array_fill(0, count($projectIds), '?'));
+            $queryLogs = "SELECT usuario, accion, proyecto, fecha, seleccionados, notifyUser, logfor, viewed FROM tbl_logs 
+                WHERE (proyecto IN ($placeholders) AND logfor != 'sistema') OR notifyUser = ?";
+            $params = array_merge($projectIds, [$userId]);
+            $logs = Crud::executeResultQuery($queryLogs, $params, str_repeat('i', count($projectIds)) . 'i');
+            
+            if (count($logs) === 0) {
+                // No se encontraron
+                echo json_encode(['success' => false, 'none' => true, 'message' => 'Sin notificaciones']);
+                exit();
+            }
+
+            // Procesar los registros para identificar notificaciones relevantes
+            $notifications = [];
+            foreach ($logs as $log) {
+                // Notificaciones directas (notifyUser)
+                if ($log['logfor'] === 'usuario' && (int)$log['notifyUser'] === (int)$userId) {
+                    $notifications[] = [
+                        'usuario' => $log['usuario'],
+                        'accion' => $log['accion'],
+                        'proyecto' => $log['proyecto'],
+                        'fecha' => $log['fecha'],
+                        'viewed' => $log['viewed']
+                    ];
+                    continue; // Pasar a la siguiente notificación
+                }
+            
+                // Notificaciones específicas (seleccionados)
+                if ($log['logfor'] === 'especificos' && $log['seleccionados'] !== null) {
+                    $decodedData = htmlspecialchars_decode($log['seleccionados']);
+                    $jsonArray = json_decode($decodedData, true);
+            
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        error_log("Error al decodificar JSON en log ID {$log['id']}: " . json_last_error_msg());
+                        continue; // Omitir registros con JSON inválido
+                    }
+            
+                    foreach ($jsonArray as $entry) {
+                        if (isset($entry['id']) && (int)$entry['id'] === (int)$userId) {
+                            $notifications[] = [
+                                'usuario' => $log['usuario'],
+                                'accion' => $log['accion'],
+                                'proyecto' => $log['proyecto'],
+                                'fecha' => $log['fecha'],
+                                'viewed' => $entry['viewed']
+                            ];
+                            break; // Salir del bucle, ya que encontramos al usuario actual
+                        }
+                    }
+                }
+            }
+            
+            
+            echo json_encode(['success' => true, 'notificaciones' => $notifications, 'message' => "Notificaciones recuperadas."]);
+        }
+        else{
+            echo json_encode(['success' => false, 'none' => true, 'message' => 'Trabajando en las notificaciones administrativas']);
+        }
+    }
 }
