@@ -142,7 +142,10 @@ if (($_SESSION['rol']==='ADM' || $_SESSION['rol']==='SAD') && $_SERVER["REQUEST_
                         $userRep = Crud::executeResultQuery('SELECT id_usuario FROM tbl_integrantes WHERE id_proyecto = ? AND responsable = ?', [$projectId, 1], 'ii');
                         if ($userRep && count($userRep) > 0 && $userRep[0]['id_usuario'] != $usuarioId) {
                             // log action
-                            $selectedUsers = '"rep" => '.$userRep[0]['id_usuario'].', "rebView" => 0, "user" => '.$usuarioId.', "userViewed" => 0';
+                            $selectedUsers = json_encode([
+                                ['id' => $userRep[0]['id_usuario'], 'viewed' => 0],
+                                ['id' => $usuarioId, 'viewed' => 0]
+                            ]);
                             Crud::logAction($_SESSION['id'], 'personal', 'especificos', 'Integrante de proyecto agregado', $projectId, null, $selectedUsers, $destination);
                         }else{
                             Crud::logAction($_SESSION['id'], 'personal', 'usuario', 'Integrante de proyecto agregado', $projectId, $usuarioId, null, $destination);

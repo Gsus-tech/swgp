@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     validateSession();
+    setTimeout(() => {
+        checkForNotifications();
+    }, 250);
 });
 
 //Barra lateral
@@ -449,3 +452,32 @@ function validateSession(){
     })
     .catch(error => console.error('Error:', error));
 }
+
+function checkForNotifications(){
+    const url = '../controller/PHP-Request.php?checkForNotifications=true'
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body:null})
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+            console.log(data.notificaciones.length+' notificaciones encontradas');
+            const existingBellIcon = document.getElementById('notificationsBell');
+            if (existingBellIcon) {
+                existingBellIcon.classList.add('foundNotifications')
+            }
+        } else if (!data.success) {
+            if(data.none){
+                console.log(data.message);
+            }else{
+                console.error('Error:', data.message);
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+

@@ -536,9 +536,24 @@ function updateNotifications(){
             console.log('Data: ',data.message);
             if(data.newState === 1){
                 addNotificationsControls();
+
+                const accountDiv = document.querySelector('.account');
+                const bellIcon = document.createElement('i');
+                bellIcon.id = "notificationsBell";
+                bellIcon.className = 'fa fa-bell notifications button';
+                bellIcon.title = 'Notificaciones';
+                if (accountDiv) {
+                    if (!accountDiv.querySelector('.fa-bell')) {
+                        accountDiv.insertBefore(bellIcon, accountDiv.querySelector('.details'));
+                    }
+                }
             }else{
                 if(document.getElementById('notificationsControl')){
                     document.getElementById('notificationsControl').remove();
+                }
+                const existingBellIcon = document.getElementById('notificationsBell');
+                if (existingBellIcon) {
+                    existingBellIcon.remove();
                 }
             }
         }
